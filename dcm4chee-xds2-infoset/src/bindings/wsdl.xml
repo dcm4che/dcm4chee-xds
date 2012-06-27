@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jaxws:bindings 
+	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+    jaxws:version="2.0"
+    schemaLocation="${basedir}/src/wsdl/Async_and_Sync_XDS.b_DocumentRegistry.wsdl">
+	    <jaxws:bindings node="wsdl:definitions">
+	      <jaxws:package name="org.dcm4chee.xds2.infoset.ws"/>
+	    </jaxws:bindings>
+</jaxws:bindings>
+
+
