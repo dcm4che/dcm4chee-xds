@@ -105,6 +105,11 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     @ManyToOne
     private XADPatient patient;
 
+    @Basic(optional = false)
+    @JoinColumn(name = "src_pat_fk")
+    @ManyToOne
+    private XADPatient sourcePatient;
+
     @ManyToMany
     @JoinTable(name = "rel_document_code", 
         joinColumns = @JoinColumn(name = "document_fk", referencedColumnName = "pk"),
@@ -127,6 +132,14 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
         this.patient = patient;
     }
     
+    public XADPatient getSourcePatient() {
+        return sourcePatient;
+    }
+
+    public void setSourcePatient(XADPatient sourcePatient) {
+        this.sourcePatient = sourcePatient;
+    }
+
     public Collection<XDSCode> getXDSCodes() {
         return xdsCodes;
     }

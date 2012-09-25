@@ -316,10 +316,14 @@ public class XDSRegistryBean implements DocumentRegistryPortType {
             throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID with wrong UniversalId type (must be ISO)! pid:"+pid, null);
         }
         try {
-            return (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+            XADPatient pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
                 .setParameter(1, qryPat.getPatientID())
                 .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
                 .getSingleResult();
+            if (pat.getLinkedPatient() != null) {
+                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID "+pat+" is merged with "+pat.getLinkedPatient(), null);
+            }
+            return pat;
         } catch (NoResultException x) {
             if (createMissing) {
                 log.warn("Unknown XAD Patient! Create missing Patient with pid:"+pid);
@@ -343,6 +347,32 @@ public class XDSRegistryBean implements DocumentRegistryPortType {
         }            
     }
 
+    public void linkPatient(String pid, String newPID) throws XDSException {
+        XADPatient qryPat = new XADPatient(pid);
+        XADPatient pat;
+        try {
+            pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+                .setParameter(1, qryPat.getPatientID())
+                .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
+                .getSingleResult();
+        } catch (NoResultException x) {
+            throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID:"+pid, null);
+        }
+        XADPatient newPat = null;
+        if (newPID != null) {
+            try {
+                qryPat = new XADPatient(newPID);
+                newPat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+                    .setParameter(1, qryPat.getPatientID())
+                    .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
+                    .getSingleResult();
+            } catch (NoResultException x) {
+                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID:"+newPID, null);
+            }
+        }
+        pat.setLinkedPatient(newPat);
+   }
+ 
     public XDSCode getXDSCode(ClassificationType clType, boolean createMissing) throws XDSException {
         XDSCode code = new XDSCode(clType.getNodeRepresentation(),
                 clType.getSlot().get(0).getValueList().getValue().get(0),

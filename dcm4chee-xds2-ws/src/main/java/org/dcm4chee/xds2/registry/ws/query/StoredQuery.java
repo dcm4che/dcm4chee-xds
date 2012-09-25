@@ -196,6 +196,7 @@ public abstract class StoredQuery {
         XADPatient qryPat = new XADPatient(pid.getStringValue());
         builder.and(QXADPatient.xADPatient.patientID.eq(qryPat.getPatientID()));
         builder.and(QXADIssuer.xADIssuer.universalID.eq(qryPat.getIssuerOfPatientID().getUniversalID()));
+        builder.and(QXADPatient.xADPatient.linkedPatient.isNull());
     }
 
     protected void addStatusMatch(BooleanBuilder builder, StringPath status, StoredQueryParam statusParam) {

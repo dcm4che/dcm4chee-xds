@@ -125,6 +125,18 @@ public class CheckErrorsTest {
         doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_UNKNOWN_PATID, "Check Unknown PID");
     }
 
+    @Test
+    public void checkErrorMergedPatId() throws Exception {
+        log.info("\n############################# TEST: check merged PatId ############################");
+        String mergedPID = XDSTestUtil.TEST_PID_MERGED+XDSTestUtil.TEST_ISSUER;
+        session.linkPatient(mergedPID, XDSTestUtil.TEST_PID_1+XDSTestUtil.TEST_ISSUER);
+        SubmitObjectsRequest req = XDSTestUtil.getSubmitObjectsRequest(TEST_METADATA_FILENAME);
+        RegistryObjectType obj = (RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(0).getValue();
+        XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
+                XDSConstants.UUID_XDSDocumentEntry_patientId, mergedPID);
+        doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_UNKNOWN_PATID, "Check merged PID");
+        session.linkPatient(mergedPID, null);
+    }
     /**
      * Check if expected error (XDSPatientIdDoesNotMatch) is returned if an Association
      * references two XDSObjects with different patientId's.

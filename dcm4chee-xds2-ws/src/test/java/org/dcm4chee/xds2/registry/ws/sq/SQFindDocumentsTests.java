@@ -47,6 +47,7 @@ import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
+import org.dcm4chee.xds2.registry.ws.XDSTestUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -74,8 +75,27 @@ public class SQFindDocumentsTests extends AbstractSQTests {
         QueryResultCheck chk = new QueryResultCheck().setStatus(XDSConstants.XDS_B_STATUS_FAILURE);
         chk.checkResponse(rsp);
         req.getAdhocQuery().getSlot().clear();
-        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_PATIENT_ID, "'test1234_1^^^&1.2.3.45.4.3.2.1&ISO'");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_PATIENT_ID, TEST_PAT_ID);
         rsp = session.documentRegistryRegistryStoredQuery(req);
+        chk.checkResponse(rsp);
+    }
+    /**
+     * Not in Pre-Con Test
+     * Queries for:
+     * all approved documents, 
+     * returns LeafClass   
+     * must return: 0 documents (patient is merged)
+     */
+    public void findDocumentsMergedPID() throws Exception {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocuments, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        String pid = XDSTestUtil.TEST_PID_1+XDSTestUtil.TEST_ISSUER;
+        String mpid = XDSTestUtil.TEST_PID_MERGED+XDSTestUtil.TEST_ISSUER;
+        session.getPatient(mpid, true);
+        session.linkPatient(pid, mpid);
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        session.linkPatient(pid, null);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setNrOfDocs(0).setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
         chk.checkResponse(rsp);
     }
     /**

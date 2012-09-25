@@ -58,7 +58,9 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Index;
 
 /**
- * A Patient of XDS Affinity Domain. 
+ * A Patient ID of XDS Affinity Domain. 
+ * 
+ * This is the XAD PID (PID within the affinity domain) and the 
  * 
  * @author Franz Willer <franz.willer@gmail.com>
  * @version $Revision$ $Date$
@@ -104,19 +106,11 @@ public class XADPatient implements Serializable {
     @JoinColumn(name = "pat_id_issuer_fk")
     private XADIssuer issuerOfPatientID;
 
-    
-    @Column(name = "pat_name")
-    @Index(name="pat_name_idx")
-    private String patientName;
+    @Basic(optional = false)
+    @JoinColumn(name = "linked_pat_fk")
+    @ManyToOne
+    private XADPatient linkedPatient;
 
-    @Column(name = "pat_birthdate")
-    @Index(name="pat_birthdate_idx")
-    private String patientBirthDate;
-
-    @Column(name = "pat_sex")
-    @Index(name="pat_sex_idx")
-    private String patientSex;
-    
     public XADPatient() {
     }
 
@@ -195,28 +189,12 @@ public class XADPatient implements Serializable {
         this.issuerOfPatientID = issuerOfPatientID;
     }
 
-    public String getPatientName() {
-        return patientName;
+    public XADPatient getLinkedPatient() {
+        return linkedPatient;
     }
 
-    public void setPatientName(String patientName) {
-        this.patientName = patientName;
-    }
-
-    public String getPatientBirthDate() {
-        return patientBirthDate;
-    }
-
-    public void setPatientBirthDate(String patientBirthDate) {
-        this.patientBirthDate = patientBirthDate;
-    }
-
-    public String getPatientSex() {
-        return patientSex;
-    }
-
-    public void setPatientSex(String patientSex) {
-        this.patientSex = patientSex;
+    public void setLinkedPatient(XADPatient linkedPatient) {
+        this.linkedPatient = linkedPatient;
     }
 
     @Override

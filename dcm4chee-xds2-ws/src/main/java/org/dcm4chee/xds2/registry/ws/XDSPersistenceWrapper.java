@@ -135,12 +135,11 @@ public class XDSPersistenceWrapper {
                     }
                 }
             }
+            doc.setSourcePatient(getPatient(getSlotValue(eoType, XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID), true));
         } else {
             eo = new ExtrinsicObject();
         }
         toPersistenceObj(eoType, eo);
-        if (doc != null) {
-        }
         eo.setMimeType(eoType.getMimeType());
         return eo;
     }
@@ -411,7 +410,6 @@ public class XDSPersistenceWrapper {
             }
             if (ro instanceof XDSFolder) {
                 slots.add( newSlot(ro, XDSConstants.SLOT_NAME_LAST_UPDATE_TIME, null, sdf.format(new Date())));
-
             }
         }
         ro.setSlots(slots);
@@ -425,6 +423,17 @@ public class XDSPersistenceWrapper {
         slot.setValue(v);
         slot.setParent(ro);
         return slot;
+    }
+    
+    public String getSlotValue(IdentifiableType idType, String slotName) {
+        List<SlotType1> list = idType.getSlot();
+        if (list != null) {
+            for (SlotType1 slotType : list) {
+                if (slotName.equals(slotType.getName()))
+                    return slotType.getValueList().getValue().get(0);
+            }
+        }
+        return null;
     }
     
     private RegistryObject getRegistryObject(String id) {
@@ -627,19 +636,17 @@ public class XDSPersistenceWrapper {
     }
 
     private XADPatient getPatient(ExternalIdentifierType eiType) throws XDSException {
-        String pid = eiType.getValue();
-        XADPatient pat = getPatient(pid);
-        if (new XADPatient(pid).getIssuerOfPatientID().getNamespaceID() != null) {
-            log.debug("XAD PatientID ("+pid+") contains Namespace ID! Corrected!");
+        XADPatient pat = getPatient(eiType.getValue(), cfg.isCreateMissingPIDs());
+        if (pat.getIssuerOfPatientID().getNamespaceID() != null) {
+            log.debug("XAD PatientID ("+eiType.getValue()+") contains Namespace ID! Corrected in metadata!");
             eiType.setValue(pat.getXADPatientID());
         }
         return pat;
     }
-    
-    public XADPatient getPatient(String pid) throws XDSException {
-        return session.getPatient(pid, cfg.isCreateMissingPIDs());
+    private XADPatient getPatient(String pid, boolean createMissing) throws XDSException {
+        return session.getPatient(pid, createMissing);
     }
-
+    
     private boolean isXDSCode(ClassificationType cl) {
         List<SlotType1> slots = cl.getSlot();
         return slots != null && slots.size() == 1 && "codingScheme".equals(slots.get(0).getName());

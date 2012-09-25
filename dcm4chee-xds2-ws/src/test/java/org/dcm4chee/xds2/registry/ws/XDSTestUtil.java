@@ -85,6 +85,7 @@ public class XDSTestUtil {
     public static final String TEST_ISSUER ="^^^dcm4che_test&1.2.3.45.4.3.2.1&ISO";
     public static final String TEST_PID_1 = "test1234_1";
     public static final String TEST_PID_2 = "test1234_2";
+    public static final String TEST_PID_MERGED = "test1234_merged";
 
     private static Set<String> ebXmlClassificationSchemeIds = null;
     private static Set<String> xdsClassificationSchemeIds = null;
@@ -294,7 +295,7 @@ public class XDSTestUtil {
             testSession.removeAllIdentifiables(ebXmlClassificationSchemeIds);
         }
         log.info("remove test patients");
-        testSession.removeTestPatients(XDSTestUtil.TEST_PID_1, XDSTestUtil.TEST_PID_2);
+        testSession.removeTestPatients(TEST_PID_MERGED, TEST_PID_1, TEST_PID_2);
         log.info("remove test issuer");
         testSession.removeTestIssuerByNamespaceId("dcm4che_test");
         log.info("remove test XDSCodes");
@@ -310,6 +311,7 @@ public class XDSTestUtil {
         try {
             session.getPatient(XDSTestUtil.TEST_PID_1+XDSTestUtil.TEST_ISSUER, true);
             session.getPatient(XDSTestUtil.TEST_PID_2+XDSTestUtil.TEST_ISSUER, true);
+            session.getPatient(XDSTestUtil.TEST_PID_MERGED+XDSTestUtil.TEST_ISSUER, true);
         } catch (Exception x) {
             log.error("Failed to add test patients!");
         }
