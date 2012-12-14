@@ -340,6 +340,7 @@ public class XDSPersistenceWrapper {
             for (LocalizedStringType localString : isType.getLocalizedString()) {
                 desc = new Description();
                 desc.setLang(localString.getLang());
+                log.info("######## description.setValue:"+localString.getValue()+" parent:"+ro);
                 desc.setValue(localString.getValue());
                 desc.setCharset(localString.getCharset());
                 desc.setParent(ro);
@@ -437,11 +438,14 @@ public class XDSPersistenceWrapper {
     }
     
     private RegistryObject getRegistryObject(String id) {
-        RegistryObject ro = (RegistryObject)uuidMapping.get(id);
+        Identifiable ro = uuidMapping.get(id);
         if (ro == null) {
             ro = session.getRegistryObjectByUUID(id);
         }
-        return ro;
+        if (ro != null && !(ro instanceof RegistryObject)) {
+            log.warn("####### Identifiable is not a RegistryObject! id:"+ro.getId());
+        }
+        return (RegistryObject) ro;
     }
     
     private JAXBElement<? extends IdentifiableType> toJAXBExtrinsicObject(

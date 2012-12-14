@@ -103,10 +103,10 @@ public class Description implements InternationalString, Serializable {
         this.charset = charset;
     }
     public String getValue() {
-        return value;
+        return "@".equals(value) ? null : value;
     }
     public void setValue(String value) {
-        this.value = value;
+        this.value = value == null ? "@" : value;
     }
     public RegistryObject getParent() {
         return parent;

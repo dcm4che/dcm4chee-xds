@@ -201,7 +201,7 @@ public class StoredQueryTest {
         findDocTests.findDocumentsCheckMissingParam();
     }
     @Test
-    public void findDocumentsMergedPID() {
+    public void findDocumentsMergedPID() throws Exception {
         findDocTests.findDocumentsMergedPID();
     }
     @Test

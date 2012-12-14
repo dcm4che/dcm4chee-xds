@@ -48,6 +48,10 @@
   <name>XDS implementation for JBoss7/EJB3</name>
   <properties>
     <!-- <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
+    <dcm4che.version>3.0.0-SNAPSHOT</dcm4che.version>
+    <slf4j.version>1.6.1</slf4j.version>
+    <hibernate.version>4.0.1.Final</hibernate.version>
+    <querydsl.version>2.7.0</querydsl.version>
     <javaee6.with.tools.version>1.0.0.M1</javaee6.with.tools.version>
   </properties>
 
@@ -55,7 +59,8 @@
     <module>dcm4chee-xds2-mvnprepare</module>
     <module>dcm4chee-xds2-infoset</module>
     <module>dcm4chee-xds2-common</module>
-    <module>dcm4chee-xds2-ws</module>
+    <module>dcm4chee-xds2-hl7</module>
+    <module>dcm4chee-xds2-conf</module>
     <module>dcm4chee-xds2-persistence</module>
     <module>dcm4chee-xds2-ear</module>
     <module>dcm4chee-xds2-tool</module>

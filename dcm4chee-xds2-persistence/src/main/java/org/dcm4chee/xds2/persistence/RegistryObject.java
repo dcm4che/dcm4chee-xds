@@ -80,7 +80,7 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     @Column(name = "version_name", length=16)
     private String versionName;
     @Basic(optional = true)
-    @Column(name = "comment")
+    @Column(name = "comment1")
     private String comment;
     
     @Basic(optional = true)

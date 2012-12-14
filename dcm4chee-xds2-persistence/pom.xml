@@ -52,8 +52,9 @@
 	<properties>
 		<db>hsql</db>
 		<ds>java:jboss/xdsDS</ds>
-		<hibernate.hbm2ddl.auto>update</hibernate.hbm2ddl.auto>
-		<hibernate.show_sql>false</hibernate.show_sql>
+	    <show_sql>false</show_sql>
+	    <hbm2ddl.auto>update</hbm2ddl.auto>
+        <hibernate.version>4.0.1.Final</hibernate.version>
 		<arquillian.version>1.0.0.Alpha5</arquillian.version>
 		<shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
 		<jboss.version>6.0.0.Final</jboss.version>
@@ -163,16 +164,21 @@
 			<version>1.6.1</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.0.Final</version>
-			<scope>provided</scope>
-		</dependency>
+			<dependency>
+			  <groupId>org.hibernate</groupId>
+			  <artifactId>hibernate-core</artifactId>
+			  <version>${hibernate.version}</version>
+			  <scope>provided</scope>
+			</dependency>
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
-			<version>3.6.6.Final</version>
+            <version>${hibernate.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -229,47 +235,43 @@
 					<ejbVersion>3.1</ejbVersion>
 				</configuration>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>hibernate3-maven-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>hbm2ddl</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<components>
-						<component>
-							<name>hbm2ddl</name>
-							<implementation>jpaconfiguration</implementation>
-						</component>
-					</components>
-					<componentProperties>
-						<ejb3>true</ejb3>
-						<drop>false</drop>
-						<create>true</create>
-						<export>false</export>
-						<update>false</update>
-						<console>false</console>
-						<outputfilename>dcm4chee-xds-${db}.ddl</outputfilename>
-						<delimiter>;</delimiter>
-						<format>true</format>
-					</componentProperties>
-				</configuration>
-			</plugin>
+		      <plugin>
+		        <groupId>org.codehaus.mojo</groupId>
+		        <artifactId>exec-maven-plugin</artifactId>
+		        <version>1.1.1</version>
+		        <executions>
+		          <execution>
+		            <id>generate-create-schema-ddl</id>
+		            <phase>process-classes</phase>
+		            <goals>
+		              <goal>java</goal>
+		            </goals>
+		            <configuration>
+		              <includePluginDependencies>true</includePluginDependencies>
+		              <mainClass>com.blogspot.doingenterprise.SchemaExport</mainClass>
+		              <arguments>
+		                <argument>--create</argument>
+		                <argument>--delimiter=;</argument>
+		                <argument>--output=${project.build.directory}/create-${db}.ddl</argument>
+		                <argument>dcm4chee-xds</argument>
+		              </arguments>
+		            </configuration>
+		          </execution>
+		        </executions>
+		        <dependencies>
+		          <dependency>
+		            <groupId>com.blogspot.doingenterprise</groupId>
+		            <artifactId>schema-export</artifactId>
+		            <version>2012_05_01</version>
+		          </dependency>
+		        </dependencies>
+		      </plugin>
 		</plugins>
-		<filters>
-			<filter>src/main/filters/${db}.properties</filter>
-		</filters>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>true</filtering>
-			</resource>
-		</resources>
+	    <resources>
+	      <resource>
+	        <directory>src/main/resources-${db}</directory>
+	        <filtering>true</filtering>
+	      </resource>
+	    </resources>
 	</build>
 </project>

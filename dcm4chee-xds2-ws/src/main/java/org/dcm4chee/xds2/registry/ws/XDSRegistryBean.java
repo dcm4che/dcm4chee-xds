@@ -112,7 +112,7 @@ import com.mysema.query.jpa.impl.JPAQuery;
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
-public class XDSRegistryBean implements DocumentRegistryPortType {
+public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBeanLocal {
 
     private ObjectFactory factory = new ObjectFactory();
 
@@ -204,7 +204,12 @@ public class XDSRegistryBean implements DocumentRegistryPortType {
             } else if (obj instanceof ClassificationNodeType) {//for initialization
                 wrapper.toClassificationNode((ClassificationNodeType)obj, null, objects);
             } else if (obj instanceof ObjectRefType) {//for initialization
-                objects.add(wrapper.toObjectRef((ObjectRefType)obj));
+                RegistryObject tmp = getRegistryObjectByUUID(obj.getId());
+                log.info("#### found RegistryObject for ObjectRef:"+tmp);
+                if (tmp == null) {
+                    log.info("#### add ObjectRef:"+obj.getId());
+                    objects.add(wrapper.toObjectRef((ObjectRefType)obj));
+                }
             } else {
                 log.warn("### unknown RegistryObject:"+obj);
                 
@@ -336,6 +341,24 @@ public class XDSRegistryBean implements DocumentRegistryPortType {
         }
     }
     
+    public boolean newPatientID(String pid) throws IllegalArgumentException {
+        XADPatient qryPat = new XADPatient(pid);
+        if (!"ISO".equals(qryPat.getIssuerOfPatientID().getUniversalIdType())) {
+            throw new IllegalArgumentException("PatientID with wrong UniversalId type (must be ISO)! pid:"+pid);
+        }
+        try {
+            em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+                .setParameter(1, qryPat.getPatientID())
+                .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
+                .getSingleResult();
+            return false;
+        } catch (NoResultException x) {
+            qryPat.setIssuerOfPatientID(getOrCreateIssuerOfPID(qryPat.getIssuerOfPatientID()));
+            em.persist(qryPat);
+            return true;
+        }
+    }
+    
     private XADIssuer getOrCreateIssuerOfPID(XADIssuer issuer) {
         try {
             return (XADIssuer) em.createNamedQuery(XADIssuer.FIND_ISSUER_BY_UID)
@@ -386,6 +409,9 @@ public class XDSRegistryBean implements DocumentRegistryPortType {
                 .setParameter(3, code.getCodeClassification())
                 .getSingleResult();
         } catch (NoResultException x) {
+            log.warn("###### code not found codeValue:'"+code.getCodeValue()+
+                    "'\ngetCodingSchemeDesignator:'"+code.getCodingSchemeDesignator()+
+                    "'\ngetCodeClassification:'"+code.getCodeClassification()+"'");
             if (createMissing) {
                 log.warn("Unknown XDS Code! Create missing XDSCode:"+code);
                 em.persist(code);

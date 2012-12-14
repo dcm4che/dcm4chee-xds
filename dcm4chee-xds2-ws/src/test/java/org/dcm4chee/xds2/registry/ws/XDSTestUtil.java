@@ -104,7 +104,7 @@ public class XDSTestUtil {
 
     public static WebArchive createDeploymentArchive(@SuppressWarnings("rawtypes") Class testClazz) {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-        .addClasses(testClazz, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
+        .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
                 XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/registry/ws/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/handlers.xml")

@@ -163,7 +163,7 @@ public class XADPatient implements Serializable {
         if ( (pos = pid.indexOf('^')) == -1 || 
              (pos1 = pid.indexOf('^', pos+1)) == -1 || 
              (pos1 = pid.indexOf('^', pos1+1)) == -1) {
-            throw new IllegalArgumentException("Missing Authority in patID!");
+            throw new IllegalArgumentException("Missing Authority in patID! pid:"+pid);
         }            
         this.patientID = pid.substring(0, pos);
         String authority = pid.substring(++pos1);

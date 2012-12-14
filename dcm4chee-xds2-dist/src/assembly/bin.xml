@@ -75,6 +75,7 @@
       <includes>
         <include>codes/codes.xml</include>
         <include>certs/keystore</include>
+        <include>INSTALL.txt</include>
       </includes>
       <outputDirectory>support</outputDirectory>
       <fileMode>0755</fileMode>

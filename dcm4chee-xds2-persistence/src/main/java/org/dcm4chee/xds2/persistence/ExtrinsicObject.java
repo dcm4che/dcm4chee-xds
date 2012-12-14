@@ -58,7 +58,7 @@ public class ExtrinsicObject extends RegistryObject implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
     @Basic(optional = false)
-    @Column(name = "is_opaque", length=1)
+    @Column(name = "is_opaque")
     private boolean isOpaque;
     
     @Basic(optional = true)

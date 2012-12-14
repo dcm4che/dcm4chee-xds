@@ -68,7 +68,7 @@ public class AuditableEvent extends RegistryObject implements Serializable {
     private String timeStamp;
 
     @Basic(optional = false)
-    @Column(name = "user")
+    @Column(name = "user1")
     private String user;
     
     public String getReqId() {

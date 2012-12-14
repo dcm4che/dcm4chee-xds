@@ -31,7 +31,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSSubmissionSet.sourceId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "SubmissionSet Source ID"/>
             </rim:Description>
         </rim:ClassificationScheme>
         
@@ -41,7 +41,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSSubmissionSet.patientId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "SubmissionSet Patient ID"/>
             </rim:Description>
         </rim:ClassificationScheme>
         
@@ -50,7 +50,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSDocumentEntry.patientId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSDocumentEntry Patient ID"/>
             </rim:Description>
         </rim:ClassificationScheme>
          
@@ -59,7 +59,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSFolder.patientId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSFolder Patient ID"/>
             </rim:Description>
         </rim:ClassificationScheme>
 
@@ -68,7 +68,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSDocumentEntry.uniqueId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSDocumentEntry uniqueId"/>
             </rim:Description>
         </rim:ClassificationScheme>
 
@@ -78,7 +78,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSFolder.uniqueId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSFolder uniqueId"/>
             </rim:Description>
         </rim:ClassificationScheme>
 
@@ -87,7 +87,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSSubmissionSet.uniqueId"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSSubmissionSet uniqueId"/>
             </rim:Description>
         </rim:ClassificationScheme>
 
@@ -278,7 +278,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSSubmissionSet.contentTypeCode"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSSubmissionSet contentTypeCode"/>
             </rim:Description>
         </rim:ClassificationScheme>
         
@@ -287,7 +287,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSFolder.codeList"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSFolder codeList"/>
             </rim:Description>
         </rim:ClassificationScheme>     
 
@@ -296,7 +296,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSSubmissionSet.author"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSSubmissionSet author"/>
             </rim:Description>
         </rim:ClassificationScheme>     
         
@@ -305,7 +305,7 @@ Updated names of author attributes (no change to UUIDs)
                 <rim:LocalizedString value = "XDSDocumentEntry.author"/>
             </rim:Name>
             <rim:Description>
-                <rim:LocalizedString value = ""/>
+                <rim:LocalizedString value = "XDSDocumentEntry author"/>
             </rim:Description>
         </rim:ClassificationScheme>     
         
