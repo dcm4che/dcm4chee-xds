@@ -1,0 +1,86 @@
+1) Install XDS ear:
+Copy deploy/dcm4chee-xds2-ear-1.0.0-oracle to $JBOSS_HOME/standalone/deployments
+
+2) Add datasource:
+Oracle:
+
+$ cd $JBOSS_HOME/modules
+$ mkdir -p com/oracle/ojdbc6/main
+$ vi module.xml
+Add the following snippet:
+<module xmlns="urn:jboss:module:1.0" name="com.oracle.ojdbc6">
+  <resources>
+    <resource-root path="ojdbc6.jar"/>
+  </resources>
+  <dependencies>
+    <module name="javax.api"/>
+  </dependencies>
+</module>
+
+copy ojdbc6.jar to $JBOSS_HOME/modules/com/oracle/ojdbc6/main 
+(make sure your jar META-INF folder is having a Services dir with a file called java.sql.Driver)
+
+Configure datasource:
+Edit standalone/configuration/standalone.xml
+Look for <subsystem xmlns="urn:jboss:domain:datasources:1.0">
+Add following snippet in datasources section:
+<datasource jta="true" jndi-name="java:jboss/xdsDS" pool-name="xds_pool" enabled="true" use-java-context="true" use-ccm="true">
+    <connection-url>jdbc:oracle:thin:@<hostname>:1521:<SID></connection-url>
+    <driver>oracle</driver>
+    <pool>
+        <prefill>true</prefill>
+        <use-strict-min>false</use-strict-min>
+        <flush-strategy>FailingConnectionOnly</flush-strategy>
+    </pool>
+    <security>
+        <user-name>user</user-name>
+        <password>passwd</password>
+    </security>
+    <statement>
+        <prepared-statement-cache-size>100</prepared-statement-cache-size>
+        <share-prepared-statements>true</share-prepared-statements>
+    </statement>
+</datasource>
+
+Add following snippet in drivers section:
+<driver name="oracle" module="com.oracle.ojdbc6">
+  <xa-datasource-class>
+    oracle.jdbc.OracleDriver
+  </xa-datasource-class>
+</driver>
+
+3) Bind to all interfaces (or a concrete one)
+Edit standalone/configuration/standalone.xml
+Look for <interface name="public">
+replace <inet-address> with <inet-address value="0.0.0.0"/>
+
+4) Prepare start script for XDS registry:
+Edit $JBOSS_HOME/bin/standalone.conf and add following:
+
+# XDS registry configuration
+JAVA_OPTS="$JAVA_OPTS -Dorg.dcm4chee.xds.logdir=/tmp/xdslog"
+JAVA_OPTS="$JAVA_OPTS -Dorg.dcm4chee.xds.cfg.createMissingPID=true"
+JAVA_OPTS="$JAVA_OPTS -Dorg.dcm4chee.xds.cfg.createMissingCodes=false"
+
+# Sample SSL debugging option:
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=ssl,handshake,data,trustmanager,help"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.debug=ssl,handshake"
+
+# Uncomment the following line to set port offset (8080 -> 8180,..)
+#JAVA_OPTS="$JAVA_OPTS -Djboss.socket.binding.port-offset=100"
+
+5) Install XDS Tool (xdsinit)
+copy modules of XDS distribution to $JBOSS_HOME
+copy bin of XDS distribution to $JBOSS_HOME
+
+6) Prepare database:
+Oracle:
+su - ora11
+sqlplus (user/passwd9
+@/install/create-oracle.ddl
+@/install/codes.sql
+commit;
+
+7) Prepare XDS Adaptor:
+Start JBoss with $JBOSS_HOME/bin/standalone.sh
+call $JBOSS_HOME/bin/xdsinit.sh
