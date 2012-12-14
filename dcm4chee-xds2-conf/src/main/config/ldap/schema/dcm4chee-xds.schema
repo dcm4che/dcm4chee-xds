@@ -1,0 +1,56 @@
+# dcm4chee-xds extensions of the DICOM Application Configuration Data Model Hierarchy LDAP Schema
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.1
+  NAME 'xdsApplicationName'
+  DESC 'XDS Application name'
+  EQUALITY caseExactMatch
+  SUBSTR caseExactSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.2 NAME 'xdsAffinityDomain'
+  DESC 'Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)'
+  EQUALITY caseExactMatch
+  SUBSTR caseExactSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.3 NAME 'xdsAcceptedMimeTypes'
+  DESC 'Accepted MIME types in the affinity domain'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.4 NAME 'xdsSoapMsgLogDir'
+  DESC 'Log directory where request and response SOAP messages are stored'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.5 NAME 'xdsCreateMissingPIDs'
+  DESC 'Specifies to create Patient IDs that are not yet known. (not conform to XDS specification!)'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.3.15.0.3.6 NAME 'xdsCreateMissingCodes'
+  DESC 'Specifies to create Codes that are not known in the Affinity Domain. (not conform to XDS specification!)'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
+objectclass ( 1.2.40.0.13.1.3.15.0.4.1
+  NAME 'xdsApplication'
+  DESC 'XDS Application information'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsApplicationName $
+    xdsAffinityDomain )
+  MAY (
+  	xdsAcceptedMimeTypes $
+    xdsSoapMsgLogDir $
+    xdsCreateMissingPIDs $
+    xdsCreateMissingCodes ) )
+
+    
