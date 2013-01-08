@@ -38,8 +38,12 @@
 
 package org.dcm4chee.xds2.registry.hl7;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,12 +54,16 @@ import javax.servlet.http.HttpServlet;
 
 import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.api.hl7.HL7Configuration;
+import org.dcm4che.conf.ldap.hl7.LdapHL7Configuration;
+import org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che.hl7.HL7Exception;
 import org.dcm4che.hl7.HL7Message;
 import org.dcm4che.hl7.HL7Segment;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.hl7.HL7Application;
 import org.dcm4che.net.hl7.HL7MessageListener;
+import org.dcm4che.util.SafeClose;
+import org.dcm4che.util.StringUtils;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,9 +112,28 @@ public class XdsHL7Servlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         try {
-            hl7Config = (HL7Configuration) Class.forName(
-                    config.getInitParameter("hl7ConfigurationClass"), false,
-                    Thread.currentThread().getContextClassLoader()).newInstance();
+            String ldapPropertiesURL = StringUtils.replaceSystemProperties(
+                    System.getProperty(
+                        "org.dcm4chee.xds.ldapPropertiesURL",
+                        config.getInitParameter("ldapPropertiesURL")));
+            String deviceName = System.getProperty(
+                    "org.dcm4chee.xds.deviceName",
+                    config.getInitParameter("deviceName"));
+            InputStream ldapConf = null;
+            try {
+                ldapConf = new URL(ldapPropertiesURL)
+                    .openStream();
+                Properties p = new Properties();
+                p.load(ldapConf);
+                hl7Config = new LdapHL7Configuration(p);
+            } catch(FileNotFoundException e) {
+                log.info("Could not find " + ldapPropertiesURL
+                        + " - use Java Preferences as Configuration Backend");
+                hl7Config = new PreferencesHL7Configuration();
+            } finally {
+                SafeClose.close(ldapConf);
+            }
+            
             log.info("###### hl7Config:"+hl7Config);
             hl7App = hl7Config.findHL7Application(config.getInitParameter("deviceName"));
             if (hl7App == null) {

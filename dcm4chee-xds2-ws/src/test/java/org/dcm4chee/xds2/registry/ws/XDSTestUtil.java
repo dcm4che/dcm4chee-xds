@@ -142,20 +142,17 @@ public class XDSTestUtil {
         .addAsWebResource(new ByteArrayAsset(new byte[0]), ArchivePaths.create("WEB-INF/beans.xml"))
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-infoset:1.0.0")
+        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-infoset:2.0.0")
              .resolveAs(GenericArchive.class))
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-common:1.0.0")
+        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-common:2.0.0")
              .resolveAs(GenericArchive.class))
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
-        .goOffline().artifacts("com.mysema.querydsl:querydsl-jpa:2.3.2")
-             .resolveAs(GenericArchive.class))
-        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-        .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-persistence:jar:mysql:1.0.0")
+        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-persistence:jar:mysql:2.0.0")
              .resolveAs(GenericArchive.class));
+        war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;
     }
     

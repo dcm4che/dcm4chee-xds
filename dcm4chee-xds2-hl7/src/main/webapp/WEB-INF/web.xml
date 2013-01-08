@@ -11,8 +11,8 @@
     <servlet-name>dcm4chee-xds2-hl7</servlet-name>
     <servlet-class>org.dcm4chee.xds2.registry.hl7.XdsHL7Servlet</servlet-class>
     <init-param>
-      <param-name>hl7ConfigurationClass</param-name>
-      <param-value>${config-class}</param-value>
+      <param-name>ldapPropertiesURL</param-name>
+      <param-value>file:${jboss.server.config.dir}/dcm4chee-xds2/ldap.properties</param-value>
     </init-param>
     <init-param>
       <param-name>deviceName</param-name>

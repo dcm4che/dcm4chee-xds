@@ -30,11 +30,11 @@
 	<parent>
 		<groupId>org.dcm4che</groupId>
 		<artifactId>dcm4chee-xds2</artifactId>
-		<version>1.0.0</version>
+		<version>2.0.0</version>
 	</parent>
 	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-ws</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0</version>
 	<packaging>ejb</packaging>
 	<name>EJB Webservice classes for XDS.b (ebRS v3.0)</name>
 	<properties>
@@ -44,19 +44,19 @@
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-infoset</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-persistence</artifactId>
-			<version>1.0.0</version>
+			<version>2.0.0</version>
 			<classifier>${db}</classifier>
 			<scope>provided</scope>
 		</dependency>
@@ -91,7 +91,8 @@
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
-			<version>2.3.2</version>
+			<version>${querydsl.version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -352,6 +353,11 @@
 				<version>2.3</version>
 				<configuration>
 					<ejbVersion>3.1</ejbVersion>
+			          <archive>
+			            <manifestEntries>
+			              <Dependencies>com.mysema.querydsl</Dependencies>
+			            </manifestEntries>
+			          </archive>
 				</configuration>
 			</plugin>
 		</plugins>
