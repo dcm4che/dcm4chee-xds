@@ -44,8 +44,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 
 import org.dcm4che.net.Device;
-import org.dcm4che.net.hl7.HL7Application;
 import org.dcm4che.net.hl7.HL7Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
@@ -54,12 +55,48 @@ import org.dcm4che.net.hl7.HL7Device;
 public class XdsDevice extends HL7Device {
 
     private static final long serialVersionUID = 5891363555469614152L;
+    
+    private static XdsDevice localXdsDevice;
+
+    public static final Logger log = LoggerFactory.getLogger(XdsDevice.class);
 
     private final LinkedHashMap<String, XdsApplication> xdsApps =
         new LinkedHashMap<String, XdsApplication>();
     
     public XdsDevice(String name) {
         super(name);
+    }
+
+    public static XdsDevice getLocalXdsDevice() {
+        return localXdsDevice;
+    }
+
+    public static void setLocalXdsDevice(XdsDevice localXdsDevice) {
+        if (XdsDevice.localXdsDevice != null) {
+            log.warn("Local XDS Device already set! current:"+XdsDevice.localXdsDevice);
+            XdsDevice.localXdsDevice.unbindConnections();
+            log.info("Unbind connections of current device done! switch to new device:"+localXdsDevice);
+        }
+        XdsDevice.localXdsDevice = localXdsDevice;
+    }
+    
+    public static XdsApplication getDefaultLocalXdsApplication() {
+        XdsApplication app = null;
+        if (localXdsDevice != null) { 
+            Collection<XdsApplication> apps = localXdsDevice.getXdsApplications();
+            if (apps.size() == 1) {
+                app = apps.iterator().next();
+            } else if (apps.size() > 0) {
+                String name = System.getProperty(XdsConfiguration.SYSTEM_PROPERTY_XDS_APPNAME);
+                app = localXdsDevice.getXdsApplication(name);
+            }
+        }
+        if (app == null) {
+            log.warn("Local XDS Device not set! Use a dummy XDS application with default configuration (1.2.3.4.5&ISO)");
+            app = new XdsApplication("dummy");
+            app.setAffinityDomain("1.2.3.4.5&ISO");
+        }
+        return app;
     }
 
     public void addXdsApplication(XdsApplication xdsApp) {

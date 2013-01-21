@@ -56,6 +56,7 @@ public class XdsApplication implements Serializable {
     
     private boolean createMissingPIDs;
     private boolean createMissingCodes;
+    private boolean dontSaveCodeClassifications;
 
     public XdsApplication(String name) {
         this.name = name;
@@ -148,4 +149,11 @@ public class XdsApplication implements Serializable {
         this.createMissingCodes = createMissingCodes;
     }
     
+    public boolean isDontSaveCodeClassifications() {
+        return dontSaveCodeClassifications;
+    }
+
+    public void setDontSaveCodeClassifications(boolean dontSaveCodeClassifications) {
+        this.dontSaveCodeClassifications = dontSaveCodeClassifications;
+    }
 }

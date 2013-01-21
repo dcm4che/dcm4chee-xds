@@ -55,6 +55,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-conf</artifactId>
+			<version>2.0.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-persistence</artifactId>
 			<version>2.0.0</version>
 			<classifier>${db}</classifier>
@@ -66,6 +72,12 @@
 			<version>1.0.0.Final</version>
 			<scope>provided</scope>
 		</dependency>
+	    <dependency>
+	      <groupId>org.dcm4che</groupId>
+	      <artifactId>dcm4che-net-hl7</artifactId>
+	      <version>3.0.1</version>
+	      <scope>provided</scope>
+	    </dependency>
 		<dependency>
 			<groupId>jboss</groupId>
 			<artifactId>jboss-annotations-ejb3</artifactId>

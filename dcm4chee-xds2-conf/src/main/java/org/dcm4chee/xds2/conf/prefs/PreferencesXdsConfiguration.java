@@ -105,7 +105,7 @@ public class PreferencesXdsConfiguration extends PreferencesHL7Configuration imp
 
     @Override
     protected void loadChilds(Device device, Preferences deviceNode)
-            throws BackingStoreException {
+            throws BackingStoreException, ConfigurationException {
         super.loadChilds(device, deviceNode);
         if (!(device instanceof XdsDevice))
             return;
@@ -131,6 +131,7 @@ public class PreferencesXdsConfiguration extends PreferencesHL7Configuration imp
         xdsApp.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
         xdsApp.setCreateMissingPIDs(booleanValue(prefs.get("xdsCreateMissingPIDs", "FALSE")));
         xdsApp.setCreateMissingCodes(booleanValue(prefs.get("xdsCreateMissingCodes", "FALSE")));
+        xdsApp.setDontSaveCodeClassifications(booleanValue(prefs.get("xdsDontSaveCodeClassifications", "FALSE")));
     }
 
     protected void loadChilds(XdsApplication hl7app, Preferences appNode) {

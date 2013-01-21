@@ -47,5 +47,9 @@ import org.dcm4che.conf.api.hl7.HL7Configuration;
  */
 public interface XdsConfiguration extends HL7Configuration {
 
+    public static final String SYSTEM_PROPERTY_XDS_DEVICENAME = "org.dcm4chee.xds.deviceName";
+    public static final String SYSTEM_PROPERTY_XDS_APPNAME = "org.dcm4chee.xds.xdsAppName";
+    public static final String SYSTEM_PROPERTY_HL7_APPNAME = "org.dcm4chee.xds.hl7AppName";
+
     XdsApplication findXdsApplication(String name) throws ConfigurationException;
 }

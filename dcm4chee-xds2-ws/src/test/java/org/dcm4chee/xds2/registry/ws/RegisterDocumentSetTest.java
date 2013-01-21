@@ -49,9 +49,8 @@ import javax.ejb.EJB;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
-import org.dcm4chee.xds2.common.config.XDSConfigFactory;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.conf.XdsApplication;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
@@ -82,7 +81,7 @@ public class RegisterDocumentSetTest {
     private static final int NUMBER_OF_TEST_METHODS = 
         XDSTestUtil.getNumberOfTestMethods(RegisterDocumentSetTest.class);
 
-    private XDSConfig cfg = XDSConfigFactory.getXDSConfig();
+    private XdsApplication cfg = new XdsApplication("TEST");
     
     private final static Logger log = LoggerFactory.getLogger(RegisterDocumentSetTest.class);
 

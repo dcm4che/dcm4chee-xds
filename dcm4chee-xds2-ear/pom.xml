@@ -53,7 +53,7 @@
 	<name>Build EAR for XDS.b Registry (ebRS v3.0)</name>
 	<properties>
 		<db>hsql</db>
-    	<dcm4che.version>3.0.0-SNAPSHOT</dcm4che.version>
+    	<dcm4che.version>3.0.1</dcm4che.version>
 	</properties>
 	<dependencies>
 		<dependency>

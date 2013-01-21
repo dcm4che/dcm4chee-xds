@@ -21,6 +21,7 @@ dicomHostname: localhost
 dicomPort: 2576
 objectClass: dicomNetworkConnection
 objectClass: dcmNetworkConnection
+dcmProtocol: HL7
 cn: hl7
 
 dn: cn=hl7-tls,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
@@ -32,6 +33,7 @@ dicomTLSCipherSuite: TLS_RSA_WITH_AES_128_CBC_SHA
 dicomTLSCipherSuite: SSL_RSA_WITH_3DES_EDE_CBC_SHA
 dcmTLSProtocol: TLSv1
 dcmTLSProtocol: SSLv3
+dcmProtocol: HL7
 cn: hl7-tls
 
 dn: hl7ApplicationName=XDS^DCM4CHEE,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
@@ -46,4 +48,36 @@ hl7AcceptedMessageType: ADT^A07
 hl7AcceptedMessageType: ADT^A08
 hl7AcceptedMessageType: ADT^A40
 
+dn: cn=audit-udp,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomHostname: localhost
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+dcmProtocol: SYSLOG_UDP
+cn: audit-udp
 
+dn: cn=Audit Logger,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dcmAuditSourceTypeCode: 4
+dcmAuditRecordRepositoryDeviceReference: dicomDeviceName=syslog,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+objectClass: dcmAuditLogger
+dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dcmAuditMessageSchemaURI: http://www.dcm4che.org/DICOM/audit-message.rnc
+cn: Audit Logger
+
+dn: dicomDeviceName=syslog,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomInstalled: TRUE
+dicomDeviceName: syslog
+objectClass: dicomDevice
+objectClass: dcmDevice
+
+dn: cn=audit-udp,dicomDeviceName=syslog,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomHostname: localhost
+dicomPort: 514
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+dcmProtocol: SYSLOG_UDP
+cn: audit-udp
+
+dn: cn=Audit Record Repository,dicomDeviceName=syslog,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+objectClass: dcmAuditRecordRepository
+dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=syslog,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+cn: Audit Record Repository

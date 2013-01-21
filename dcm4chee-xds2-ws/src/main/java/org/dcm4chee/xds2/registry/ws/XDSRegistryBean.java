@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -58,13 +59,21 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.soap.SOAPMessageContext;
 import javax.xml.ws.soap.Addressing;
 
+import org.apache.cxf.jaxws.context.WrappedMessageContext;
+import org.apache.cxf.message.Message;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
@@ -72,6 +81,7 @@ import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationSchemeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
+import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
@@ -82,6 +92,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.infoset.ws.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
@@ -94,9 +105,12 @@ import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
+import org.dcm4chee.xds2.registry.ws.handler.LogHandler;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 
@@ -120,6 +134,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     private SessionContext context;
     @Resource
     private EJBContext ejbContext;
+    @Resource
+    WebServiceContext wsContext;
     
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
@@ -139,8 +155,9 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         log.info("################ documentRegistryRegisterDocumentSetB called! CallerPrincipal:"+
                 context.getCallerPrincipal());
         RegistryResponseType rsp = factory.createRegistryResponseType();
+        XDSPersistenceWrapper wrapper = new XDSPersistenceWrapper(this);
         try {
-            store(req);
+            store(req, wrapper);
             rsp.setStatus(XDSConstants.XDS_B_STATUS_SUCCESS);
         } catch (Exception x) {
             XDSException e;
@@ -158,6 +175,16 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             ejbContext.setRollbackOnly();
         }
         log.info("################# documentRegistryRegisterDocumentSetB finished! #############");
+        XDSSubmissionSet subm = wrapper.getSubmissionSet();
+        if (subm == null) {
+            subm = new XDSSubmissionSet();
+            String[] sa = this.getSubmissionUIDandPatID(req);
+            subm.setUniqueId(sa[0]);
+            subm.setPatient(new XADPatient(sa[1] != null ? sa[1] : "UNKNOWN^^^&1.2.3.4.5&ISO"));
+        }
+        XDSAudit.logImport(subm.getUniqueId(), subm.getPatient().getCXPatientID(), 
+                new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
+                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
         return rsp;
     }
 
@@ -169,24 +196,37 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         log.info("################ documentRegistryRegistryStoredQuery called! CallerPrincipal:"
                 +context.getCallerPrincipal());
         log.debug("ReturnType:"+req.getResponseOption().getReturnType());
+        AdhocQueryResponse rsp;
+        StoredQuery qry = null;
         try {
-            return StoredQuery.getStoredQuery(req, this).query();
+            qry = StoredQuery.getStoredQuery(req, this);
+            rsp = qry.query();
         } catch (Exception x) {
             log.error("Unexpected error in XDS service (query)!: "+x.getMessage(),x);
-            AdhocQueryResponse rsp = factory.createAdhocQueryResponse();
+            rsp = factory.createAdhocQueryResponse();
             XDSException e = (x instanceof XDSException) ? (XDSException) x :
                 new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "Unexpected error in XDS service !: "+x.getMessage(),x);
-            this.addError(rsp, e);
+            addError(rsp, e);
             rsp.setRegistryObjectList(factory.createRegistryObjectListType());
-            return rsp;
         }
+        try {
+            XDSAudit.logQuery(req.getAdhocQuery().getId(), 
+                qry == null ? null : qry.getPatientID(), 
+                (qry != null && qry.getQueryParam(XDSConstants.QRY_HOME_COMMUNITY_ID) != null) ? 
+                        qry.getQueryParam(XDSConstants.QRY_HOME_COMMUNITY_ID).getStringValue() : null,
+                InfosetUtil.marshallObject(req, true).getBytes("UTF-8"), 
+                new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
+                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+        } catch (Exception x) {
+            log.warn("Failed to log query audit message!");
+            log.debug("Stacktrace:", x);
+        }
+        return rsp;
     }
 
-    private List<Identifiable> store(SubmitObjectsRequest req) throws XDSException {
-        XDSPersistenceWrapper wrapper = new XDSPersistenceWrapper(this);
-        RegistryObjectListType rol = req.getRegistryObjectList();
-        List<JAXBElement<? extends IdentifiableType>> objs = rol.getIdentifiable();
+    private List<Identifiable> store(SubmitObjectsRequest req, XDSPersistenceWrapper wrapper) throws XDSException {
+        List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
         IdentifiableType obj;
         List<Identifiable> objects = new ArrayList<Identifiable>();
         for (int i=0,len=objs.size() ; i < len ; i++) {
@@ -315,6 +355,34 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
     }
 
+    private String[] getSubmissionUIDandPatID(SubmitObjectsRequest req) {
+        String[] result = new String[2];
+        List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
+        IdentifiableType obj;
+        int found = 0;
+        whole: for (int i=0,len=objs.size() ; i < len ; i++) {
+            obj = objs.get(i).getValue();
+            if (obj instanceof RegistryPackageType) {
+                List<ExternalIdentifierType> list = ((RegistryPackageType)obj).getExternalIdentifier();
+                if (list != null) {
+                    for (ExternalIdentifierType eiType : list) {
+                        if (XDSConstants.UUID_XDSSubmissionSet_patientId.equals(eiType.getIdentificationScheme())) {
+                            result[1] = eiType.getValue();
+                        } else if (XDSConstants.UUID_XDSSubmissionSet_uniqueId.equals(eiType.getIdentificationScheme())) {
+                            result[0] = eiType.getValue();
+                        } else {
+                            continue;
+                        }
+                        if (result[0] != null && result[1] != null)
+                            break whole;
+                    }
+                }
+            
+            }
+        }
+        return result;
+    }
+    
     public XADPatient getPatient(String pid, boolean createMissing) throws XDSException {
         XADPatient qryPat = new XADPatient(pid);
         if (!"ISO".equals(qryPat.getIssuerOfPatientID().getUniversalIdType())) {

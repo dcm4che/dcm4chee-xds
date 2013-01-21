@@ -40,6 +40,7 @@ package org.dcm4chee.xds2.conf.ldap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -69,6 +70,11 @@ public class LdapXdsConfiguration extends LdapHL7Configuration implements XdsCon
         setConfigurationCN(XDS_CONFIGURATION);
     }
 
+    public LdapXdsConfiguration(Properties p) throws ConfigurationException {
+        super(p);
+        setConfigurationCN(XDS_CONFIGURATION);
+    }
+
     @Override
     public XdsApplication findXdsApplication(String name)
             throws ConfigurationException {
@@ -83,7 +89,7 @@ public class LdapXdsConfiguration extends LdapHL7Configuration implements XdsCon
     }
 
     @Override
-    protected void loadChilds(Device device, String deviceDN) throws NamingException {
+    protected void loadChilds(Device device, String deviceDN) throws NamingException, ConfigurationException {
         super.loadChilds(device, deviceDN);
         if (!(device instanceof XdsDevice))
             return;
@@ -116,19 +122,20 @@ public class LdapXdsConfiguration extends LdapHL7Configuration implements XdsCon
     
     @Override
     protected Device newDevice(Attributes attrs) throws NamingException {
-        return new XdsDevice(stringValue(attrs.get("dicomDeviceName")));
+        return new XdsDevice(stringValue(attrs.get("dicomDeviceName"), null));
     }
 
     protected XdsApplication newXdsApplication(Attributes attrs) throws NamingException {
-        return new XdsApplication(stringValue(attrs.get("xdsApplicationName")));
+        return new XdsApplication(stringValue(attrs.get("xdsApplicationName"), null));
     }
     
     protected void loadFrom(XdsApplication xdsApp, Attributes attrs) throws NamingException {
-        xdsApp.setAffinityDomain(stringValue(attrs.get("xdsAffinityDomain")));
+        xdsApp.setAffinityDomain(stringValue(attrs.get("xdsAffinityDomain"), null));
         xdsApp.setAcceptedMimeTypes(stringArray(attrs.get("xdsAcceptedMimeTypes")));
-        xdsApp.setSoapLogDir(stringValue(attrs.get("xdsSoapMsgLogDir")));
+        xdsApp.setSoapLogDir(stringValue(attrs.get("xdsSoapMsgLogDir"), null));
         xdsApp.setCreateMissingPIDs(booleanValue(attrs.get("xdsCreateMissingPIDs"), false));
         xdsApp.setCreateMissingCodes(booleanValue(attrs.get("xdsCreateMissingCodes"), false));
+        xdsApp.setDontSaveCodeClassifications(booleanValue(attrs.get("xdsDontSaveCodeClassifications"), false));
     }
 
     protected Attribute objectClassesOf(XdsApplication xdsApp, Attribute attr) {

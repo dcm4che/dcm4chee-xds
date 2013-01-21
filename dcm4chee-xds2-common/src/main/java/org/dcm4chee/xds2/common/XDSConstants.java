@@ -173,5 +173,9 @@ public interface XDSConstants {
     public static final String SLOT_NAME_SOURCE_PATIENT_ID = "sourcePatientId";
     public static final String SLOT_NAME_SOURCE_PATIENT_INFO = "sourcePatientInfo";
     public static final String SLOT_NAME_LANGUAGE_CODE = "languageCode";
+    
+    //Other
+    public static final String WS_ADDRESSING_NS = "http://www.w3.org/2005/08/addressing";
+    public static final String WS_ADDRESSING_ANONYMOUS = "http://www.w3.org/2005/08/addressing/anonymous";
 
 }

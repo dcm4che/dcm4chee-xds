@@ -48,9 +48,8 @@ import java.util.List;
 import javax.ejb.EJB;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
-import org.dcm4chee.xds2.common.config.XDSConfigFactory;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.conf.XdsApplication;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
@@ -81,7 +80,7 @@ public class CheckErrorsTest {
 
     private static final String TEST_METADATA_FILENAME = "CreateFolderWithDocument.xml";
 
-    private XDSConfig cfg = XDSConfigFactory.getXDSConfig();
+    private XdsApplication cfg = new XdsApplication("TEST");
     
     private final static Logger log = LoggerFactory.getLogger(CheckErrorsTest.class);
 

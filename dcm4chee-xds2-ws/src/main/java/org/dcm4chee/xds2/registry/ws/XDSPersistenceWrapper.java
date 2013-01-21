@@ -52,9 +52,9 @@ import java.util.UUID;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
-import org.dcm4chee.xds2.common.config.XDSConfigFactory;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.conf.XdsApplication;
+import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationSchemeType;
@@ -105,7 +105,8 @@ public class XDSPersistenceWrapper {
 
     private XDSRegistryBean session;
     private ObjectFactory factory = new ObjectFactory();
-    private XDSConfig cfg = XDSConfigFactory.getXDSConfig();
+    private XdsApplication cfg;
+    XDSSubmissionSet submissionSet;
 
     private HashMap<String, Identifiable> uuidMapping = new HashMap<String, Identifiable>();
     
@@ -115,6 +116,7 @@ public class XDSPersistenceWrapper {
 
     public XDSPersistenceWrapper(XDSRegistryBean session) {
         this.session = session;
+        cfg = XdsDevice.getDefaultLocalXdsApplication();
     }
     
     public ExtrinsicObject toExtrinsicObject(ExtrinsicObjectType eoType) throws XDSException {
@@ -180,8 +182,11 @@ public class XDSPersistenceWrapper {
             rp = new RegistryPackage();
         }
         toPersistenceObj(rpType, rp);
+        if (rp instanceof XDSSubmissionSet)
+            submissionSet = (XDSSubmissionSet)rp;
         return rp;
     }
+
     public Association toAssociation(AssociationType1 assocType) throws XDSException {
         Association assoc = new Association();
         toPersistenceObj(assocType, assoc);
@@ -654,6 +659,10 @@ public class XDSPersistenceWrapper {
     private boolean isXDSCode(ClassificationType cl) {
         List<SlotType1> slots = cl.getSlot();
         return slots != null && slots.size() == 1 && "codingScheme".equals(slots.get(0).getName());
+    }
+
+    public XDSSubmissionSet getSubmissionSet() {
+        return submissionSet;
     }
     
 }

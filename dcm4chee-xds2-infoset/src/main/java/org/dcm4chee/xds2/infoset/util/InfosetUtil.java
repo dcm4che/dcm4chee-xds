@@ -35,39 +35,32 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.dcm4chee.xds2.common.config;
+package org.dcm4chee.xds2.infoset.util;
 
-public interface XDSConfig {
+import java.io.StringWriter;
 
-    /**
-     * Logging directory of SOAP messages (receive and response)
-     * @return
-     */
-    String getSOAPMsgLoggingDir();
-    void setSOAPMsgLoggingDir(String dir);
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
+
+public class InfosetUtil {
+
+    private static JAXBContext jaxbCtx;
+
+    public static JAXBContext jaxbCtx() throws JAXBException {
+        if (InfosetUtil.jaxbCtx == null)
+            InfosetUtil.jaxbCtx = JAXBContext.newInstance(AdhocQueryRequest.class);
+        return InfosetUtil.jaxbCtx;
+    }
     
-    /**
-     * Create missing XAD Patient ID's
-     * @return
-     */
-    boolean isCreateMissingPIDs();
-    void setCreateMissingPIDs(boolean b);
+    public static String marshallObject(Object o, boolean indent) throws JAXBException {
+        StringWriter sw = new StringWriter();
+        Marshaller m = jaxbCtx().createMarshaller();
+        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, indent);
+        m.marshal(o, sw);
+        return sw.toString();
+    }
 
-    /**
-     * Create missing XDS Codes.
-     * @return
-     */
-    boolean isCreateMissingCodes();
-    void setCreateMissingCodes(boolean b);
-
-    /**
-     * Don't save Classifications for XDS Codes
-     * i.e. If classification has one Slot with name 'codingScheme' (a Code) the classification
-     * will be not stored as Classification Object and must be recovered from XDSCode in Query response.
-     * @return
-     */
-    boolean isDontSaveCodeClassifications();
-    void setDontSaveCodeClassifications(boolean b);
-    
-    void logConfig();
 }

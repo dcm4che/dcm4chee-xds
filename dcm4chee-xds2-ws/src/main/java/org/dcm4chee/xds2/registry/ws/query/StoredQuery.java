@@ -90,6 +90,7 @@ public abstract class StoredQuery {
     private ObjectFactory factory = new ObjectFactory();
 
     Map<String, StoredQueryParam> queryParam;
+    String patID;
     
     private static Logger log = LoggerFactory.getLogger(StoredQuery.class);
 
@@ -121,6 +122,10 @@ public abstract class StoredQuery {
 
     public XDSRegistryBean getSession() {
         return session;
+    }
+    
+    public String getPatientID() {
+        return patID;
     }
 
     public static StoredQuery getStoredQuery(AdhocQueryRequest req, XDSRegistryBean session) throws XDSException {
@@ -194,6 +199,7 @@ public abstract class StoredQuery {
 
     protected void addPatientIdMatch(BooleanBuilder builder, StoredQueryParam pid) {
         XADPatient qryPat = new XADPatient(pid.getStringValue());
+        patID = qryPat.getCXPatientID();
         builder.and(QXADPatient.xADPatient.patientID.eq(qryPat.getPatientID()));
         builder.and(QXADIssuer.xADIssuer.universalID.eq(qryPat.getIssuerOfPatientID().getUniversalID()));
         builder.and(QXADPatient.xADPatient.linkedPatient.isNull());

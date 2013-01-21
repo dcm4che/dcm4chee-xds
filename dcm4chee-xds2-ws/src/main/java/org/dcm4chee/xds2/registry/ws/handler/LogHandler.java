@@ -53,8 +53,7 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
-import org.dcm4chee.xds2.common.config.XDSConfigFactory;
+import org.dcm4chee.xds2.conf.XdsDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
@@ -62,13 +61,15 @@ import org.w3c.dom.NodeList;
 public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private Set<QName> headers = new HashSet<QName>();
     private static final char sepChar = File.separatorChar;
-    private static XDSConfig cfg = XDSConfigFactory.getXDSConfig();
+    
+    private static ThreadLocal<SOAPHeader> soapHeader = new ThreadLocal<SOAPHeader>();
 
     private static Logger log = LoggerFactory.getLogger(LogHandler.class);
     
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
         log.info("##########handleMessage LogHandler:"+ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
+        storeInboundSOAPHeader(ctx);
         logMessage(ctx);
         return true;
     }
@@ -90,14 +91,33 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         log.debug("################ getHeaders");
         return headers;
     }
+    
+    public static SOAPHeader getInboundSOAPHeader() {
+        return soapHeader.get();
+    }
+
+    private void storeInboundSOAPHeader(SOAPMessageContext ctx) {
+        if (!(Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
+            try {
+                if (soapHeader.get() != null) {
+                    log.warn("Inbound SOAPHeader already set! SOAPHeader:"+soapHeader.get());
+                }
+                soapHeader.set(ctx.getMessage().getSOAPHeader());
+                log.debug("Saved inbound SOAPHeader:"+soapHeader.get());
+            } catch (Exception x) {
+                log.warn("Failed to save SOAP Header to ThreadLocal!", x);
+            }
+        }
+    }
 
     private void logMessage(SOAPMessageContext ctx) {
         String action = getAction(ctx);
         String host = getHost(ctx);
-        if (cfg.getSOAPMsgLoggingDir() != null) {
+        String logDir = XdsDevice.getDefaultLocalXdsApplication().getSoapLogDir();
+        if (logDir != null) {
             FileOutputStream out = null;
             try {
-                File f = getLogFile(host, action, ".xml");
+                File f = getLogFile(host, action, ".xml", logDir);
                 f.getParentFile().mkdirs();
                 log.info("SOAP message saved to file "+f);
                 out = new FileOutputStream(f);
@@ -116,7 +136,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private String getAction(SOAPMessageContext ctx) {
         try {
             SOAPHeader hdr =ctx.getMessage().getSOAPHeader();
-            NodeList nodeList = hdr.getElementsByTagNameNS("http://www.w3.org/2005/08/addressing", "Action");
+            NodeList nodeList = hdr.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "Action");
             if (nodeList.getLength() == 0) {
                 return "noAction";
             }
@@ -144,10 +164,10 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         return host;
     }
 
-    private File getLogFile(String host, String action, String extension) {
+    private File getLogFile(String host, String action, String extension, String logDir) {
         Calendar cal = Calendar.getInstance();
         StringBuilder sb = new StringBuilder();
-        sb.append(cfg.getSOAPMsgLoggingDir()).append(sepChar).append(cal.get(Calendar.YEAR))
+        sb.append(logDir).append(sepChar).append(cal.get(Calendar.YEAR))
         .append(sepChar).append(cal.get(Calendar.MONTH)+1).append(sepChar)
         .append(cal.get(Calendar.DAY_OF_MONTH)).append(sepChar).append(host)
         .append(sepChar).append(action).append('_')

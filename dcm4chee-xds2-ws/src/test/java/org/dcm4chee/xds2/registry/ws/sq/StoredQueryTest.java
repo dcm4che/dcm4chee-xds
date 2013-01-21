@@ -49,8 +49,8 @@ import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
-import org.dcm4chee.xds2.common.config.XDSConfigFactory;
+import org.dcm4chee.xds2.conf.XdsApplication;
+import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
@@ -76,7 +76,7 @@ public class StoredQueryTest {
     private static final int NUMBER_OF_TEST_METHODS = 
         XDSTestUtil.getNumberOfTestMethods(StoredQueryTest.class);
 
-    private XDSConfig cfg = XDSConfigFactory.getXDSConfig();
+    private XdsApplication cfg = new XdsApplication("TEST");
     
     private static SQFindDocumentsTests findDocTests;
     private static SQFindSubmissionSetTests findSubmTests;

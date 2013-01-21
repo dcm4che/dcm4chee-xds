@@ -50,7 +50,28 @@
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>dcm4chee-xds2-common</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dcm4che.version>3.0.1</dcm4che.version>
+    </properties>
 	<dependencies>
+    	<dependency>
+      		<groupId>org.dcm4che</groupId>
+      		<artifactId>dcm4che-audit</artifactId>
+      		<version>${dcm4che.version}</version>
+      		<scope>provided</scope>
+    	</dependency>
+    	<dependency>
+      		<groupId>org.dcm4che</groupId>
+      		<artifactId>dcm4che-net-audit</artifactId>
+      		<version>${dcm4che.version}</version>
+      		<scope>provided</scope>
+    	</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+			<version>1.0.0.Final</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>

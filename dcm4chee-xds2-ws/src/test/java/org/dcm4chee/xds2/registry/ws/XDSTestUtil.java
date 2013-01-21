@@ -53,7 +53,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.config.XDSConfig;
+import org.dcm4chee.xds2.conf.XdsApplication;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationSchemeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
@@ -147,6 +147,10 @@ public class XDSTestUtil {
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
         .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-common:2.0.0")
+             .resolveAs(GenericArchive.class))
+        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
+        .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
+        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-conf:2.0.0")
              .resolveAs(GenericArchive.class))
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(System.getenv().get("M2_HOME") + "/conf/settings.xml")
@@ -256,10 +260,9 @@ public class XDSTestUtil {
         return sb.toString();
     }
 
-    public static void prepareTests(XDSRegistryBean session, XDSConfig cfg, Logger log) {
+    public static void prepareTests(XDSRegistryBean session, XdsApplication cfg, Logger log) {
         long t1 = System.currentTimeMillis();
         log.info("\n################################# Prepare Tests #################################");
-        cfg.logConfig();
         if (session.getRegistryObjectByUUID("urn:oasis:names:tc:ebxml-regrep:classificationScheme:AssociationType") == null) {
             log.info("#### prepare with ebXML ClassificationSchemes!");
             ebXmlClassificationSchemeIds = prepareRegistryWithSubmissionRequest(session, 
@@ -279,7 +282,7 @@ public class XDSTestUtil {
         log.info("\n###### PREPARE done in "+(System.currentTimeMillis()-t1)+"ms ######");
     }
 
-    public static void clearDB(XDSRegistryTestBean testSession, XDSConfig cfg, Logger log) {
+    public static void clearDB(XDSRegistryTestBean testSession, XdsApplication cfg, Logger log) {
         long t1 = System.currentTimeMillis();
         log.info("\n################################# CLEAR DB #################################");
         testSession.removeAllIdentifiables("urn:uuid:aabbccdd-bdda");

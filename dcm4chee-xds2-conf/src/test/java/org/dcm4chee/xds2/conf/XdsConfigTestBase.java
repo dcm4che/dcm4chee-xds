@@ -38,12 +38,14 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 import org.dcm4che.conf.api.ConfigurationNotFoundException;
 import org.dcm4che.data.Code;
@@ -51,21 +53,10 @@ import org.dcm4che.data.Issuer;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.Device;
 import org.dcm4che.net.hl7.HL7Application;
-import org.dcm4che.net.hl7.HL7Device;
-import org.dcm4che.util.SafeClose;
-import org.dcm4chee.xds2.conf.XdsApplication;
-import org.dcm4chee.xds2.conf.XdsConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXdsConfiguration;
-import org.dcm4chee.xds2.conf.prefs.PreferencesXdsConfiguration;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertNotNull;
 
-public class XdsConfigTest {
+public class XdsConfigTestBase {
 
     private static final String XDS_REGISTRY1 = "XDS_REGISTRY1";
     private static final String XDS_REGISTRY2 = "XDS_REGISTRY2";
@@ -91,38 +82,27 @@ public class XdsConfigTest {
     private static final String[] MIME_TYPES2 = new String[]{"text/xml","application/dicom"};
     private String AFFINITY_DOMAIN = "1.2.3.4.5&ISO";
 
-    private static int testCount = 0;
-    private XdsConfiguration config;
-
-    @Before
-    public void setUp() throws Exception {
-        testCount++;
-        config = System.getProperty("ldap") == null
-                ? new PreferencesXdsConfiguration(Preferences.userRoot())
-                : new LdapXdsConfiguration();
-        cleanUp();
-    }
+    protected static int testCount = 0;
+    protected XdsConfiguration config;
 
     @After
     public void tearDown() throws Exception {
         if (System.getProperty("keep") == null)
             cleanUp();
-        config.close();
+        if (config != null)
+            config.close();
     }
-
     @Test
     public void testSimple() throws Exception {
         config.persist(createXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false));
-        if (config instanceof PreferencesXdsConfiguration)
-            export(System.getProperty("export"));
+        afterPersist();
         checkXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false, null);
         
     }
     @Test
     public void testWithOptional() throws Exception {
         config.persist(createXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true));
-        if (config instanceof PreferencesXdsConfiguration)
-            export(System.getProperty("export"));
+        afterPersist();
         checkXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true, null);
     }
     @Test
@@ -133,8 +113,7 @@ public class XdsConfigTest {
         hl7Apps.add(hl7App);
         xdsDevice.addHL7Application(hl7App);
         config.persist(xdsDevice);
-        if (config instanceof PreferencesXdsConfiguration)
-            export(System.getProperty("export"));
+        afterPersist();
         checkXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true, hl7Apps);
         HL7Application hl7AppFound = config.findHL7Application(HL7_APP_NAME1);
         assertNotNull("findHL7Application", hl7AppFound);
@@ -148,8 +127,7 @@ public class XdsConfigTest {
         hl7Apps.add(hl7App);
         xdsDevice.addHL7Application(hl7App);
         config.persist(xdsDevice);
-        if (config instanceof PreferencesXdsConfiguration)
-            export(System.getProperty("export"));
+        afterPersist();
         checkXdsDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, hl7Apps);
         XdsApplication xdsApp = xdsDevice.getXdsApplication(XDS_REGISTRY4);
         xdsApp.setAffinityDomain("5.4.3.2.1&ISO");
@@ -170,28 +148,19 @@ public class XdsConfigTest {
         assertNotNull("findHL7Application2", hl7AppFound1);
     }
 
-    private void cleanUp() throws Exception {
+    protected void cleanUp() throws Exception {
+        if (config == null || testCount==0)
+            return;
         try {
             config.removeDevice("xds"+testCount);
         } catch (ConfigurationNotFoundException e) {}
     }
 
-    private void export(String name) throws Exception {
-        if (name == null)
-            return;
-
-        OutputStream os = new FileOutputStream(name);
-        try {
-            ((PreferencesXdsConfiguration) config)
-                    .getDicomConfigurationRoot().exportSubtree(os);
-        } finally {
-            SafeClose.close(os);
-        }
+    public void afterPersist() throws Exception {
     }
 
     private Device init(Device device, Issuer issuer, Code institutionCode)
             throws Exception {
-        String name = device.getDeviceName();
         device.setIssuerOfPatientID(issuer);
         device.setIssuerOfAccessionNumber(issuer);
         if (institutionCode != null) {
@@ -237,6 +206,7 @@ public class XdsConfigTest {
                  return c;
          }
          Connection conn = new Connection(connName, host, port);
+         conn.setProtocol(Connection.Protocol.HL7);
          xdsDevice.addConnection(conn);
         return conn;
     }
