@@ -61,7 +61,6 @@ import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
-import org.dcm4chee.xds2.persistence.XADPatient;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
