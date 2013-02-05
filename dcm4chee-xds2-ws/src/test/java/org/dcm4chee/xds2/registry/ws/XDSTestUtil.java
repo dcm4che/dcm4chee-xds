@@ -157,7 +157,7 @@ public class XDSTestUtil {
              .resolveAs(GenericArchive.class))
         .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
         .configureFrom(mavenConfigFile)
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-persistence:jar:mysql:2.0.0")
+        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-persistence:jar:" + System.getProperty("db") + ":2.0.0")
              .resolveAs(GenericArchive.class));
         war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;
