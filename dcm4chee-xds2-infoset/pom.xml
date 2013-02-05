@@ -64,8 +64,8 @@
 					</wsdls>
 					<!-- <targetPackage>org.dcm4chee.xds2.infoset</targetPackage> -->
 					<bindingFiles>
-						<File>${basedir}/src/bindings/wsdl.xml"&gt;</File>
-						<File>${basedir}/src/bindings/rim_schemas.xml"&gt;</File>
+						<File>${basedir}/src/bindings/wsdl.xml</File>
+						<File>${basedir}/src/bindings/rim_schemas.xml</File>
 					</bindingFiles>
 					<extension>true</extension>
 					<target>2.0</target>
