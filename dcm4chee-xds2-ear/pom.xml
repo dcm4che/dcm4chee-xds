@@ -53,7 +53,7 @@
 	<name>Build EAR for XDS.b Registry (ebRS v3.0)</name>
 	<properties>
 		<db>hsql</db>
-    	<dcm4che.version>3.0.1</dcm4che.version>
+    	<dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -72,9 +72,19 @@
 			<classifier>${db}</classifier>
 			<version>2.0.0</version>
 		</dependency>
+	    <dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-store</artifactId>
+			<version>2.0.0</version>
+	    </dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-hl7</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-service</artifactId>
 			<type>war</type>
 			<version>2.0.0</version>
 		</dependency>
@@ -126,7 +136,7 @@
 						</ejbModule>
 						<webModule>
 							<groupId>org.dcm4che</groupId>
-							<artifactId>dcm4chee-xds2-hl7</artifactId>
+							<artifactId>dcm4chee-xds2-service</artifactId>
 						</webModule>
 					</modules>
 					<version>6</version>

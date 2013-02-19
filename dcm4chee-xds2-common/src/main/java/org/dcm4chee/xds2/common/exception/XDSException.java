@@ -85,6 +85,9 @@ public class XDSException extends Exception {
     public static final String XDS_ERR_SEVERITY_WARNING = "urn:oasis:names:tc:ebxml-regrep:ErrorSeverityType:Warning";
     public static final String XDS_ERR_SEVERITY_ERROR = "urn:oasis:names:tc:ebxml-regrep:ErrorSeverityType:Error";
 
+    //Errors not defined in IHE
+    public static final String XDS_ERR_MISSING_REGISTRY_PACKAGE = "RegistryPackage missing";
+
     //?? referenced in ITI_TF_Rev8-0_Vol3: 4.1.11 XDS Registry Adaptor:
     //    The error XDSReplaceFailed shall be thrown if this object is not contained in the registry or has status other than Approved.
     public static final String XDS_ERR_REPLACE_FAILED = "XDSReplaceFailed";

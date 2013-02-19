@@ -1,1 +1,0 @@
-Dependencies: deployment.dcm4chee-xds2-entities-1.0.0-mysql.jar

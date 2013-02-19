@@ -42,10 +42,13 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.prefs.Preferences;
 
+import org.dcm4che.conf.prefs.PreferencesDicomConfiguration;
 import org.dcm4che.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
 import org.dcm4che.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
+import org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che.util.SafeClose;
-import org.dcm4chee.xds2.conf.prefs.PreferencesXdsConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
 import org.junit.Before;
 
 public class XdsConfigPrefsTest extends XdsConfigTestBase {
@@ -54,7 +57,10 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
     @Before
     public void setUp() throws Exception {
         testCount++;
-        PreferencesXdsConfiguration cfg = new PreferencesXdsConfiguration(Preferences.userRoot());
+        PreferencesDicomConfiguration cfg = new PreferencesDicomConfiguration(Preferences.userRoot());
+        cfg.addDicomConfigurationExtension(new PreferencesXDSRegistryConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesHL7Configuration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
         config = cfg;
@@ -63,13 +69,13 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
 
     @Override
     public void afterPersist() throws Exception{
-        String name = System.getProperty("export");
-        if (name == null)
+        String export = System.getProperty("export");
+        if (export == null)
             return;
 
-        OutputStream os = new FileOutputStream(name);
+        OutputStream os = new FileOutputStream(export);
         try {
-            ((PreferencesXdsConfiguration) config)
+            ((PreferencesDicomConfiguration) config)
                     .getDicomConfigurationRoot().exportSubtree(os);
         } finally {
             SafeClose.close(os);

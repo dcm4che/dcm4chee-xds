@@ -41,8 +41,10 @@ package org.dcm4chee.xds2.common.audit;
 import static org.dcm4che.audit.AuditMessages.createEventIdentification;
 
 import java.io.IOException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.Calendar;
+import java.util.List;
 
 import org.dcm4che.audit.AuditMessage;
 import org.dcm4che.audit.AuditMessages;
@@ -52,11 +54,15 @@ import org.dcm4che.audit.AuditMessages.EventOutcomeIndicator;
 import org.dcm4che.audit.AuditMessages.EventTypeCode;
 import org.dcm4che.audit.AuditMessages.ParticipantObjectIDTypeCode;
 import org.dcm4che.audit.AuditMessages.RoleIDCode;
+import org.dcm4che.audit.ParticipantObjectDetail;
 import org.dcm4che.audit.ParticipantObjectIdentification;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.Device;
 import org.dcm4che.net.IncompatibleConnectionException;
 import org.dcm4che.net.audit.AuditLogger;
+import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,13 +70,83 @@ import org.slf4j.LoggerFactory;
 /**
  * Audit logger for XDS.
  * 
+ * A configured AuditLogger must be set via setAuditLogger.
+ * 
+ * AuditLogger can be configured via LDAP:
+ * 
+ *      InputStream ldapConf = new URL(ldapPropertiesURL).openStream();
+ *      Properties p = new Properties();
+ *      p.load(ldapConf);
+ *      ExtendedLdapDicomConfiguration config = new ExtendedLdapDicomConfiguration(p);
+ *      config.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
+ *      config.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
+ *      Device device = config.findDevice("XDSAuditLogger");
+ *      AuditLogger logger = device.getDeviceExtension(AuditLogger.class);
+ *
+ *      LDAP properties example (openDs):
+ *      java.naming.factory.initial=com.sun.jndi.ldap.LdapCtxFactory
+ *      java.naming.ldap.attributes.binary=dicomVendorData
+ *      java.naming.provider.url=ldap://localhost:1389/dc=example,dc=com
+ *      java.naming.security.principal=cn=Directory Manager
+ *      java.naming.security.credentials=secret
+ *
+ * or Java Preferences:
+ *
+ *      PreferencesDicomConfiguration prefConfig = new PreferencesDicomConfiguration();
+ *      prefConfig.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
+ *      prefConfig.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
+ *      Device device = prefConfig.findDevice("XDSAuditLogger");
+ *      AuditLogger logger = device.getDeviceExtension(AuditLogger.class);
+ *      
+ * 
+ * or by using AuditLogger directly:
+ * 
+ *     ..
+ *     AuditLogger logger = createLoggerDevice("XDSLoggerDevice").getDeviceExtension(AuditLogger.class);
+ *     ..
+ *     private Device createLoggerDevice(String name) {
+ *       Device device = new Device(name);
+ *       Connection udp = new Connection("audit-udp", "host.dcm4che.org");
+ *       udp.setProtocol(Connection.Protocol.SYSLOG_UDP);
+ *       Connection tls = new Connection("audit-tls", "host.dcm4che.org");
+ *       tls.setProtocol(Connection.Protocol.SYSLOG_TLS);
+ *       tls.setTlsCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA");
+ *       device.addConnection(udp);
+ *       device.addConnection(tls);
+ *       udp.setPort(514);
+ *       tls.setPort(6514);
+ *       addAuditRecordRepository(device, udp, tls);
+ *       arrDevice = device;
+ *       addAuditLogger(device, udp, tls, arrDevice);
+ *       return device ;
+ *   }
+ *
+ *   private void addAuditRecordRepository(Device device, Connection udp, Connection tls) {
+ *       AuditRecordRepository arr = new AuditRecordRepository();
+ *       device.addDeviceExtension(arr);
+ *       arr.addConnection(udp);
+ *       arr.addConnection(tls);
+ *   }
+ *
+ *   private void addAuditLogger(Device device, Connection udp, Connection tls, Device arrDevice) {
+ *       AuditLogger logger = new AuditLogger();
+ *       device.addDeviceExtension(logger);
+ *       logger.addConnection(udp);
+ *       logger.addConnection(tls);
+ *       logger.setAuditRecordRepositoryDevice(arrDevice);
+ *       logger.setSchemaURI(AuditMessages.SCHEMA_URI);
+ *   }
+ *
+ * 
  * @author franz.willer@gmail.com
  *
  */
 public class XDSAudit {
+    private static final String UNKNOWN = "UNKNOWN";
+
     private static AuditLogger logger;
 
-    public static final Logger log = LoggerFactory.getLogger(XDSAudit.class);
+    private static final Logger log = LoggerFactory.getLogger(XDSAudit.class);
     
     public static AuditLogger getAuditLogger() {
         return logger;
@@ -94,29 +170,241 @@ public class XDSAudit {
         }
     }
     
-    public static void logImport(String submissionSetUID, String patID, AuditRequestInfo info, boolean success) {
+    /**
+     * Send a ITI-41 Import Audit message. (Document Repository: PnR)
+     * patID(1)
+     * srcUserID         content of wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null).
+     * altSrcUserID      not specialized
+     * destUserID        SOAP endpoint URI.
+     * altDestUserID     Process ID (consumer)
+     * SubmissionSet(1)
+     * Document(0)
+     * 
+     * @param submissionSetUID
+     * @param patID
+     * @param info
+     * @param success
+     */
+   public static void logRepositoryImport(String submissionSetUID, String patID, AuditRequestInfo info, boolean success) {
+       if (logger != null && logger.isInstalled()) {
+           logImport(EventTypeCode.ITI_41_ProvideAndRegisterDocumentSetB, submissionSetUID, patID, info.getReplyTo(),
+               null, info.getRemoteHost(), info.getRequestURI(), AuditLogger.processID(), 
+               info.getLocalHost(), null, success);
+       }
+    }
+    /**
+     * Send a ITI-42 Import Audit message. (Document Registry: register document set)
+     * patID(1)
+     * srcUserID         content of wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null).
+     * altSrcUserID      not specialized
+     * destUserID        SOAP endpoint URI.
+     * altDestUserID     Process ID (consumer)
+     * SubmissionSet(1)
+     * Document(0)
+     * 
+     * @param submissionSetUID
+     * @param patID
+     * @param info
+     * @param success
+     */
+    public static void logRegistryImport(String submissionSetUID, String patID, AuditRequestInfo info, boolean success) {
         if (logger != null && logger.isInstalled()) {
-            try {
-                Calendar timeStamp = logger.timeStamp();
-                AuditMessage msg = XDSAudit.createImport(submissionSetUID, patID, 
-                        info.getSourceUserID(), info.getAlternativeSourceUserID(), info.getRemoteHost(), 
-                        info.getDestUserID(), timeStamp, 
-                        success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
-                sendAuditMessage(timeStamp, msg);
-            } catch (Exception e) {
-                log.warn("Audit log of Import failed!");
-                log.debug("AuditLog Exception:", e);
-            }
+            logImport(EventTypeCode.ITI_42_RegisterDocumentSetB, submissionSetUID, patID, info.getReplyTo(),
+                null, info.getRemoteHost(), info.getRequestURI(), AuditLogger.processID(), 
+                info.getLocalHost(), null, success);
+        }
+    }
+    
+    /**
+     * Send a ITI-43 Import Audit message. (document consumer: Retrieve document set)
+     * patID(0..1)
+     * srcUserID         SOAP Endpoint URI of repository
+     * altSrcUserID      not specialized
+     * destUserID        content of wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null).
+     * altDestUserID     Process ID (consumer)
+     * SubmissionSet(0)
+     * Document(1..n)
+     * 
+     * @param patID
+     * @param repositoryURL
+     * @param docReq
+     * @param success
+     */
+    public static void logConsumerImport(String patID, URL repositoryURL, RetrieveDocumentSetRequestType docReq, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            logImport(EventTypeCode.ITI_43_RetrieveDocumentSet, null, patID, repositoryURL.toExternalForm(),
+                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
+                AuditLogger.localHost().getHostName(), docReq, success);
+        }
+    }
+    
+    public static void logImport(EventTypeCode eventTypeCode, String submissionSetUID, String patID, 
+            String srcUserID, String altSrcUserID, String srcHostName, 
+            String destUserID, String altDestUserID, String destHostName, RetrieveDocumentSetRequestType docReq, boolean success) {
+        try {
+            Calendar timeStamp = logger.timeStamp();
+            AuditMessage msg = XDSAudit.createImport(eventTypeCode, submissionSetUID, patID, 
+                    srcUserID, altSrcUserID, srcHostName, 
+                    destUserID, altDestUserID, destHostName, docReq, timeStamp, 
+                    success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
+            sendAuditMessage(timeStamp, msg);
+        } catch (Exception e) {
+            log.warn("Audit log of Import ("+eventTypeCode.getDisplayName()+") failed!");
+            log.debug("AuditLog Exception:", e);
         }
     }
 
-    public static void logQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
+    /**
+     * Send a ITI-41 Export Audit message. (document source)
+     * patID(1)
+     * srcUserID         wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null
+     * altSrcUserID      Process ID (consumer)
+     * destUserID        SOAP endpoint URI
+     * altDestUserID     not spezialized
+     * SubmissionSet(1)
+     * Document(0)
+     * 
+     * @param submissionSetUID
+     * @param patID
+     * @param srcUserID
+     * @param altSrcUserID
+     * @param srcHostName
+     * @param destUserID
+     * @param destHostName
+     * @param success
+     */
+    public static void logSourceExport(String submissionSetUID, String patID, String srcUserID, String altSrcUserID, String srcHostName, 
+            String destUserID, String destHostName, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            if (patID == null) {
+                log.error("Audit ITI-41 Export! patient ID is null. set to 'UNKNOWN'!");
+                patID = UNKNOWN;
+            }
+            if (srcUserID == null) {
+                srcUserID = XDSConstants.WS_ADDRESSING_ANONYMOUS;
+            }
+            logExport(EventTypeCode.ITI_41_ProvideAndRegisterDocumentSetB, submissionSetUID, patID, 
+                    srcUserID, altSrcUserID, srcHostName, destUserID, null, destHostName, null, null, success);
+        }
+    }
+    /**
+     * Send a ITI-42 Export Audit message. (document repository: register document set)
+     * patID(1)
+     * srcUserID         wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null).
+     * altSrcUserID      Process ID
+     * destUserID        SOAP endpoint URI.
+     * altDestUserID     not spezialized
+     * SubmissionSet(1)
+     * Document(0)
+     * 
+     * @param submissionSetUID
+     * @param patID
+     * @param info
+     * @param registryURL
+     * @param success
+     */
+    public static void logRepositoryPnRExport(String submissionSetUID, String patID, AuditRequestInfo info, URL registryURL, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            logExport(EventTypeCode.ITI_42_RegisterDocumentSetB, submissionSetUID, patID, 
+                XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), info.getLocalHost(), registryURL.toExternalForm(), null, registryURL.getHost(), 
+                null, null, success);
+        }
+    }
+    /**
+     * Send a ITI-43 Export Audit message. (document repository: Retrieve document set)
+     * patID(0)
+     * srcUserID         SOAP Endpoint URI of repository
+     * altSrcUserID      Process ID
+     * destUserID        content of wsa:ReplyTo. ('http://www.w3.org/2005/08/addressing/anonymous' if null).
+     * altDestUserID     not spezialized
+     * SubmissionSet(0)
+     * Document(1..n)
+     * 
+     * @param info
+     * @param docReq
+     * @param docUIDs
+     * @param success
+     */
+    public static void logRepositoryRetrieveExport(AuditRequestInfo info, 
+            RetrieveDocumentSetRequestType docReq, List<String> docUIDs, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            logExport(EventTypeCode.ITI_43_RetrieveDocumentSet, null, null, info.getRequestURI(), 
+                AuditLogger.processID(), info.getLocalHost(), info.getReplyTo(), null, info.getRemoteHost(),
+                docReq, docUIDs, success);
+        }
+    }
+    
+    public static void logExport(EventTypeCode eventTypeCode, String submissionSetUID, String patID,
+            String srcUserID, String altSrcUserID, String srcHostName, String destUserID, String altDestUserID, String destHostName,
+            RetrieveDocumentSetRequestType docReq, List<String> docUIDs, boolean success) {
+        try {
+            Calendar timeStamp = logger.timeStamp();
+            AuditMessage msg = XDSAudit.createExport(eventTypeCode, submissionSetUID, patID, 
+                    srcUserID, altSrcUserID, srcHostName, 
+                    destUserID, altDestUserID, destHostName, 
+                    docReq, docUIDs, timeStamp, success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
+            sendAuditMessage(timeStamp, msg);
+        } catch (Exception e) {
+            log.warn("Audit log of Export ("+eventTypeCode.getDisplayName()+") failed!");
+            log.info("AuditLog Exception:", e);
+        }
+    }
+    
+    /**
+     * Send a ITI-18 Stored Query Audit message. (Document Source/Consumer)
+     * 
+     * srcUserID         wsa:ReplyTo
+     * altSrcUserID      process ID
+     * destUserID        SOAP Endpoint URI (registry)
+     * altDestUserID     not specialized
+     * Patient (0..1)
+     * Query Parameters(1) 
+     * 
+     * @param queryUID
+     * @param patID
+     * @param homeCommunityID
+     * @param adhocQuery
+     * @param srcUserID
+     * @param srcHostName
+     * @param registryURL
+     * @param success
+     */
+    public static void logClientQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
+            String srcUserID, String srcHostName, URL registryURL, boolean success) {
+        logQuery(queryUID, patID, homeCommunityID, adhocQuery, srcUserID, AuditLogger.processID(), srcHostName, 
+                registryURL.toExternalForm(), null, registryURL.getHost(), success);
+    }
+    /**
+     * Send a ITI-18 Stored Query Audit message. (Document Registry)
+     * 
+     * srcUserID         wsa:ReplyTo
+     * altSrcUserID      not spezialized
+     * destUserID        SOAP Endpoint URI (registry)
+     * altDestUserID     process ID
+     * Patient (0..1)
+     * Query Parameters(1) 
+     * 
+     * @param queryUID
+     * @param patID
+     * @param homeCommunityID
+     * @param adhocQuery
+     * @param info
+     * @param success
+     */
+    public static void logRegistryQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
             AuditRequestInfo info, boolean success) {
+        logQuery(queryUID, patID, homeCommunityID, adhocQuery, info.getReplyTo(), null, info.getRemoteHost(), 
+                info.getRequestURI(), AuditLogger.processID(), info.getLocalHost(), success);
+    }
+
+    public static void logQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
+            String srcUserID, String altSrcUserID, String srcHostName, String destUserID, String altDestUserID, 
+            String destHostName, boolean success) {
         if (logger != null && logger.isInstalled()) {
             try {
                 Calendar timeStamp = logger.timeStamp();
                 AuditMessage msg = XDSAudit.createQuery(queryUID, patID, homeCommunityID, adhocQuery, 
-                        info.getSourceUserID(), info.getAlternativeSourceUserID(), info.getRemoteHost(), info.getDestUserID(), 
+                        srcUserID, altSrcUserID, srcHostName, destUserID, altDestUserID, destHostName, 
                         timeStamp, success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
                 sendAuditMessage(timeStamp, msg);
             } catch (Exception e) {
@@ -159,9 +447,9 @@ public class XDSAudit {
         return msg;
     }
 
-    public static AuditMessage createImport(String submissionSetUID, String patID, 
+    public static AuditMessage createImport(EventTypeCode eventTypeCode, String submissionSetUID, String patID, 
             String srcUserID, String altSrcUserID, String srcHostName, 
-            String destUserID, Calendar timeStamp, String outcomeIndicator) {
+            String destUserID, String altDestUserID, String destHostName, RetrieveDocumentSetRequestType docReq, Calendar timeStamp, String outcomeIndicator) {
         AuditMessage msg = new AuditMessage();
         msg.setEventIdentification(createEventIdentification(
                 EventID.Import, 
@@ -169,25 +457,74 @@ public class XDSAudit {
                 timeStamp,
                 outcomeIndicator,
                 null,
-                EventTypeCode.ITI_42_RegisterDocumentSetB));
+                eventTypeCode));
         msg.getAuditSourceIdentification().add(
                 logger.createAuditSourceIdentification());
-        String hostName = AuditLogger.localHost().getHostName();
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
                         srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
         msg.getActiveParticipant().add(
-                AuditMessages.createActiveParticipant(destUserID, AuditLogger.processID(), null, false,
-                        hostName, machineOrIP(hostName), null, RoleIDCode.Destination));
-        msg.getParticipantObjectIdentification().add(createPatient(null2unknown(patID)));
-        msg.getParticipantObjectIdentification().add(createSubmissionSet(null2unknown(submissionSetUID)));
+                AuditMessages.createActiveParticipant(destUserID, altDestUserID, null, false,
+                        destHostName, machineOrIP(destHostName), null, RoleIDCode.Destination));
+        if (patID != null)
+            msg.getParticipantObjectIdentification().add(createPatient(null2unknown(patID)));
+        if (submissionSetUID != null)
+            msg.getParticipantObjectIdentification().add(createSubmissionSet(null2unknown(submissionSetUID)));
+        if (docReq != null) {
+            addDocuments(msg.getParticipantObjectIdentification(), docReq, null, EventOutcomeIndicator.Success.equals(outcomeIndicator));
+        }
+        return msg;
+    }
+    
+    /**
+     * 
+     * @param eventTypeCode
+     * @param submissionSetUID
+     * @param patID
+     * @param srcUserID
+     * @param srcHostName
+     * @param destUserID
+     * @param altDestUserID
+     * @param docReq            The RetrieveDocumentRequest with list of requested documents (null if no documents are involved)
+     * @param docUIDs           List of retrieved Document UIDs. Used to filter docUIDs for ParticipantObjectIdentification 'Document' according outcomeIndicator. null means no filtering.
+     * @param timeStamp
+     * @param outcomeIndicator
+     * @return
+     */
+    public static AuditMessage createExport(EventTypeCode eventTypeCode, String submissionSetUID, String patID, 
+            String srcUserID, String altSrcUserID, String srcHostName, String destUserID, String altDestUserID, String destHostName,
+            RetrieveDocumentSetRequestType docReq, List<String> docUIDs, Calendar timeStamp, String outcomeIndicator) {
+        AuditMessage msg = new AuditMessage();
+        msg.setEventIdentification(createEventIdentification(
+                EventID.Export, 
+                EventActionCode.Read,
+                timeStamp,
+                outcomeIndicator,
+                null,
+                eventTypeCode));
+        msg.getAuditSourceIdentification().add(
+                logger.createAuditSourceIdentification());
+        msg.getActiveParticipant().add(
+                AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
+                        srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
+        msg.getActiveParticipant().add(
+                AuditMessages.createActiveParticipant(destUserID, altDestUserID, null, false,
+                        destHostName, machineOrIP(destHostName), null, RoleIDCode.Destination));
+        if (patID != null)
+            msg.getParticipantObjectIdentification().add(createPatient(patID));
+        if (submissionSetUID != null)
+            msg.getParticipantObjectIdentification().add(createSubmissionSet(null2unknown(submissionSetUID)));
+        if (docReq != null) {
+            addDocuments(msg.getParticipantObjectIdentification(), docReq, docUIDs, EventOutcomeIndicator.Success.equals(outcomeIndicator));
+        }
         return msg;
     }
 
     public static AuditMessage createQuery(String queryUID, String patID, 
             String homeCommunityID, byte[] adhocQuery, 
             String srcUserID, String altSrcUserID, String srcHostName, 
-            String destUserID, Calendar timeStamp, String outcomeIndicator) {
+            String destUserID, String altDestUserID, String destHostName, 
+            Calendar timeStamp, String outcomeIndicator) {
         AuditMessage msg = new AuditMessage();
         msg.setEventIdentification(createEventIdentification(
                 EventID.Query, 
@@ -245,7 +582,7 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
-        log.debug("AuditMessage:"+AuditMessages.toXML(msg));
+        log.info("AuditMessage:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
     }
 
@@ -255,6 +592,7 @@ public class XDSAudit {
                 (byte[])null, AuditMessages.ParticipantObjectTypeCode.Person, 
                 AuditMessages.ParticipantObjectTypeCodeRole.Patient, null, null, null);
     }
+    
     public static ParticipantObjectIdentification createSubmissionSet(String submissionSetUID) {
         return AuditMessages.createParticipantObjectIdentification(
                 submissionSetUID, 
@@ -263,6 +601,36 @@ public class XDSAudit {
                 null, (byte[])null, AuditMessages.ParticipantObjectTypeCode.SystemObject, 
                 AuditMessages.ParticipantObjectTypeCodeRole.Job, null, null, null);
     }
+
+    private static void addDocuments(List<ParticipantObjectIdentification> pois,
+            RetrieveDocumentSetRequestType req, List<String> docUIDs, boolean success) {
+        List<DocumentRequest> docRequests = req.getDocumentRequest();
+        List<ParticipantObjectDetail> details;
+        for (DocumentRequest docReq : docRequests) {
+            if (isAddDocument(docReq.getDocumentUniqueId(), docUIDs, success)) {
+                ParticipantObjectIdentification poi = AuditMessages.createParticipantObjectIdentification(
+                        docReq.getDocumentUniqueId(), ParticipantObjectIDTypeCode.ReportNumber,
+                        null, (byte[])null, AuditMessages.ParticipantObjectTypeCode.SystemObject, 
+                        AuditMessages.ParticipantObjectTypeCodeRole.Report, null, null, null);
+                details = poi.getParticipantObjectDetail();
+                details.add(AuditMessages.createParticipantObjectDetail("Repository Unique Id", docReq.getRepositoryUniqueId().getBytes()));
+                if (docReq.getHomeCommunityId() != null)
+                    details.add(AuditMessages.createParticipantObjectDetail("ihe:homeCommunityID", docReq.getHomeCommunityId().getBytes()));
+                pois.add(poi);
+            }
+        }
+        
+    }
+    private static boolean isAddDocument(String docUID, List<String> docUIDs, boolean success) {
+        if (docUIDs == null) {
+            return success;
+        }
+        if (docUIDs.contains(docUID)) {
+            return success;
+        }
+        return !success;
+    }
+
     public static ParticipantObjectIdentification createQueryParticipantObjectIdentification(String queryUID, String homeCommunityID, byte[] adhocQuery) {
         return AuditMessages.createParticipantObjectIdentification(queryUID, 
                 new ParticipantObjectIDTypeCode("ITI-18", "IHE Transactions", "Registry Stored Query"),
@@ -271,7 +639,7 @@ public class XDSAudit {
     }
     
     private static String null2unknown(String s) {
-        return s == null ? "UNKNOWN" : s;
+        return s == null ? UNKNOWN : s;
     }
 
     public static String info() {

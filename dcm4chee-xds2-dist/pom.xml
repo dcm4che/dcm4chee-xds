@@ -79,7 +79,7 @@
               <fileMappers>
                 <fileMapper
                   implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
-                  <targetName>codes.sql</targetName>
+                  <targetName>codes-${db}.sql</targetName>
                 </fileMapper>
               </fileMappers>
             </transformationSet>

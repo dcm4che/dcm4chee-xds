@@ -22,10 +22,10 @@ import org.apache.commons.cli.PosixParser;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
-import org.dcm4chee.xds2.infoset.ws.DocumentRegistryPortType;
+import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 
 public class XDSInit {
-    private static final String DEFAULT_WSDL_URL = "http://localhost:8080/dcm4chee-xds/XDSbRegistry/xds?wsdl";
+    private static final String DEFAULT_WSDL_URL = "http://localhost:8080/dcm4chee-xds/XDSbRegistry/b?wsdl";
     
     public static void main(String[] args) throws Exception {
         CommandLine cl = parseComandLine(args);

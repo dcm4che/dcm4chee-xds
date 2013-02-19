@@ -65,7 +65,6 @@ public class AuditRequestInfo {
     private SOAPHeader soapHeader;
     private HttpServletRequest servletRequest;
     String host;
-    private String alternativeSourceUserID;
     private boolean enableDNSLookups = Boolean.valueOf(
             System.getProperty("org.dcm4chee.xds.audit.enableDNSLookups", "true"));
     
@@ -127,24 +126,15 @@ public class AuditRequestInfo {
         return UNKNOWN;
     }
 
-    public String getSourceUserID() {
+    public String getReplyTo() {
         NodeList replyToNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "ReplyTo");
         if (replyToNodes.getLength() < 1) {
-            //synchronous web service with missing replyTo!
             return XDSConstants.WS_ADDRESSING_ANONYMOUS;
         }
         return replyToNodes.item(0).getTextContent();
     }
 
-    public String getAlternativeSourceUserID() {
-        return alternativeSourceUserID;
-    }
-    public AuditRequestInfo setAlternativeSourceUserID(String userID) {
-        alternativeSourceUserID = userID;
-        return this;
-    }
-
-    public String getDestUserID() {
+    public String getRequestURI() {
         NodeList toNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "To");
         if (toNodes.getLength() < 1) {
             if (servletRequest != null) {

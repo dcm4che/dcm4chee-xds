@@ -54,6 +54,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.Index;
 
@@ -76,7 +77,8 @@ import org.hibernate.annotations.Index;
     })
 
 @Entity
-@Table(name = "xad_patient")
+@Table(name = "xad_patient", uniqueConstraints=
+    {@UniqueConstraint(columnNames = {"pat_id", "pat_id_issuer_fk"})})
 public class XADPatient implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
@@ -98,7 +100,7 @@ public class XADPatient implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "pat_id")
-    @Index(name="pat_id_idx")
+    //@Index(name="pat_id_idx")
     private String patientID;
     
     @Basic(optional = false)

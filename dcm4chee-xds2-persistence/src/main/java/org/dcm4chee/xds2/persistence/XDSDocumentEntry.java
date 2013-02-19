@@ -96,7 +96,7 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     private static Logger log = LoggerFactory.getLogger(XDSDocumentEntry.class);
     
     @Basic(optional = false)
-    @Column(name = "unique_id")
+    @Column(name = "unique_id", unique=true)
     @Index(name="uniqueId_idx")
     private String uniqueId;
 

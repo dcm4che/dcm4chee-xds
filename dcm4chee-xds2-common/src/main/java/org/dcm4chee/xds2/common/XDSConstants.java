@@ -166,6 +166,7 @@ public interface XDSConstants {
     public static final String SLOT_NAME_SERVICE_START_TIME = "serviceStartTime";
     public static final String SLOT_NAME_SERVICE_STOP_TIME = "serviceStopTime";
     public static final String SLOT_NAME_SUBMISSION_TIME = "submissionTime";
+    public static final String SLOT_NAME_SUBMISSIONSET_STATUS = "SubmissionSetStatus";
     public static final String SLOT_NAME_LAST_UPDATE_TIME = "lastUpdateTime";
     public static final String SLOT_NAME_REPOSITORY_UNIQUE_ID = "repositoryUniqueId";
     public static final String SLOT_NAME_SIZE = "size";
@@ -173,6 +174,7 @@ public interface XDSConstants {
     public static final String SLOT_NAME_SOURCE_PATIENT_ID = "sourcePatientId";
     public static final String SLOT_NAME_SOURCE_PATIENT_INFO = "sourcePatientInfo";
     public static final String SLOT_NAME_LANGUAGE_CODE = "languageCode";
+    public static final String SLOT_NAME_INTENDED_RECIPIENT = "intendedRecipient";
     
     //Other
     public static final String WS_ADDRESSING_NS = "http://www.w3.org/2005/08/addressing";

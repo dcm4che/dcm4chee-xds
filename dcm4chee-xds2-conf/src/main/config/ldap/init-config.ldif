@@ -1,11 +1,11 @@
 version: 1
 
-dn: cn=XDS Configuration,dc=example,dc=com
+dn: cn=DICOM Configuration,dc=example,dc=com
 objectClass: dicomConfigurationRoot
 objectClass: top
 cn: DICOM Configuration
 
-dn: cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dn: cn=Devices,cn=DICOM Configuration,dc=example,dc=com
 objectClass: dicomDevicesRoot
 objectClass: top
 cn: Devices

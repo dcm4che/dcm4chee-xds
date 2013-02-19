@@ -38,9 +38,12 @@
 
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che.conf.ldap.LdapDicomConfiguration;
 import org.dcm4che.conf.ldap.audit.LdapAuditLoggerConfiguration;
 import org.dcm4che.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXdsConfiguration;
+import org.dcm4che.conf.ldap.hl7.LdapHL7Configuration;
+import org.dcm4chee.xds2.conf.ldap.LdapXDSRegistryConfiguration;
+import org.dcm4chee.xds2.conf.ldap.LdapXDSRepositoryConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -55,13 +58,13 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
     @Before
     public void setUp() throws Exception {
         testCount++;
-        LdapXdsConfiguration cfg = new LdapXdsConfiguration();
+        LdapDicomConfiguration cfg = new LdapDicomConfiguration();
+        cfg.addDicomConfigurationExtension(new LdapXDSRegistryConfiguration());
+        cfg.addDicomConfigurationExtension(new LdapXDSRepositoryConfiguration());
+        cfg.addDicomConfigurationExtension(new LdapHL7Configuration());
+        cfg.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
+        cfg.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
         config = cfg;
-        cfg.addDicomConfigurationExtension(
-                new LdapAuditLoggerConfiguration());
-        cfg.addDicomConfigurationExtension(
-                new LdapAuditRecordRepositoryConfiguration());
         cleanUp();
     }
-
 }

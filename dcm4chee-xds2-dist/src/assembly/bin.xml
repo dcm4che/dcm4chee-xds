@@ -84,7 +84,7 @@
     <fileSet>
       <directory>target/generated-resources/sql</directory>
       <includes>
-        <include>codes.sql</include>
+        <include>codes-${db}.sql</include>
       </includes>
       <outputDirectory>support/codes</outputDirectory>
       <fileMode>0755</fileMode>
