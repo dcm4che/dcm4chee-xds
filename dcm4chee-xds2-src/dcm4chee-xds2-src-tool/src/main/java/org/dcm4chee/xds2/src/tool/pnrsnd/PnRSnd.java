@@ -40,6 +40,7 @@ package org.dcm4chee.xds2.src.tool.pnrsnd;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
@@ -76,6 +77,7 @@ import org.dcm4chee.xds2.src.metadata.Code;
 import org.dcm4chee.xds2.src.metadata.DocumentEntry;
 import org.dcm4chee.xds2.src.metadata.PnRRequest;
 import org.dcm4chee.xds2.src.metadata.Util;
+import org.dcm4chee.xds2.src.metadata.XDSFolder;
 import org.dcm4chee.xds2.src.metadata.exception.MetadataConfigurationException;
 import org.dcm4chee.xds2.src.ws.XDSSourceWSClient;
 import org.slf4j.Logger;
@@ -187,37 +189,80 @@ public class PnRSnd {
             log.info("### submissionUID created:"+submUID);
         }
         PnRRequest pnrReq = new PnRRequest(props.getProperty("sourceID"), submUID, props.getProperty("patID"), props.getProperty("srcPatID"));
-        String docUID = props.getProperty("doc.UID");
-        if ("new()".equals(docUID)) {
-            docUID = UIDUtils.createUID();
-            log.info("### documentUID created:"+docUID);
-        }
-        @SuppressWarnings("unchecked")
-        List<String> args = cl.getArgList();
-        File docFile = new File(args.get(0));
-        byte[] buffer = new byte[(int)docFile.length()];
-        FileInputStream fis = new FileInputStream(docFile);
-        fis.read(buffer);
-        DocumentEntry doc = pnrReq.addDocumentEntry(docUID, buffer, props.getProperty("mime"));
-        addAuthor(doc.addAuthor());
-        doc.addConfidentialityCode(new Code(props.getProperty("confidentialityCode")));
-        doc.addEventCode(new Code(props.getProperty("eventCode")));
-        doc.setClassCode(new Code(props.getProperty("classCode")));
-        doc.setFormatCode(new Code(props.getProperty("formatCode")));
-        doc.setHealthcareFacilityTypeCode(new Code(props.getProperty("healthcareFacilityTypeCode")));
-        doc.setPracticeSettingCode(new Code(props.getProperty("practiceSettingCode")));
-        doc.setTypeCode(new Code(props.getProperty("typeCode")));
-        doc.setCreationTime(Util.toDate(props.getProperty("creationTime")));
-        doc.setServiceStartTime(Util.toDate(props.getProperty("serviceStartTime")));
-        doc.setServiceStopTime(Util.toDate(props.getProperty("serviceStopTime")));
-        doc.setLanguageCode("de-DE");
+        addDocument(cl, pnrReq);
         
         addAuthor(pnrReq.addAuthor());
         pnrReq.setContentTypeCode(new Code(props.getProperty("contentTypeCode")));
         pnrReq.setSubmissionTime(Util.toDate(props.getProperty("submissionTime")));
+        addOptional(pnrReq);
+        
+        addFolder(pnrReq);
         return pnrReq;
     }
+
+    private void addDocument(CommandLine cl, PnRRequest pnrReq)
+            throws FileNotFoundException, IOException, java.text.ParseException {
+        @SuppressWarnings("unchecked")
+        List<String> args = cl.getArgList();
+        for (int i = 0, len = args.size() ; i < len ; i++) {
+            String docUID = getProperty("doc.UID", i);
+            if ("new()".equals(docUID)) {
+                docUID = UIDUtils.createUID();
+                log.info("### documentUID created:"+docUID);
+            }
+            File docFile = new File(args.get(i));
+            byte[] buffer = new byte[(int)docFile.length()];
+            FileInputStream fis = new FileInputStream(docFile);
+            fis.read(buffer);
+            DocumentEntry doc = pnrReq.addDocumentEntry(docUID, buffer, getProperty("mime", i));
+            addAuthor(doc.addAuthor());
+            doc.addConfidentialityCode(new Code(getProperty("confidentialityCode", i)));
+            doc.addEventCodeList(new Code(getProperty("eventCode", i)));
+            doc.setClassCode(new Code(getProperty("classCode", i)));
+            doc.setFormatCode(new Code(getProperty("formatCode", i)));
+            doc.setHealthcareFacilityTypeCode(new Code(getProperty("healthcareFacilityTypeCode", i)));
+            doc.setPracticeSettingCode(new Code(getProperty("practiceSettingCode", i)));
+            doc.setTypeCode(new Code(getProperty("typeCode", i)));
+            doc.setCreationTime(Util.toDate(getProperty("creationTime", i)));
+            doc.setServiceStartTime(Util.toDate(getProperty("serviceStartTime", i)));
+            doc.setServiceStopTime(Util.toDate(getProperty("serviceStopTime", i)));
+            doc.setLanguageCode(getProperty("languageCode", i));
+            addOptional(doc);
+        }
+    }
     
+    private void addFolder(PnRRequest pnrReq) {
+        String folderUID = props.getProperty("folder.UID");
+        if (folderUID != null) {
+            if ("new()".equals(folderUID)) {
+                folderUID = UIDUtils.createUID();
+                log.info("### folderUID created:"+folderUID);
+            }
+            XDSFolder folder = pnrReq.addFolder(folderUID);
+            folder.addCodeList(new Code(props.getProperty("codeList")));
+            folder.setTitle(props.getProperty("folder.title"));
+            folder.setComments(props.getProperty("folder.comments"));
+            if (Boolean.parseBoolean(props.getProperty("addDocs"))) {
+                for ( DocumentEntry doc : pnrReq.getDocumentEntries()) {
+                    pnrReq.addAssociation(folder.getID(), doc.getID(), XDSConstants.HAS_MEMBER);
+                }
+            }
+        }
+        
+    }
+
+    private void addOptional(PnRRequest pnrReq) {
+        pnrReq.setTitle(props.getProperty("subm.title"));
+        pnrReq.setComments(props.getProperty("subm.comments"));
+        pnrReq.addIntendedRecipient(props.getProperty("intendedRecipient"));
+    }
+
+    private void addOptional(DocumentEntry doc) {
+        doc.setTitle(props.getProperty("doc.title"));
+        doc.setComments(props.getProperty("doc.comments"));
+        doc.setLegalAuthenticator("legalAuthenticator");
+    }
+
     private void addAuthor(Author author) {
         author.setAuthorPerson(props.getProperty("authorPerson"));
         author.setAuthorInstitutions(getAuthorAttributeValues("authorInstitutions"));
@@ -229,6 +274,11 @@ public class PnRSnd {
     private List<String> getAuthorAttributeValues(String propName) {
         String value = props.getProperty(propName);
         return value == null ? null : Arrays.asList(StringUtils.split(value, '|'));
+    }
+    
+    private String getProperty(String propName, int idx) {
+        String v = props.getProperty(propName+"."+idx);
+        return v == null ? props.getProperty(propName) : v;
     }
 
     private void send(PnRRequest pnrReq) throws MalformedURLException, MetadataConfigurationException {

@@ -76,6 +76,8 @@ public class DocumentEntry {
     
     private List<Author> authors = new ArrayList<Author>();
     
+    private String title, comments, legalAuthenticator;
+    
     public DocumentEntry(PnRRequest pnrReq, String uniqueID, byte[] content, String mime) {
         this.pnrRequest = pnrReq;
         doc = PnRRequest.iheFactory.createProvideAndRegisterDocumentSetRequestTypeDocument();
@@ -128,7 +130,7 @@ public class DocumentEntry {
         return confidentialityCodes;
     }
     
-    public void addEventCode(Code code) {
+    public void addEventCodeList(Code code) {
         eventCodeList.add(code);
     }
     public List<Code> getEventCodeList() {
@@ -221,6 +223,47 @@ public class DocumentEntry {
         this.serviceStopTime = serviceStopTime;
     }
 
+    //Optional Attributes
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
+
+    public String getLegalAuthenticator() {
+        return legalAuthenticator;
+    }
+
+    /**
+     * Represents a participant who has legally authenticated or attested the
+     * document within the authorInstitution. Legal authentication implies that
+     * a document has been signed manually or electronically by the legalAuthenticator.
+     * Format: XCN
+     * <ID number (ST)> ^ <family name (FN)> ^ <given name (ST)> ^ 
+     * <second and further given names or initials thereof (ST)> ^ 
+     * <suffix (e.g., JR or III) (ST)> ^ <prefix (e.g., DR) (ST)> ^ 
+     * <degree (e.g., MD) (IS)> ^ <source table (IS)> ^ 
+     * <assigning authority (HD)> ^ <name type code (ID)> ^ <identifier check digit (ST)> ^ 
+     * <code identifying the check digit scheme employed (ID)> ^ <identifier type code (IS)> ^ 
+     * <assigning facility (HD)> ^ <name representation code (ID)> ^ <name context (CE)> ^ 
+     * <name validity range (DR)> ^ <name assembly order (ID)>
+     * 
+     * @param legalAuthenticator
+     */
+    public void setLegalAuthenticator(String legalAuthenticator) {
+        this.legalAuthenticator = legalAuthenticator;
+    }
+
     public void buildMetadata(boolean check) throws MetadataConfigurationException {
         if (check)
             checkMetadata();
@@ -238,6 +281,14 @@ public class DocumentEntry {
 
         Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_START_TIME, null, Util.toTimeString(serviceStartTime));
         Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME, null, Util.toTimeString(serviceStopTime));
+        if (comments != null) {
+            Util.setDescription(metadata, comments);
+        }
+        if (legalAuthenticator != null)
+            Util.addSlot(metadata, XDSConstants.SLOT_NAME_LEGAL_AUTHENTICATOR, null, legalAuthenticator);
+        if (title != null) {
+            Util.setName(metadata, title);
+        }
 }
 
     public void checkMetadata() throws MetadataConfigurationException {

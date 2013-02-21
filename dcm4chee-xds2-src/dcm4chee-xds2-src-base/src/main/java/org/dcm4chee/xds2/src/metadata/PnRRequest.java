@@ -84,6 +84,7 @@ public class PnRRequest {
     private List<String> intendedRecipient;
 
     private List<DocumentEntry> documents = new ArrayList<DocumentEntry>();
+    private List<XDSFolder> folders = new ArrayList<XDSFolder>();
     private List<XDSAssociation> associations = new ArrayList<XDSAssociation>();
     
     private int docCounter = 1;
@@ -156,7 +157,23 @@ public class PnRRequest {
         documents.remove(doc);
         doc.removeFromRequest();
     }
+    public List<DocumentEntry> getDocumentEntries() {
+        return documents;
+    }
 
+    public XDSFolder addFolder(String folderUID) {
+        XDSFolder folder = new XDSFolder(this, folderUID);
+        folders.add(folder);
+        return folder;
+    }
+    public void removeFolder(XDSFolder folder) {
+        folders.remove(folder);
+        folder.removeFromRequest();
+    }
+    public List<XDSFolder> getFolders() {
+        return folders;
+    }
+    
     public XDSAssociation addAssociation(String src, String target, String type) {
         XDSAssociation assoc = new XDSAssociation(nextID(), src, target, type);
         associations.add(assoc);
@@ -224,6 +241,26 @@ public class PnRRequest {
         return intendedRecipient;
     }
 
+    /**
+     * Represents the organization(s) or person(s) for whom the
+     * Submission set is intended. If present, shall have one or more
+     * values. Each slot value shall include at least one of the
+     * organization, person, or telecommunications address fields
+     * described below. Example below shows two doctors from the
+     * same organization, another doctor without precision of the
+     * organization, another organization without the precision of the
+     * person, and just a telecommunications address. The receipt of this
+     * attribute in any transaction will not cause the request to be
+     * rejected but the attribute may be ignored.
+     * Format: XON/XCN
+     * e.g.: 
+     * 1) Some Hospital^^^^^^^^^1.2.3.4.5.6.7.8.9.1789.45|^Wel^Marcus^^^Dr^MD|^^Internet^mwel@healthcare.example.org
+     * 2) Some Hospital^^^^^^^^^1.2.3.4.5.6.7.8.9.1789.45|^Al^Peter^^^Dr^MD
+     * 3) |12345^John^Smith^^^Dr^MD
+     * 4) Main Hospital^^^^^^^^^1.2.3.4.5.6.7.8.9.1789.2364
+     * 
+     * @param recipient
+     */
     public void addIntendedRecipient(String recipient) {
         if (intendedRecipient == null)
             intendedRecipient = new ArrayList<String>();
@@ -248,6 +285,9 @@ public class PnRRequest {
         for (int i = 0, len = documents.size() ; i < len ; i++) {
             documents.get(i).buildMetadata(false);
         }
+        for (int i = 0, len = folders.size() ; i < len ; i++) {
+            folders.get(i).buildMetadata(false);
+        }
         List<JAXBElement<? extends IdentifiableType>> list = this.registryObjectList.getIdentifiable();
         for (int i = 0, len = associations.size() ; i < len ; i++) {
             Util.addAssociation(list, associations.get(i));
@@ -261,6 +301,13 @@ public class PnRRequest {
         for (int i = 0, len = documents.size() ; i < len ; i++) {
             try {
                 documents.get(i).checkMetadata();
+            } catch (MetadataConfigurationException x1) {
+                x.addSubError(x1);
+            }
+        }
+        for (int i = 0, len = folders.size() ; i < len ; i++) {
+            try {
+                folders.get(i).checkMetadata();
             } catch (MetadataConfigurationException x1) {
                 x.addSubError(x1);
             }
