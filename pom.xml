@@ -39,7 +39,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dcm4che</groupId>
   <artifactId>dcm4chee-xds2</artifactId>
@@ -54,7 +53,6 @@
     <querydsl.version>2.8.1</querydsl.version>
     <javaee6.with.tools.version>1.0.0.M1</javaee6.with.tools.version>
   </properties>
-
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>
     <module>dcm4chee-xds2-infoset</module>
@@ -70,34 +68,33 @@
     <module>dcm4chee-xds2-src</module>
     <module>dcm4chee-xds2-dist</module>
   </modules>
-   <dependencyManagement>
-      <dependencies>
-        <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
+  <dependencyManagement>
+    <dependencies>
+      <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
           of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
           of artifacts. We use this here so that we always get the correct versions 
           of artifacts. Here we use the jboss-javaee-6.0-with tools stack (you can read this as 
           the JBoss stack of the Java EE 6 APIs, with some extras tools for your project, such
           as Arquillian for testing) -->
-         <dependency>
-            <groupId>org.jboss.bom</groupId>
-            <artifactId>jboss-javaee-6.0-with-tools</artifactId>
-            <version>${javaee6.with.tools.version}</version>
-            <type>pom</type>
-            <scope>import</scope>
-         </dependency>
-      </dependencies>
-   </dependencyManagement>
-
+      <dependency>
+        <groupId>org.jboss.bom</groupId>
+        <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+        <version>${javaee6.with.tools.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <build>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.3.2</version>
-	  <configuration>
+        <configuration>
           <source>1.6</source>
           <target>1.6</target>
-	     <encoding>UTF-8</encoding>
+          <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
       <plugin>
@@ -106,6 +103,20 @@
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -152,11 +163,10 @@
     </pluginRepository>
   </pluginRepositories>
   <distributionManagement>
-     <repository>
-       <id>www.dcm4che.org</id>
-       <name>dcm4che Repository</name>
-       <url>scp://www.dcm4che.org:443/home/maven2</url>
-     </repository>
-   </distributionManagement>
+    <repository>
+      <id>www.dcm4che.org</id>
+      <name>dcm4che Repository</name>
+      <url>scp://www.dcm4che.org:443/home/maven2</url>
+    </repository>
+  </distributionManagement>
 </project>
-
