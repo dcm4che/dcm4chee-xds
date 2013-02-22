@@ -34,7 +34,11 @@ public class XDSInit {
         List<String> filenames = cl.getArgList();
         boolean defaultInit = filenames.isEmpty();
         if (defaultInit) {
-            filenames = Arrays.asList("initialize.xml", "ebXmlAssociationTypes.xml");
+            if (cl.hasOption("additional")) {
+                filenames = Arrays.asList("additional.xml");
+            } else {
+                filenames = Arrays.asList("initialize.xml", "ebXmlAssociationTypes.xml");
+            }
         }
         QName name = new QName("urn:ihe:iti:xds-b:2007", "XDSbRegistry");
         Service service = Service.create(url, name);
@@ -88,6 +92,7 @@ public class XDSInit {
         opts.addOption("h", "help", false, "Initialize XDS Registry by sending ebXML SubmitObjectRequests");//rb.getString("help"));
         opts.addOption("v", "version", false, "Version:");
         opts.addOption("wsdl", true, "WSDL URL of XDS Registry Service");
+        opts.addOption("additional", false, "Add additional ClassificationSchemes/ClassificationNode");
         CommandLineParser parser = new PosixParser();
         CommandLine cl = parser.parse(opts, args);
         if (cl.hasOption("h")) {

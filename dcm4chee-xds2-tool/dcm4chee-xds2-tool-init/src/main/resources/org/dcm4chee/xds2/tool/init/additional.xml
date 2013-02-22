@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- +++++++++++++++++++++++++++++++++++++++++++++++++++++++++  
+This submission initializes a ebXML Registry version 3.0 to act as an XDS Registry.
+    
+New entries added in Year 3 (2006-2007 season)
+    XDSDocumentEntry.authorDescription (authorPerson, authorInstitution, authorRole, authorSpeciality)
+    XDSSubmissionSet.authorDescription (authorPerson, authorInstitution, authorRole, authorSpeciality)
+    
+Two new entries added in Year 2 (2005-2006 season)
+	signs assocation
+	XDSSubmissionSet.patientId ClassificationScheme
+	
+October 9, 2008
+Updated names of author attributes (no change to UUIDs)
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<lcm:SubmitObjectsRequest 
+    xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
+    xmlns:lcm="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0"
+    xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0">
+
+    
+    <rim:RegistryObjectList>
+    
+  
+        <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ 
+        Additions to the ObjectType classification scheme. This adds:
+        XDS ++
+            +++ XDSDocumentEntry
+            +++ XDSSubmissionSet
+            +++ XDSFolder
+            +++ XDSDocumentEntryStub
+        
+        XDS becomes a child of ObjectType
+        ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+  
+        <rim:ClassificationNode 
+            id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3"
+            parent="urn:uuid:415715f1-fc0b-47c4-90e5-c180b7b82db6"
+            code="Association Documentation">
+            <rim:Name>
+                <rim:LocalizedString value = "Association Documentation"/>
+            </rim:Name>
+        </rim:ClassificationNode>
+        
+    </rim:RegistryObjectList>
+</lcm:SubmitObjectsRequest>
+
+

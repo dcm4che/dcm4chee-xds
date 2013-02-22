@@ -205,21 +205,33 @@ public class XDSPersistenceWrapper {
         cl.setNodeRepresentation(clType.getNodeRepresentation());
         log.debug("######clType.getClassificationScheme:{}",clType.getClassificationScheme());
         if (clType.getClassificationScheme() != null) {
-            cl.setClassificationScheme((ClassificationScheme)
-                getRegistryObject(clType.getClassificationScheme()));
-            if (cl.getClassificationScheme() == null) {
+            RegistryObject obj = getRegistryObject(clType.getClassificationScheme());
+            if (obj == null) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "Classification Scheme ("+clType.getClassificationScheme()+
                         ") missing! Classification id:"+clType.getId(), null);
+            } else if (obj instanceof ClassificationScheme) {
+                cl.setClassificationScheme((ClassificationScheme) obj);
+            } else {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "Referenced ClassificationScheme ("+clType.getClassificationScheme()+
+                        ") is not a ClassificationScheme! (objType:"+obj.getObjectType()+", class:"+obj.getClass().getSimpleName()+
+                        ") Classification id:"+clType.getId(), null);
             }
         } else if (clType.getClassificationNode() != null) {
-            cl.setClassificationNode((ClassificationNode)
-                getRegistryObject(clType.getClassificationNode()));
-            if (cl.getClassificationNode() == null) {
+            RegistryObject obj = getRegistryObject(clType.getClassificationNode());
+            if (obj == null) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "Classification Node ("+clType.getClassificationNode()+
                         ") missing! Classification id:"+clType.getId(), null);
-            }
+            } else if (obj instanceof ClassificationNode) {
+                cl.setClassificationNode((ClassificationNode) obj);
+            } else {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "Referenced ClassificationNode ("+clType.getClassificationScheme()+
+                        ") is not a ClassificationNode! (objType:"+obj.getObjectType()+", class:"+obj.getClass().getSimpleName()+
+                        ") Classification id:"+clType.getId(), null);
+            } 
         }else {
             log.error("#######Classification Node AND Scheme missing!!! classification id:"+clType.getId());
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
@@ -246,7 +258,7 @@ public class XDSPersistenceWrapper {
     public ClassificationNode toClassificationNode(ClassificationNodeType nodeType, Identifiable parent, List<Identifiable> objects) throws XDSException {
         ClassificationNode node = new ClassificationNode();
         toPersistenceObj(nodeType, node);
-        node.setParent(parent == null ? this.uuidMapping.get(nodeType.getParent()) : parent);
+        node.setParent(parent == null ? getRegistryObject(nodeType.getParent()) : parent);
         node.setCode(nodeType.getCode());
         node.setPath(nodeType.getPath());
         objects.add(node);
@@ -452,6 +464,8 @@ public class XDSPersistenceWrapper {
         return ro;
     }
     private RegistryObject getRegistryObject(String id) {
+        if (id == null)
+            return null;
         Identifiable ro = uuidMapping.get(id);
         if (ro == null) {
             ro = session.getRegistryObjectByUUID(id);

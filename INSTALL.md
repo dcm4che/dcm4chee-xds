@@ -493,7 +493,7 @@ Setup JBoss AS 7
 
         [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-ear-2.0.0-mysql.ear
 
-    Verify that DCM4CHEE Archive was deployed and started successfully, e.g.:
+    Verify that DCM4CHEE XDS was deployed and started successfully, e.g.:
 
 
 11. You may undeploy DCM4CHEE XDS at any time using JBoss AS 7 CLI, e.g.:
