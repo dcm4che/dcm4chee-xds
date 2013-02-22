@@ -117,6 +117,8 @@ import com.mysema.query.jpa.impl.JPAQuery;
 @HandlerChain(file="handlers.xml")
 public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBeanLocal {
 
+    private static final String UNKNOWN = "UNKNOWN";
+
     private ObjectFactory factory = new ObjectFactory();
 
     @Resource 
@@ -165,13 +167,13 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
         log.info("################# documentRegistryRegisterDocumentSetB finished! #############");
         XDSSubmissionSet subm = wrapper.getSubmissionSet();
+        String[] submUIDandPat;
         if (subm == null) {
-            subm = new XDSSubmissionSet();
-            String[] sa = this.getSubmissionUIDandPatID(req);
-            subm.setUniqueId(sa[0]);
-            subm.setPatient(new XADPatient(sa[1] != null ? sa[1] : "UNKNOWN^^^&1.2.3.4.5&ISO"));
+            submUIDandPat = this.getSubmissionUIDandPatID(req);
+        } else {
+            submUIDandPat = new String[]{subm.getUniqueId(),subm.getPatient().getXADPatientID()};
         }
-        XDSAudit.logRegistryImport(subm.getUniqueId(), subm.getPatient().getCXPatientID(), 
+        XDSAudit.logRegistryImport(submUIDandPat[0], submUIDandPat[1], 
                 new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
         return rsp;
@@ -354,7 +356,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     }
 
     private String[] getSubmissionUIDandPatID(SubmitObjectsRequest req) {
-        String[] result = new String[2];
+        String[] result = new String[]{UNKNOWN, UNKNOWN};
         List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
         IdentifiableType obj;
         whole: for (int i=0,len=objs.size() ; i < len ; i++) {
@@ -364,13 +366,15 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 if (list != null) {
                     for (ExternalIdentifierType eiType : list) {
                         if (XDSConstants.UUID_XDSSubmissionSet_patientId.equals(eiType.getIdentificationScheme())) {
-                            result[1] = eiType.getValue();
+                            if (eiType.getValue() != null)
+                                result[1] = eiType.getValue();
                         } else if (XDSConstants.UUID_XDSSubmissionSet_uniqueId.equals(eiType.getIdentificationScheme())) {
-                            result[0] = eiType.getValue();
+                            if (eiType.getValue() != null)
+                                result[0] = eiType.getValue();
                         } else {
                             continue;
                         }
-                        if (result[0] != null && result[1] != null)
+                        if (result[0] != UNKNOWN && result[1] != UNKNOWN)
                             break whole;
                     }
                 }
