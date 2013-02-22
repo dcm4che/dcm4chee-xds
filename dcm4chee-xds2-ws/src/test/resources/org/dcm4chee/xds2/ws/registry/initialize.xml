@@ -141,6 +141,14 @@ Updated names of author attributes (no change to UUIDs)
                         <rim:LocalizedString value = "XDSDocumentEntryStub"/>
                     </rim:Name>
                 </rim:ClassificationNode>
+
+                <rim:ClassificationNode 
+                    id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3"
+                    code="Association Documentation">
+                    <rim:Name>
+                        <rim:LocalizedString value = "Association Documentation"/>
+                    </rim:Name>
+                </rim:ClassificationNode>
         </rim:ClassificationNode>
          
         <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ 
