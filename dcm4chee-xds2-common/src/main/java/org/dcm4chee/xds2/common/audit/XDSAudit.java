@@ -588,7 +588,7 @@ public class XDSAudit {
 
     public static ParticipantObjectIdentification createPatient(String patID) {
         return AuditMessages.createParticipantObjectIdentification(
-                patID, ParticipantObjectIDTypeCode.PatientNumber, null,
+                patID, ParticipantObjectIDTypeCode.ITI_PatientNumber, null,
                 (byte[])null, AuditMessages.ParticipantObjectTypeCode.Person, 
                 AuditMessages.ParticipantObjectTypeCodeRole.Patient, null, null, null);
     }

@@ -320,6 +320,7 @@ public class PnRSnd {
         logger.addConnection(auditUDP);
         logger.setAuditSourceTypeCodes("4");
         logger.setAuditRecordRepositoryDevice(arrDevice);
+        logger.setIncludeBOM(false);
         XDSAudit.setAuditLogger(logger);
     }
     private Device createARRDevice(String name, Connection.Protocol protocol, String host, int port) {
