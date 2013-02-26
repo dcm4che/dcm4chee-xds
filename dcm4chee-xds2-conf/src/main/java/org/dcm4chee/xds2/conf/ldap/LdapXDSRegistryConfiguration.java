@@ -78,7 +78,7 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
         attrs.put(new BasicAttribute("objectclass", "xdsRegistry"));
         attrs.put(new BasicAttribute("cn", "XDSRegistry"));
         LdapUtils.storeNotNull(attrs, "xdsApplicationName", registry.getApplicationName());
-        LdapUtils.storeNotNull(attrs, "xdsAffinityDomain", registry.getAffinityDomain());
+        LdapUtils.storeNotEmpty(attrs, "xdsAffinityDomain", registry.getAffinityDomain());
         LdapUtils.storeNotEmpty(attrs, "xdsAcceptedMimeTypes", registry.getAcceptedMimeTypes());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         LdapUtils.storeNotDef(attrs, "xdsCreateMissingPIDs", registry.isCreateMissingPIDs(), false);
@@ -103,12 +103,14 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
 
     private void loadFrom(XdsRegistry registry, Attributes attrs) throws NamingException {
         registry.setApplicationName(LdapUtils.stringValue(attrs.get("xdsApplicationName"), null));
-        registry.setAffinityDomain(LdapUtils.stringValue(attrs.get("xdsAffinityDomain"), null));
+        registry.setAffinityDomain(LdapUtils.stringArray(attrs.get("xdsAffinityDomain")));
         registry.setAcceptedMimeTypes(LdapUtils.stringArray(attrs.get("xdsAcceptedMimeTypes")));
         registry.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
         registry.setCreateMissingPIDs(LdapUtils.booleanValue(attrs.get("xdsCreateMissingPIDs"), false));
         registry.setCreateMissingCodes(LdapUtils.booleanValue(attrs.get("xdsCreateMissingCodes"), false));
         registry.setDontSaveCodeClassifications(LdapUtils.booleanValue(attrs.get("xdsDontSaveCodeClassifications"), false));
+        registry.setCheckAffinityDomain(LdapUtils.booleanValue(attrs.get("xdsCheckAffinityDomain"), false));
+        registry.setPreMetadataCheck(LdapUtils.booleanValue(attrs.get("xdsPreMetadataCheck"), false));
     }
 
     @Override
@@ -153,6 +155,12 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
         LdapUtils.storeDiff(mods, "xdsDontSaveCodeClassifications",
                 prevRegistry.isCreateMissingCodes(),
                 registry.isCreateMissingCodes());
+        LdapUtils.storeDiff(mods, "xdsCheckAffinityDomain",
+                prevRegistry.isCheckAffinityDomain(),
+                registry.isCheckAffinityDomain());
+        LdapUtils.storeDiff(mods, "xdsPreMetadataCheck",
+                prevRegistry.isPreMetadataCheck(),
+                registry.isPreMetadataCheck());
         return mods;
     }
 }

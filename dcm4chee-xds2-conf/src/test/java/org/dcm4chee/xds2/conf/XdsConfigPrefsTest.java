@@ -50,9 +50,15 @@ import org.dcm4che.util.SafeClose;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
 import org.junit.Before;
+import org.junit.runner.RunWith;
 
+@RunWith(IgnoreableJUnitTestRunner.class)
 public class XdsConfigPrefsTest extends XdsConfigTestBase {
 
+    //Used by IgnoreableJUnitTestRunner to check if all tests of this class should be ignored
+    public static boolean ignoreTests() {
+        return System.getProperty("ldap") != null;
+    }
 
     @Before
     public void setUp() throws Exception {

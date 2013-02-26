@@ -55,6 +55,7 @@ import org.dcm4chee.xds2.conf.XdsRegistry;
 public class PreferencesXDSRegistryConfiguration
         extends PreferencesDicomConfigurationExtension {
 
+    private static final String FALSE = "FALSE";
     private static final String NODE_NAME = "xdsRegistry";
 
     @Override
@@ -67,7 +68,7 @@ public class PreferencesXDSRegistryConfiguration
 
     private void storeTo(XdsRegistry registry, Preferences prefs) {
         PreferencesUtils.storeNotNull(prefs, "xdsApplicationName", registry.getApplicationName());
-        PreferencesUtils.storeNotNull(prefs, "xdsAffinityDomain", registry.getAffinityDomain());
+        PreferencesUtils.storeNotEmpty(prefs, "xdsAffinityDomain", registry.getAffinityDomain());
         PreferencesUtils.storeNotEmpty(prefs, "xdsAcceptedMimeTypes", registry.getAcceptedMimeTypes());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingPIDs",registry.isCreateMissingPIDs(), false);
@@ -89,12 +90,14 @@ public class PreferencesXDSRegistryConfiguration
 
     private void loadFrom(XdsRegistry registry, Preferences prefs) {
         registry.setApplicationName(prefs.get("xdsApplicationName",null));
-        registry.setAffinityDomain(prefs.get("xdsAffinityDomain",null));
+        registry.setAffinityDomain(PreferencesUtils.stringArray(prefs, "xdsAffinityDomain"));
         registry.setAcceptedMimeTypes(PreferencesUtils.stringArray(prefs, "xdsAcceptedMimeTypes"));
         registry.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
-        registry.setCreateMissingPIDs(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingPIDs", "FALSE")));
-        registry.setCreateMissingCodes(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingCodes", "FALSE")));
-        registry.setDontSaveCodeClassifications(PreferencesUtils.booleanValue(prefs.get("xdsDontSaveCodeClassifications", "FALSE")));
+        registry.setCreateMissingPIDs(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingPIDs", FALSE)));
+        registry.setCreateMissingCodes(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingCodes", FALSE)));
+        registry.setDontSaveCodeClassifications(PreferencesUtils.booleanValue(prefs.get("xdsDontSaveCodeClassifications", FALSE)));
+        registry.setCheckAffinityDomain(PreferencesUtils.booleanValue(prefs.get("xdsCheckAffinityDomain", FALSE)));
+        registry.setPreMetadataCheck(PreferencesUtils.booleanValue(prefs.get("xdsPreMetadataCheck", FALSE)));
     }
 
     @Override
@@ -107,13 +110,13 @@ public class PreferencesXDSRegistryConfiguration
         if (registry == null && prevRegistry == null)
             return;
         
-        Preferences arrNode = deviceNode.node(NODE_NAME);
+        Preferences xdsNode = deviceNode.node(NODE_NAME);
         if (registry == null)
-            arrNode.removeNode();
+            xdsNode.removeNode();
         else if (prevRegistry == null)
-            storeTo(registry, arrNode);
+            storeTo(registry, xdsNode);
         else
-            storeDiffs(arrNode, prevRegistry, registry);
+            storeDiffs(xdsNode, prevRegistry, registry);
     }
 
     private void storeDiffs(Preferences prefs, XdsRegistry prevRegistry, XdsRegistry registry) {
@@ -138,5 +141,11 @@ public class PreferencesXDSRegistryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsDontSaveCodeClassifications",
                 prevRegistry.isCreateMissingCodes(),
                 registry.isCreateMissingCodes());
+        PreferencesUtils.storeDiff(prefs, "xdsCheckAffinityDomain",
+                prevRegistry.isCheckAffinityDomain(),
+                registry.isCheckAffinityDomain());
+        PreferencesUtils.storeDiff(prefs, "xdsPreMetadataCheck",
+                prevRegistry.isPreMetadataCheck(),
+                registry.isPreMetadataCheck());
     }
 }

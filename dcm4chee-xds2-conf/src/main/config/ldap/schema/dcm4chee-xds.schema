@@ -46,14 +46,26 @@ attributetype ( 1.2.40.0.13.1.15.20.3.7 NAME 'xdsDontSaveCodeClassifications'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsRepositoryUID'
+attributetype ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsCheckAffinityDomain'
+  DESC 'Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsPreMetadataCheck'
+  DESC 'Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.20 NAME 'xdsRepositoryUID'
   DESC 'Log directory where request and response SOAP messages are stored'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsRegistryURL'
+attributetype ( 1.2.40.0.13.1.15.20.3.21 NAME 'xdsRegistryURL'
   DESC 'Accepted MIME types in the affinity domain'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
@@ -71,7 +83,9 @@ objectclass ( 1.2.40.0.13.1.15.20.4.1
     xdsSoapMsgLogDir $
     xdsCreateMissingPIDs $
     xdsCreateMissingCodes $
-    xdsDontSaveCodeClassifications ) )
+    xdsDontSaveCodeClassifications $
+    xdsCheckAffinityDomain $
+    xdsPreMetadataCheck ) )
 
 objectclass ( 1.2.40.0.13.1.15.20.4.2
   NAME 'xdsRepository'

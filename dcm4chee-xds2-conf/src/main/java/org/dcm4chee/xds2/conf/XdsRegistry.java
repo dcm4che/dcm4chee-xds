@@ -48,13 +48,15 @@ public class XdsRegistry extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
     private String applicationName;
-    private String affinityDomain;
+    private String[] affinityDomain;
     private String[] mimeTypes;
     private String soapLogDir;
     
     private boolean createMissingPIDs;
     private boolean createMissingCodes;
     private boolean dontSaveCodeClassifications;
+    private boolean checkAffinityDomain;
+    private boolean preMetadtaCheck;
 
     public String getApplicationName() {
         return applicationName;
@@ -63,12 +65,21 @@ public class XdsRegistry extends DeviceExtension {
         this.applicationName = applicationName;
     }
 
-    public String getAffinityDomain() {
+    public String[] getAffinityDomain() {
         return affinityDomain;
     }
 
-    public void setAffinityDomain(String affinityDomain) {
-        this.affinityDomain = affinityDomain;
+    public void setAffinityDomain(String[] ads) {
+        this.affinityDomain = ads;
+        if (ads != null) {
+            String ad;
+            for (int i = 0 ; i < ads.length ; i++) {
+                ad = ads[i];
+                if (ad.endsWith("&ISO")) {
+                    affinityDomain[i] = ad.substring(0, ad.length()-4);
+                }
+            }
+        }
     }
 
     public String[] getAcceptedMimeTypes() {
@@ -110,6 +121,20 @@ public class XdsRegistry extends DeviceExtension {
     public void setDontSaveCodeClassifications(boolean dontSaveCodeClassifications) {
         this.dontSaveCodeClassifications = dontSaveCodeClassifications;
     }
+
+    public boolean isCheckAffinityDomain() {
+        return checkAffinityDomain;
+    }
+    public void setCheckAffinityDomain(boolean checkAffinityDomain) {
+        this.checkAffinityDomain = checkAffinityDomain;
+    }
+    public boolean isPreMetadataCheck() {
+        return preMetadtaCheck;
+    }
+    public void setPreMetadataCheck(boolean b) {
+        preMetadtaCheck = b;
+    }
+
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRegistry src = (XdsRegistry) from;

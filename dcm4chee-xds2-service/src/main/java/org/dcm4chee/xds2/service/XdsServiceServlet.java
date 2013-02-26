@@ -306,7 +306,7 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("not configured");
         } else {
             sb.append(APPLICATION_NAME).append(xdsApp.getApplicationName());
-            append(sb, xdsApp.getAffinityDomain(), "\n  Affinity domain:", null);
+            sb.append("\n  Affinity domain(s):").append(StringUtils.concat(xdsApp.getAffinityDomain(), ','));
             if (xdsApp.getAcceptedMimeTypes() != null)
                 sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
             append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);

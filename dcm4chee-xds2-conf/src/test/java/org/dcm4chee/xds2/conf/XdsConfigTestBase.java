@@ -88,7 +88,8 @@ public class XdsConfigTestBase {
         new Code("111.1111", "99DCM4CHEE", null, "Site A");
     private static final String[] MIME_TYPES1 = new String[]{"application/dicom"};
     private static final String[] MIME_TYPES2 = new String[]{"text/xml","application/dicom"};
-    private String AFFINITY_DOMAIN = "1.2.3.4.5&ISO";
+    private String[] AFFINITY_DOMAIN = {"1.2.3.4.5"};
+    private static final String[] AFFINITY_DOMAIN2 = {"5.4.3.2.1"};
 
     protected static int testCount = 0;
     protected DicomConfiguration config;
@@ -144,9 +145,10 @@ public class XdsConfigTestBase {
         afterPersist();
         checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, hl7Apps);
         XdsRegistry xdsApp = device.getDeviceExtension(XdsRegistry.class);
-        xdsApp.setAffinityDomain("5.4.3.2.1&ISO");
+        xdsApp.setAffinityDomain(AFFINITY_DOMAIN2);
         xdsApp.setSoapLogDir("/log/xdslog/mod");
         xdsApp.setCreateMissingPIDs(false);
+        xdsApp.setAcceptedMimeTypes(MIME_TYPES2);
         for (Connection c : hl7App.getConnections()) {
             c.setPort(c.getPort()+10000);
             c.setHostname("changed");
@@ -155,7 +157,7 @@ public class XdsConfigTestBase {
         hl7Apps.add(hl7App2);
         hl7Ext.addHL7Application(hl7App2);
         config.merge(device);
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, "5.4.3.2.1&ISO", MIME_TYPES1, "/log/xdslog/mod", false, true, hl7Apps);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN2, MIME_TYPES2, "/log/xdslog/mod", false, true, hl7Apps);
     }
 
     @Test
@@ -190,7 +192,7 @@ public class XdsConfigTestBase {
 
 
     private Device createXdsRegistryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode) throws Exception {
+            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode) throws Exception {
          Device device = new Device(name);
          init(device, issuer, institutionCode);
          XdsRegistry registry = new XdsRegistry();
@@ -245,10 +247,10 @@ public class XdsConfigTestBase {
     }
 /*_*/    
     private void checkXdsRegistryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode, Collection<HL7Application> hl7Apps) throws Exception {
+            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode, Collection<HL7Application> hl7Apps) throws Exception {
         Device device = config.findDevice(name);
         XdsRegistry app = device.getDeviceExtension(XdsRegistry.class);
-        assertEquals(name+"-"+appName+"-AffinityDomain", affinityDomain, app.getAffinityDomain());
+        assertArrayEquals(name+"-"+appName+"-AffinityDomain: count:", affinityDomain, app.getAffinityDomain());
         assertEquals(name+"-"+appName+"-ApplicationName", appName, app.getApplicationName());
         assertEquals(name+"-"+appName+"-SoapLogDir", logDir, app.getSoapLogDir());
         assertArrayEquals(name+"-"+appName+"-MimeTypes", mime, app.getAcceptedMimeTypes());
