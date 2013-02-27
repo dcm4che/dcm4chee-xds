@@ -56,6 +56,7 @@ public class XdsRepository extends DeviceExtension {
     private String soapLogDir;
     private String[] mimeTypes;
     private String[] logFullMessageHosts;
+    private boolean checkMimetype;
 
     public String getApplicationName() {
         return applicationName;
@@ -116,6 +117,12 @@ public class XdsRepository extends DeviceExtension {
         this.mimeTypes = mimeTypes;
     }
 
+    public boolean isCheckMimetype() {
+        return checkMimetype;
+    }
+    public void setCheckMimetype(boolean checkMimetype) {
+        this.checkMimetype = checkMimetype;
+    }
     public String[] getLogFullMessageHosts() {
         return logFullMessageHosts;
     }
@@ -130,5 +137,7 @@ public class XdsRepository extends DeviceExtension {
         setRegistryURLs(src.getRegistryURLs());
         setAcceptedMimeTypes(src.getAcceptedMimeTypes());
         setSoapLogDir(src.getSoapLogDir());
+        setCheckMimetype(src.isCheckMimetype());
+        setLogFullMessageHosts(src.getLogFullMessageHosts());
     }
 }

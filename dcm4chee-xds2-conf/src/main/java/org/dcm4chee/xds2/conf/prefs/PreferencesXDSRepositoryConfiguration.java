@@ -42,11 +42,9 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 import org.dcm4che.conf.api.ConfigurationException;
-import org.dcm4che.conf.ldap.LdapUtils;
 import org.dcm4che.conf.prefs.PreferencesDicomConfigurationExtension;
 import org.dcm4che.conf.prefs.PreferencesUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 
 /**
@@ -73,6 +71,7 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeNotEmpty(prefs, "xdsRegistryURL", repository.getRegistryURLs());
         PreferencesUtils.storeNotEmpty(prefs, "xdsAcceptedMimeTypes", repository.getAcceptedMimeTypes());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
+        PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", repository.isCheckMimetype(), false);
         PreferencesUtils.storeNotEmpty(prefs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
     }
 
@@ -94,6 +93,7 @@ public class PreferencesXDSRepositoryConfiguration
         repository.setRegistryURLs(PreferencesUtils.stringArray(prefs, "xdsRegistryURL"));
         repository.setAcceptedMimeTypes(PreferencesUtils.stringArray(prefs, "xdsAcceptedMimeTypes"));
         repository.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
+        repository.setCheckMimetype(PreferencesUtils.booleanValue(prefs.get("xdsCheckMimetype", "false")));
         repository.setLogFullMessageHosts(PreferencesUtils.stringArray(prefs, "xdsLogFullMessageHosts"));
     }
 
@@ -129,6 +129,9 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsAcceptedMimeTypes",
                 prevRepository.getAcceptedMimeTypes(),
                 repository.getAcceptedMimeTypes());
+        PreferencesUtils.storeDiff(prefs, "xdsCheckMimetype",
+                prevRepository.isCheckMimetype(),
+                repository.isCheckMimetype());
         PreferencesUtils.storeDiff(prefs, "xdsSoapMsgLogDir",
                 prevRepository.getSoapLogDir(),
                 repository.getSoapLogDir());

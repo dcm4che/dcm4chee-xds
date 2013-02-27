@@ -68,7 +68,9 @@ public class XdsConfigTestBase {
     
     private static final String XDS_REPOSITORY1 = "XDS_REPOSITORY1";
     private static final String XDS_REPO1_UID = "1.2.3.4";
+    private static final String XDS_REPO2_UID = "4.3.2.1";
     private static final String[] XDS_REPO1_URI = {"0|http:/xds/repo1"};
+    private static final String[] XDS_REPO2_URI = {"0|http:/xds/repo2"};
     
     private static final String HL7_APP_NAME1 = "XDS^DCM4CHEE";
     private static final String HL7_APP_NAME2 = "XDS2^DCM4CHEE";
@@ -105,14 +107,14 @@ public class XdsConfigTestBase {
     public void testSimple() throws Exception {
         config.persist(createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false));
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false, null);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false, true, null);
         
     }
     @Test
     public void testWithOptional() throws Exception {
         config.persist(createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true));
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true, null);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true, true, null);
     }
     @Test
     public void testWithHL7() throws Exception {
@@ -125,7 +127,7 @@ public class XdsConfigTestBase {
         hl7Ext.addHL7Application(hl7App);
         config.persist(device);
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true, hl7Apps);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true, true, hl7Apps);
     }
     
     protected HL7Application findHL7Application(String hl7AppName1) throws ConfigurationException {
@@ -143,12 +145,14 @@ public class XdsConfigTestBase {
         hl7Ext.addHL7Application(hl7App);
         config.persist(device);
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, hl7Apps);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, true, hl7Apps);
         XdsRegistry xdsApp = device.getDeviceExtension(XdsRegistry.class);
         xdsApp.setAffinityDomain(AFFINITY_DOMAIN2);
         xdsApp.setSoapLogDir("/log/xdslog/mod");
         xdsApp.setCreateMissingPIDs(false);
         xdsApp.setAcceptedMimeTypes(MIME_TYPES2);
+        xdsApp.setCheckAffinityDomain(false);
+        xdsApp.setCheckMimetype(false);
         for (Connection c : hl7App.getConnections()) {
             c.setPort(c.getPort()+10000);
             c.setHostname("changed");
@@ -157,15 +161,22 @@ public class XdsConfigTestBase {
         hl7Apps.add(hl7App2);
         hl7Ext.addHL7Application(hl7App2);
         config.merge(device);
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN2, MIME_TYPES2, "/log/xdslog/mod", false, true, hl7Apps);
+        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN2, MIME_TYPES2, "/log/xdslog/mod", false, true, false, hl7Apps);
     }
 
     @Test
     public void testRepository() throws Exception {
-        config.persist(createXdsRepositoryDevice("xds"+testCount, SITE_A, INST_A, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null));
+        Device app = createXdsRepositoryDevice("xds"+testCount, SITE_A, INST_A, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null);
+        config.persist(app);
         afterPersist();
-        checkXdsRepositoryDevice("xds"+testCount, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null);
-        
+        checkXdsRepositoryDevice("xds"+testCount, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null, true);
+        XdsRepository rep = app.getDeviceExtension(XdsRepository.class);
+        rep.setAcceptedMimeTypes(MIME_TYPES2);
+        rep.setCheckMimetype(false);
+        rep.setRepositoryUID(XDS_REPO2_UID);
+        rep.setRegistryURLs(XDS_REPO2_URI);
+        config.merge(app);
+        checkXdsRepositoryDevice("xds"+testCount, XDS_REPOSITORY1, XDS_REPO2_UID, XDS_REPO2_URI, MIME_TYPES2, null, false);
     }
     
     protected void cleanUp() throws Exception {
@@ -203,6 +214,8 @@ public class XdsConfigTestBase {
          registry.setSoapLogDir(logDir);
          registry.setCreateMissingPIDs(createPID);
          registry.setCreateMissingCodes(createCode);
+         registry.setCheckAffinityDomain(true);
+         registry.setCheckMimetype(true);
          return device;
      }
 
@@ -217,6 +230,8 @@ public class XdsConfigTestBase {
          rep.setRegistryURLs(registryURLs);
          rep.setAcceptedMimeTypes(mime);
          rep.setSoapLogDir(logDir);
+         rep.setCheckMimetype(true);
+         rep.setLogFullMessageHosts(new String[]{});
          return device;
      }
     
@@ -247,32 +262,35 @@ public class XdsConfigTestBase {
     }
 /*_*/    
     private void checkXdsRegistryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode, Collection<HL7Application> hl7Apps) throws Exception {
+            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode, boolean check, Collection<HL7Application> hl7Apps) throws Exception {
         Device device = config.findDevice(name);
         XdsRegistry app = device.getDeviceExtension(XdsRegistry.class);
-        assertArrayEquals(name+"-"+appName+"-AffinityDomain: count:", affinityDomain, app.getAffinityDomain());
-        assertEquals(name+"-"+appName+"-ApplicationName", appName, app.getApplicationName());
-        assertEquals(name+"-"+appName+"-SoapLogDir", logDir, app.getSoapLogDir());
-        assertArrayEquals(name+"-"+appName+"-MimeTypes", mime, app.getAcceptedMimeTypes());
-        assertEquals(name+"-"+appName+"-createCode", createCode, app.isCreateMissingCodes());
-        assertEquals(name+"-"+appName+"-createPIDs", createPID, app.isCreateMissingPIDs());
+        String prefix = name+"-"+appName;
+        assertArrayEquals(prefix + "-AffinityDomain: count:", affinityDomain, app.getAffinityDomain());
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+        assertArrayEquals(prefix + "-MimeTypes", mime, app.getAcceptedMimeTypes());
+        assertEquals(prefix + "-createCode", createCode, app.isCreateMissingCodes());
+        assertEquals(prefix + "-createPIDs", createPID, app.isCreateMissingPIDs());
+        assertEquals(prefix + "-checkAffinityDomain", check, app.isCheckAffinityDomain());
+        assertEquals(prefix + "-checkMimetype", check, app.isCheckMimetype());
         HL7DeviceExtension foundHL7ext = device.getDeviceExtension(HL7DeviceExtension.class);
-        assertEquals(name+"-"+appName+"-NumberOfHL7Apps", 
+        assertEquals(prefix + "-NumberOfHL7Apps", 
                 hl7Apps == null ? 0 : hl7Apps.size(), 
                 foundHL7ext == null ? 0 : foundHL7ext.getHL7Applications().size());
         if (hl7Apps != null) {
             HL7Application hl7app1;
             for (HL7Application hl7app : hl7Apps) {
                 hl7app1 = foundHL7ext.getHL7Application(hl7app.getApplicationName());
-                assertNotNull(name+"-"+appName+"-HL7Applicationname "+hl7app.getApplicationName()+" not found!", hl7app1);
-                assertArrayEquals(name+"-"+appName+"-AcceptedMessageTypes", hl7app.getAcceptedMessageTypes(),hl7app1.getAcceptedMessageTypes());
-                assertArrayEquals(name+"-"+appName+"-AcceptedSendingApplications", hl7app.getAcceptedSendingApplications(),hl7app1.getAcceptedSendingApplications());
-                assertEquals(name+"-"+appName+"-HL7DefaultCharacterSet", hl7app.getHL7DefaultCharacterSet(),hl7app1.getHL7DefaultCharacterSet());
+                assertNotNull(prefix + "-HL7Applicationname " + hl7app.getApplicationName() + " not found!", hl7app1);
+                assertArrayEquals(prefix + "-AcceptedMessageTypes", hl7app.getAcceptedMessageTypes(),hl7app1.getAcceptedMessageTypes());
+                assertArrayEquals(prefix + "-AcceptedSendingApplications", hl7app.getAcceptedSendingApplications(),hl7app1.getAcceptedSendingApplications());
+                assertEquals(prefix + "-HL7DefaultCharacterSet", hl7app.getHL7DefaultCharacterSet(),hl7app1.getHL7DefaultCharacterSet());
                 List<Connection> conns = hl7app.getConnections();
-                assertNotNull(name+"-"+appName+"-Missing connections (original)", conns);
+                assertNotNull(prefix + "-Missing connections (original)", conns);
                 List<Connection> conns1 = hl7app1.getConnections();
-                assertNotNull(name+"-"+appName+"-Missing connections (stored)", conns1);
-                assertEquals(name+"-"+appName+"-Number of connections", conns.size(), conns1.size());
+                assertNotNull(prefix + "-Missing connections (stored)", conns1);
+                assertEquals(prefix + "-Number of connections", conns.size(), conns1.size());
                 loop: for (Connection con : conns) {
                     for (Connection con1 : conns1) {
                       if (con.getPort() == con1.getPort() &&
@@ -280,7 +298,7 @@ public class XdsConfigTestBase {
                           isEqual(con.getHttpProxy(), con1.getHttpProxy()))
                           continue loop;
                     }
-                    fail(name+"-"+appName+"-No Identical Connection found:"+con+"\nstored connections:"+conns1);
+                    fail(prefix + "-No Identical Connection found:" + con + "\nstored connections:" + conns1);
                 }
             }
         }
@@ -288,14 +306,16 @@ public class XdsConfigTestBase {
     }
 
     private void checkXdsRepositoryDevice(String name, String appName, 
-            String repUID, String[] urls, String[] mime, String logDir) throws Exception {
+            String repUID, String[] urls, String[] mime, String logDir, boolean check) throws Exception {
         Device device = config.findDevice(name);
         XdsRepository app = device.getDeviceExtension(XdsRepository.class);
-        assertEquals(name+"-"+appName+"-ApplicationName", appName, app.getApplicationName());
-        assertEquals(name+"-"+appName+"-repositoryUID", repUID, app.getRepositoryUID());
-        assertArrayEquals(name+"-"+appName+"-MimeTypes", urls, app.getRegistryURLs());
-        assertEquals(name+"-"+appName+"-SoapLogDir", logDir, app.getSoapLogDir());
-        assertArrayEquals(name+"-"+appName+"-MimeTypes", mime, app.getAcceptedMimeTypes());
+        String prefix = name+"-"+appName;
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-repositoryUID", repUID, app.getRepositoryUID());
+        assertArrayEquals(prefix + "-RegistryURLs", urls, app.getRegistryURLs());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+        assertArrayEquals(prefix + "-MimeTypes", mime, app.getAcceptedMimeTypes());
+        assertEquals(prefix + "-checkMimetype", check, app.isCheckMimetype());
     }
     
     private boolean isEqual(Object o1, Object o2) {

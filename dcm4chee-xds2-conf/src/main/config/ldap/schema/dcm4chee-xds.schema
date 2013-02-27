@@ -52,7 +52,13 @@ attributetype ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsCheckAffinityDomain'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsPreMetadataCheck'
+attributetype ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsCheckMimetype'
+  DESC 'Enable check mimetype'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.10 NAME 'xdsPreMetadataCheck'
   DESC 'Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
@@ -91,6 +97,7 @@ objectclass ( 1.2.40.0.13.1.15.20.4.1
     xdsCreateMissingCodes $
     xdsDontSaveCodeClassifications $
     xdsCheckAffinityDomain $
+    xdsCheckMimetype $
     xdsPreMetadataCheck ) )
 
 objectclass ( 1.2.40.0.13.1.15.20.4.2
@@ -103,6 +110,7 @@ objectclass ( 1.2.40.0.13.1.15.20.4.2
     xdsRepositoryUID )
   MAY (
   	xdsAcceptedMimeTypes $
+  	xdsCheckMimetype $
     xdsSoapMsgLogDir $
     xdsLogFullMessageHosts ) )
     

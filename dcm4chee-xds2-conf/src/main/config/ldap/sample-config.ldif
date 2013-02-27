@@ -15,6 +15,8 @@ xdsAcceptedMimeTypes: application/pdf
 xdsAcceptedMimeTypes: application/xml
 xdsAcceptedMimeTypes: application/dicom
 xdsAcceptedMimeTypes: text/xml
+xdsCheckAffinityDomain: true
+xdsCheckMimetype: true
 xdsSoapMsgLogDir: /var/log/xdslog
 
 dn: cn=XDSRepository,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
@@ -26,6 +28,8 @@ xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
 xdsAcceptedMimeTypes: application/xml
 xdsAcceptedMimeTypes: application/dicom
 xdsAcceptedMimeTypes: text/xml
+xdsCheckAffinityDomain: false
+xdsCheckMimetype: false
 xdsSoapMsgLogDir: /var/log/xdslog
 
 dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com

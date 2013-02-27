@@ -309,6 +309,8 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("\n  Affinity domain(s):").append(StringUtils.concat(xdsApp.getAffinityDomain(), ','));
             if (xdsApp.getAcceptedMimeTypes() != null)
                 sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
+            append(sb, xdsApp.isCheckAffinityDomain(), "\n  checkAffinityDomain:", null);
+            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
             append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
             sb.append("\n  CreateMissingCodes:").append(xdsApp.isCreateMissingCodes());
             sb.append("\n  CreateMissingPIDs:").append(xdsApp.isCreateMissingPIDs());
@@ -325,6 +327,7 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("\n  ").append(urls[i]);
         if (xdsApp.getAcceptedMimeTypes() != null)
             sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
+        append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
         append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
         sb.append("\n  Hostnames/IPs for full SOAP message logging:");
         if (xdsApp.getLogFullMessageHosts() != null)

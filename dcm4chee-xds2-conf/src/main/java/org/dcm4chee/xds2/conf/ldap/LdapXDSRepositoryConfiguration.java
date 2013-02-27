@@ -52,7 +52,6 @@ import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.ldap.LdapDicomConfigurationExtension;
 import org.dcm4che.conf.ldap.LdapUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 
 /**
@@ -82,6 +81,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeNotEmpty(attrs, "xdsRegistryURL", repository.getRegistryURLs());
         LdapUtils.storeNotEmpty(attrs, "xdsAcceptedMimeTypes", repository.getAcceptedMimeTypes());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
+        LdapUtils.storeNotNull(attrs, "xdsCheckMimetype", repository.isCheckMimetype());
         LdapUtils.storeNotEmpty(attrs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
         return attrs;
     }
@@ -106,6 +106,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         repository.setRegistryURLs(LdapUtils.stringArray(attrs.get("xdsRegistryURL")));
         repository.setAcceptedMimeTypes(LdapUtils.stringArray(attrs.get("xdsAcceptedMimeTypes")));
         repository.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
+        repository.setCheckMimetype(LdapUtils.booleanValue(attrs.get("xdsCheckMimetype"), false));
         repository.setLogFullMessageHosts(LdapUtils.stringArray(attrs.get("xdsLogFullMessageHosts")));
     }
 
@@ -142,6 +143,9 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeDiff(mods, "xdsAcceptedMimeTypes",
                 prevRepository.getAcceptedMimeTypes(),
                 repository.getAcceptedMimeTypes());
+        LdapUtils.storeDiff(mods, "xdsCheckMimetype",
+                prevRepository.isCheckMimetype(),
+                repository.isCheckMimetype());
         LdapUtils.storeDiff(mods, "xdsSoapMsgLogDir",
                 prevRepository.getSoapLogDir(),
                 repository.getSoapLogDir());

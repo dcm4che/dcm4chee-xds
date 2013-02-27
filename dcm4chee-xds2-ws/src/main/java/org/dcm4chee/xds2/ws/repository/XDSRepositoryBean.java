@@ -244,6 +244,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         String docUID;
         XDSDocument xdsDoc;
         String[] storedUIDs = new String[extrObjs.size()];
+        String[] mimetypes = getConfig().isCheckMimetype() ? cfg.getAcceptedMimeTypes() : null;
         for (int i = 0, len = extrObjs.size() ; i < len ; i++ ) {
             eo = extrObjs.get(i);
             doc = docs.get(eo.getId());
@@ -251,6 +252,17 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             log.info("####### Document id:"+doc.getId());
             log.info("####### Document uuid:"+docUID);
             log.info("####### Document mime:"+eo.getMimeType());
+            if (mimetypes != null) {
+                boolean unsupportedMimetype = true;
+                for (int j = 0 ; j < mimetypes.length ; j++) {
+                    if (mimetypes[j].equals(eo.getMimeType())) {
+                        unsupportedMimetype = false;
+                        break;
+                    }
+                    if (unsupportedMimetype)
+                        throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Mimetype not supported:"+eo.getMimeType(), null);
+                }
+            }
             storedUIDs[i] = docUID;
             try {
                 xdsDoc = (XDSDocument) ManagementFactory.getPlatformMBeanServer().invoke(new ObjectName("dcm4chee.xds2:service=Store"),

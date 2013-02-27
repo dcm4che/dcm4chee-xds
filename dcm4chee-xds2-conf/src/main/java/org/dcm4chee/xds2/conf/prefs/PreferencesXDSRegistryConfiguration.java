@@ -73,6 +73,8 @@ public class PreferencesXDSRegistryConfiguration
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingPIDs",registry.isCreateMissingPIDs(), false);
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingCodes", registry.isCreateMissingPIDs(), false);
+        PreferencesUtils.storeNotDef(prefs, "xdsCheckAffinityDomain", registry.isCheckAffinityDomain(), false);
+        PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", registry.isCheckMimetype(), false);
         PreferencesUtils.storeNotDef(prefs, "xdsDontSaveCodeClassifications", registry.isDontSaveCodeClassifications(), false);
     }
 
@@ -96,7 +98,8 @@ public class PreferencesXDSRegistryConfiguration
         registry.setCreateMissingPIDs(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingPIDs", FALSE)));
         registry.setCreateMissingCodes(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingCodes", FALSE)));
         registry.setDontSaveCodeClassifications(PreferencesUtils.booleanValue(prefs.get("xdsDontSaveCodeClassifications", FALSE)));
-        registry.setCheckAffinityDomain(PreferencesUtils.booleanValue(prefs.get("xdsCheckAffinityDomain", FALSE)));
+        registry.setCheckAffinityDomain(PreferencesUtils.booleanValue(prefs.get("xdsCheckAffinityDomain", "true")));
+        registry.setCheckMimetype(PreferencesUtils.booleanValue(prefs.get("xdsCheckMimetype", "true")));
         registry.setPreMetadataCheck(PreferencesUtils.booleanValue(prefs.get("xdsPreMetadataCheck", FALSE)));
     }
 
@@ -144,6 +147,9 @@ public class PreferencesXDSRegistryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsCheckAffinityDomain",
                 prevRegistry.isCheckAffinityDomain(),
                 registry.isCheckAffinityDomain());
+        PreferencesUtils.storeDiff(prefs, "xdsCheckMimetype",
+                prevRegistry.isCheckMimetype(),
+                registry.isCheckMimetype());
         PreferencesUtils.storeDiff(prefs, "xdsPreMetadataCheck",
                 prevRegistry.isPreMetadataCheck(),
                 registry.isPreMetadataCheck());

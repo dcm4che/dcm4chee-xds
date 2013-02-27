@@ -186,7 +186,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
     private void preMetadataCheck(SubmitObjectsRequest req) throws XDSException {
         XdsRegistry cfg = XdsDevice.getXdsRegistry();
-        if (cfg.isPreMetadataCheck() || cfg.getAcceptedMimeTypes() != null) {
+        if (cfg.isPreMetadataCheck() || cfg.isCheckMimetype()) {
             List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
             IdentifiableType obj;
             List<ExternalIdentifierType> list;

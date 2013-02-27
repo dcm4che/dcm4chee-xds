@@ -56,6 +56,7 @@ public class XdsRegistry extends DeviceExtension {
     private boolean createMissingCodes;
     private boolean dontSaveCodeClassifications;
     private boolean checkAffinityDomain;
+    private boolean checkMimetype;
     private boolean preMetadtaCheck;
 
     public String getApplicationName() {
@@ -128,6 +129,12 @@ public class XdsRegistry extends DeviceExtension {
     public void setCheckAffinityDomain(boolean checkAffinityDomain) {
         this.checkAffinityDomain = checkAffinityDomain;
     }
+    public boolean isCheckMimetype() {
+        return checkMimetype;
+    }
+    public void setCheckMimetype(boolean checkMimetype) {
+        this.checkMimetype = checkMimetype;
+    }
     public boolean isPreMetadataCheck() {
         return preMetadtaCheck;
     }
@@ -145,5 +152,8 @@ public class XdsRegistry extends DeviceExtension {
         setDontSaveCodeClassifications(src.isDontSaveCodeClassifications());
         setAcceptedMimeTypes(src.getAcceptedMimeTypes());
         setSoapLogDir(src.getSoapLogDir());
+        setCheckAffinityDomain(src.isCheckAffinityDomain());
+        setCheckMimetype(src.isCheckMimetype());
+        setPreMetadataCheck(src.isPreMetadataCheck());
     }
 }
