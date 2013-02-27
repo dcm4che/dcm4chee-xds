@@ -77,6 +77,7 @@ import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryErrorList;
+import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
@@ -121,7 +122,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         String[] storedUIDs = null;
         URL registryURL = null;
         try {
-            registryURL = getRegistryWsdlUrl();
+            registryURL = getRegistryWsdlUrl(getSourceID(req));
             logRequest(req);
             List<ExtrinsicObjectType> extrObjs = checkRequest(req);
             storedUIDs = storeDocuments(req, extrObjs);
@@ -146,6 +147,18 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         XDSAudit.logRepositoryImport(submUIDAndpatid[0], submUIDAndpatid[1], info, 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
         return rsp;
+    }
+
+    private String getSourceID(ProvideAndRegisterDocumentSetRequestType req) {
+        List<JAXBElement<? extends IdentifiableType>> objs = req.getSubmitObjectsRequest().getRegistryObjectList().getIdentifiable();
+        IdentifiableType obj;
+        for (int i = 0, len = objs.size() ; i < len ; i++) {
+            obj = objs.get(i).getValue();
+            if (obj instanceof RegistryPackageType) {
+                return InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSSubmissionSet_sourceId, (RegistryPackageType)obj);
+            }
+        }
+        return null;
     }
 
     private void commit(String[] storedUIDs, boolean success) {
@@ -309,11 +322,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         return getConfig().getRepositoryUID();
     }
 
-    private URL getRegistryWsdlUrl() throws MalformedURLException {
-        String url = getConfig().getRegistryURL("*");
+    private URL getRegistryWsdlUrl(String sourceID) throws MalformedURLException {
+        String url = getConfig().getRegistryURL(sourceID);
         return new URL(url);
-        //return new URL("http://localhost:8080/dcm4chee-xds/XDSbRegistry/b?wsdl");
-        //return new URL("http://ihexds.nist.gov:12080/tf6/services/xdsregistryb?wsdl");
     }
 
     private RegistryResponseType dispatchSubmitObjectsRequest(SubmitObjectsRequest submitRequest, URL xdsRegistryURI) throws MalformedURLException,
