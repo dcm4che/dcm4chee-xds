@@ -55,6 +55,7 @@ public class XdsRepository extends DeviceExtension {
     private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();
     private String soapLogDir;
     private String[] mimeTypes;
+    private String[] logFullMessageHosts;
 
     public String getApplicationName() {
         return applicationName;
@@ -115,6 +116,12 @@ public class XdsRepository extends DeviceExtension {
         this.mimeTypes = mimeTypes;
     }
 
+    public String[] getLogFullMessageHosts() {
+        return logFullMessageHosts;
+    }
+    public void setLogFullMessageHosts(String[] logFullMessageHosts) {
+        this.logFullMessageHosts = logFullMessageHosts;
+    }
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;

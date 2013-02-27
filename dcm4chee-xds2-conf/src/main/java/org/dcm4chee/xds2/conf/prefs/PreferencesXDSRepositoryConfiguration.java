@@ -73,6 +73,7 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeNotEmpty(prefs, "xdsRegistryURL", repository.getRegistryURLs());
         PreferencesUtils.storeNotEmpty(prefs, "xdsAcceptedMimeTypes", repository.getAcceptedMimeTypes());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
+        PreferencesUtils.storeNotEmpty(prefs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
     }
 
     @Override
@@ -93,6 +94,7 @@ public class PreferencesXDSRepositoryConfiguration
         repository.setRegistryURLs(PreferencesUtils.stringArray(prefs, "xdsRegistryURL"));
         repository.setAcceptedMimeTypes(PreferencesUtils.stringArray(prefs, "xdsAcceptedMimeTypes"));
         repository.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
+        repository.setLogFullMessageHosts(PreferencesUtils.stringArray(prefs, "xdsLogFullMessageHosts"));
     }
 
     @Override
@@ -130,5 +132,8 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsSoapMsgLogDir",
                 prevRepository.getSoapLogDir(),
                 repository.getSoapLogDir());
+        PreferencesUtils.storeDiff(prefs, "xdsLogFullMessageHosts",
+                prevRepository.getLogFullMessageHosts(),
+                repository.getLogFullMessageHosts());
     }
 }

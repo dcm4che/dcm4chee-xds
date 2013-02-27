@@ -82,7 +82,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeNotEmpty(attrs, "xdsRegistryURL", repository.getRegistryURLs());
         LdapUtils.storeNotEmpty(attrs, "xdsAcceptedMimeTypes", repository.getAcceptedMimeTypes());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
-        System.out.println("#####################attrs:"+attrs);
+        LdapUtils.storeNotEmpty(attrs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
         return attrs;
     }
 
@@ -106,6 +106,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         repository.setRegistryURLs(LdapUtils.stringArray(attrs.get("xdsRegistryURL")));
         repository.setAcceptedMimeTypes(LdapUtils.stringArray(attrs.get("xdsAcceptedMimeTypes")));
         repository.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
+        repository.setLogFullMessageHosts(LdapUtils.stringArray(attrs.get("xdsLogFullMessageHosts")));
     }
 
     @Override
@@ -144,6 +145,9 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeDiff(mods, "xdsSoapMsgLogDir",
                 prevRepository.getSoapLogDir(),
                 repository.getSoapLogDir());
+        LdapUtils.storeDiff(mods, "xdsLogFullMessageHosts",
+                prevRepository.getLogFullMessageHosts(),
+                repository.getLogFullMessageHosts());
         return mods;
     }
 }

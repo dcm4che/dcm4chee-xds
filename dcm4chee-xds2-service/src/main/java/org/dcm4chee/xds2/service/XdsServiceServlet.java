@@ -326,6 +326,9 @@ public class XdsServiceServlet extends HttpServlet {
         if (xdsApp.getAcceptedMimeTypes() != null)
             sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
         append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
+        sb.append("\n  Hostnames/IPs for full SOAP message logging:");
+        if (xdsApp.getLogFullMessageHosts() != null)
+            sb.append(StringUtils.concat(xdsApp.getLogFullMessageHosts(), ','));
     }
 
     private void appendAuditLogger(StringBuilder sb, AuditLogger logger, String prefix, String postfix) {

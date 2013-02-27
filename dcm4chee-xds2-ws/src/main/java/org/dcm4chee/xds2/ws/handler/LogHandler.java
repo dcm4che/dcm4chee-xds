@@ -48,6 +48,10 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeader;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
@@ -113,7 +117,27 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private void logMessage(SOAPMessageContext ctx) {
         String action = getAction(ctx);
         String host = getHost(ctx);
-        String logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
+        String logDir = null;
+        boolean logFullMessage = false;
+        try {
+            if (action.endsWith(":RegisterDocumentSet-b") ||
+                 action.endsWith(":RegisterDocumentSet-bResponse")) {
+                logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
+            } else {
+                logDir = XdsDevice.getXdsRepository().getSoapLogDir();
+                String [] hosts = XdsDevice.getXdsRepository().getLogFullMessageHosts(); 
+                if (hosts != null) {
+                    for (int i=0 ; i < hosts.length ; i++) {
+                        if (hosts[i].equals(host)) {
+                            logFullMessage = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception ignore) {
+            log.warn("Failed to get logDir from XDS configuration!", ignore);
+        }
         if (logDir != null) {
             FileOutputStream out = null;
             try {
@@ -121,7 +145,14 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                 f.getParentFile().mkdirs();
                 log.info("SOAP message saved to file "+f);
                 out = new FileOutputStream(f);
-                ctx.getMessage().writeTo(out);//On registry we don't need take care for attachments!
+                if (logFullMessage) {
+                    ctx.getMessage().writeTo(out);
+                } else {
+                    Source s = ctx.getMessage().getSOAPPart().getContent();
+                    Transformer t = TransformerFactory.newInstance().newTransformer();
+                    t.setOutputProperty("indent", "yes");
+                    t.transform(s, new StreamResult(out));
+                }
             } catch (Exception x) {
                 log.error("Error logging SOAP message to file!", x);
             } finally {
