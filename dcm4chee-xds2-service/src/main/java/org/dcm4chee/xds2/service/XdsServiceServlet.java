@@ -60,6 +60,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
@@ -83,6 +84,9 @@ import org.dcm4che.net.hl7.HL7DeviceExtension;
 import org.dcm4che.util.SafeClose;
 import org.dcm4che.util.StringUtils;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
+import org.dcm4chee.xds2.common.code.Code;
+import org.dcm4chee.xds2.common.code.CodeRepository;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
@@ -300,6 +304,44 @@ public class XdsServiceServlet extends HttpServlet {
         return sb.toString();
     }
     
+    @GET
+    @Path("/initCodes/{affinity}")
+    public Response initCodes(@PathParam("affinity") String affinityDomain) {
+        log.info("################ Init XDS Affinity domain codes!");
+        XdsRegistry d = XdsDevice.getXdsRegistry();
+        if (d != null && d.getCodeRepository() != null) {
+            try {
+                d.getCodeRepository().init(affinityDomain);
+                log.info("Load codes of affinity domain "+affinityDomain+" finished!");
+                return Response.ok().entity(getAffinityDomainResultMsg(affinityDomain)).build();
+            } catch (Exception x) {
+                log.error("Load codes of affinity domain "+affinityDomain+" failed!");
+                return Response.serverError().entity("Load codes of affinity domain "+affinityDomain+" failed!"+x).build();
+            }
+        } else {
+            return Response.serverError().entity(getConfigurationString("Code Repository not configured!")).build();
+        }
+    }
+
+    @GET
+    @Path("/showPatIDs/{affinity}")
+    public Response showPatIDs(@PathParam("affinity") String affinityDomain) {
+        log.info("################ Show Patient ID's!");
+        try {
+            List<String> patIDs = xdsRegistryBean.listPatientIDs(affinityDomain);
+            StringBuilder sb = new StringBuilder(patIDs.size()<<4);
+            sb.append("<h4>List of Patient IDs for affinity domain ").append(affinityDomain).append("</h4><pre>");
+            for (int i = 0, len = patIDs.size() ; i < len ; i++) {
+                sb.append("\n    ").append(patIDs.get(i));
+            }
+            sb.append("</pre>");
+            return Response.ok().entity(sb.toString()).build();
+        } catch (Exception x) {
+            log.error("List patient IDs of affinity domain failed!", x);
+            return Response.serverError().entity("List patient IDs of affinity domain "+affinityDomain+" failed!"+x).build();
+        }
+    }
+    
     private void appendXdsRegistry(StringBuilder sb, XdsRegistry xdsApp, String prefix, String postfix) {
         append(sb, prefix);
         if (xdsApp == null) {
@@ -307,6 +349,7 @@ public class XdsServiceServlet extends HttpServlet {
         } else {
             sb.append(APPLICATION_NAME).append(xdsApp.getApplicationName());
             sb.append("\n  Affinity domain(s):").append(StringUtils.concat(xdsApp.getAffinityDomain(), ','));
+            sb.append("\n  Affinity domain config dir:").append(xdsApp.getAffinityDomainConfigDir());
             if (xdsApp.getAcceptedMimeTypes() != null)
                 sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
             append(sb, xdsApp.isCheckAffinityDomain(), "\n  checkAffinityDomain:", null);
@@ -385,6 +428,29 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("\n  Accepted Message types:").append(StringUtils.concat(hl7App.getAcceptedMessageTypes(), ','));
         if (hl7App.getAcceptedSendingApplications() != null)
             sb.append("\n  Accepted Sending Applications:").append(StringUtils.concat(hl7App.getAcceptedSendingApplications(), ','));
+    }
+
+    private String getAffinityDomainResultMsg(String affinityDomain) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Load codes of affinity domain <b>").append(affinityDomain).
+        append(" </b>finished at ").append(new Date());
+        CodeRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+        String[] ads = "*".equals(affinityDomain) ?
+            codeRepository.getAffinityDomains().toArray(new String[0]) : new String[]{affinityDomain};
+        for (int i = 0 ; i < ads.length ; i++) {
+            AffinityDomainCodes adCodes = codeRepository.getAffinityDomainCodes(ads[i]);
+            sb.append("<h4>Affinity domain:").append(adCodes.getAffinityDomain()).append("</h4>");
+            List<Code> codes;
+            for (String codeType : adCodes.getCodeTypes()) {
+                sb.append("<h5>Code Type:").append(codeType).append("</h5><pre>");
+                codes = adCodes.getCodes(codeType);
+                for (int j = 0, len = codes.size() ; j < len ; j++) {
+                    sb.append("\n   ").append(codes.get(j));
+                }
+                sb.append("</pre>");
+            }
+        }
+        return sb.toString();
     }
 
     private void append(StringBuilder sb, Object o) {

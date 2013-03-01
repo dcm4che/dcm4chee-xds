@@ -38,9 +38,12 @@
 
 package org.dcm4chee.xds2.ws.registry;
 
+import java.util.List;
+
 import javax.ejb.Local;
 
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.persistence.XADPatient;
 
 @Local
 public interface XDSRegistryBeanLocal {
@@ -48,4 +51,6 @@ public interface XDSRegistryBeanLocal {
     boolean newPatientID(String pid) throws XDSException;
 
     void linkPatient(String pid, String newPID) throws XDSException;
+    
+    List<String> listPatientIDs(String affinityDomain);
 }

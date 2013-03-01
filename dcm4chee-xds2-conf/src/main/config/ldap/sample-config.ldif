@@ -11,6 +11,7 @@ objectClass: xdsRegistry
 cn:XDSRegistry
 xdsApplicationName: XDS_REGISTRY
 xdsAffinityDomain: 1.2.3.4.5&ISO
+xdsAffinityDomainConfigDir: ${jboss.server.config.dir}/affinitydomain
 xdsAcceptedMimeTypes: application/pdf
 xdsAcceptedMimeTypes: application/xml
 xdsAcceptedMimeTypes: application/dicom

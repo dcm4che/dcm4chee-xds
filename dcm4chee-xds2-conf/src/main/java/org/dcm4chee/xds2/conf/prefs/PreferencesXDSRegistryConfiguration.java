@@ -69,6 +69,7 @@ public class PreferencesXDSRegistryConfiguration
     private void storeTo(XdsRegistry registry, Preferences prefs) {
         PreferencesUtils.storeNotNull(prefs, "xdsApplicationName", registry.getApplicationName());
         PreferencesUtils.storeNotEmpty(prefs, "xdsAffinityDomain", registry.getAffinityDomain());
+        PreferencesUtils.storeNotNull(prefs, "xdsAffinityDomainConfigDir", registry.getAffinityDomainConfigDir());
         PreferencesUtils.storeNotEmpty(prefs, "xdsAcceptedMimeTypes", registry.getAcceptedMimeTypes());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingPIDs",registry.isCreateMissingPIDs(), false);
@@ -93,6 +94,7 @@ public class PreferencesXDSRegistryConfiguration
     private void loadFrom(XdsRegistry registry, Preferences prefs) {
         registry.setApplicationName(prefs.get("xdsApplicationName",null));
         registry.setAffinityDomain(PreferencesUtils.stringArray(prefs, "xdsAffinityDomain"));
+        registry.setAffinityDomainConfigDir(prefs.get("xdsAffinityDomainConfigDir", null));
         registry.setAcceptedMimeTypes(PreferencesUtils.stringArray(prefs, "xdsAcceptedMimeTypes"));
         registry.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
         registry.setCreateMissingPIDs(PreferencesUtils.booleanValue(prefs.get("xdsCreateMissingPIDs", FALSE)));
@@ -129,6 +131,9 @@ public class PreferencesXDSRegistryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsAffinityDomain",
                 prevRegistry.getAffinityDomain(),
                 registry.getAffinityDomain());
+        PreferencesUtils.storeDiff(prefs, "xdsAffinityDomainConfigDir",
+                prevRegistry.getAffinityDomainConfigDir(),
+                registry.getAffinityDomainConfigDir());
         PreferencesUtils.storeDiff(prefs, "xdsAcceptedMimeTypes",
                 prevRegistry.getAcceptedMimeTypes(),
                 registry.getAcceptedMimeTypes());

@@ -44,6 +44,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.src.metadata.exception.MetadataConfigurationException;

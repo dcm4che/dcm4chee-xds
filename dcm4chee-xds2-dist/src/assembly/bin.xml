@@ -73,27 +73,17 @@
     <fileSet>
       <directory>src/etc</directory>
       <includes>
-        <include>codes/codes.xml</include>
-        <include>certs/keystore</include>
-        <include>INSTALL.txt</include>
+        <include>configuration/affinitydomain/default/codes.xml</include>
+        <include>configuration/keystore</include>
       </includes>
-      <outputDirectory>support</outputDirectory>
-      <fileMode>0755</fileMode>
-      <lineEnding>unix</lineEnding>
-    </fileSet>
-    <fileSet>
-      <directory>target/generated-resources/sql</directory>
-      <includes>
-        <include>codes-${db}.sql</include>
-      </includes>
-      <outputDirectory>support/codes</outputDirectory>
+      <outputDirectory>.</outputDirectory>
       <fileMode>0755</fileMode>
       <lineEnding>unix</lineEnding>
     </fileSet>
   </fileSets>
   <dependencySets>
     <dependencySet>
-      <outputDirectory>deploy</outputDirectory>
+      <outputDirectory>deployments</outputDirectory>
       <includes>
         <include>org.dcm4che:dcm4chee-xds2-ear:ear:${db}</include>
       </includes>

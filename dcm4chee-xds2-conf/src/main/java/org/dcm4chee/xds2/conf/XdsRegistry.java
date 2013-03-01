@@ -38,17 +38,24 @@
 
 package org.dcm4chee.xds2.conf;
 
+import java.io.File;
+
 import org.dcm4che.net.DeviceExtension;
+import org.dcm4che.util.StringUtils;
+import org.dcm4chee.xds2.common.code.CodeRepository;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 public class XdsRegistry extends DeviceExtension {
 
+    private static final String DEFAULT_AFFINITYDOMAIN_CFG_DIR = "${jboss.server.config.dir}/affinitydomain";
+
     private static final long serialVersionUID = -8258532093950989486L;
 
     private String applicationName;
     private String[] affinityDomain;
+    private String affinityDomainConfigDir;
     private String[] mimeTypes;
     private String soapLogDir;
     
@@ -58,6 +65,8 @@ public class XdsRegistry extends DeviceExtension {
     private boolean checkAffinityDomain;
     private boolean checkMimetype;
     private boolean preMetadtaCheck;
+    
+    private CodeRepository codeRepository;
 
     public String getApplicationName() {
         return applicationName;
@@ -83,6 +92,20 @@ public class XdsRegistry extends DeviceExtension {
         }
     }
 
+    public String getAffinityDomainConfigDir() {
+        return affinityDomainConfigDir;
+    }
+    public void setAffinityDomainConfigDir(String dir) {
+        this.affinityDomainConfigDir = dir;
+        dir = StringUtils.replaceSystemProperties(dir == null ? DEFAULT_AFFINITYDOMAIN_CFG_DIR : dir);
+        if (codeRepository == null || !new File(dir).equals(codeRepository.getBaseDir())) {
+            codeRepository = new CodeRepository(dir);
+        }
+    }
+    
+    public CodeRepository getCodeRepository() {
+        return codeRepository;
+    }
     public String[] getAcceptedMimeTypes() {
         return mimeTypes;
     }
@@ -155,5 +178,6 @@ public class XdsRegistry extends DeviceExtension {
         setCheckAffinityDomain(src.isCheckAffinityDomain());
         setCheckMimetype(src.isCheckMimetype());
         setPreMetadataCheck(src.isPreMetadataCheck());
+        setAffinityDomainConfigDir(src.getAffinityDomainConfigDir());
     }
 }

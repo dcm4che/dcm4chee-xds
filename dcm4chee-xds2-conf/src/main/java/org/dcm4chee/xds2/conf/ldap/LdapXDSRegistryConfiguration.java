@@ -79,6 +79,7 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
         attrs.put(new BasicAttribute("cn", "XDSRegistry"));
         LdapUtils.storeNotNull(attrs, "xdsApplicationName", registry.getApplicationName());
         LdapUtils.storeNotEmpty(attrs, "xdsAffinityDomain", registry.getAffinityDomain());
+        LdapUtils.storeNotNull(attrs, "xdsAffinityDomainConfigDir", registry.getAffinityDomainConfigDir());
         LdapUtils.storeNotEmpty(attrs, "xdsAcceptedMimeTypes", registry.getAcceptedMimeTypes());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         LdapUtils.storeNotDef(attrs, "xdsCreateMissingPIDs", registry.isCreateMissingPIDs(), false);
@@ -106,6 +107,7 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
     private void loadFrom(XdsRegistry registry, Attributes attrs) throws NamingException {
         registry.setApplicationName(LdapUtils.stringValue(attrs.get("xdsApplicationName"), null));
         registry.setAffinityDomain(LdapUtils.stringArray(attrs.get("xdsAffinityDomain")));
+        registry.setAffinityDomainConfigDir(LdapUtils.stringValue(attrs.get("xdsAffinityDomainConfigDir"), null));
         registry.setAcceptedMimeTypes(LdapUtils.stringArray(attrs.get("xdsAcceptedMimeTypes")));
         registry.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
         registry.setCreateMissingPIDs(LdapUtils.booleanValue(attrs.get("xdsCreateMissingPIDs"), false));
@@ -143,6 +145,9 @@ public class LdapXDSRegistryConfiguration extends LdapDicomConfigurationExtensio
         LdapUtils.storeDiff(mods, "xdsAffinityDomain",
                 prevRegistry.getAffinityDomain(),
                 registry.getAffinityDomain());
+        LdapUtils.storeDiff(mods, "xdsAffinityDomainConfigDir",
+                prevRegistry.getAffinityDomainConfigDir(),
+                registry.getAffinityDomainConfigDir());
         LdapUtils.storeDiff(mods, "xdsAcceptedMimeTypes",
                 prevRegistry.getAcceptedMimeTypes(),
                 registry.getAcceptedMimeTypes());

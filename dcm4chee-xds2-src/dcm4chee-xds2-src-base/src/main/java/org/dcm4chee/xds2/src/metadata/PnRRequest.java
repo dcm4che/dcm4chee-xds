@@ -45,6 +45,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.infoset.ihe.ObjectFactory;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;

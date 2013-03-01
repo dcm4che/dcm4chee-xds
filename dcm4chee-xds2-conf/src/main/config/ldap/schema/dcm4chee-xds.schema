@@ -64,6 +64,13 @@ attributetype ( 1.2.40.0.13.1.15.20.3.10 NAME 'xdsPreMetadataCheck'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
+attributetype ( 1.2.40.0.13.1.15.20.3.11 NAME 'xdsAffinityDomainConfigDir'
+  DESC 'Path to affinity domain configuration directory'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
 attributetype ( 1.2.40.0.13.1.15.20.3.20 NAME 'xdsRepositoryUID'
   DESC 'Log directory where request and response SOAP messages are stored'
   EQUALITY caseIgnoreMatch
@@ -89,7 +96,8 @@ objectclass ( 1.2.40.0.13.1.15.20.4.1
   SUP top STRUCTURAL
   MUST ( 
     xdsApplicationName $
-    xdsAffinityDomain )
+    xdsAffinityDomain $
+    xdsAffinityDomainConfigDir )
   MAY (
   	xdsAcceptedMimeTypes $
     xdsSoapMsgLogDir $

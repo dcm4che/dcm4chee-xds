@@ -68,6 +68,8 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.code.CodeRepository;
+import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
@@ -98,7 +100,6 @@ import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
-import org.dcm4chee.xds2.persistence.XDSObject;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.dcm4chee.xds2.ws.registry.query.StoredQuery;
@@ -124,7 +125,9 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     private static final String UNKNOWN = "UNKNOWN";
 
     private ObjectFactory factory = new ObjectFactory();
-
+    
+    AffinityDomainCodes adCodes;
+    
     @Resource 
     private SessionContext context;
     @Resource
@@ -186,57 +189,82 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
     private void preMetadataCheck(SubmitObjectsRequest req) throws XDSException {
         XdsRegistry cfg = XdsDevice.getXdsRegistry();
-        if (cfg.isPreMetadataCheck() || cfg.isCheckMimetype()) {
-            List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
-            IdentifiableType obj;
-            List<ExternalIdentifierType> list;
-            String patID = null, patIDtmp;
-            String[] mimes = cfg.getAcceptedMimeTypes();
-            for (int i=0,len=objs.size() ; i < len ; i++) {
-                obj = objs.get(i).getValue();
-                if (obj instanceof RegistryObjectType) {
-                    if (mimes != null && (obj instanceof ExtrinsicObjectType) ) {
-                        checkMimetype((ExtrinsicObjectType)obj, mimes);
-                    }
-                        
-                    list = ((RegistryObjectType)obj).getExternalIdentifier();
-                    if (list != null) {
-                        for (ExternalIdentifierType eiType : list) {
-                            patIDtmp = getPatID(eiType);
-                            if (patIDtmp != null) {
-                                if (patID == null) {
-                                    patID = patIDtmp;
-                                } else if (!patIDtmp.equals(patID)) {
-                                    throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
-                                            "PatientID of object"+obj.getId()+" does not match:"+patIDtmp+" vs. "+patID, null);
-                                }
+        List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
+        IdentifiableType obj;
+        List<ExternalIdentifierType> list;
+        String patID = null, patIDtmp;
+        String[] mimes = cfg.getAcceptedMimeTypes();
+        XADPatient xadPatient = null;
+        objLoop: for (int i=0,len=objs.size() ; i < len ; i++) {
+            obj = objs.get(i).getValue();
+            if (obj instanceof RegistryObjectType) {
+                if (mimes != null && cfg.isCheckMimetype() && (obj instanceof ExtrinsicObjectType) ) {
+                    checkMimetype((ExtrinsicObjectType)obj, mimes);
+                }
+                    
+                list = ((RegistryObjectType)obj).getExternalIdentifier();
+                if (list != null) {
+                    for (ExternalIdentifierType eiType : list) {
+                        patIDtmp = getPatID(eiType);
+                        if (patIDtmp != null) {
+                            if (patID == null) {
+                                patID = patIDtmp;
+                                if (!cfg.isPreMetadataCheck() && !cfg.isCheckMimetype())
+                                    break objLoop;
+                            } else if (!patIDtmp.equals(patID)) {
+                                throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
+                                        "PatientID of object"+obj.getId()+" does not match:"+patIDtmp+" vs. "+patID, null);
                             }
                         }
                     }
                 }
-                if (obj instanceof AssociationType1) {
-                    AssociationType1 assoc = (AssociationType1) obj;
-                    if (assoc.getSourceObject().startsWith("urn:") || assoc.getTargetObject().startsWith("urn:")) {
-                        try {
-                            XADPatient xadPatient = new XADPatient(patID);
-                        } catch (Exception ignore) {
-                            throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
-                                    "PatientID referenced in Association "+obj.getId()+" does not match! SubmissionSet patID not valid!:"+patID, null);
-                        }
+            }
+            if (cfg.isPreMetadataCheck() && (obj instanceof AssociationType1)) {
+                AssociationType1 assoc = (AssociationType1) obj;
+                if (assoc.getSourceObject().startsWith("urn:") || assoc.getTargetObject().startsWith("urn:")) {
+                    try {
+                        xadPatient = new XADPatient(patID);
+                    } catch (Exception ignore) {
+                        throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
+                                "PatientID referenced in Association "+obj.getId()+" does not match! SubmissionSet patID not valid!:"+patID, null);
                     }
                 }
             }
-            checkAffinityDomain(patID);
         }
+        if (xadPatient == null) {
+            try {
+                xadPatient = new XADPatient(patID);
+            } catch (Exception ignore) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
+                        "PatientID not valid! patID:"+patID, null);
+            }
+        }
+        //save affinityDomain and AffinityDomainCodes in session
+        String affinityDomain = xadPatient.getIssuerOfPatientID().getUniversalID();
+        CodeRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+        adCodes = codeRepository.getAffinityDomainCodes(affinityDomain);
+        if (adCodes.isEmpty() && !cfg.isCreateMissingCodes()) {
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                    "No codes configured for affinity domain! affinityDomain:"+affinityDomain, null);
+        }
+        checkAffinityDomain(xadPatient);
     }
 
     private void checkAffinityDomain(String patID) throws XDSException {
+        XADPatient pat;
+        try {
+            pat = new XADPatient(patID);
+        } catch (Exception x) {
+            throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
+                    "Unknown patient ID: patientID:"+patID+" - "+x.getMessage(), null);
+        }
+        checkAffinityDomain(pat);
+    }
+    private void checkAffinityDomain(XADPatient pat) throws XDSException {
         if (XdsDevice.getXdsRegistry().isCheckAffinityDomain()) {
-            try {
-                XADPatient pat = new XADPatient(patID);
                 if (!"ISO".equals(pat.getIssuerOfPatientID().getUniversalIdType())) {
                     throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
-                            "PatientID with wrong UniversalId type (must be ISO)! pid:"+patID, null);
+                            "PatientID with wrong UniversalId type (must be ISO)! pid:"+pat.getXADPatientID(), null);
                 }
                 String universalID = pat.getIssuerOfPatientID().getUniversalID();
                 String[] ads = XdsDevice.getXdsRegistry().getAffinityDomain();
@@ -246,11 +274,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                     }
                 }
                 throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
-                        "Unknown patient ID: Universial ID of "+patID+" doesn't match a Affinity Domain!", null);
-            } catch (Exception x) {
-                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
-                        "Unknown patient ID: patientID:"+patID+" - "+x.getMessage(), null);
-            }
+                        "Unknown patient ID: Universial ID of "+pat.getXADPatientID()+" doesn't match a Affinity Domain!", null);
         }
     }
 
@@ -395,10 +419,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     public XDSDocumentEntry getDocumentEntryByUUIDandFetch(String uuid) {
         XDSDocumentEntry doc = (XDSDocumentEntry) getObjectByNamedQuery(XDSDocumentEntry.FIND_BY_UUID, uuid);
         log.info("found classifications:"+doc.getClassifications().size());
-        //doc.getExternalIdentifiers();
-        //doc.getDescription();
-        //doc.getName();
-        //doc.getXDSCodes();
         return doc;
     }
 
@@ -491,7 +511,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID with wrong UniversalId type (must be ISO)! pid:"+pid, null);
         }
         try {
-            XADPatient pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+            XADPatient pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)
                 .setParameter(1, qryPat.getPatientID())
                 .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
                 .getSingleResult();
@@ -515,7 +535,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         checkAffinityDomain(pid);
         XADPatient qryPat = new XADPatient(pid);
         try {
-            em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+            em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)
                 .setParameter(1, qryPat.getPatientID())
                 .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
                 .getSingleResult();
@@ -525,6 +545,18 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             em.persist(qryPat);
             return true;
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<String> listPatientIDs(String affinityDomain) {
+        List<XADPatient> pats = (List<XADPatient>) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_AFFINITYDOMAIN)
+        .setParameter(1, affinityDomain.replace('*', '%'))
+        .getResultList();
+        List<String> patIDs = new ArrayList<String>(pats.size());
+        for (int i = 0, len = pats.size() ; i < len ; i++) {
+            patIDs.add(pats.get(i).getXADPatientID());
+        }
+        return patIDs;
     }
     
     private XADIssuer getOrCreateIssuerOfPID(XADIssuer issuer) {
@@ -542,7 +574,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         XADPatient qryPat = new XADPatient(pid);
         XADPatient pat;
         try {
-            pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+            pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)
                 .setParameter(1, qryPat.getPatientID())
                 .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
                 .getSingleResult();
@@ -553,7 +585,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         if (newPID != null) {
             try {
                 qryPat = new XADPatient(newPID);
-                newPat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_ISSUER)
+                newPat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)
                     .setParameter(1, qryPat.getPatientID())
                     .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
                     .getSingleResult();
@@ -565,28 +597,29 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
    }
  
     public XDSCode getXDSCode(ClassificationType clType, boolean createMissing) throws XDSException {
-        XDSCode code = new XDSCode(clType.getNodeRepresentation(),
-                clType.getSlot().get(0).getValueList().getValue().get(0),
+        String scheme = clType.getClassificationScheme();
+        String codeValue = clType.getNodeRepresentation();
+        String codeDesignator = clType.getSlot().get(0).getValueList().getValue().get(0);
+        if (!createMissing) {
+            if (!adCodes.isClassSchemeCodeDefinded(scheme, codeValue, codeDesignator)) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Unknown code:"+
+                            codeValue+"^^"+codeDesignator+" ("+scheme+")", null);
+            }
+        }
+        XDSCode code = new XDSCode(codeValue, codeDesignator,
                 clType.getName().getLocalizedString().get(0).getValue(),
-                clType.getClassificationScheme());
+                scheme);
 
         try {
             return (XDSCode) em.createNamedQuery(XDSCode.FIND_BY_CODE_VALUE)
-                .setParameter(1, code.getCodeValue())
-                .setParameter(2, code.getCodingSchemeDesignator())
-                .setParameter(3, code.getCodeClassification())
+                .setParameter(1, codeValue)
+                .setParameter(2, codeDesignator)
+                .setParameter(3, scheme)
                 .getSingleResult();
         } catch (NoResultException x) {
-            log.warn("###### code not found codeValue:'"+code.getCodeValue()+
-                    "'\ngetCodingSchemeDesignator:'"+code.getCodingSchemeDesignator()+
-                    "'\ngetCodeClassification:'"+code.getCodeClassification()+"'");
-            if (createMissing) {
-                log.warn("Unknown XDS Code! Create missing XDSCode:"+code);
-                em.persist(code);
-                return code;
-            } else {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Unknown code:"+code, null);
-            }
+            log.info("Store new XDS Code! code:"+code);
+            em.persist(code);
+            return code;
         }
     }
     

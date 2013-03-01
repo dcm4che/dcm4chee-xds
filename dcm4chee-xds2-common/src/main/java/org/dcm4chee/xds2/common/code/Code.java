@@ -36,7 +36,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.dcm4chee.xds2.src.metadata;
+package org.dcm4chee.xds2.common.code;
 
 
 /**

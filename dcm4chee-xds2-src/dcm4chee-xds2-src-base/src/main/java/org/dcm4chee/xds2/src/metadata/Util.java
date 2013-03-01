@@ -47,6 +47,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;

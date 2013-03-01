@@ -52,48 +52,6 @@
     <finalName>dcm4chee-xds2-${project.version}-${db}</finalName>
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>transform</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <transformationSets>
-            <transformationSet>
-              <dir>src/etc/codes</dir>
-              <includes>
-                <include>codes.xml</include>
-              </includes>
-              <stylesheet>src/etc/codes/codes2sql.xsl</stylesheet>
-			  <parameters>
-                <parameter>
-                  <name>db</name>
-                  <value>${db}</value>
-                </parameter>
-              </parameters>
-			  <outputDir>target/generated-resources/sql</outputDir>
-              <fileMappers>
-                <fileMapper
-                  implementation="org.codehaus.plexus.components.io.filemappers.MergeFileMapper">
-                  <targetName>codes-${db}.sql</targetName>
-                </fileMapper>
-              </fileMappers>
-            </transformationSet>
-          </transformationSets>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>net.sf.saxon</groupId>
-            <artifactId>saxon</artifactId>
-            <version>8.7</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>

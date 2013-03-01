@@ -56,6 +56,9 @@ import junit.framework.Assert;
 
 import org.dcm4che.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.code.Code;
+import org.dcm4chee.xds2.common.code.CodeRepository;
+import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
@@ -93,7 +96,7 @@ public class XDSTestUtil {
 
     private static Set<String> ebXmlClassificationSchemeIds = null;
     private static Set<String> xdsClassificationSchemeIds = null;
-    private static boolean oldCreateMissingPatient, oldCreateMissingCodes;
+    private static boolean oldCreateMissingPatient, oldCreateMissingCodes, oldCheckAffinity;
     
     @SuppressWarnings("rawtypes")
     public static int getNumberOfTestMethods(Class clazz) {
@@ -283,12 +286,17 @@ public class XDSTestUtil {
             xdsClassificationSchemeIds = prepareRegistryWithSubmissionRequest(session, 
                     "initialize.xml", log);
         }
+        XdsRegistry xdsRegistry = XdsDevice.getXdsRegistry();
+        oldCreateMissingPatient = xdsRegistry.isCreateMissingPIDs();
+        oldCreateMissingCodes = xdsRegistry.isCreateMissingCodes();
+        oldCheckAffinity = xdsRegistry.isCheckAffinityDomain();
+        xdsRegistry.setCreateMissingCodes(true);
+        xdsRegistry.setCreateMissingPIDs(true);
+        xdsRegistry.setCheckAffinityDomain(false);
         XDSTestUtil.prepareTestPatients(session, log);
         XDSTestUtil.prepareTestCodes(session, log);
-        oldCreateMissingPatient = XdsDevice.getXdsRegistry().isCreateMissingPIDs();
-        oldCreateMissingCodes = XdsDevice.getXdsRegistry().isCreateMissingCodes();
-        XdsDevice.getXdsRegistry().setCreateMissingCodes(false);
-        XdsDevice.getXdsRegistry().setCreateMissingPIDs(false);
+        xdsRegistry.setCreateMissingCodes(false);
+        xdsRegistry.setCreateMissingPIDs(false);
         log.info("\n###### PREPARE done in "+(System.currentTimeMillis()-t1)+"ms ######");
     }
 
@@ -311,8 +319,10 @@ public class XDSTestUtil {
         log.info("remove test XDSCodes");
         testSession.removeXDSCodes();
         log.info("\n###### CLEAR done in "+(System.currentTimeMillis()-t1)+"ms ######");
-        XdsDevice.getXdsRegistry().setCreateMissingCodes(oldCreateMissingPatient);
-        XdsDevice.getXdsRegistry().setCreateMissingPIDs(oldCreateMissingCodes);
+        XdsRegistry xdsRegistry = XdsDevice.getXdsRegistry();
+        xdsRegistry.setCreateMissingCodes(oldCreateMissingPatient);
+        xdsRegistry.setCreateMissingPIDs(oldCreateMissingCodes);
+        xdsRegistry.setCheckAffinityDomain(oldCheckAffinity);
     }
 
 
@@ -332,9 +342,14 @@ public class XDSTestUtil {
         try {
             SubmitObjectsRequest req = getSubmitObjectsRequest("testCodeClassifications.xml");
             RegistryObjectType obj = (RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(0).getValue();
+            AffinityDomainCodes adCodes = new AffinityDomainCodes();
             for (ClassificationType clType : obj.getClassification()) {
                 XDSCode code = session.getXDSCode(clType, true);
+                Code c = new Code(code.getCodeValue(), code.getCodingSchemeDesignator(), code.getCodeMeaning());
+                adCodes.addCode(code.getCodeClassification(), code.getCodeClassification(), c);
             }
+            XdsDevice.getXdsRegistry().setAffinityDomainConfigDir("dummy");
+            XdsDevice.getXdsRegistry().getCodeRepository().addAffinityDomainCodes(CodeRepository.DEFAULT_DOMAIN, adCodes);
         } catch (Exception x) {
             log.error("Failed to add test codes!", x);
         }

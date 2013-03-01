@@ -56,8 +56,6 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.hibernate.annotations.Index;
-
 /**
  * A Patient ID of XDS Affinity Domain. 
  * 
@@ -69,11 +67,14 @@ import org.hibernate.annotations.Index;
  */
 @NamedQueries({
     @NamedQuery(
-        name="XADPatient.findByPIDandIssuer",
+        name="XADPatient.findByPIDandUniversalID",
         query="SELECT p FROM XADPatient p WHERE p.patientID = ?1 and p.issuerOfPatientID.universalID = ?2"),
     @NamedQuery(
         name="XADPatient.findByPID",
         query="SELECT p FROM XADPatient p WHERE p.patientID = ?1"),
+    @NamedQuery(
+        name="XADPatient.findByAffinityDomain",
+        query="SELECT p FROM XADPatient p WHERE p.issuerOfPatientID.universalID LIKE ?1 ORDER BY p.issuerOfPatientID"),
     })
 
 @Entity
@@ -83,7 +84,8 @@ public class XADPatient implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
     public static final String FIND_PATIENT_BY_PID = "XADPatient.findByPID";
-    public static final String FIND_PATIENT_BY_PID_AND_ISSUER = "XADPatient.findByPIDandIssuer";
+    public static final String FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID = "XADPatient.findByPIDandUniversalID";
+    public static final String FIND_PATIENT_BY_AFFINITYDOMAIN = "XADPatient.findByAffinityDomain";
 
     @Id
     @GeneratedValue
