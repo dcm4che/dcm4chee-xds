@@ -57,6 +57,7 @@ public class XdsRepository extends DeviceExtension {
     private String[] mimeTypes;
     private String[] logFullMessageHosts;
     private boolean checkMimetype;
+    private String allowedCipherHostname;
 
     public String getApplicationName() {
         return applicationName;
@@ -129,6 +130,13 @@ public class XdsRepository extends DeviceExtension {
     public void setLogFullMessageHosts(String[] logFullMessageHosts) {
         this.logFullMessageHosts = logFullMessageHosts;
     }
+    public String getAllowedCipherHostname() {
+        return allowedCipherHostname;
+    }
+    public void setAllowedCipherHostname(String allowedCipherHostnames) {
+        this.allowedCipherHostname = allowedCipherHostnames;
+    }
+    
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;
@@ -139,5 +147,6 @@ public class XdsRepository extends DeviceExtension {
         setSoapLogDir(src.getSoapLogDir());
         setCheckMimetype(src.isCheckMimetype());
         setLogFullMessageHosts(src.getLogFullMessageHosts());
+        setAllowedCipherHostname(src.getAllowedCipherHostname());
     }
 }

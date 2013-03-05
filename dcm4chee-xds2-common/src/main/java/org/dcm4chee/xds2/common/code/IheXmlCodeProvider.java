@@ -40,9 +40,9 @@ package org.dcm4chee.xds2.common.code;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -54,84 +54,98 @@ import org.xml.sax.helpers.DefaultHandler;
 
 
 /**
- * Code repository to maintain defined codes for affinity domain(s).
+ * Code repository provider that read codes.xml files provided by IHE (NIST).
  * 
  * @author franz.willer@agfa.com
  *
  */
-public class CodeRepository {
+public class IheXmlCodeProvider implements XADCfgProviderSPI{
 
     private File baseDir;
-    private HashMap<String, AffinityDomainCodes> adCodesMap = new HashMap<String,AffinityDomainCodes>();
     
     public static final String DEFAULT_DOMAIN = "default";
     
-    private static Logger log = LoggerFactory.getLogger(CodeRepository.class);
+    private static Logger log = LoggerFactory.getLogger(IheXmlCodeProvider.class);
     
-    public CodeRepository(String baseDir) {
-        this(new File(baseDir));
+
+    @Override
+    public void init(String... cfg) {
+        if (cfg == null || cfg.length == 0 || cfg[0] == null)
+            throw new IllegalArgumentException("First configuration string must exist and must be a file path!");
+        baseDir = new File(cfg[0]);
     }
-    public CodeRepository(File baseDir) {
-        this.baseDir = baseDir;
+
+    @Override
+    public String getName() {
+        return "IHECodeProvider";
     }
     
-    public AffinityDomainCodes getAffinityDomainCodes(String affinityDomain) {
-        AffinityDomainCodes codes = adCodesMap.get(affinityDomain);
-        return codes == null ? readCodes(affinityDomain) : codes;
+    @Override
+    public boolean supportMimetypeCfg() {
+        return true;
     }
-    
-    public void addAffinityDomainCodes(String affinityDomain, AffinityDomainCodes adCodes) {
-        this.adCodesMap.put(affinityDomain, adCodes);
+
+    @Override
+    public String getDescription() {
+        return "Read codes.xml provided by IHE supporting multiple affinity domains by using sub directories."+
+        "\nA default code set can be defined by using 'default' sub directory"+
+        "\nConfiguration: A String naming the base configuration directory.";
     }
 
     public File getBaseDir() {
         return baseDir;
     }
     
-    public Set<String> getAffinityDomains() {
-        return adCodesMap.keySet();
+    public Collection<String> getAffinityDomains() {
+        String[] adDirs = baseDir != null ? baseDir.list() : null;
+        return adDirs == null ? null : Arrays.asList(adDirs);
     }
     
-    public void init(String affinityDomain) {
+    @Override
+    public AffinityDomainCodes initCodes(XADCfgRepository codeRep, String affinityDomain) {
         if ("*".equals(affinityDomain)) {
             String[] adDirs = baseDir.list();
             if (adDirs == null) {
                 log.error("Invalid affinity domain base directory! Does not contain any directory.");
             } else {
                 for (int i = 0 ; i < adDirs.length ; i++) {
-                    readCodes(adDirs[i]);
+                    readCodes(codeRep, adDirs[i]);
                 }
             }
+            return null;
         } else {
             if (affinityDomain == null)
                 affinityDomain = DEFAULT_DOMAIN;
-            readCodes(affinityDomain);
+            return readCodes(codeRep, affinityDomain);
         }
     }
 
-    private AffinityDomainCodes readCodes(String affinityDomain) {
-        AffinityDomainCodes codes = readCodeFile(affinityDomain);
+    private AffinityDomainCodes readCodes(XADCfgRepository codeRep, String affinityDomain) {
+        AffinityDomainCodes codes = readCodeFile(codeRep, affinityDomain);
         if (codes == null)
-            codes = adCodesMap.get(DEFAULT_DOMAIN);
+            codes = codeRep.getAffinityDomainCodes(DEFAULT_DOMAIN);
         if (codes == null)
-            codes = readCodeFile(DEFAULT_DOMAIN);
+            codes = readCodeFile(codeRep, DEFAULT_DOMAIN);
         return codes == null ? new AffinityDomainCodes() : codes;
     }
     
-    private AffinityDomainCodes readCodeFile(String affinityDomain) {
+    private AffinityDomainCodes readCodeFile(final XADCfgRepository codeRep, final String affinityDomain) {
         File f = new File(new File(baseDir, affinityDomain), "codes.xml");
         if (f.isFile()) {
             try {
                 final AffinityDomainCodes codes = new AffinityDomainCodes();
                 SAXParserFactory.newInstance().newSAXParser().parse(f, new DefaultHandler() {
                     private List<Code> typedCodes = null;
+                    private boolean mimeType = false;
                     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
                         if (qName.equals("CodeType")) {
                             String name = attributes.getValue("name");
                             if ("mimeType".equals(name)) {//Ignore mimeType pseudo codes
                                 typedCodes = null;
+                                mimeType = true;
                                 return;
                             }
+                            mimeType = false;
                             String scheme = attributes.getValue("classScheme");
                             codes.addClassSchemeToCodeType(scheme, name);
                             typedCodes = new ArrayList<Code>();
@@ -140,11 +154,14 @@ public class CodeRepository {
                             if (typedCodes != null)
                                 typedCodes.add( new Code(attributes.getValue("code"),
                                     attributes.getValue("codingScheme"), attributes.getValue("display")));
+                            if (mimeType) {
+                                codeRep.addMimetype(affinityDomain, attributes.getValue("code"), attributes.getValue("ext"));
+                            }
                         }
                     }
                 });
                 codes.setAffinityDomain(affinityDomain);
-                adCodesMap.put(affinityDomain, codes);
+                codeRep.addAffinityDomainCodes(affinityDomain, codes);
                 return codes;
             } catch (Exception x) {
                 log.error("Reading codes for affinitydomain "+affinityDomain+" failed!", x);
@@ -154,4 +171,12 @@ public class CodeRepository {
         }
         return null;
     }
+
+    @Override
+    public boolean configChanged(String name, String... cfg) {
+        if (cfg == null || cfg.length == 0 || (name != null && name.equals(this.getName())))
+            return true;
+        return cfg[0] == null || !baseDir.equals(new File(cfg[0]));
+    }
+
 }

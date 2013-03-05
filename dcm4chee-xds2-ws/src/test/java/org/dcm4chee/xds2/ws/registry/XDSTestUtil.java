@@ -57,7 +57,6 @@ import junit.framework.Assert;
 import org.dcm4che.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.code.Code;
-import org.dcm4chee.xds2.common.code.CodeRepository;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
@@ -349,7 +348,7 @@ public class XDSTestUtil {
                 adCodes.addCode(code.getCodeClassification(), code.getCodeClassification(), c);
             }
             XdsDevice.getXdsRegistry().setAffinityDomainConfigDir("dummy");
-            XdsDevice.getXdsRegistry().getCodeRepository().addAffinityDomainCodes(CodeRepository.DEFAULT_DOMAIN, adCodes);
+            XdsDevice.getXdsRegistry().getCodeRepository().addAffinityDomainCodes("default", adCodes);
         } catch (Exception x) {
             log.error("Failed to add test codes!", x);
         }

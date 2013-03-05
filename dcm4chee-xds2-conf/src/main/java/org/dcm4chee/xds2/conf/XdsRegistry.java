@@ -38,11 +38,9 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.io.File;
-
 import org.dcm4che.net.DeviceExtension;
 import org.dcm4che.util.StringUtils;
-import org.dcm4chee.xds2.common.code.CodeRepository;
+import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -66,7 +64,7 @@ public class XdsRegistry extends DeviceExtension {
     private boolean checkMimetype;
     private boolean preMetadtaCheck;
     
-    private CodeRepository codeRepository;
+    private XADCfgRepository xadCfgRepository;
 
     public String getApplicationName() {
         return applicationName;
@@ -98,13 +96,13 @@ public class XdsRegistry extends DeviceExtension {
     public void setAffinityDomainConfigDir(String dir) {
         this.affinityDomainConfigDir = dir;
         dir = StringUtils.replaceSystemProperties(dir == null ? DEFAULT_AFFINITYDOMAIN_CFG_DIR : dir);
-        if (codeRepository == null || !new File(dir).equals(codeRepository.getBaseDir())) {
-            codeRepository = new CodeRepository(dir);
+        if (xadCfgRepository == null || xadCfgRepository.configChanged(null, dir)) {
+            xadCfgRepository = new XADCfgRepository(null, dir);
         }
     }
     
-    public CodeRepository getCodeRepository() {
-        return codeRepository;
+    public XADCfgRepository getCodeRepository() {
+        return xadCfgRepository;
     }
     public String[] getAcceptedMimeTypes() {
         return mimeTypes;

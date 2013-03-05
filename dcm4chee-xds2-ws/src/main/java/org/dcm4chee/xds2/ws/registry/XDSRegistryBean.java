@@ -68,7 +68,7 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
-import org.dcm4chee.xds2.common.code.CodeRepository;
+import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsDevice;
@@ -241,7 +241,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
         //save affinityDomain and AffinityDomainCodes in session
         String affinityDomain = xadPatient.getIssuerOfPatientID().getUniversalID();
-        CodeRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+        XADCfgRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
         adCodes = codeRepository.getAffinityDomainCodes(affinityDomain);
         if (adCodes.isEmpty() && !cfg.isCreateMissingCodes()) {
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 

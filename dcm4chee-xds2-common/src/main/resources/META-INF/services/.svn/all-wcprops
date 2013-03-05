@@ -1,0 +1,11 @@
+K 25
+svn:wc:ra_dav:version-url
+V 124
+/svnroot/dcm4che/!svn/ver/6826/dcm4chee/dcm4chee-docstore/trunk/dcm4chee-docstore-store/src/main/resources/META-INF/services
+END
+org.dcm4chee.docstore.spi.DocumentStorageProviderSPI
+K 25
+svn:wc:ra_dav:version-url
+V 177
+/svnroot/dcm4che/!svn/ver/6826/dcm4chee/dcm4chee-docstore/trunk/dcm4chee-docstore-store/src/main/resources/META-INF/services/org.dcm4chee.docstore.spi.DocumentStorageProviderSPI
+END

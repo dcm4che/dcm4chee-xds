@@ -73,6 +73,7 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
         PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", repository.isCheckMimetype(), false);
         PreferencesUtils.storeNotEmpty(prefs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
+        PreferencesUtils.storeNotNull(prefs, "xdsAllowedCipherHostname", repository.getAllowedCipherHostname());
     }
 
     @Override
@@ -95,6 +96,7 @@ public class PreferencesXDSRepositoryConfiguration
         repository.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
         repository.setCheckMimetype(PreferencesUtils.booleanValue(prefs.get("xdsCheckMimetype", "false")));
         repository.setLogFullMessageHosts(PreferencesUtils.stringArray(prefs, "xdsLogFullMessageHosts"));
+        repository.setAllowedCipherHostname(prefs.get("xdsAllowedCipherHostname", "*"));
     }
 
     @Override
@@ -138,5 +140,8 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsLogFullMessageHosts",
                 prevRepository.getLogFullMessageHosts(),
                 repository.getLogFullMessageHosts());
+        PreferencesUtils.storeDiff(prefs, "xdsAllowedCipherHostname",
+                prevRepository.getAllowedCipherHostname(),
+                repository.getAllowedCipherHostname());
     }
 }

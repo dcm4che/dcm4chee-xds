@@ -78,6 +78,11 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.22 NAME 'xdsLogFullMessageHosts'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.23 NAME 'xdsAllowedCipherHostname'
+  DESC 'Hostname which is allowed in TLS hostname checking. Possible values: CERT , * (default) or <hostname>'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.1 NAME 'xdsRegistry'
   DESC 'XDS Registry information'
   SUP top STRUCTURAL
@@ -107,4 +112,5 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.2 NAME 'xdsRepository'
     xdsAcceptedMimeTypes $
     xdsCheckMimetype $
     xdsSoapMsgLogDir $
+    xdsAllowedCipherHostname $
     xdsLogFullMessageHosts ) )

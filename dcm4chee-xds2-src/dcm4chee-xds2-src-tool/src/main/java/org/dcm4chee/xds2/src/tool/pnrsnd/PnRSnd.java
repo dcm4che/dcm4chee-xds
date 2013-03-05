@@ -287,6 +287,7 @@ public class PnRSnd {
 
     private void send(PnRRequest pnrReq) throws MalformedURLException, MetadataConfigurationException {
         configTLS();
+        configTimeout();
         URL xdsRepositoryURL = new URL(props.getProperty("URL"));
         RegistryResponseType rsp = client.sendProvideAndRegister(pnrReq, xdsRepositoryURL);
         InetAddress addr = AuditLogger.localHost();
@@ -310,6 +311,16 @@ public class PnRSnd {
                 log.info("  Location   :"+err.getLocation());
             }
         }
+    }
+
+    private void configTimeout() {
+        String connectionTimeout = props.getProperty("connectionTimeout");
+        if (connectionTimeout != null)
+            System.setProperty("sun.net.client.defaultConnectTimeout", connectionTimeout);
+        String receiveTimeout = props.getProperty("receiveTimeout");
+        if (receiveTimeout != null)
+            System.setProperty("sun.net.client.defaultReadTimeout", receiveTimeout);
+        
     }
 
     private void initAuditLoggerUDP() {

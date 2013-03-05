@@ -51,6 +51,9 @@ import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.management.ObjectName;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.ws.BindingType;
@@ -336,6 +339,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         log.info("XDS.b: Send register document-b request to registry:"+xdsRegistryURI);
         log.info("####################################################");
         log.info("####################################################");
+        log.info("org.jboss.security.ignoreHttpsHost:"+System.getProperty("org.jboss.security.ignoreHttpsHost"));
         RegistryResponseType rsp = null;
         try {
             rsp = port.documentRegistryRegisterDocumentSetB(submitRequest);
@@ -344,7 +348,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
         return rsp;
     }
-
+    
     private List<ExtrinsicObjectType> checkRequest(ProvideAndRegisterDocumentSetRequestType req) throws XDSException {
         SubmitObjectsRequest sor = req.getSubmitObjectsRequest();
         RegistryPackageType submissionSet = InfosetUtil.getRegistryPackage(sor, XDSConstants.UUID_XDSSubmissionSet);

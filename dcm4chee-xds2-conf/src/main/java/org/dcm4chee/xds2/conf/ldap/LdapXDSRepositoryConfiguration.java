@@ -83,6 +83,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", repository.getSoapLogDir());
         LdapUtils.storeNotNull(attrs, "xdsCheckMimetype", repository.isCheckMimetype());
         LdapUtils.storeNotEmpty(attrs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
+        LdapUtils.storeNotNull(attrs, "xdsAllowedCipherHostname", repository.getAllowedCipherHostname());
         return attrs;
     }
 
@@ -108,6 +109,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         repository.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
         repository.setCheckMimetype(LdapUtils.booleanValue(attrs.get("xdsCheckMimetype"), false));
         repository.setLogFullMessageHosts(LdapUtils.stringArray(attrs.get("xdsLogFullMessageHosts")));
+        repository.setAllowedCipherHostname(LdapUtils.stringValue(attrs.get("xdsAllowedCipherHostname"), "*"));
     }
 
     @Override
@@ -152,6 +154,9 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeDiff(mods, "xdsLogFullMessageHosts",
                 prevRepository.getLogFullMessageHosts(),
                 repository.getLogFullMessageHosts());
+        LdapUtils.storeDiff(mods, "xdsAllowedCipherHostname",
+                prevRepository.getAllowedCipherHostname(),
+                repository.getAllowedCipherHostname());
         return mods;
     }
 }

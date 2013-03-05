@@ -55,6 +55,9 @@ import java.util.concurrent.Executors;
 import javax.ejb.EJB;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -86,7 +89,7 @@ import org.dcm4che.util.StringUtils;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.Code;
-import org.dcm4chee.xds2.common.code.CodeRepository;
+import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
@@ -186,6 +189,7 @@ public class XdsServiceServlet extends HttpServlet {
             throw new ConfigurationException(msg);
         }
         XdsDevice.setLocalXdsDevice(device);
+        
         if (hl7AppName != null) {
             HL7DeviceExtension hl7 = device.getDeviceExtension(HL7DeviceExtension.class);
             if (hl7 != null) {
@@ -229,7 +233,10 @@ public class XdsServiceServlet extends HttpServlet {
         if (hl7App != null)
             hl7App.getDevice().unbindConnections();
     }
-    
+        
+/*
+ * RESTFUL Services    
+ */
     @GET
     @Path("/reconfigure")
     public Response reconfigureXdsDevice() {
@@ -311,7 +318,7 @@ public class XdsServiceServlet extends HttpServlet {
         XdsRegistry d = XdsDevice.getXdsRegistry();
         if (d != null && d.getCodeRepository() != null) {
             try {
-                d.getCodeRepository().init(affinityDomain);
+                d.getCodeRepository().initCodes(affinityDomain);
                 log.info("Load codes of affinity domain "+affinityDomain+" finished!");
                 return Response.ok().entity(getAffinityDomainResultMsg(affinityDomain)).build();
             } catch (Exception x) {
@@ -434,7 +441,7 @@ public class XdsServiceServlet extends HttpServlet {
         StringBuilder sb = new StringBuilder();
         sb.append("Load codes of affinity domain <b>").append(affinityDomain).
         append(" </b>finished at ").append(new Date());
-        CodeRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+        XADCfgRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
         String[] ads = "*".equals(affinityDomain) ?
             codeRepository.getAffinityDomains().toArray(new String[0]) : new String[]{affinityDomain};
         for (int i = 0 ; i < ads.length ; i++) {
