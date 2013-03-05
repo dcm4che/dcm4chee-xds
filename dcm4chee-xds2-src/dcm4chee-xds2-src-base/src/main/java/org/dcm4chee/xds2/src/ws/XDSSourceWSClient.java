@@ -39,12 +39,17 @@
 package org.dcm4chee.xds2.src.ws;
 
 import java.net.URL;
+import java.util.Map;
+
+import javax.xml.ws.BindingProvider;
 
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.src.metadata.PnRRequest;
 import org.dcm4chee.xds2.src.metadata.exception.MetadataConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -55,8 +60,42 @@ import org.dcm4chee.xds2.src.metadata.exception.MetadataConfigurationException;
  */
 public class XDSSourceWSClient {
 
+    //only effective if webservice stack supports javax.xml.ws.client.connectionTimeout property in BindingProvider (jbossws-3.4.0, JBoss7)
+    private int connectionTimeout = -1;
+    private int receiveTimeout = -1;
+    
+    private static Logger log = LoggerFactory.getLogger(XDSSourceWSClient.class);
+    
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setReceiveTimeout(int receiveTimeout) {
+        this.receiveTimeout = receiveTimeout;
+    }
+
+    public int getReceiveTimeout() {
+        return receiveTimeout;
+    }
+
     public RegistryResponseType sendProvideAndRegister(PnRRequest req, URL xdsRegistryURI) throws MetadataConfigurationException {
         DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(xdsRegistryURI.toString());
-        return port.documentRepositoryProvideAndRegisterDocumentSetB(req.createInfoset());
+        if (connectionTimeout >= 0) {
+            ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", String.valueOf(connectionTimeout));
+            log.debug("Set connectionTimeout to {}", connectionTimeout);
+        }
+        if (receiveTimeout >= 0) {
+            ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.receiveTimeout", String.valueOf(receiveTimeout));
+            log.debug("Set receiveTimeout to {}", receiveTimeout);
+        }
+        log.debug("Send {}", req);
+        RegistryResponseType rsp = port.documentRepositoryProvideAndRegisterDocumentSetB(req.createInfoset());
+        log.debug("Send PnR request finished! response:{}", rsp.getStatus());
+        return rsp;
     }
+    
 }

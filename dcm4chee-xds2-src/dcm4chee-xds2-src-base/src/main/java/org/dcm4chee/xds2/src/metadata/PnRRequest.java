@@ -93,8 +93,16 @@ public class PnRRequest {
     private int idCounter = 1;
     
     public PnRRequest(String sourceID, String submissionSetUID, String patID, String srcPatID) {
-        if (sourceID == null || submissionSetUID == null || patID == null || srcPatID == null)
-            throw new IllegalArgumentException("SourceID, submissionSetUID patID and srcPatID must not be null!");
+        if (sourceID == null || submissionSetUID == null || patID == null || srcPatID == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Parameter values must not be null! (");
+            if (sourceID == null) sb.append("sourceID,");
+            if (submissionSetUID == null) sb.append("submissionSetUID,");
+            if (patID == null) sb.append("patID,");
+            if (srcPatID == null) sb.append("srcPatID,");
+            sb.setCharAt(sb.length()-1, ')');
+            throw new IllegalArgumentException(sb.toString());
+        }
         this.submissionSetUID = submissionSetUID;
         patientID = patID;
         srcPatIDSlot = Util.createSlot(XDSConstants.SLOT_NAME_SOURCE_PATIENT_ID, null, srcPatID);
@@ -335,6 +343,12 @@ public class PnRRequest {
 
     protected SlotType1 getSrcPatInfo() {
         return srcPatInfoSlot;
+    }
+    
+    @Override
+    public String toString() {
+        return "ProvideAndRegisterDocumentSet.b (PatID:"+patientID+", SubmissionSetUID:"+submissionSetUID+
+        " docs:"+this.documents.size()+" folders:"+folders.size()+")";
     }
 
     private void addValue(List<String> values, String val, String prefix) {

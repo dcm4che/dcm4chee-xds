@@ -105,7 +105,11 @@ public class PnRSnd {
         }
     }
     public PnRSnd() {
-        initAuditLogger();
+        if (Boolean.parseBoolean(props.getProperty("auditTLS"))) {
+            initAuditLoggerTLS();
+        } else {
+            initAuditLoggerUDP();
+        }
     }
 
     private static CommandLine parseComandLine(String[] args)
@@ -308,10 +312,10 @@ public class PnRSnd {
         }
     }
 
-    private void initAuditLogger() {
+    private void initAuditLoggerUDP() {
         device = new Device("test");
-        Device arrDevice = createARRDevice("arr", Connection.Protocol.SYSLOG_UDP, 
-                props.getProperty("audit.host"), Integer.parseInt(props.getProperty("audit.port")));
+        Device arrDevice = createARRDevice("arr", props.getProperty("audit.host"), 
+                Integer.parseInt(props.getProperty("audit.port")));
         AuditLogger logger = new AuditLogger();
         device.addDeviceExtension(logger);
         Connection auditUDP = new Connection("audit-udp", "localhost");
@@ -323,15 +327,40 @@ public class PnRSnd {
         logger.setIncludeBOM(false);
         XDSAudit.setAuditLogger(logger);
     }
-    private Device createARRDevice(String name, Connection.Protocol protocol, String host, int port) {
+    private void initAuditLoggerTLS() {
+        device = new Device("test");
+        Device arrDevice = createARRDevice("arr", props.getProperty("audit.host"), 
+                Integer.parseInt(props.getProperty("audit.port")));
+        AuditLogger logger = new AuditLogger();
+        device.addDeviceExtension(logger);
+        Connection auditTLS = new Connection("audit-tls", "localhost");
+        auditTLS.setProtocol(Connection.Protocol.SYSLOG_TLS);
+        auditTLS.setTlsCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA", "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
+        auditTLS.setTlsNeedClientAuth(true);
+        auditTLS.setTlsProtocols("TLSv1");
+        device.addConnection(auditTLS);
+        logger.addConnection(auditTLS);
+        logger.setAuditSourceTypeCodes("4");
+        logger.setAuditRecordRepositoryDevice(arrDevice);
+        logger.setIncludeBOM(false);
+        XDSAudit.setAuditLogger(logger);
+    }
+    private Device createARRDevice(String name, String host, int port) {
         log.info("####ARR:"+host+":"+port);
         Device arrDevice = new Device(name);
         AuditRecordRepository arr = new AuditRecordRepository();
         arrDevice.addDeviceExtension(arr);
         Connection auditUDP = new Connection("audit-udp", host, port);
-        auditUDP.setProtocol(protocol);
+        auditUDP.setProtocol(Connection.Protocol.SYSLOG_UDP);
         arrDevice.addConnection(auditUDP);
         arr.addConnection(auditUDP);
+
+        Connection auditTLS = new Connection("audit-tls", host, port);
+        auditTLS.setProtocol(Connection.Protocol.SYSLOG_TLS);
+        auditTLS.setTlsCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA", "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
+        auditTLS.setTlsProtocols("TLSv1");
+        arrDevice.addConnection(auditTLS);
+        arr.addConnection(auditTLS);
         return arrDevice ;
     }
 
