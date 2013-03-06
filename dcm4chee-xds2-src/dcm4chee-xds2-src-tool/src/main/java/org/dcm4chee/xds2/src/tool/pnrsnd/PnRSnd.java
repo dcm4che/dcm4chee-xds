@@ -46,6 +46,7 @@ import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -69,7 +70,9 @@ import org.dcm4che.util.StringUtils;
 import org.dcm4che.util.UIDUtils;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.Code;
+import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryErrorList;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
@@ -117,6 +120,7 @@ public class PnRSnd {
         Options opts = new Options();
         opts.addOption("h", "help", false, rb.getString("help"));
         opts.addOption("V", "version", false, rb.getString("version"));
+        opts.addOption("c", "showCodes", false, "Show defined codes for affinity domain");
         addURLOption(opts);
         addPropertyOption(opts);
         CommandLineParser parser = new PosixParser();
@@ -134,6 +138,10 @@ public class PnRSnd {
             String s = p.getName();
             System.out.println(s.substring(s.lastIndexOf('.')+1) + ": " +
                    p.getImplementationVersion());
+            System.exit(0);
+        }
+        if (cl.hasOption("c")) {
+            showCodes(cl);
             System.exit(0);
         }
         if (cl.hasOption("u")) {
@@ -399,7 +407,26 @@ public class PnRSnd {
         };
 
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
-
-
     }
+
+    private static void showCodes(CommandLine cl) {
+        @SuppressWarnings("unchecked")
+        Collection<String> args = cl.getArgList();
+        log.info("Show codes of affinity domain(s):"+args);
+        XADCfgRepository rep = new XADCfgRepository(null, "../conf/affinitydomain");
+        if (args.isEmpty() || args.contains("*")) {
+            args = rep.getAffinityDomains();
+        }
+        for (String domain : args) {
+            AffinityDomainCodes adCodes = rep.getAffinityDomainCodes(domain);
+            log.info("  Affinity domain:"+domain+" (source:"+adCodes.getAffinityDomain()+"):");
+            for (String codeType : adCodes.getCodeTypes()) {
+                log.info("CodeType:"+codeType);
+                for (Code c : adCodes.getCodes(codeType)) {
+                    log.info("    "+c);
+                }
+            }
+        }
+    }
+
 }
