@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+		29 Oct 09 - Added codes for NHIN - labeled NHIN 2009
+		
+		Document : codes.xml Created on : October 13, 2004, 2:51 PM Last
+		updated on : February 20, 2008 Author : bill Description: Required
+		values for XDS Codes for Pre-Connectathon and Connectathon testing
+
+		Change Log: 2/20/08 - major update to confidentialityCode section -
+		update to BPPC and HIMSS showcase 2/20/08 - added comment about
+		multiple Affinity Domain patient ID domains
+	-->
+<Codes>
+	<CodeType name="contentTypeCode" classScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500">
+		<Code code="Evaluation and management" display="Evaluation and management"
+			codingScheme="Connect-a-thon contentTypeCodes" />
+		<Code code="Conference" display="Conference" codingScheme="Connect-a-thon contentTypeCodes" />
+
+	</CodeType>
+	<CodeType name="classCode" classScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a">
+		
+		<!-- Added for NHIN Sept. 2009 -->
+		<Code code="10160-0" codingScheme="2.16.840.1.113883.6.1"
+			display="History of MEdication Use" />
+		<Code code="44943-9" codingScheme="2.16.840.1.113883.6.1"
+			display="Self management - Patient" />
+		
+		
+	</CodeType>
+	<CodeType name="confidentialityCode" classScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f">
+		<!-- Added Sept. 2009 NHIN -->
+		<Code code="N" display="Normal" codingScheme="2.16.840.1.113883.5.25" />
+		<Code code="R" display="Restricted" codingScheme="2.16.840.1.113883.5.25" />
+	</CodeType>
+	<CodeType name="formatCode" classScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d">
+		
+		<Code code="PDF/IHE 1.x" display="PDF/IHE 1.x" codingScheme="Connect-a-thon formatCodes" />
+		<Code code="Generic Image" display="Generic Image" codingScheme="Connect-a-thon formatCodes" />
+		<Code code="PDF" display="PDF" codingScheme="Connect-a-thon formatCodes" />
+		<Code code="TEXT" display="TEXT" codingScheme="Connect-a-thon formatCodes" />
+	</CodeType>
+	<CodeType name="healthcareFacilityTypeCode" classScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1">
+		
+		<Code code="ACC" display="Accident Site"
+			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="AMB" display="Ambulance"
+			codingScheme="2.16.840.1.113883.5.11" />
+	</CodeType>
+	<CodeType name="practiceSettingCode" classScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead">
+		
+		<!-- Added Sept, 2009 NHIN -->
+		<Code code="394802001" display="General Medicine"
+			codingScheme="2.16.840.1.113883.6.96" />
+		<Code code="408478003" display="Critical Care Medicine"
+			codingScheme="2.16.840.1.113883.6.96" />
+	</CodeType>
+	<CodeType name="eventCodeList" classScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4">
+		<Code code="TRID1001" display="XRAY CHEST Orderable"
+			codingScheme="RSNA2008 eventCodeList" />
+		<Code code="TRID1002" display="XRAY CHEST Procedure"
+			codingScheme="RSNA2008 eventCodeList" />
+	</CodeType>
+	
+	<!-- 
+		
+		This section replaced by folderCodeList below.
+		
+		
+	<CodeType name="codeList" classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5">
+		<Code code="Anesthesia" display="Anesthesia" codingScheme="Connect-a-thon codeList" />
+		<Code code="Cardiology" display="Cardiology" codingScheme="Connect-a-thon codeList" />
+	</CodeType>
+	
+	-->
+	<CodeType name="typeCode" classScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983">
+		<Code code="11488-4" display="Consultation Note" codingScheme="LOINC" />
+		<Code code="28574-2" display="Discharge Note" codingScheme="LOINC" />
+	</CodeType>
+	<!--
+		This section is used to validate mime type requests and to map mime
+		types into repository file types. The mapping from repository file
+		types back into mime types is done in /usr/local/tomcat1/conf/web.xml
+	-->
+	<CodeType name="mimeType">
+		<Code code="application/pdf" ext="pdf" />
+		<!--
+			used only by ACC, I think, now obsolete <Code
+			code="text/x-cda-r2+xml"/>
+		-->
+		<Code code="text/xml" ext="xml" />
+		<Code code="application/x-hl7" ext="hl7" />
+		<Code code="application/dicom" ext="dicom" />
+		<Code code="text/plain" ext="txt" />
+		<Code code="multipart/related" ext="mpr" />
+		<Code code="image/tiff" ext="tiff" />
+		<Code code="image/jpeg" ext="jpeg" />
+		<Code code="image/gif" ext="gif" />
+		<Code code="text/goofy" ext="gfy" />  <!--  fake mimetype for testing -->
+	</CodeType>
+	
+	<!--
+		This section is used to validate XDSFolder.folderCodeList attribute. 
+		As of TF 6, this attribute is no longer tied to the DocumentEntry 
+		objects it contains.  This attribute is separately controlled by
+		Affinity Domain configuration. 
+	 -->
+	 
+	 <CodeType name="folderCodeList" classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5">
+		<Code code="Referrals" codingScheme="Connect-a-thon folderCodeList"
+			display="Referrals" />
+		<Code code="Alergy Treatments" codingScheme="Connect-a-thon folderCodeList"
+			display="Alergy Treatments" />
+	 </CodeType>
+	 
+	 <CodeType name="associationDocumentation" classScheme="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3">
+		<Code code="Additional_Information" codingScheme="Connect-a-thon associationDocumentation"
+			display="Additional Information" />
+		<Code code="Corrected_Information" codingScheme="Connect-a-thon associationDocumentation"
+			display="Corrected Information" />
+	 </CodeType>
+	 
+	<!--
+		This element is now repeated since this server must support testing
+		for multiple events simultaneous and each event has an Assiging
+		Authority defined for the event.
+	-->
+	<AssigningAuthority id="&amp;1.3.6.1.4.1.21367.2005.3.7&amp;ISO" />
+	<AssigningAuthority id="&amp;1.3.6.1.4.1.21367.2008.2.1&amp;ISO" />
+	<AssigningAuthority id="&amp;1.19.6.24.109.42.1.3&amp;ISO" />
+	<AssigningAuthority id="&amp;1.3.6.1.4.1.21367.2009.1.2.300&amp;ISO" />
+</Codes>
