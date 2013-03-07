@@ -362,6 +362,17 @@ public class PnRSnd {
         auditTLS.setTlsCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA", "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
         auditTLS.setTlsNeedClientAuth(true);
         auditTLS.setTlsProtocols("TLSv1");
+        try {
+            device.setKeyStoreURL(new File(System.getProperty("javax.net.ssl.keyStore")).toURI().toURL().toString());
+            device.setTrustStoreURL(new File(System.getProperty("javax.net.ssl.trustStore")).toURI().toURL().toString());
+        } catch (Exception x) {
+            log.error("Failed to set keystore URL!", x);
+        }
+        device.setKeyStoreType("JKS");
+        device.setTrustStoreType("JKS");
+        device.setKeyStoreKeyPin(System.getProperty("javax.net.ssl.keyStorePassword"));
+        device.setKeyStorePin(System.getProperty("javax.net.ssl.keyPassword", System.getProperty("javax.net.ssl.keyStorePassword")));
+        device.setTrustStorePin(System.getProperty("javax.net.ssl.trustStorePassword"));
         device.addConnection(auditTLS);
         logger.addConnection(auditTLS);
         logger.setAuditSourceTypeCodes("4");

@@ -61,5 +61,9 @@ set JAVA_OPTS=%JAVA_OPTS% -Djavax.net.ssl.trustStorePassword=changeit
 set JAVA_OPTS=%JAVA_OPTS% -Djavax.net.ssl.keyStore=%DCM4CHE_HOME%\conf\EURO2012\keystore
 set JAVA_OPTS=%JAVA_OPTS% -Djavax.net.ssl.keyStorePassword=changeit
 
+rem set "JAVA_OPTS=%JAVA_OPTS% -Djavax.net.debug=ssl,handshake,data,trustmanager,help"
+set "JAVA_OPTS=%JAVA_OPTS% -Djavax.net.debug=ssl,handshake"
+rem set "JAVA_OPTS=%JAVA_OPTS% -Djavax.net.debug=all"
+
 "%JAVA%" -version
 "%JAVA%" %JAVA_OPTS% -cp "%CP%" %MAIN_CLASS% %ARGS%
