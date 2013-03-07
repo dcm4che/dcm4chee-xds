@@ -121,6 +121,7 @@ public class PnRSnd {
         opts.addOption("h", "help", false, rb.getString("help"));
         opts.addOption("V", "version", false, rb.getString("version"));
         opts.addOption("c", "showCodes", false, "Show defined codes for affinity domain");
+        opts.addOption("a", "audit", false, "Send a dummy audit message");
         addURLOption(opts);
         addPropertyOption(opts);
         CommandLineParser parser = new PosixParser();
@@ -142,6 +143,10 @@ public class PnRSnd {
         }
         if (cl.hasOption("c")) {
             showCodes(cl);
+            System.exit(0);
+        }
+        if (cl.hasOption("a")) {
+            new PnRSnd().audit();
             System.exit(0);
         }
         if (cl.hasOption("u")) {
@@ -429,4 +434,10 @@ public class PnRSnd {
         }
     }
 
+    private void audit() {
+        XDSAudit.logSourceExport("1.2.3.3.2.1", "test^^^&1.2.3.3.2.1&ISO",
+                XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), "localhost", 
+                "http://localhost:8080/testweb", "localhost", true);
+
+    }
 }
