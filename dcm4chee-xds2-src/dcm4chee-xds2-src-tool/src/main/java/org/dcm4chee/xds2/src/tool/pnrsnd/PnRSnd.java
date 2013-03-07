@@ -394,6 +394,7 @@ public class PnRSnd {
         auditTLS.setProtocol(Connection.Protocol.SYSLOG_TLS);
         auditTLS.setTlsCipherSuites("TLS_RSA_WITH_AES_128_CBC_SHA", "SSL_RSA_WITH_3DES_EDE_CBC_SHA");
         auditTLS.setTlsProtocols("TLSv1");
+        auditTLS.setHttpProxy(props.getProperty("http.proxy"));
         arrDevice.addConnection(auditTLS);
         arr.addConnection(auditTLS);
         return arrDevice ;
