@@ -364,6 +364,8 @@ public class XdsServiceServlet extends HttpServlet {
             append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
             sb.append("\n  CreateMissingCodes:").append(xdsApp.isCreateMissingCodes());
             sb.append("\n  CreateMissingPIDs:").append(xdsApp.isCreateMissingPIDs());
+            sb.append("\n  PreMetadataCheck:").append(xdsApp.isPreMetadataCheck());
+            sb.append("\n  DontSaveCodeClassifications:").append(xdsApp.isDontSaveCodeClassifications());
         }
     }
     
@@ -378,10 +380,13 @@ public class XdsServiceServlet extends HttpServlet {
         if (xdsApp.getAcceptedMimeTypes() != null)
             sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
         append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
+        append(sb, xdsApp.isForceMTOM(), "\n  forceMTOM:", null);
         append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
         sb.append("\n  Hostnames/IPs for full SOAP message logging:");
         if (xdsApp.getLogFullMessageHosts() != null)
             sb.append(StringUtils.concat(xdsApp.getLogFullMessageHosts(), ','));
+        append(sb, xdsApp.getAllowedCipherHostname(), "\n  AllowedCipherHostname:", " (not used in JBoss7 / appache cxf! Set system property: 'org.jboss.security.ignoreHttpsHost=true'" );
+        append(sb, System.getProperty("org.jboss.security.ignoreHttpsHost"), "\n  org.jboss.security.ignoreHttpsHost:", null);
     }
 
     private void appendAuditLogger(StringBuilder sb, AuditLogger logger, String prefix, String postfix) {

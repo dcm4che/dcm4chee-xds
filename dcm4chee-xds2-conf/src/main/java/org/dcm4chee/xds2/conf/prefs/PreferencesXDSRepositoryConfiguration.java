@@ -74,6 +74,7 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", repository.isCheckMimetype(), false);
         PreferencesUtils.storeNotEmpty(prefs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
         PreferencesUtils.storeNotNull(prefs, "xdsAllowedCipherHostname", repository.getAllowedCipherHostname());
+        PreferencesUtils.storeNotDef(prefs, "xdsForceMTOM", repository.isForceMTOM(), false);
     }
 
     @Override
@@ -97,6 +98,7 @@ public class PreferencesXDSRepositoryConfiguration
         repository.setCheckMimetype(PreferencesUtils.booleanValue(prefs.get("xdsCheckMimetype", "false")));
         repository.setLogFullMessageHosts(PreferencesUtils.stringArray(prefs, "xdsLogFullMessageHosts"));
         repository.setAllowedCipherHostname(prefs.get("xdsAllowedCipherHostname", "*"));
+        repository.setForceMTOM(PreferencesUtils.booleanValue(prefs.get("xdsForceMTOM", "false")));
     }
 
     @Override
@@ -143,5 +145,8 @@ public class PreferencesXDSRepositoryConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsAllowedCipherHostname",
                 prevRepository.getAllowedCipherHostname(),
                 repository.getAllowedCipherHostname());
+        PreferencesUtils.storeDiff(prefs, "xdsForceMTOM",
+                prevRepository.isForceMTOM(),
+                repository.isForceMTOM());
     }
 }

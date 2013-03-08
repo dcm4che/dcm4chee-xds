@@ -84,6 +84,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeNotNull(attrs, "xdsCheckMimetype", repository.isCheckMimetype());
         LdapUtils.storeNotEmpty(attrs, "xdsLogFullMessageHosts", repository.getLogFullMessageHosts());
         LdapUtils.storeNotNull(attrs, "xdsAllowedCipherHostname", repository.getAllowedCipherHostname());
+        LdapUtils.storeNotNull(attrs, "xdsForceMTOM", repository.isForceMTOM());
         return attrs;
     }
 
@@ -110,6 +111,7 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         repository.setCheckMimetype(LdapUtils.booleanValue(attrs.get("xdsCheckMimetype"), false));
         repository.setLogFullMessageHosts(LdapUtils.stringArray(attrs.get("xdsLogFullMessageHosts")));
         repository.setAllowedCipherHostname(LdapUtils.stringValue(attrs.get("xdsAllowedCipherHostname"), "*"));
+        repository.setForceMTOM(LdapUtils.booleanValue(attrs.get("xdsForceMTOM"), false));
     }
 
     @Override
@@ -157,6 +159,9 @@ public class LdapXDSRepositoryConfiguration extends LdapDicomConfigurationExtens
         LdapUtils.storeDiff(mods, "xdsAllowedCipherHostname",
                 prevRepository.getAllowedCipherHostname(),
                 repository.getAllowedCipherHostname());
+        LdapUtils.storeDiff(mods, "xdsForceMTOM",
+                prevRepository.isForceMTOM(),
+                repository.isForceMTOM());
         return mods;
     }
 }

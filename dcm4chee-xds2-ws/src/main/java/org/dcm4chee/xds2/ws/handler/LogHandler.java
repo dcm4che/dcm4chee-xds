@@ -72,7 +72,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
-        log.info("##########handleMessage LogHandler:"+ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
+        log.debug("##########handleMessage LogHandler:"+ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
         storeInboundSOAPHeader(ctx);
         logMessage(ctx);
         return true;
@@ -87,7 +87,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
 
     @Override
     public void close(MessageContext context) {
-        log.info("################ close");
+        log.debug("################ close");
     }
 
     @Override

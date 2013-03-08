@@ -96,6 +96,12 @@ attributetype ( 1.2.40.0.13.1.15.20.3.23 NAME 'xdsAllowedCipherHostname'
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
+attributetype ( 1.2.40.0.13.1.15.20.3.24 NAME 'xdsForceMTOM'
+  DESC 'Force MTOM/XOP message, even message doesn't contain attachment(s)'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+
 objectclass ( 1.2.40.0.13.1.15.20.4.1
   NAME 'xdsRegistry'
   DESC 'XDS Application information'
@@ -127,5 +133,6 @@ objectclass ( 1.2.40.0.13.1.15.20.4.2
   	xdsCheckMimetype $
     xdsSoapMsgLogDir $
     xdsAllowedCipherHostname $
+    xdsForceMTOM $
     xdsLogFullMessageHosts ) )
     

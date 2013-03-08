@@ -58,6 +58,7 @@ public class XdsRepository extends DeviceExtension {
     private String[] logFullMessageHosts;
     private boolean checkMimetype;
     private String allowedCipherHostname;
+    private boolean forceMTOM;
 
     public String getApplicationName() {
         return applicationName;
@@ -137,6 +138,12 @@ public class XdsRepository extends DeviceExtension {
         this.allowedCipherHostname = allowedCipherHostnames;
     }
     
+    public boolean isForceMTOM() {
+        return forceMTOM;
+    }
+    public void setForceMTOM(boolean forceMTOM) {
+        this.forceMTOM = forceMTOM;
+    }
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;
@@ -148,5 +155,6 @@ public class XdsRepository extends DeviceExtension {
         setCheckMimetype(src.isCheckMimetype());
         setLogFullMessageHosts(src.getLogFullMessageHosts());
         setAllowedCipherHostname(src.getAllowedCipherHostname());
+        this.setForceMTOM(src.isForceMTOM());
     }
 }
