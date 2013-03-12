@@ -430,6 +430,47 @@ public class XDSAudit {
         }
     }
 
+    public static void logPixQuery(String patID, String sendingApp, String sendingFacility, 
+            String receivingApp, String receivingFacility, String remoteHost, byte[] query, byte[] msh10, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            try {
+                Calendar timeStamp = logger.timeStamp();
+                AuditMessage msg = new AuditMessage(); 
+                msg.setEventIdentification(createEventIdentification(
+                        EventID.Query, 
+                        EventActionCode.Execute,
+                        timeStamp,
+                        success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure,
+                        null,
+                        EventTypeCode.ITI_9_PIXQuery));
+                msg.getAuditSourceIdentification().add(
+                        logger.createAuditSourceIdentification());
+                String hostName = AuditLogger.localHost().getHostName();
+                msg.getActiveParticipant().add(
+                        AuditMessages.createActiveParticipant(sendingFacility+"|"+sendingApp, 
+                                AuditLogger.processID(), null, true,
+                                hostName, machineOrIP(hostName), null, RoleIDCode.Source));
+                msg.getActiveParticipant().add(
+                        AuditMessages.createActiveParticipant(sendingFacility+"|"+sendingApp, null, null, false,
+                                remoteHost, machineOrIP(remoteHost), null, RoleIDCode.Destination));
+                msg.getParticipantObjectIdentification().add(createPatient(patID));
+                msg.getParticipantObjectIdentification().add(AuditMessages.createParticipantObjectIdentification(
+                        null, new ParticipantObjectIDTypeCode("ITI-9", "IHE Transactions", "PIX Query"),
+                        null, query, AuditMessages.ParticipantObjectTypeCode.SystemObject, 
+                        AuditMessages.ParticipantObjectTypeCodeRole.Query, null, null, null, 
+                        AuditMessages.createParticipantObjectDetail("MSH-10", msh10)));
+                msg.getParticipantObjectIdentification().add(AuditMessages.createParticipantObjectIdentification(
+                        patID, ParticipantObjectIDTypeCode.ITI_PatientNumber, null,
+                        (byte[])null, AuditMessages.ParticipantObjectTypeCode.Person, 
+                        AuditMessages.ParticipantObjectTypeCodeRole.Patient, null, null, null));
+                sendAuditMessage(timeStamp, msg);
+            } catch (Exception e) {
+                log.warn("Audit log of PIX query failed!");
+                log.debug("AuditLog Exception:", e);
+            }
+        }
+    }
+    
     private static AuditMessage createApplicationActivity(
             EventTypeCode eventType, Calendar timeStamp, String outcomeIndicator) {
         AuditMessage msg = new AuditMessage();

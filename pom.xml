@@ -66,6 +66,7 @@
     <module>dcm4chee-xds2-ear</module>
     <module>dcm4chee-xds2-tool</module>
     <module>dcm4chee-xds2-src</module>
+    <module>dcm4chee-xds2-pix</module>
     <module>dcm4chee-xds2-dist</module>
   </modules>
   <dependencyManagement>

@@ -1,0 +1,68 @@
+#!/bin/sh
+# -------------------------------------------------------------------------
+# hl7snd  Launcher
+# -------------------------------------------------------------------------
+
+MAIN_CLASS=org.dcm4chee.xds2.src.tool.pnrsnd.PnRSnd
+MAIN_JAR=dcm4chee-xds2-src-tool-2.0.0.jar
+
+DIRNAME="`dirname "$0"`"
+
+# OS specific support (must be 'true' or 'false').
+cygwin=false;
+case "`uname`" in
+    CYGWIN*)
+        cygwin=true
+        ;;
+esac
+
+# For Cygwin, ensure paths are in UNIX format before anything is touched
+if $cygwin ; then
+    [ -n "$DCM4CHE_HOME" ] &&
+        DCM4CHE_HOME=`cygpath --unix "$DCM4CHE_HOME"`
+    [ -n "$JAVA_HOME" ] &&
+        JAVA_HOME=`cygpath --unix "$JAVA_HOME"`
+fi
+
+# Setup DCM4CHE_HOME
+if [ "x$DCM4CHE_HOME" = "x" ]; then
+    DCM4CHE_HOME=`cd "$DIRNAME"/..; pwd`
+fi
+
+# Setup the JVM
+if [ "x$JAVA_HOME" != "x" ]; then
+    JAVA=$JAVA_HOME/bin/java
+else
+    JAVA="java"
+fi
+
+# Setup the classpath
+CP="$DCM4CHE_HOME/etc/hl7snd/"
+CP="$CP:$DCM4CHE_HOME/lib/$MAIN_JAR"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-src-base-2.0.0.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-common-2.0.0.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-infoset-2.0.0.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-audit-3.0.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-core-3.0.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-audit-3.0.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-3.0.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/slf4j-api-1.6.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/slf4j-log4j12-1.6.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/log4j-1.2.16.jar"
+CP="$CP:$DCM4CHE_HOME/lib/commons-cli-1.2.jar"
+
+# For Cygwin, switch paths to Windows format before running java
+if $cygwin; then
+    JAVA=`cygpath --path --windows "$JAVA"`
+    CP=`cygpath --path --windows "$CP"`
+fi
+
+JAVA_OPTS="$JAVA_OPTS -Dhttps.protocols=TLSv1"
+JAVA_OPTS="$JAVA_OPTS -Dhttps.cipherSuites=TLS_RSA_WITH_AES_128_CBC_SHA,SSL_RSA_WITH_3DES_EDE_CBC_SHA"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStore=%DCM4CHE_HOME%\conf\EURO2012\keystore"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.trustStorePassword=changeit"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.keyStore=%DCM4CHE_HOME%\conf\EURO2012\keystore"
+JAVA_OPTS="$JAVA_OPTS -Djavax.net.ssl.keyStorePassword=changeit"
+
+# Execute the JVM
+exec $JAVA $JAVA_OPTS -cp "$CP" $MAIN_CLASS "$@"
