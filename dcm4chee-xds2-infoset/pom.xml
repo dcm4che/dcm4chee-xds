@@ -57,6 +57,7 @@
 				<groupId>org.jboss.ws.plugins</groupId>
 				<artifactId>maven-jaxws-tools-plugin</artifactId>
 				<version>1.0.0.GA</version>
+				
 				<executions>
 					<execution>
 						<id>XDS.b Registry</id>
@@ -87,6 +88,26 @@
 							</wsdls>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_repo.xml"</File>
+								<File>${basedir}/src/bindings/schemas_repo.xml"</File>
+							</bindingFiles>
+							<extension>true</extension>
+							<target>2.0</target>
+							<verbose>true</verbose>
+						</configuration>
+					</execution>
+					<execution>
+						<id>XCA Responding Gateway</id>
+						<goals>
+							<goal>wsconsume</goal>
+						</goals>
+						<configuration>
+							<wsdls>
+								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGatewayQuery.wsdl</wsdl>
+								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGatewayRetrieve.wsdl</wsdl>
+								<wsdl>${basedir}/src/main/resources/wsdl/XCARespondingGateway.wsdl</wsdl>
+							</wsdls>
+							<bindingFiles>
+								<File>${basedir}/src/bindings/wsdl_xca.xml"</File>
 								<File>${basedir}/src/bindings/schemas_repo.xml"</File>
 							</bindingFiles>
 							<extension>true</extension>

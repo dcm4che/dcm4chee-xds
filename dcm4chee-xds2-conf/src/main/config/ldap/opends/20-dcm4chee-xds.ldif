@@ -88,6 +88,17 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.24 NAME 'xdsForceMTOM'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.30 NAME 'xdsHomeCommunityID'
+  DESC 'XDS/XCA HomeCommunityID'
+  EQUALITY caseExactMatch
+  SUBSTR caseExactSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.31 NAME 'xdsRepositoryURL'
+  DESC 'Repository URL(s) which is used by Source, Consumer and XCA Actors.'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.1 NAME 'xdsRegistry'
   DESC 'XDS Registry information'
   SUP top STRUCTURAL
@@ -120,3 +131,14 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.2 NAME 'xdsRepository'
     xdsAllowedCipherHostname $
     xdsForceMTOM $
     xdsLogFullMessageHosts ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.3 NAME 'xcaRespondingGW'
+  DESC 'XCA Responding Gateway information'
+  SUP top STRUCTURAL
+  MUST (
+    cn $
+    xdsApplicationName $
+    xdsHomeCommunityID $
+    xdsRegistryURL $
+    xdsRepositoryURL )
+  MAY (
+    xdsSoapMsgLogDir ) )

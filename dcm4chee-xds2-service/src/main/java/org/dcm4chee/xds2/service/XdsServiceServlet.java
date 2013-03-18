@@ -55,9 +55,6 @@ import java.util.concurrent.Executors;
 import javax.ejb.EJB;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSession;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -90,11 +87,14 @@ import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
+import org.dcm4chee.xds2.conf.XCARespondigGWCfg;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
+import org.dcm4chee.xds2.conf.ldap.LdapXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRepositoryConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
 import org.dcm4chee.xds2.registry.hl7.XdsHL7Service;
@@ -163,6 +163,7 @@ public class XdsServiceServlet extends HttpServlet {
             LdapDicomConfiguration ldapConfig = new LdapDicomConfiguration(p);
             ldapConfig.addDicomConfigurationExtension(new LdapXDSRegistryConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapXDSRepositoryConfiguration());
+            ldapConfig.addDicomConfigurationExtension(new LdapXCARespondingGWConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapHL7Configuration());
             ldapConfig.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
@@ -173,6 +174,7 @@ public class XdsServiceServlet extends HttpServlet {
             PreferencesDicomConfiguration prefConfig = new PreferencesDicomConfiguration();
             prefConfig.addDicomConfigurationExtension(new PreferencesXDSRegistryConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
+            prefConfig.addDicomConfigurationExtension(new PreferencesXCARespondingGWConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesHL7Configuration());
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
@@ -288,9 +290,10 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append(d.getDeviceName());
             append(sb, d.getDescription(), " (", ")");
             sb.append("<h4>XDS Applications:</h4><pre>");
-            appendXdsRegistry(sb, d.getDeviceExtension(XdsRegistry.class), "\n", null);
-            appendXdsRepo(sb, d.getDeviceExtension(XdsRepository.class), "\n\n", null);
-            sb.append("<h4>Audit Logger:</h4><pre>");
+            appendXdsRegistry(sb, d.getDeviceExtension(XdsRegistry.class), "\n</pre><h5>XDS Registry:</h5><pre>\n", null);
+            appendXdsRepo(sb, d.getDeviceExtension(XdsRepository.class), "\n</pre><h5>XDS Repository:</h5><pre>\n", null);
+            appendXCARespGW(sb, d.getDeviceExtension(XCARespondigGWCfg.class), "\n</pre><h5>XCA Responding Gateway:</h5><pre>\n", null);
+            sb.append("</pre><h4>Audit Logger:</h4><pre>");
             appendAuditLogger(sb, d.getDeviceExtension(AuditLogger.class), "\n\n", null);
             sb.append("</pre><h4>HL7 Applications:</h4><pre>");
             HL7DeviceExtension hl7 = d.getDeviceExtension(HL7DeviceExtension.class);
@@ -371,22 +374,42 @@ public class XdsServiceServlet extends HttpServlet {
     
     private void appendXdsRepo(StringBuilder sb, XdsRepository xdsApp, String prefix, String postfix) {
         append(sb, prefix);
-        sb.append(APPLICATION_NAME).append(xdsApp.getApplicationName());
-        append(sb, xdsApp.getRepositoryUID(), "\n  repositoryUID:", null);
-        sb.append("\n  Registry URLs:");
-        String[] urls = xdsApp.getRegistryURLs();
-        for (int i=0 ; i < urls.length ; i++)
-            sb.append("\n  ").append(urls[i]);
-        if (xdsApp.getAcceptedMimeTypes() != null)
-            sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
-        append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
-        append(sb, xdsApp.isForceMTOM(), "\n  forceMTOM:", null);
-        append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
-        sb.append("\n  Hostnames/IPs for full SOAP message logging:");
-        if (xdsApp.getLogFullMessageHosts() != null)
-            sb.append(StringUtils.concat(xdsApp.getLogFullMessageHosts(), ','));
-        append(sb, xdsApp.getAllowedCipherHostname(), "\n  AllowedCipherHostname:", " (not used in JBoss7 / appache cxf! Set system property: 'org.jboss.security.ignoreHttpsHost=true'" );
-        append(sb, System.getProperty("org.jboss.security.ignoreHttpsHost"), "\n  org.jboss.security.ignoreHttpsHost:", null);
+        if (xdsApp == null) {
+            sb.append("not configured");
+        } else {
+            sb.append(APPLICATION_NAME).append(xdsApp.getApplicationName());
+            append(sb, xdsApp.getRepositoryUID(), "\n  repositoryUID:", null);
+            sb.append("\n  Registry URLs:");
+            String[] urls = xdsApp.getRegistryURLs();
+            for (int i=0 ; i < urls.length ; i++)
+                sb.append("\n  ").append(urls[i]);
+            if (xdsApp.getAcceptedMimeTypes() != null)
+                sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
+            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
+            append(sb, xdsApp.isForceMTOM(), "\n  forceMTOM:", null);
+            append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
+            sb.append("\n  Hostnames/IPs for full SOAP message logging:");
+            if (xdsApp.getLogFullMessageHosts() != null)
+                sb.append(StringUtils.concat(xdsApp.getLogFullMessageHosts(), ','));
+            append(sb, xdsApp.getAllowedCipherHostname(), "\n  AllowedCipherHostname:", " (not used in JBoss7 / appache cxf! Set system property: 'org.jboss.security.ignoreHttpsHost=true'" );
+            append(sb, System.getProperty("org.jboss.security.ignoreHttpsHost"), "\n  org.jboss.security.ignoreHttpsHost:", null);
+        }
+    }
+
+    private void appendXCARespGW(StringBuilder sb, XCARespondigGWCfg rspGW, String prefix, String postfix) {
+        append(sb, prefix);
+        if (rspGW == null) {
+            sb.append("not configured");
+        } else {
+            sb.append(APPLICATION_NAME).append(rspGW.getApplicationName());
+            append(sb, rspGW.getHomeCommunityID(), "\n  HomeCommunityID:", null);
+            append(sb, rspGW.getRegistryURL(), "\n  Registry URL:", null);
+            sb.append("\n  Repository URLs:");
+            String[] urls = rspGW.getRepositoryURLs();
+            for (int i=0 ; i < urls.length ; i++)
+                sb.append("\n  ").append(urls[i]);
+            append(sb, rspGW.getSoapLogDir(), "\n  SOAP logging dir:", null);
+        }
     }
 
     private void appendAuditLogger(StringBuilder sb, AuditLogger logger, String prefix, String postfix) {

@@ -381,7 +381,7 @@
 			        -->
 			          <archive>
 			            <manifestEntries>
-			              <Dependencies>com.mysema.querydsl</Dependencies>
+			              <Dependencies>com.mysema.querydsl, org.apache.cxf</Dependencies>
 			            </manifestEntries>
 			          </archive>
 				</configuration>

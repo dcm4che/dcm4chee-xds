@@ -33,6 +33,15 @@ xdsCheckAffinityDomain: false
 xdsCheckMimetype: false
 xdsSoapMsgLogDir: /var/log/xdslog
 
+dn: cn=XCARespondingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+objectClass: xcaRespondingGW
+cn:XCARespondingGW
+xdsApplicationName: XCA_RESPONDING_GW
+xdsHomeCommunityID: 1.2.3.4.9.99
+xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
+xdsRepositoryURL: http://localhost:8080/dcm4chee-xds/XDSbRepository/b
+xdsSoapMsgLogDir: /var/log/xdslog
+
 dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
 dicomHostname: localhost
 dicomPort: 2576

@@ -123,6 +123,9 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             if (action.endsWith(":RegisterDocumentSet-b") ||
                  action.endsWith(":RegisterDocumentSet-bResponse")) {
                 logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
+            } else if (action.endsWith(":CrossGatewayQuery") ||
+                        action.endsWith(":CrossGatewayQueryResponse")) {
+                logDir = XdsDevice.getXCARespondingGW().getSoapLogDir();
             } else {
                 logDir = XdsDevice.getXdsRepository().getSoapLogDir();
                 String [] hosts = XdsDevice.getXdsRepository().getLogFullMessageHosts(); 
