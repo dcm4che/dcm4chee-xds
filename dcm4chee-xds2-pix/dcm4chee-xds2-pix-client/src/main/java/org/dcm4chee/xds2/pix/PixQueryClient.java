@@ -41,6 +41,11 @@ package org.dcm4chee.xds2.pix;
 import java.io.IOException;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.UnrecoverableKeyException;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.dcm4che.hl7.HL7Exception;
 import org.dcm4che.hl7.HL7Message;
@@ -168,6 +173,29 @@ public class PixQueryClient {
         conn.getDevice().setTrustStoreURL(trustStoreURL);
         conn.getDevice().setTrustStoreType(trustStoreType);
         conn.getDevice().setTrustStorePin(trustStorePin);
+    }
+    
+    public void setKeyStore(KeyStore ks, char[] password) {            
+        KeyManagerFactory kmf;
+        try {
+            kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+            kmf.init(ks, password);
+            conn.getDevice().setKeyManager(kmf.getKeyManagers()[0]);
+        } catch (Exception e) {
+            log.error( "Failed to set key-store from configured certificates", e );
+        }        
+    }
+
+    
+    public void setTrustStore(KeyStore ts) {            
+        TrustManagerFactory tmf;
+        try {
+            tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(ts);
+            conn.getDevice().setTrustManager(tmf.getTrustManagers()[0]);
+        } catch (Exception e) {
+            log.error("Failed to set trust-store from configured certificates", e );
+        }        
     }
     
     public void setResponseTimeout(int timeout) {
