@@ -42,11 +42,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.dcm4che.net.DeviceExtension;
+import org.dcm4chee.xds2.common.XDSUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-public class XCARespondigGWCfg extends DeviceExtension {
+public class XCARespondingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
@@ -82,40 +83,20 @@ public class XCARespondigGWCfg extends DeviceExtension {
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
     }
-    public String[] getRepositoryURLs() {
-        String[] sa = new String[repositoryUrlMapping.size()];
-        int i = 0;
-        for (Map.Entry<String, String> e : repositoryUrlMapping.entrySet()) {
-            sa[i++] = e.getKey()+"|"+e.getValue();
-        }
-        return sa;
-    }
-
-    public void setRepositoryURLs(String[] repositoryURLs) {
-        repositoryUrlMapping.clear();
-        int pos;
-        String value;
-        for (int i = 0 ; i < repositoryURLs.length ; i++) {
-            value = repositoryURLs[i];
-            pos = value.indexOf('|');
-            if (pos == -1) {
-                repositoryUrlMapping.put("*", value);
-            } else {
-                repositoryUrlMapping.put(value.substring(0, pos), value.substring(++pos));
-            }
-        }
-    }
     
+    public String[] getRepositoryURLs() {
+        return XDSUtil.map2keyValueStrings(repositoryUrlMapping, '|');
+    }
+    public void setRepositoryURLs(String[] repositoryURLs) {
+        XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", repositoryUrlMapping);
+    }
     public String getRepositoryURL(String repositoryID) {
-        String url = repositoryUrlMapping.get(repositoryID);
-        if (url == null)
-            url = repositoryUrlMapping.get("*");
-        return url;
+        return XDSUtil.getValue(repositoryID, "*", repositoryUrlMapping);
     }
 
     @Override
     public void reconfigure(DeviceExtension from) {
-        XCARespondigGWCfg src = (XCARespondigGWCfg) from;
+        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
         setApplicationName(src.getApplicationName());
         setHomeCommunityID(src.getHomeCommunityID());
         setRegistryURL(src.getRegistryURL());

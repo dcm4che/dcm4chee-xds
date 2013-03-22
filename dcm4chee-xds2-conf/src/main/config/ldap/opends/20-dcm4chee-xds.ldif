@@ -99,6 +99,26 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.31 NAME 'xdsRepositoryURL'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.32 NAME 'xdsRespondingGatewayURL'
+  DESC 'Responding Gateway URL(s) which is used by XCA Initiating Gateway Actors.'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.33 NAME 'xdsRespondingGatewayRetrieveURL'
+  DESC 'Optional Responding Gateway Retrieve URL(s) if Query and Retrieve Service use different URLs.'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.34 NAME 'xdsAsync'
+  DESC 'Enable Async web service request'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.35 NAME 'xdsAsyncHandler'
+  DESC 'Use async handler method for Async web service request'
+  EQUALITY booleanMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
+  SINGLE-VALUE )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.1 NAME 'xdsRegistry'
   DESC 'XDS Registry information'
   SUP top STRUCTURAL
@@ -141,4 +161,19 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.3 NAME 'xcaRespondingGW'
     xdsRegistryURL $
     xdsRepositoryURL )
   MAY (
+    xdsSoapMsgLogDir ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.4 NAME 'xcaInitiatingGW'
+  DESC 'XCA Initiating Gateway information'
+  SUP top STRUCTURAL
+  MUST (
+    cn $
+    xdsApplicationName $
+    xdsHomeCommunityID $
+    xdsRespondingGatewayURL )
+  MAY (
+    xdsRespondingGatewayRetrieveURL $
+    xdsRegistryURL $
+    xdsRepositoryURL $
+    xdsAsync $
+    xdsAsyncHandler $
     xdsSoapMsgLogDir ) )

@@ -37,7 +37,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -142,5 +144,42 @@ public class XDSUtil {
         }
         return sb.toString();
     }
+
+    public static String[] map2keyValueStrings(Map<String,String> map, char delimiter) {
+        String[] sa = new String[map.size()];
+        int i = 0;
+        for (Map.Entry<String, String> e : map.entrySet()) {
+            sa[i++] = e.getKey()+delimiter+e.getValue();
+        }
+        return sa;
+    }
+
+    public static Map<String, String> storeKeyValueStrings2map(String[] keyValues, char delimiter, String defaultKey, Map<String,String> map) {
+        if (map == null) {
+            map = new HashMap<String,String>();
+        } else {
+            map.clear();
+        }
+        int pos;
+        String value;
+        for (int i = 0 ; i < keyValues.length ; i++) {
+            value = keyValues[i];
+            pos = value.indexOf(delimiter);
+            if (pos == -1) {
+                map.put(defaultKey, value);
+            } else {
+                map.put(value.substring(0, pos), value.substring(++pos));
+            }
+        }
+        return map;
+    }
+    
+    public static String getValue(String key, String defaultKey, Map<String,String> map) {
+        String value = map.get(key);
+        if (value == null)
+            value = map.get(defaultKey);
+        return value;
+    }
+    
 
 }

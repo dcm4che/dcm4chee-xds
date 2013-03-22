@@ -52,35 +52,39 @@ import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.ldap.LdapDicomConfigurationExtension;
 import org.dcm4che.conf.ldap.LdapUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  * @author Franz Willer <franz.willer@gmail.com>
  */
-public class LdapXCARespondingGWConfiguration extends LdapDicomConfigurationExtension {
-    private static final String CN_XCA_RESPONDING_GW = "cn=XCARespondingGW,";
+public class LdapXCAInitiatingGWConfiguration extends LdapDicomConfigurationExtension {
+    private static final String CN_XCA_INITIATING_GW = "cn=XCAInitiatingGW,";
 
     @Override
     protected void storeChilds(String deviceDN, Device device) throws NamingException {
-        XCARespondingGWCfg rspGW = device.getDeviceExtension(XCARespondingGWCfg.class);
-        if (rspGW != null)
-            store(deviceDN, rspGW);
+        XCAInitiatingGWCfg gw = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        if (gw != null)
+            store(deviceDN, gw);
     }
 
-    private void store(String deviceDN, XCARespondingGWCfg rspGW)
+    private void store(String deviceDN, XCAInitiatingGWCfg rspGW)
             throws NamingException {
-        config.createSubcontext(CN_XCA_RESPONDING_GW + deviceDN,
+        config.createSubcontext(CN_XCA_INITIATING_GW + deviceDN,
                 storeTo(rspGW, deviceDN, new BasicAttributes(true)));
     }
 
-    private Attributes storeTo(XCARespondingGWCfg rspGW, String deviceDN, Attributes attrs) {
+    private Attributes storeTo(XCAInitiatingGWCfg rspGW, String deviceDN, Attributes attrs) {
         attrs.put(new BasicAttribute("objectclass", "xcaRespondingGW"));
         LdapUtils.storeNotNull(attrs, "xdsApplicationName", rspGW.getApplicationName());
         LdapUtils.storeNotNull(attrs, "xdsHomeCommunityID", rspGW.getHomeCommunityID());
         LdapUtils.storeNotEmpty(attrs, "xdsRepositoryURL", rspGW.getRepositoryURLs());
+        LdapUtils.storeNotEmpty(attrs, "xdsRespondingGatewayURL", rspGW.getRespondingGWURLs());
+        LdapUtils.storeNotEmpty(attrs, "xdsRespondingGatewayRetrieveURL", rspGW.getRespondingGWRetrieveURLs());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", rspGW.getSoapLogDir());
         LdapUtils.storeNotNull(attrs, "xdsRegistryURL", rspGW.getRegistryURL());
+        LdapUtils.storeNotNull(attrs, "xdsAsync", rspGW.isAsync());
+        LdapUtils.storeNotNull(attrs, "xdsAsyncHandler", rspGW.isAsyncHandler());
         return attrs;
     }
 
@@ -89,59 +93,75 @@ public class LdapXCARespondingGWConfiguration extends LdapDicomConfigurationExte
             throws NamingException, ConfigurationException {
         Attributes attrs;
         try {
-            attrs = config.getAttributes(CN_XCA_RESPONDING_GW + deviceDN);
+            attrs = config.getAttributes(CN_XCA_INITIATING_GW + deviceDN);
         } catch (NameNotFoundException e) {
             return;
         }
-        XCARespondingGWCfg rspGW = new XCARespondingGWCfg();
-        loadFrom(rspGW, attrs);
-        device.addDeviceExtension(rspGW);
+        XCAInitiatingGWCfg gw = new XCAInitiatingGWCfg();
+        loadFrom(gw, attrs);
+        device.addDeviceExtension(gw);
     }
 
-    private void loadFrom(XCARespondingGWCfg rspGW, Attributes attrs) throws NamingException {
-        rspGW.setApplicationName(LdapUtils.stringValue(attrs.get("xdsApplicationName"), null));
-        rspGW.setHomeCommunityID(LdapUtils.stringValue(attrs.get("xdsHomeCommunityID"), null));
-        rspGW.setRegistryURL(LdapUtils.stringValue(attrs.get("xdsRegistryURL"), null));
-        rspGW.setRepositoryURLs(LdapUtils.stringArray(attrs.get("xdsRepositoryURL")));
-        rspGW.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
+    private void loadFrom(XCAInitiatingGWCfg rsp, Attributes attrs) throws NamingException {
+        rsp.setApplicationName(LdapUtils.stringValue(attrs.get("xdsApplicationName"), null));
+        rsp.setHomeCommunityID(LdapUtils.stringValue(attrs.get("xdsHomeCommunityID"), null));
+        rsp.setRegistryURL(LdapUtils.stringValue(attrs.get("xdsRegistryURL"), null));
+        rsp.setRepositoryURLs(LdapUtils.stringArray(attrs.get("xdsRepositoryURL")));
+        rsp.setRespondingGWURLs(LdapUtils.stringArray(attrs.get("xdsRespondingGatewayURL")));
+        rsp.setRespondingGWRetrieveURLs(LdapUtils.stringArray(attrs.get("xdsRespondingGatewayRetrieveURL")));
+        rsp.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
+        rsp.setAsync(LdapUtils.booleanValue(attrs.get("xdsAsync"), false));
+        rsp.setAsyncHandler(LdapUtils.booleanValue(attrs.get("xdsAsyncHandler"), false));
     }
 
     @Override
     protected void mergeChilds(Device prev, Device device, String deviceDN)
             throws NamingException {
-        XCARespondingGWCfg prevRspGW = prev.getDeviceExtension(XCARespondingGWCfg.class);
-        XCARespondingGWCfg rspGW = device.getDeviceExtension(XCARespondingGWCfg.class);
-        if (rspGW == null) {
-            if (prevRspGW != null)
-                config.destroySubcontextWithChilds(CN_XCA_RESPONDING_GW + deviceDN);
+        XCAInitiatingGWCfg prevGW = prev.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAInitiatingGWCfg gw = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        if (gw == null) {
+            if (prevGW != null)
+                config.destroySubcontextWithChilds(CN_XCA_INITIATING_GW + deviceDN);
             return;
         }
-        if (prevRspGW == null) {
-            store(deviceDN, rspGW);
+        if (prevGW == null) {
+            store(deviceDN, gw);
             return;
         }
-        config.modifyAttributes(CN_XCA_RESPONDING_GW + deviceDN,
-                storeDiffs(prevRspGW, rspGW, deviceDN,
+        config.modifyAttributes(CN_XCA_INITIATING_GW + deviceDN,
+                storeDiffs(prevGW, gw, deviceDN,
                         new ArrayList<ModificationItem>()));
     }
 
-    private List<ModificationItem> storeDiffs(XCARespondingGWCfg prevRspGW, XCARespondingGWCfg rspGW,
+    private List<ModificationItem> storeDiffs(XCAInitiatingGWCfg prevGW, XCAInitiatingGWCfg gw,
             String deviceDN, ArrayList<ModificationItem> mods) {
         LdapUtils.storeDiff(mods, "xdsApplicationName",
-                prevRspGW.getApplicationName(),
-                rspGW.getApplicationName());
+                prevGW.getApplicationName(),
+                gw.getApplicationName());
         LdapUtils.storeDiff(mods, "xdsRepositoryURL",
-                prevRspGW.getRepositoryURLs(),
-                rspGW.getRepositoryURLs());
+                prevGW.getRepositoryURLs(),
+                gw.getRepositoryURLs());
+        LdapUtils.storeDiff(mods, "xdsRespondingGatewayURL",
+                prevGW.getRespondingGWURLs(),
+                gw.getRespondingGWURLs());
+        LdapUtils.storeDiff(mods, "xdsRespondingGatewayRetrieveURL",
+                prevGW.getRespondingGWRetrieveURLs(),
+                gw.getRespondingGWRetrieveURLs());
         LdapUtils.storeDiff(mods, "xdsRegistryURL",
-                prevRspGW.getRegistryURL(),
-                rspGW.getRegistryURL());
+                prevGW.getRegistryURL(),
+                gw.getRegistryURL());
         LdapUtils.storeDiff(mods, "xdsHomeCommunityID",
-                prevRspGW.getHomeCommunityID(),
-                rspGW.getHomeCommunityID());
+                prevGW.getHomeCommunityID(),
+                gw.getHomeCommunityID());
         LdapUtils.storeDiff(mods, "xdsSoapMsgLogDir",
-                prevRspGW.getSoapLogDir(),
-                rspGW.getSoapLogDir());
+                prevGW.getSoapLogDir(),
+                gw.getSoapLogDir());
+        LdapUtils.storeDiff(mods, "xdsAsync",
+                prevGW.isAsync(),
+                gw.isAsync());
+        LdapUtils.storeDiff(mods, "xdsAsyncHandler",
+                prevGW.isAsyncHandler(),
+                gw.isAsyncHandler());
         return mods;
     }
 }

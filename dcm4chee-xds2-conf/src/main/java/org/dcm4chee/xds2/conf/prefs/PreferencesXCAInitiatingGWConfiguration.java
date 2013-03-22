@@ -45,32 +45,36 @@ import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.prefs.PreferencesDicomConfigurationExtension;
 import org.dcm4che.conf.prefs.PreferencesUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  * @author Franz Willer <franz.willer@gmail.com>
  *
  */
-public class PreferencesXCARespondingGWConfiguration
+public class PreferencesXCAInitiatingGWConfiguration
         extends PreferencesDicomConfigurationExtension {
 
-    private static final String NODE_NAME = "xcaRespondingGW";
+    private static final String NODE_NAME = "xcaInitiatingGW";
 
     @Override
     protected void storeChilds(Device device, Preferences deviceNode) {
-        XCARespondingGWCfg rspGW =
-                device.getDeviceExtension(XCARespondingGWCfg.class);
-        if (rspGW != null)
-            storeTo(rspGW, deviceNode.node(NODE_NAME));
+        XCAInitiatingGWCfg gw =
+                device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        if (gw != null)
+            storeTo(gw, deviceNode.node(NODE_NAME));
     }
 
-    private void storeTo(XCARespondingGWCfg rspGW, Preferences prefs) {
+    private void storeTo(XCAInitiatingGWCfg rspGW, Preferences prefs) {
         PreferencesUtils.storeNotNull(prefs, "xdsApplicationName", rspGW.getApplicationName());
         PreferencesUtils.storeNotNull(prefs, "xdsRegistryURL", rspGW.getRegistryURL());
         PreferencesUtils.storeNotEmpty(prefs, "xdsRepositoryURL", rspGW.getRepositoryURLs());
+        PreferencesUtils.storeNotEmpty(prefs, "xdsRespondingGatewayURL", rspGW.getRespondingGWURLs());
+        PreferencesUtils.storeNotEmpty(prefs, "xdsRespondingGatewayRetrieveURL", rspGW.getRespondingGWRetrieveURLs());
         PreferencesUtils.storeNotNull(prefs, "xdsHomeCommunityID", rspGW.getHomeCommunityID());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", rspGW.getSoapLogDir());
+        PreferencesUtils.storeNotNull(prefs, "xdsASync", rspGW.isAsync());
+        PreferencesUtils.storeNotNull(prefs, "xdsAsyncHandler", rspGW.isAsyncHandler());
     }
 
     @Override
@@ -80,53 +84,69 @@ public class PreferencesXCARespondingGWConfiguration
             return;
         
         Preferences loggerNode = deviceNode.node(NODE_NAME);
-        XCARespondingGWCfg rspGW = new XCARespondingGWCfg();
-        loadFrom(rspGW, loggerNode);
-        device.addDeviceExtension(rspGW);
+        XCAInitiatingGWCfg gw = new XCAInitiatingGWCfg();
+        loadFrom(gw, loggerNode);
+        device.addDeviceExtension(gw);
     }
 
-    private void loadFrom(XCARespondingGWCfg rspGW, Preferences prefs) {
+    private void loadFrom(XCAInitiatingGWCfg rspGW, Preferences prefs) {
         rspGW.setApplicationName(prefs.get("xdsApplicationName", null));
         rspGW.setHomeCommunityID(prefs.get("xdsHomeCommunityID", null));
         rspGW.setRegistryURL(prefs.get("xdsRegistryURL", null));
         rspGW.setRepositoryURLs(PreferencesUtils.stringArray(prefs, "xdsRepositoryURL"));
+        rspGW.setRespondingGWURLs(PreferencesUtils.stringArray(prefs, "xdsRespondingGatewayURL"));
+        rspGW.setRespondingGWRetrieveURLs(PreferencesUtils.stringArray(prefs, "xdsRespondingGatewayRetrieveURL"));
         rspGW.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
+        rspGW.setAsync(PreferencesUtils.booleanValue(prefs.get("xdsAsync", "false")));
+        rspGW.setAsyncHandler(PreferencesUtils.booleanValue(prefs.get("xdsAsyncHandler", "false")));
     }
 
     @Override
     protected void mergeChilds(Device prev, Device device, Preferences deviceNode)
             throws BackingStoreException {
-        XCARespondingGWCfg prevRspGW =
-                prev.getDeviceExtension(XCARespondingGWCfg.class);
-        XCARespondingGWCfg rspGW =
-                device.getDeviceExtension(XCARespondingGWCfg.class);
-        if (rspGW == null && prevRspGW == null)
+        XCAInitiatingGWCfg prevGW =
+                prev.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAInitiatingGWCfg gw =
+                device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        if (gw == null && prevGW == null)
             return;
         
         Preferences arrNode = deviceNode.node(NODE_NAME);
-        if (rspGW == null)
+        if (gw == null)
             arrNode.removeNode();
-        else if (prevRspGW == null)
-            storeTo(rspGW, arrNode);
+        else if (prevGW == null)
+            storeTo(gw, arrNode);
         else
-            storeDiffs(arrNode, prevRspGW, rspGW);
+            storeDiffs(arrNode, prevGW, gw);
     }
 
-    private void storeDiffs(Preferences prefs, XCARespondingGWCfg prevRspGW, XCARespondingGWCfg rspGW) {
+    private void storeDiffs(Preferences prefs, XCAInitiatingGWCfg prevGW, XCAInitiatingGWCfg gw) {
         PreferencesUtils.storeDiff(prefs, "xdsApplicationName",
-                prevRspGW.getApplicationName(),
-                rspGW.getApplicationName());
+                prevGW.getApplicationName(),
+                gw.getApplicationName());
         PreferencesUtils.storeDiff(prefs, "xdsRepositoryURL",
-                prevRspGW.getRepositoryURLs(),
-                rspGW.getRepositoryURLs());
+                prevGW.getRepositoryURLs(),
+                gw.getRepositoryURLs());
+        PreferencesUtils.storeDiff(prefs, "xdsRespondingGatewayURL",
+                prevGW.getRespondingGWURLs(),
+                gw.getRespondingGWURLs());
+        PreferencesUtils.storeDiff(prefs, "xdsRespondingGatewayRetrieveURL",
+                prevGW.getRespondingGWRetrieveURLs(),
+                gw.getRespondingGWRetrieveURLs());
         PreferencesUtils.storeDiff(prefs, "xdsRegistryURL",
-                prevRspGW.getRegistryURL(),
-                rspGW.getRegistryURL());
+                prevGW.getRegistryURL(),
+                gw.getRegistryURL());
         PreferencesUtils.storeDiff(prefs, "xdsHomeCommunityID",
-                prevRspGW.getHomeCommunityID(),
-                rspGW.getHomeCommunityID());
+                prevGW.getHomeCommunityID(),
+                gw.getHomeCommunityID());
         PreferencesUtils.storeDiff(prefs, "xdsSoapMsgLogDir",
-                prevRspGW.getSoapLogDir(),
-                rspGW.getSoapLogDir());
+                prevGW.getSoapLogDir(),
+                gw.getSoapLogDir());
+        PreferencesUtils.storeDiff(prefs, "xdsAsync",
+                prevGW.isAsync(),
+                gw.isAsync());
+        PreferencesUtils.storeDiff(prefs, "xdsAsyncHandler",
+                prevGW.isAsyncHandler(),
+                gw.isAsyncHandler());
     }
 }

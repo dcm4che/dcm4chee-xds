@@ -78,8 +78,12 @@ public class XdsDevice {
         return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XdsRepository.class);
     }
 
-    public static XCARespondigGWCfg getXCARespondingGW() {
-        return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCARespondigGWCfg.class);
+    public static XCARespondingGWCfg getXCARespondingGW() {
+        return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCARespondingGWCfg.class);
+    }
+
+    public static XCAInitiatingGWCfg getXCAInitiatingGW() {
+        return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCAInitiatingGWCfg.class);
     }
 
     public void reconfigure(Device from) throws IOException, GeneralSecurityException {

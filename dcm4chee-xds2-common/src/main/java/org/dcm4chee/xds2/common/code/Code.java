@@ -47,10 +47,30 @@ package org.dcm4chee.xds2.common.code;
  */
 public class Code {
 
+    /**
+     * Code Value
+     * e.g.:(<b>TRID1001</b>, RSNA2008 eventCodeList, "XRAY CHEST Orderable")
+     */
     private String value;
+    /**
+     * Code Scheme Designator (issuer of this code)
+     * e.g.:(TRID1001, <b>RSNA2008 eventCodeList</b>, "XRAY CHEST Orderable")
+     */
     private String designator;
+    /**
+     * Code Meaning
+     * User friendly description (for display) of the Code
+     * e.g.:(TRID1001, RSNA2008 eventCodeList, <b>"XRAY CHEST Orderable"</b>)
+     */
     private String meaning;
     
+    /**
+     * Create a Code object with given value, designator and meaning.
+     * 
+     * @param value       Code Value
+     * @param designator  Code Scheme Designator (Issuer of code)
+     * @param meaning     Code Meaning (User friendly description for display)
+     */
     public Code(String value, String designator, String meaning) {
         if (designator == null || meaning == null || value == null) {
             throw new IllegalArgumentException("Code value, designator and meaning must not be null! code:("+value+", "+designator+",\""+meaning+"\")");
@@ -59,6 +79,11 @@ public class Code {
         this.designator = designator;
         this.meaning = meaning;
     }
+    /**
+     * Create a Code object with given Code string.
+     * 
+     * @param s Code String with format: '(&lt;code value&gt;, &lt;code scheme designator&gt;, "&lt;code meaning&gt;")'
+     */
     public Code(String s) {
         int len = s.length();
         if (len < 9 

@@ -54,15 +54,10 @@ import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Response;
 import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.apache.cxf.jaxws.context.WrappedMessageContext;
-import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.message.MessageUtils;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsDevice;
@@ -85,6 +80,7 @@ import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
+import org.dcm4chee.xds2.ws.util.CxfUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +88,7 @@ import org.slf4j.LoggerFactory;
 @BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 @Stateless
 @WebService(endpointInterface="org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType", 
-        name="rg",
+        name="xca",
         serviceName="RespondingGateway",
         portName="RespondingGateway_Port_Soap12",
         targetNamespace="urn:ihe:iti:xds-b:2007",
@@ -170,20 +166,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
             log.info("####################################################");
             log.info("org.jboss.security.ignoreHttpsHost:"+System.getProperty("org.jboss.security.ignoreHttpsHost"));
             try {
-                MessageContext msgCtx = wsContext.getMessageContext();
-                WrappedMessageContext wmc = (WrappedMessageContext)msgCtx;
-                Exchange ex = wmc.getWrappedMessage().getExchange();
-                Message out = ex.getOutMessage();
-                if (out != null) {
-                    int i = 0;
-                    for ( ; MessageUtils.isTrue(out.getContextualProperty(Message.MTOM_ENABLED)) && i < 10 ; i++ ) {
-                        out.setContextualProperty(Message.MTOM_ENABLED, false);
-                        log.debug("###### disableMTOM! enabled:{}", out.getContextualProperty(Message.MTOM_ENABLED));
-                    }
-                    if (i > 1) 
-                        log.warn("###### disable MTOM needs "+i+" tries! enabled:{}", out.getContextualProperty(Message.MTOM_ENABLED));
-                }
-                log.debug("###### MTOM enabled? {}:",out.getContextualProperty(Message.MTOM_ENABLED));
+                CxfUtil.disableMTOMResponse(wsContext);
                 rsp = port.documentRegistryRegistryStoredQuery(req);
             } catch ( Exception x) {
                 throw new XDSException( XDSException.XDS_ERR_REG_NOT_AVAIL, "Document Registry not available: "+url, x);

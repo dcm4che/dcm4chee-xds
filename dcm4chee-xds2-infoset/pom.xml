@@ -102,9 +102,8 @@
 						</goals>
 						<configuration>
 							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGatewayQuery.wsdl</wsdl>
-								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGatewayRetrieve.wsdl</wsdl>
 								<wsdl>${basedir}/src/main/resources/wsdl/XCARespondingGateway.wsdl</wsdl>
+								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGateway.wsdl</wsdl>
 							</wsdls>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_xca.xml"</File>

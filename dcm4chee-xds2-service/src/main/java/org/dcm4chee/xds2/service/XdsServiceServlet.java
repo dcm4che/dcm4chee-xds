@@ -87,13 +87,16 @@ import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
-import org.dcm4chee.xds2.conf.XCARespondigGWCfg;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
+import org.dcm4chee.xds2.conf.ldap.LdapXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRepositoryConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
@@ -164,6 +167,7 @@ public class XdsServiceServlet extends HttpServlet {
             ldapConfig.addDicomConfigurationExtension(new LdapXDSRegistryConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapXDSRepositoryConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapXCARespondingGWConfiguration());
+            ldapConfig.addDicomConfigurationExtension(new LdapXCAInitiatingGWConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapHL7Configuration());
             ldapConfig.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
@@ -175,6 +179,7 @@ public class XdsServiceServlet extends HttpServlet {
             prefConfig.addDicomConfigurationExtension(new PreferencesXDSRegistryConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesXCARespondingGWConfiguration());
+            prefConfig.addDicomConfigurationExtension(new PreferencesXCAInitiatingGWConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesHL7Configuration());
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
@@ -288,11 +293,12 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append(" NOT configured").toString();
         } else {
             sb.append(d.getDeviceName());
-            append(sb, d.getDescription(), " (", ")");
+            append(sb, d.getDescription(), " (", ")", true);
             sb.append("<h4>XDS Applications:</h4><pre>");
             appendXdsRegistry(sb, d.getDeviceExtension(XdsRegistry.class), "\n</pre><h5>XDS Registry:</h5><pre>\n", null);
             appendXdsRepo(sb, d.getDeviceExtension(XdsRepository.class), "\n</pre><h5>XDS Repository:</h5><pre>\n", null);
-            appendXCARespGW(sb, d.getDeviceExtension(XCARespondigGWCfg.class), "\n</pre><h5>XCA Responding Gateway:</h5><pre>\n", null);
+            appendXCARespGW(sb, d.getDeviceExtension(XCARespondingGWCfg.class), "\n</pre><h5>XCA Responding Gateway:</h5><pre>\n", null);
+            appendXCAInitiatingGW(sb, d.getDeviceExtension(XCAInitiatingGWCfg.class), "\n</pre><h5>XCA Initiating Gateway:</h5><pre>\n", null);
             sb.append("</pre><h4>Audit Logger:</h4><pre>");
             appendAuditLogger(sb, d.getDeviceExtension(AuditLogger.class), "\n\n", null);
             sb.append("</pre><h4>HL7 Applications:</h4><pre>");
@@ -362,9 +368,9 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("\n  Affinity domain config dir:").append(xdsApp.getAffinityDomainConfigDir());
             if (xdsApp.getAcceptedMimeTypes() != null)
                 sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
-            append(sb, xdsApp.isCheckAffinityDomain(), "\n  checkAffinityDomain:", null);
-            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
-            append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
+            append(sb, xdsApp.isCheckAffinityDomain(), "\n  checkAffinityDomain:", null, true);
+            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null, true);
+            append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
             sb.append("\n  CreateMissingCodes:").append(xdsApp.isCreateMissingCodes());
             sb.append("\n  CreateMissingPIDs:").append(xdsApp.isCreateMissingPIDs());
             sb.append("\n  PreMetadataCheck:").append(xdsApp.isPreMetadataCheck());
@@ -378,37 +384,57 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append("not configured");
         } else {
             sb.append(APPLICATION_NAME).append(xdsApp.getApplicationName());
-            append(sb, xdsApp.getRepositoryUID(), "\n  repositoryUID:", null);
-            sb.append("\n  Registry URLs:");
-            String[] urls = xdsApp.getRegistryURLs();
-            for (int i=0 ; i < urls.length ; i++)
-                sb.append("\n  ").append(urls[i]);
+            append(sb, xdsApp.getRepositoryUID(), "\n  repositoryUID:", null, false);
+            appendArray(sb, xdsApp.getRegistryURLs(), "\n  Registry URLs:");
             if (xdsApp.getAcceptedMimeTypes() != null)
                 sb.append("\n  MIME types:").append(StringUtils.concat(xdsApp.getAcceptedMimeTypes(), ','));
-            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null);
-            append(sb, xdsApp.isForceMTOM(), "\n  forceMTOM:", null);
-            append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null);
+            append(sb, xdsApp.isCheckMimetype(), "\n  checkMimetype:", null, true);
+            append(sb, xdsApp.isForceMTOM(), "\n  forceMTOM:", null, true);
+            append(sb, xdsApp.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
             sb.append("\n  Hostnames/IPs for full SOAP message logging:");
             if (xdsApp.getLogFullMessageHosts() != null)
                 sb.append(StringUtils.concat(xdsApp.getLogFullMessageHosts(), ','));
-            append(sb, xdsApp.getAllowedCipherHostname(), "\n  AllowedCipherHostname:", " (not used in JBoss7 / appache cxf! Set system property: 'org.jboss.security.ignoreHttpsHost=true'" );
-            append(sb, System.getProperty("org.jboss.security.ignoreHttpsHost"), "\n  org.jboss.security.ignoreHttpsHost:", null);
+            append(sb, xdsApp.getAllowedCipherHostname(), "\n  AllowedCipherHostname:", " (not used in JBoss7 / appache cxf! Set system property: 'org.jboss.security.ignoreHttpsHost=true'", true);
+            append(sb, System.getProperty("org.jboss.security.ignoreHttpsHost"), "\n  org.jboss.security.ignoreHttpsHost:", null, true);
         }
     }
 
-    private void appendXCARespGW(StringBuilder sb, XCARespondigGWCfg rspGW, String prefix, String postfix) {
+    private void appendXCARespGW(StringBuilder sb, XCARespondingGWCfg rspGW, String prefix, String postfix) {
         append(sb, prefix);
         if (rspGW == null) {
             sb.append("not configured");
         } else {
             sb.append(APPLICATION_NAME).append(rspGW.getApplicationName());
-            append(sb, rspGW.getHomeCommunityID(), "\n  HomeCommunityID:", null);
-            append(sb, rspGW.getRegistryURL(), "\n  Registry URL:", null);
+            append(sb, rspGW.getHomeCommunityID(), "\n  HomeCommunityID:", null, false);
+            append(sb, rspGW.getRegistryURL(), "\n  Registry URL:", null, false);
+            appendArray(sb, rspGW.getRepositoryURLs(), "\n  Repository URLs:");
+            append(sb, rspGW.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
+        }
+    }
+
+    private void appendXCAInitiatingGW(StringBuilder sb, XCAInitiatingGWCfg gw, String prefix, String postfix) {
+        append(sb, prefix);
+        if (gw == null) {
+            sb.append("not configured");
+        } else {
+            sb.append(APPLICATION_NAME).append(gw.getApplicationName());
+            append(sb, gw.getHomeCommunityID(), "\n  HomeCommunityID:", null, false);
+            append(sb, gw.getRegistryURL(), "\n  Registry URL:", null, false);
             sb.append("\n  Repository URLs:");
-            String[] urls = rspGW.getRepositoryURLs();
-            for (int i=0 ; i < urls.length ; i++)
-                sb.append("\n  ").append(urls[i]);
-            append(sb, rspGW.getSoapLogDir(), "\n  SOAP logging dir:", null);
+            appendArray(sb, gw.getRespondingGWURLs(), "\n  Responding Gateway URLs: (Query and Retrieve if no RespondingGWRetrieveURL configured)");
+            appendArray(sb, gw.getRespondingGWRetrieveURLs(), "\n  Responding Gateway Retrieve URLs:");
+            appendArray(sb, gw.getRepositoryURLs(), "\n  Repository URLs:");
+            append(sb, gw.isAsync(), "\n  ASYNC:", null, false);
+            append(sb, gw.isAsyncHandler(), "\n  AsyncHandler:", null, false);
+            append(sb, gw.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
+        }
+    }
+ 
+    private void appendArray(StringBuilder sb, String[] sa, String prefix) {
+        if (sa != null) {
+            sb.append(prefix);
+            for (int i=0 ; i < sa.length ; i++)
+               sb.append("\n  ").append(sa[i]);
         }
     }
 
@@ -418,7 +444,7 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append(NOT_CONFIGURED);
         } else {
             sb.append(APPLICATION_NAME).append(logger.getApplicationName());
-            append(sb, logger.getAuditSourceID(), "\n  Audit SourceID:", null);
+            append(sb, logger.getAuditSourceID(), "\n  Audit SourceID:", null, false);
             Device arrDevice = logger.getAuditRecordRepositoryDevice();
             sb.append("\n  Audit Record Repository:");
             if (arrDevice == null) {
@@ -440,16 +466,16 @@ public class XdsServiceServlet extends HttpServlet {
 
     private void appendAuditConnections(StringBuilder sb, List<Connection> cons) {
         for (Connection c : cons) {
-            append(sb, c.getCommonName(), "\n      Name:", null);
-            append(sb, c.getHostname(),   "\n       Hostname:", null);
-            append(sb, c.getPort(),       "\n           Port:", null);
+            append(sb, c.getCommonName(), "\n      Name:", null, false);
+            append(sb, c.getHostname(),   "\n       Hostname:", null, false);
+            append(sb, c.getPort(),       "\n           Port:", null, false);
             if (c.isTls()) {
                 if (c.getTlsProtocols() != null)
                     append(sb, StringUtils.concat(c.getTlsProtocols(),','),
-                            "\n   TlsProtocols:", null);
+                            "\n   TlsProtocols:", null, true);
                 if (c.getTlsCipherSuites() != null)
                     append(sb, StringUtils.concat(c.getTlsCipherSuites(),','),
-                            "\n   CipherSuites:", null);
+                            "\n   CipherSuites:", null, true);
             }
             sb.append("\n");
         }
@@ -458,7 +484,7 @@ public class XdsServiceServlet extends HttpServlet {
     private void appendHL7App(StringBuilder sb, HL7Application hl7App, String prefix, String postfix) {
         append(sb, prefix);
         sb.append(APPLICATION_NAME).append(hl7App.getApplicationName());
-        append(sb, hl7App.getHL7DefaultCharacterSet(), "\n  DefaultCharacterSet:", null);
+        append(sb, hl7App.getHL7DefaultCharacterSet(), "\n  DefaultCharacterSet:", null, true);
         if (hl7App.getAcceptedMessageTypes() != null)
             sb.append("\n  Accepted Message types:").append(StringUtils.concat(hl7App.getAcceptedMessageTypes(), ','));
         if (hl7App.getAcceptedSendingApplications() != null)
@@ -493,10 +519,14 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append(o);
         }
     }
-    private void append(StringBuilder sb, Object o, String prefix, String postfix) {
+    private void append(StringBuilder sb, Object o, String prefix, String postfix, boolean hideNull) {
         if (o != null) {
             append(sb, prefix);
             sb.append(o);
+            append(sb, postfix);
+        } else if (!hideNull) {
+            append(sb, prefix);
+            sb.append("-NOT CONFIGURED-");
             append(sb, postfix);
         }
     }

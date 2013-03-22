@@ -3,5 +3,5 @@ Archiver-Version: Plexus Archiver
 Created-By: Apache Maven
 Built-By: AWPRC
 Build-Jdk: 1.6.0_30
-Dependencies: com.mysema.querydsl2
+Dependencies: com.mysema.querydsl
 
