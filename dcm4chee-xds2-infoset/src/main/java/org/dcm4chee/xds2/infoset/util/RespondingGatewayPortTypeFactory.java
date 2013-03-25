@@ -21,7 +21,8 @@ public class RespondingGatewayPortTypeFactory {
     }
 
     public static RespondingGatewayPortType getRespondingGatewayPortSoap12() {
-        return service.getPort(new QName("urn:ihe:iti:xds-b:2007", "RespondingGateway_Port_Soap12"), RespondingGatewayPortType.class, new AddressingFeature());
+        return service.getPort(new QName("urn:ihe:iti:xds-b:2007", "RespondingGateway_Port_Soap12"), 
+                RespondingGatewayPortType.class, new AddressingFeature(true, true));
     }
 
     public static RespondingGatewayPortType getRespondingGatewayPortSoap12(String endpointAddress) {

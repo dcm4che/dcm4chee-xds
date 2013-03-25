@@ -21,7 +21,8 @@ public class DocumentRegistryPortTypeFactory {
     }
 
     public static DocumentRegistryPortType getDocumentRegistryPortSoap12() {
-        return service.getPort(new QName("urn:ihe:iti:xds-b:2007", "DocumentRegistry_Port_Soap12"), DocumentRegistryPortType.class, new AddressingFeature());
+        return service.getPort(new QName("urn:ihe:iti:xds-b:2007", "DocumentRegistry_Port_Soap12"), 
+                DocumentRegistryPortType.class, new AddressingFeature(true, true));
     }
 
     public static DocumentRegistryPortType getDocumentRegistryPortSoap12(String endpointAddress) {

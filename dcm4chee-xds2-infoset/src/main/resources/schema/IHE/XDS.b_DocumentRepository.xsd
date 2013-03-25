@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="urn:ihe:iti:xds-b:2007" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" xmlns:lcm="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" targetNamespace="urn:ihe:iti:xds-b:2007" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns="urn:ihe:iti:xds-b:2007" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:rim="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" 
+xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0" xmlns:lcm="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" 
+targetNamespace="urn:ihe:iti:xds-b:2007" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns:xmime="http://www.w3.org/2005/05/xmlmime">
 	<xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0" schemaLocation="../ebRS/rs.xsd"/>
 	<xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" schemaLocation="../ebRS/rim.xsd"/>
 	<xs:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0" schemaLocation="../ebRS/lcm.xsd"/>
@@ -62,7 +64,7 @@
 								</xs:annotation>
 							</xs:element>
 							<xs:element name="mimeType" type="rim:LongName"/>
-							<xs:element name="Document" type="xs:base64Binary"/>
+							<xs:element name="Document" type="xs:base64Binary" xmime:expectedContentTypes="application/octet-stream"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
@@ -75,7 +77,7 @@
 		<xs:sequence>
 			<xs:element ref="lcm:SubmitObjectsRequest"/>
 			<xs:sequence minOccurs="0">
-				<xs:element name="Document" maxOccurs="unbounded">
+				<xs:element name="Document" maxOccurs="unbounded" xmime:expectedContentTypes="application/octet-stream">
 					<xs:complexType>
 						<xs:simpleContent>
 							<xs:extension base="xs:base64Binary">
