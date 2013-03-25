@@ -49,6 +49,9 @@ import java.security.DigestOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.storage.XDSDocument;
 import org.slf4j.Logger;
@@ -89,7 +92,7 @@ public class XDSFileStorage implements XDSFileStorageMBean {
         if (mime != null) {
             writeFileIgnoreError(new File(docPath, MIME_TYPE_FILENAME), mime.getBytes());
         }
-        return new XDSDocument(docUID, mime, content, hash);
+        return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(docFile)), docFile.length(), hash);
     }
 
     @Override
@@ -98,11 +101,11 @@ public class XDSFileStorage implements XDSFileStorageMBean {
         if (!docPath.exists()) {
             return null;
         }
-        MessageDigest md  = newMessageDigest();
-        byte[] content = readFile(new File(docPath, DOCUMENT_CONTENT_FILENAME), md);
+        File docFile = new File(docPath, DOCUMENT_CONTENT_FILENAME);
         byte[] mime = this.readFileIgnoreError(new File(docPath, MIME_TYPE_FILENAME));
+        byte[] hash = this.readFileIgnoreError(new File(docPath, HASH_FILENAME));
         String mimeType = mime == null ? UNKNOWN_MIME : new String(mime);
-        return new XDSDocument(docUID, mimeType, content, md.digest());
+        return new XDSDocument(docUID, mimeType, new DataHandler(new FileDataSource(docFile)), docFile.length(), hash);
     }
     
     @Override

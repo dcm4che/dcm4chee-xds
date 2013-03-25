@@ -38,18 +38,22 @@
 
 package org.dcm4chee.xds2.storage;
 
+import javax.activation.DataHandler;
+
 import org.dcm4chee.xds2.common.XDSUtil;
 
 public class XDSDocument {
     private String uid;
     private String mimeType;
-    private byte[] content;
+    private DataHandler content;
+    long size;
     private byte[] hash;
 
-    public XDSDocument(String uid, String mimeType, byte[] content, byte[] hash) {
+    public XDSDocument(String uid, String mimeType, DataHandler content, long size, byte[] hash) {
         this.uid = uid;
         this.mimeType = mimeType;
         this.content = content;
+        this.size = size;
         this.hash = hash;
     }
     
@@ -60,10 +64,10 @@ public class XDSDocument {
         return mimeType;
     }
     public long getSize() {
-        return content == null ? -1 : content.length;
+        return size;
     }
     
-    public byte[] getContent() {
+    public DataHandler getContent() {
         return content;
     }
 
