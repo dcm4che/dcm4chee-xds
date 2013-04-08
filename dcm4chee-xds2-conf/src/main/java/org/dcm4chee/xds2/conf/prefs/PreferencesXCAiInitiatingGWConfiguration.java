@@ -45,39 +45,34 @@ import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.prefs.PreferencesDicomConfigurationExtension;
 import org.dcm4che.conf.prefs.PreferencesUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  * @author Franz Willer <franz.willer@gmail.com>
  *
  */
-public class PreferencesXCAInitiatingGWConfiguration
+public class PreferencesXCAiInitiatingGWConfiguration
         extends PreferencesDicomConfigurationExtension {
 
-    private static final String NODE_NAME = "xcaInitiatingGW";
+    private static final String NODE_NAME = "xcai_InitiatingGW";
 
     @Override
     protected void storeChilds(Device device, Preferences deviceNode) {
-        XCAInitiatingGWCfg gw =
-                device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg gw =
+                device.getDeviceExtension(XCAiInitiatingGWCfg.class);
         if (gw != null)
             storeTo(gw, deviceNode.node(NODE_NAME));
     }
 
-    private void storeTo(XCAInitiatingGWCfg rspGW, Preferences prefs) {
+    private void storeTo(XCAiInitiatingGWCfg rspGW, Preferences prefs) {
         PreferencesUtils.storeNotNull(prefs, "xdsApplicationName", rspGW.getApplicationName());
-        PreferencesUtils.storeNotNull(prefs, "xdsRegistryURL", rspGW.getRegistryURL());
-        PreferencesUtils.storeNotEmpty(prefs, "xdsRepositoryURL", rspGW.getRepositoryURLs());
+        PreferencesUtils.storeNotEmpty(prefs, "xdsiSourceURL", rspGW.getXDSiSourceURLs());
         PreferencesUtils.storeNotEmpty(prefs, "xdsRespondingGatewayURL", rspGW.getRespondingGWURLs());
-        PreferencesUtils.storeNotEmpty(prefs, "xdsRespondingGatewayRetrieveURL", rspGW.getRespondingGWRetrieveURLs());
-        PreferencesUtils.storeNotEmpty(prefs, "xdsAssigningAuthority", rspGW.getAssigningAuthoritiesMap());
         PreferencesUtils.storeNotNull(prefs, "xdsHomeCommunityID", rspGW.getHomeCommunityID());
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", rspGW.getSoapLogDir());
         PreferencesUtils.storeNotNull(prefs, "xdsASync", rspGW.isAsync());
         PreferencesUtils.storeNotNull(prefs, "xdsAsyncHandler", rspGW.isAsyncHandler());
-        PreferencesUtils.storeNotNull(prefs, "xdsPIXConsumerApplication", rspGW.getLocalPIXConsumerApplication());
-        PreferencesUtils.storeNotNull(prefs, "xdsPIXManagerApplication", rspGW.getRemotePIXManagerApplication());
     }
 
     @Override
@@ -87,33 +82,28 @@ public class PreferencesXCAInitiatingGWConfiguration
             return;
         
         Preferences loggerNode = deviceNode.node(NODE_NAME);
-        XCAInitiatingGWCfg gw = new XCAInitiatingGWCfg();
+        XCAiInitiatingGWCfg gw = new XCAiInitiatingGWCfg();
         loadFrom(gw, loggerNode);
         device.addDeviceExtension(gw);
     }
 
-    private void loadFrom(XCAInitiatingGWCfg rspGW, Preferences prefs) {
+    private void loadFrom(XCAiInitiatingGWCfg rspGW, Preferences prefs) {
         rspGW.setApplicationName(prefs.get("xdsApplicationName", null));
         rspGW.setHomeCommunityID(prefs.get("xdsHomeCommunityID", null));
-        rspGW.setRegistryURL(prefs.get("xdsRegistryURL", null));
-        rspGW.setRepositoryURLs(PreferencesUtils.stringArray(prefs, "xdsRepositoryURL"));
+        rspGW.setXDSiSourceURLs(PreferencesUtils.stringArray(prefs, "xdsiSourceURL"));
         rspGW.setRespondingGWURLs(PreferencesUtils.stringArray(prefs, "xdsRespondingGatewayURL"));
-        rspGW.setRespondingGWRetrieveURLs(PreferencesUtils.stringArray(prefs, "xdsRespondingGatewayRetrieveURL"));
-        rspGW.setAssigningAuthoritiesMap(PreferencesUtils.stringArray(prefs, "xdsAssigningAuthority"));
         rspGW.setSoapLogDir(prefs.get("xdsSoapMsgLogDir", null));
         rspGW.setAsync(PreferencesUtils.booleanValue(prefs.get("xdsAsync", "false")));
         rspGW.setAsyncHandler(PreferencesUtils.booleanValue(prefs.get("xdsAsyncHandler", "false")));
-        rspGW.setLocalPIXConsumerApplication(prefs.get("xdsPIXConsumerApplication", null));
-        rspGW.setRemotePIXManagerApplication(prefs.get("xdsPIXManagerApplication", null));
     }
 
     @Override
     protected void mergeChilds(Device prev, Device device, Preferences deviceNode)
             throws BackingStoreException {
-        XCAInitiatingGWCfg prevGW =
-                prev.getDeviceExtension(XCAInitiatingGWCfg.class);
-        XCAInitiatingGWCfg gw =
-                device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg prevGW =
+                prev.getDeviceExtension(XCAiInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg gw =
+                device.getDeviceExtension(XCAiInitiatingGWCfg.class);
         if (gw == null && prevGW == null)
             return;
         
@@ -126,25 +116,16 @@ public class PreferencesXCAInitiatingGWConfiguration
             storeDiffs(arrNode, prevGW, gw);
     }
 
-    private void storeDiffs(Preferences prefs, XCAInitiatingGWCfg prevGW, XCAInitiatingGWCfg gw) {
+    private void storeDiffs(Preferences prefs, XCAiInitiatingGWCfg prevGW, XCAiInitiatingGWCfg gw) {
         PreferencesUtils.storeDiff(prefs, "xdsApplicationName",
                 prevGW.getApplicationName(),
                 gw.getApplicationName());
-        PreferencesUtils.storeDiff(prefs, "xdsRepositoryURL",
-                prevGW.getRepositoryURLs(),
-                gw.getRepositoryURLs());
+        PreferencesUtils.storeDiff(prefs, "xdsiSourceURL",
+                prevGW.getXDSiSourceURLs(),
+                gw.getXDSiSourceURLs());
         PreferencesUtils.storeDiff(prefs, "xdsRespondingGatewayURL",
                 prevGW.getRespondingGWURLs(),
                 gw.getRespondingGWURLs());
-        PreferencesUtils.storeDiff(prefs, "xdsRespondingGatewayRetrieveURL",
-                prevGW.getRespondingGWRetrieveURLs(),
-                gw.getRespondingGWRetrieveURLs());
-        PreferencesUtils.storeDiff(prefs, "xdsAssigningAuthority",
-                prevGW.getAssigningAuthoritiesMap(),
-                gw.getAssigningAuthoritiesMap());
-        PreferencesUtils.storeDiff(prefs, "xdsRegistryURL",
-                prevGW.getRegistryURL(),
-                gw.getRegistryURL());
         PreferencesUtils.storeDiff(prefs, "xdsHomeCommunityID",
                 prevGW.getHomeCommunityID(),
                 gw.getHomeCommunityID());
@@ -157,11 +138,5 @@ public class PreferencesXCAInitiatingGWConfiguration
         PreferencesUtils.storeDiff(prefs, "xdsAsyncHandler",
                 prevGW.isAsyncHandler(),
                 gw.isAsyncHandler());
-        PreferencesUtils.storeDiff(prefs, "xdsPIXConsumerApplication",
-                prevGW.getLocalPIXConsumerApplication(),
-                gw.getLocalPIXConsumerApplication());
-        PreferencesUtils.storeDiff(prefs, "xdsPIXManagerApplication",
-                prevGW.getRemotePIXManagerApplication(),
-                gw.getRemotePIXManagerApplication());
     }
 }

@@ -4,6 +4,7 @@ version: 1
 dn: dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
 dicomInstalled: TRUE
 dicomDeviceName: dcm4chee-xds2-registry
+objectClass: dcmDevice
 objectClass: dicomDevice
 
 dn: cn=XDSRegistry,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
@@ -49,10 +50,27 @@ xdsApplicationName: XCA_INITIATING_GW
 xdsHomeCommunityID: 1.2.3.4.9.99
 xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
 xdsRepositoryURL: *|http://localhost:8080/dcm4chee-xds/XDSbRepository/b
-xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/RespondingGateway/rg
+xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/RespondingGateway/xca
 xdsSoapMsgLogDir: /var/log/xdslog
 
-dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=XCAiRespondingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+objectClass: xcaiRespondingGW
+cn:XCAiRespondingGW
+xdsApplicationName: XCA-I_RESPONDING_GW
+xdsHomeCommunityID: 1.2.3.4.9.99
+xdsiSourceURL: *|http://localhost:8080/service/ImagingDocumentSource/src
+xdsSoapMsgLogDir: /var/log/xdslog
+
+dn: cn=XCAiInitiatingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+objectClass: xcaiInitiatingGW
+cn:XCAiInitiatingGW
+xdsApplicationName: XCA-I_INITIATING_GW
+xdsHomeCommunityID: 1.2.3.4.9.99
+xdsiSourceURL: *|http://localhost:8080/service/ImagingDocumentSource/src
+xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/XCAIRespondingGateway/xcai
+xdsSoapMsgLogDir: /var/log/xdslog
+
+dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devi																																																																																																																																																																																																																																																																																																																																																																																																																																					ces,cn=DICOM Configuration,dc=example,dc=com
 dicomHostname: localhost
 dicomPort: 2576
 objectClass: dicomNetworkConnection

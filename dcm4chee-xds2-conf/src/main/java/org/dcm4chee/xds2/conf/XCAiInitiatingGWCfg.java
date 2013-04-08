@@ -38,7 +38,9 @@
 
 package org.dcm4chee.xds2.conf;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.dcm4che.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -46,15 +48,18 @@ import org.dcm4chee.xds2.common.XDSUtil;
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-public class XCARespondingGWCfg extends DeviceExtension {
+public class XCAiInitiatingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
     private String applicationName;
     private String homeCommunityID;
-    private String registryURL;
-    private HashMap<String, String> repositoryUrlMapping = new HashMap<String,String>();
+    private Map<String, String> respondingGWUrlMapping = new HashMap<String,String>();
+    //AffinityDomain Option
+    private Map<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
     private String soapLogDir;
+    private boolean async;
+    private boolean asyncHandler;
 
     public String getApplicationName() {
         return applicationName;
@@ -69,12 +74,6 @@ public class XCARespondingGWCfg extends DeviceExtension {
     public void setHomeCommunityID(String homeCommunityID) {
         this.homeCommunityID = homeCommunityID;
     }
-    public String getRegistryURL() {
-        return registryURL;
-    }
-    public void setRegistryURL(String registryURL) {
-        this.registryURL = registryURL;
-    }
     public String getSoapLogDir() {
         return soapLogDir;
     }
@@ -83,23 +82,51 @@ public class XCARespondingGWCfg extends DeviceExtension {
         this.soapLogDir = soapLogDir;
     }
     
-    public String[] getRepositoryURLs() {
-        return XDSUtil.map2keyValueStrings(repositoryUrlMapping, '|');
+    public String[] getXDSiSourceURLs() {
+        return XDSUtil.map2keyValueStrings(xdsiSrcUrlMapping, '|');
     }
-    public void setRepositoryURLs(String[] repositoryURLs) {
-        XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", repositoryUrlMapping);
+    public void setXDSiSourceURLs(String[] repositoryURLs) {
+        XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", xdsiSrcUrlMapping);
     }
-    public String getRepositoryURL(String repositoryID) {
-        return XDSUtil.getValue(repositoryID, "*", repositoryUrlMapping);
+    public String getXDSiSourceURL(String repositoryID) {
+        return XDSUtil.getValue(repositoryID, "*", xdsiSrcUrlMapping);
     }
 
+    public String[] getRespondingGWURLs() {
+        return XDSUtil.map2keyValueStrings(respondingGWUrlMapping, '|');
+    }
+    public void setRespondingGWURLs(String[] urls) {
+        XDSUtil.storeKeyValueStrings2map(urls, '|', "*", respondingGWUrlMapping);
+    }
+    
+    public Collection<String> getCommunityIDs() {
+        return respondingGWUrlMapping.keySet();
+    }
+    public String getRespondingGWURL(String homeCommunityID) {
+        return XDSUtil.getValue(homeCommunityID, "*", respondingGWUrlMapping);
+    }
+
+    public boolean isAsync() {
+        return async;
+    }
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+    public boolean isAsyncHandler() {
+        return asyncHandler;
+    }
+    public void setAsyncHandler(boolean asyncHandler) {
+        this.asyncHandler = asyncHandler;
+    }
     @Override
     public void reconfigure(DeviceExtension from) {
-        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
+        XCAiInitiatingGWCfg src = (XCAiInitiatingGWCfg) from;
         setApplicationName(src.getApplicationName());
         setHomeCommunityID(src.getHomeCommunityID());
-        setRegistryURL(src.getRegistryURL());
-        setRepositoryURLs(src.getRepositoryURLs());
+        setXDSiSourceURLs(src.getXDSiSourceURLs());
+        setRespondingGWURLs(src.getRespondingGWURLs());
         setSoapLogDir(src.getSoapLogDir());
+        setAsync(src.isAsync());
+        setAsyncHandler(src.isAsyncHandler());
     }
 }

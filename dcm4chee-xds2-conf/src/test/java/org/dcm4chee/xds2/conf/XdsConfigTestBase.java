@@ -210,6 +210,7 @@ public class XdsConfigTestBase {
          device.addDeviceExtension(registry);
          registry.setApplicationName(appName);
          registry.setAffinityDomain(affinityDomain);
+         registry.setAffinityDomainConfigDir("/domainconfig");
          registry.setAcceptedMimeTypes(mime);
          registry.setSoapLogDir(logDir);
          registry.setCreateMissingPIDs(createPID);
@@ -231,6 +232,7 @@ public class XdsConfigTestBase {
          rep.setAcceptedMimeTypes(mime);
          rep.setSoapLogDir(logDir);
          rep.setCheckMimetype(true);
+         rep.setAllowedCipherHostname("*");
          rep.setLogFullMessageHosts(new String[]{});
          return device;
      }

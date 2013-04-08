@@ -52,42 +52,37 @@ import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.ldap.LdapDicomConfigurationExtension;
 import org.dcm4che.conf.ldap.LdapUtils;
 import org.dcm4che.net.Device;
-import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 
 /**
  * @author Gunter Zeilinger <gunterze@gmail.com>
  * @author Franz Willer <franz.willer@gmail.com>
  */
-public class LdapXCAInitiatingGWConfiguration extends LdapDicomConfigurationExtension {
-    private static final String CN_XCA_INITIATING_GW = "cn=XCAInitiatingGW,";
+public class LdapXCAiInitiatingGWConfiguration extends LdapDicomConfigurationExtension {
+    private static final String CN_XCAI_INITIATING_GW = "cn=XCAiInitiatingGW,";
 
     @Override
     protected void storeChilds(String deviceDN, Device device) throws NamingException {
-        XCAInitiatingGWCfg gw = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg gw = device.getDeviceExtension(XCAiInitiatingGWCfg.class);
         if (gw != null)
             store(deviceDN, gw);
     }
 
-    private void store(String deviceDN, XCAInitiatingGWCfg rspGW)
+    private void store(String deviceDN, XCAiInitiatingGWCfg rspGW)
             throws NamingException {
-        config.createSubcontext(CN_XCA_INITIATING_GW + deviceDN,
+        config.createSubcontext(CN_XCAI_INITIATING_GW + deviceDN,
                 storeTo(rspGW, deviceDN, new BasicAttributes(true)));
     }
 
-    private Attributes storeTo(XCAInitiatingGWCfg rspGW, String deviceDN, Attributes attrs) {
-        attrs.put(new BasicAttribute("objectclass", "xcaInitiatingGW"));
+    private Attributes storeTo(XCAiInitiatingGWCfg rspGW, String deviceDN, Attributes attrs) {
+        attrs.put(new BasicAttribute("objectclass", "xcaiInitiatingGW"));
         LdapUtils.storeNotNull(attrs, "xdsApplicationName", rspGW.getApplicationName());
         LdapUtils.storeNotNull(attrs, "xdsHomeCommunityID", rspGW.getHomeCommunityID());
-        LdapUtils.storeNotEmpty(attrs, "xdsRepositoryURL", rspGW.getRepositoryURLs());
+        LdapUtils.storeNotEmpty(attrs, "xdsiSourceURL", rspGW.getXDSiSourceURLs());
         LdapUtils.storeNotEmpty(attrs, "xdsRespondingGatewayURL", rspGW.getRespondingGWURLs());
-        LdapUtils.storeNotEmpty(attrs, "xdsRespondingGatewayRetrieveURL", rspGW.getRespondingGWRetrieveURLs());
-        LdapUtils.storeNotEmpty(attrs, "xdsAssigningAuthority", rspGW.getAssigningAuthoritiesMap());
         LdapUtils.storeNotNull(attrs, "xdsSoapMsgLogDir", rspGW.getSoapLogDir());
-        LdapUtils.storeNotNull(attrs, "xdsRegistryURL", rspGW.getRegistryURL());
         LdapUtils.storeNotNull(attrs, "xdsAsync", rspGW.isAsync());
         LdapUtils.storeNotNull(attrs, "xdsAsyncHandler", rspGW.isAsyncHandler());
-        LdapUtils.storeNotNull(attrs, "xdsPIXConsumerApplication", rspGW.getLocalPIXConsumerApplication());
-        LdapUtils.storeNotNull(attrs, "xdsPIXManagerApplication", rspGW.getRemotePIXManagerApplication());
         return attrs;
     }
 
@@ -96,69 +91,55 @@ public class LdapXCAInitiatingGWConfiguration extends LdapDicomConfigurationExte
             throws NamingException, ConfigurationException {
         Attributes attrs;
         try {
-            attrs = config.getAttributes(CN_XCA_INITIATING_GW + deviceDN);
+            attrs = config.getAttributes(CN_XCAI_INITIATING_GW + deviceDN);
         } catch (NameNotFoundException e) {
             return;
         }
-        XCAInitiatingGWCfg gw = new XCAInitiatingGWCfg();
+        XCAiInitiatingGWCfg gw = new XCAiInitiatingGWCfg();
         loadFrom(gw, attrs);
         device.addDeviceExtension(gw);
     }
 
-    private void loadFrom(XCAInitiatingGWCfg rsp, Attributes attrs) throws NamingException {
+    private void loadFrom(XCAiInitiatingGWCfg rsp, Attributes attrs) throws NamingException {
         rsp.setApplicationName(LdapUtils.stringValue(attrs.get("xdsApplicationName"), null));
         rsp.setHomeCommunityID(LdapUtils.stringValue(attrs.get("xdsHomeCommunityID"), null));
-        rsp.setRegistryURL(LdapUtils.stringValue(attrs.get("xdsRegistryURL"), null));
-        rsp.setRepositoryURLs(LdapUtils.stringArray(attrs.get("xdsRepositoryURL")));
+        rsp.setXDSiSourceURLs(LdapUtils.stringArray(attrs.get("xdsiSourceURL")));
         rsp.setRespondingGWURLs(LdapUtils.stringArray(attrs.get("xdsRespondingGatewayURL")));
-        rsp.setRespondingGWRetrieveURLs(LdapUtils.stringArray(attrs.get("xdsRespondingGatewayRetrieveURL")));
-        rsp.setAssigningAuthoritiesMap(LdapUtils.stringArray(attrs.get("xdsAssigningAuthority")));
         rsp.setSoapLogDir(LdapUtils.stringValue(attrs.get("xdsSoapMsgLogDir"), null));
         rsp.setAsync(LdapUtils.booleanValue(attrs.get("xdsAsync"), false));
         rsp.setAsyncHandler(LdapUtils.booleanValue(attrs.get("xdsAsyncHandler"), false));
-        rsp.setLocalPIXConsumerApplication(LdapUtils.stringValue(attrs.get("xdsPIXConsumerApplication"), null));
-        rsp.setRemotePIXManagerApplication(LdapUtils.stringValue(attrs.get("xdsPIXManagerApplication"), null));
     }
 
     @Override
     protected void mergeChilds(Device prev, Device device, String deviceDN)
             throws NamingException {
-        XCAInitiatingGWCfg prevGW = prev.getDeviceExtension(XCAInitiatingGWCfg.class);
-        XCAInitiatingGWCfg gw = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg prevGW = prev.getDeviceExtension(XCAiInitiatingGWCfg.class);
+        XCAiInitiatingGWCfg gw = device.getDeviceExtension(XCAiInitiatingGWCfg.class);
         if (gw == null) {
             if (prevGW != null)
-                config.destroySubcontextWithChilds(CN_XCA_INITIATING_GW + deviceDN);
+                config.destroySubcontextWithChilds(CN_XCAI_INITIATING_GW + deviceDN);
             return;
         }
         if (prevGW == null) {
             store(deviceDN, gw);
             return;
         }
-        config.modifyAttributes(CN_XCA_INITIATING_GW + deviceDN,
+        config.modifyAttributes(CN_XCAI_INITIATING_GW + deviceDN,
                 storeDiffs(prevGW, gw, deviceDN,
                         new ArrayList<ModificationItem>()));
     }
 
-    private List<ModificationItem> storeDiffs(XCAInitiatingGWCfg prevGW, XCAInitiatingGWCfg gw,
+    private List<ModificationItem> storeDiffs(XCAiInitiatingGWCfg prevGW, XCAiInitiatingGWCfg gw,
             String deviceDN, ArrayList<ModificationItem> mods) {
         LdapUtils.storeDiff(mods, "xdsApplicationName",
                 prevGW.getApplicationName(),
                 gw.getApplicationName());
-        LdapUtils.storeDiff(mods, "xdsRepositoryURL",
-                prevGW.getRepositoryURLs(),
-                gw.getRepositoryURLs());
+        LdapUtils.storeDiff(mods, "xdsiSourceURL",
+                prevGW.getXDSiSourceURLs(),
+                gw.getXDSiSourceURLs());
         LdapUtils.storeDiff(mods, "xdsRespondingGatewayURL",
                 prevGW.getRespondingGWURLs(),
                 gw.getRespondingGWURLs());
-        LdapUtils.storeDiff(mods, "xdsRespondingGatewayRetrieveURL",
-                prevGW.getRespondingGWRetrieveURLs(),
-                gw.getRespondingGWRetrieveURLs());
-        LdapUtils.storeDiff(mods, "xdsAssigningAuthority",
-                prevGW.getAssigningAuthoritiesMap(),
-                gw.getAssigningAuthoritiesMap());
-        LdapUtils.storeDiff(mods, "xdsRegistryURL",
-                prevGW.getRegistryURL(),
-                gw.getRegistryURL());
         LdapUtils.storeDiff(mods, "xdsHomeCommunityID",
                 prevGW.getHomeCommunityID(),
                 gw.getHomeCommunityID());
@@ -171,12 +152,6 @@ public class LdapXCAInitiatingGWConfiguration extends LdapDicomConfigurationExte
         LdapUtils.storeDiff(mods, "xdsAsyncHandler",
                 prevGW.isAsyncHandler(),
                 gw.isAsyncHandler());
-        LdapUtils.storeDiff(mods, "xdsPIXConsumerApplication",
-                prevGW.getLocalPIXConsumerApplication(),
-                gw.getLocalPIXConsumerApplication());
-        LdapUtils.storeDiff(mods, "xdsPIXManagerApplication",
-                prevGW.getRemotePIXManagerApplication(),
-                gw.getRemotePIXManagerApplication());
         return mods;
     }
 }

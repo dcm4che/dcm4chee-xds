@@ -122,23 +122,19 @@ public class StoredQueryParam {
     
     public static Map<String, StoredQueryParam> getQueryParams(AdhocQueryRequest req) throws XDSException {
         List<SlotType1> slots = req.getAdhocQuery().getSlot();
-        if (slots != null) {
-            Map<String, StoredQueryParam> params = new HashMap<String, StoredQueryParam>();
-            SlotType1 slot;
-            StoredQueryParam param;
-            for (int i = 0, len= slots.size() ; i < len ; i++) {
-                slot = slots.get(i);
-                param = params.get(slot.getName());
-                if (param == null) {
-                    param = new StoredQueryParam(slot.getName()); 
-                    params.put(param.getName(), param);
-                }
-                param.addValues(slot.getValueList().getValue());
+        Map<String, StoredQueryParam> params = new HashMap<String, StoredQueryParam>();
+        SlotType1 slot;
+        StoredQueryParam param;
+        for (int i = 0, len= slots.size() ; i < len ; i++) {
+            slot = slots.get(i);
+            param = params.get(slot.getName());
+            if (param == null) {
+                param = new StoredQueryParam(slot.getName()); 
+                params.put(param.getName(), param);
             }
-            return params;
-        } else {
-            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, "AdhocQueryRequest: AdhocQuery.Slot is null!", null);
+            param.addValues(slot.getValueList().getValue());
         }
+        return params;
     }
     
     public StoredQueryParam(String name) {

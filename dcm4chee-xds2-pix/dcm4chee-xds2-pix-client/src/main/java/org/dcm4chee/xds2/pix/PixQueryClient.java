@@ -42,7 +42,8 @@ import java.io.IOException;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
-import java.security.UnrecoverableKeyException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -51,9 +52,12 @@ import org.dcm4che.hl7.HL7Exception;
 import org.dcm4che.hl7.HL7Message;
 import org.dcm4che.hl7.HL7Segment;
 import org.dcm4che.hl7.MLLPConnection;
+import org.dcm4che.net.CompatibleConnection;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.Device;
 import org.dcm4che.net.IncompatibleConnectionException;
+import org.dcm4che.net.hl7.HL7Application;
+import org.dcm4che.util.StringUtils;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +73,7 @@ public class PixQueryClient {
 
     private String sendingApplication, sendingFacility;
     private String receivingApplication, receivingFacility;
-    private String charset;
+    private String charset = "ISO-8859-1";
 
     private Connection conn;
     private Connection remote;
@@ -98,6 +102,20 @@ public class PixQueryClient {
             conn.setHostname(bindHost);
     }
     
+    public PixQueryClient(HL7Application pixConsumerApp, HL7Application pixManagerApp) throws IncompatibleConnectionException {
+        CompatibleConnection cc = pixConsumerApp.findCompatibelConnection(pixManagerApp);
+        conn = cc.getLocalConnection();
+        remote = cc.getRemoteConnection();
+        String[] appAndFacility = StringUtils.split(pixConsumerApp.getApplicationName(), '^');
+        sendingApplication = appAndFacility[0];
+        sendingFacility = appAndFacility[1];
+        appAndFacility = StringUtils.split(pixManagerApp.getApplicationName(), '^');
+        receivingApplication = appAndFacility[0];
+        receivingFacility = appAndFacility[1];
+        if (pixConsumerApp.getHL7DefaultCharacterSet() != null)
+            charset = pixConsumerApp.getHL7DefaultCharacterSet();
+    }
+
     public String getSendingApplication() {
         return sendingApplication;
     }
@@ -221,6 +239,7 @@ public class PixQueryClient {
         }
         String[] cx, hd, dhd;
         String[] pids = HL7Segment.split(pidSeg.getField(3, ""), pidSeg.getRepetitionSeparator());
+        dhd = HL7Segment.split(domain, '&');
         char cSep = pidSeg.getComponentSeparator();
         char scSep = pidSeg.getSubcomponentSeparator();
         for (int i = 0; i < pids.length ; i++) {
@@ -228,7 +247,6 @@ public class PixQueryClient {
             cx = HL7Segment.split(pids[i], cSep);
             if (cx.length > 3 && cx[3].indexOf(domain) != -1) {
                 hd = HL7Segment.split(cx[3], scSep);
-                dhd = HL7Segment.split(domain, scSep);
                 if (dhd.length > 2 && hd.length > 2 && dhd[1].equals(hd[1]) && dhd[2].equals(hd[2])) {
                     return xadQuery ? cx[0]+"^^^&"+hd[1]+"&ISO" : pids[i];
                 } else if (dhd[0].equals(hd[0])) {
@@ -239,6 +257,40 @@ public class PixQueryClient {
         return null;
     }
 
+    /**
+     * 
+     * @param patID
+     * @param domain
+     * @return
+     * @throws IOException
+     * @throws IncompatibleConnectionException
+     * @throws GeneralSecurityException
+     * @throws HL7Exception
+     */
+    public synchronized Map<String, String> queryXadPIDs(String patID, String... domain) throws IOException, IncompatibleConnectionException, GeneralSecurityException, HL7Exception {
+        HL7Segment pidSeg = doQuery(patID, domain);
+        if (pidSeg == null) {
+            log.warn("PatID not found or no corresponding patID in given domains! patID:"+patID+" domain:"+StringUtils.concat(domain,','));
+            return null;
+        }
+        String[] cx, hd;
+        String[] pids = HL7Segment.split(pidSeg.getField(3, ""), pidSeg.getRepetitionSeparator());
+        char cSep = pidSeg.getComponentSeparator();
+        char scSep = pidSeg.getSubcomponentSeparator();
+        Map<String, String> pidOfDomain = new HashMap<String, String>();
+        for (int i = 0; i < pids.length ; i++) {
+            log.debug("#### patientID:"+pids[i]);
+            cx = HL7Segment.split(pids[i], cSep);
+            if (cx.length > 3) {
+                hd = HL7Segment.split(cx[3], scSep);
+                if (hd.length > 2) {
+                    pidOfDomain.put(hd[1], cx[0]+"^^^&"+hd[1]+"&ISO");
+                }
+            }
+        }
+        return pidOfDomain;
+    }
+
     public HL7Segment doQuery(String patID, String... domains) throws IOException, IncompatibleConnectionException, GeneralSecurityException, HL7Exception {
         Socket sock = conn.connect(remote);
         HL7Segment pidSeg = null;
@@ -247,7 +299,7 @@ public class PixQueryClient {
         try {
             sock.setSoTimeout(conn.getResponseTimeout());
             MLLPConnection mllp = new MLLPConnection(sock);
-            HL7Message qbp = HL7Message.makePixQuery(patID, domains);
+            HL7Message qbp = HL7Message.makePixQuery(patID, prepareDomains(domains));
             HL7Segment msh = qbp.get(0);
             msh.setSendingApplicationWithFacility(sendingApplication+"^"+sendingFacility);
             msh.setReceivingApplicationWithFacility(receivingApplication+"^"+receivingFacility);
@@ -278,4 +330,15 @@ public class PixQueryClient {
             }
         }
     }
+
+    private String[] prepareDomains(String... domains) {
+        if (domains != null) {
+            for (int i = 0 ; i < domains.length ; i++) {
+                if (!domains[i].startsWith("^^^")) 
+                    domains[i] = "^^^"+domains[i];
+            }
+        }
+        return domains;
+    }
+    
 }

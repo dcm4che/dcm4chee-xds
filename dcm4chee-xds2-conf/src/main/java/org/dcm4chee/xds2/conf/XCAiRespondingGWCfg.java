@@ -38,19 +38,60 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che.conf.api.ConfigurationException;
+import java.util.HashMap;
+
+import org.dcm4che.net.DeviceExtension;
+import org.dcm4chee.xds2.common.XDSUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
- *
  */
-public interface XdsDomainConfiguration {
+public class XCAiRespondingGWCfg extends DeviceExtension {
 
-    boolean registerXDSDomain(String name) throws ConfigurationException;
+    private static final long serialVersionUID = -8258532093950989486L;
 
-    void unregisterXDSDomain(String name) throws ConfigurationException;
+    private String applicationName;
+    private String homeCommunityID;
+    private HashMap<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
+    private String soapLogDir;
 
-    XdsDomain findXDSDomain(String name) throws ConfigurationException;
+    public String getApplicationName() {
+        return applicationName;
+    }
+    public final void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-    String[] listRegisteredXDSDomainNames() throws ConfigurationException;
+    public String getHomeCommunityID() {
+        return homeCommunityID;
+    }
+    public void setHomeCommunityID(String homeCommunityID) {
+        this.homeCommunityID = homeCommunityID;
+    }
+    public String getSoapLogDir() {
+        return soapLogDir;
+    }
+
+    public void setSoapLogDir(String soapLogDir) {
+        this.soapLogDir = soapLogDir;
+    }
+    
+    public String[] getXDSiSourceURLs() {
+        return XDSUtil.map2keyValueStrings(xdsiSrcUrlMapping, '|');
+    }
+    public void setXDSiSourceURLs(String[] xdsiSrcURLs) {
+        XDSUtil.storeKeyValueStrings2map(xdsiSrcURLs, '|', "*", xdsiSrcUrlMapping);
+    }
+    public String getXDSiSourceURL(String homeCommunityID) {
+        return XDSUtil.getValue(homeCommunityID, "*", xdsiSrcUrlMapping);
+    }
+
+    @Override
+    public void reconfigure(DeviceExtension from) {
+        XCAiRespondingGWCfg src = (XCAiRespondingGWCfg) from;
+        setApplicationName(src.getApplicationName());
+        setHomeCommunityID(src.getHomeCommunityID());
+        setXDSiSourceURLs(src.getXDSiSourceURLs());
+        setSoapLogDir(src.getSoapLogDir());
+    }
 }

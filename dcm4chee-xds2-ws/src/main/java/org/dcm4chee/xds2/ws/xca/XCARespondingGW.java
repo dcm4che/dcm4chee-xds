@@ -77,6 +77,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.util.DocumentRegistryPortTypeFactory;
 import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
+import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
@@ -172,7 +173,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                 throw new XDSException( XDSException.XDS_ERR_REG_NOT_AVAIL, "Document Registry not available: "+url, x);
             }
         } catch (Exception x) {
-            rsp = factory.createAdhocQueryResponse();
+            rsp = InfosetUtil.emptyAdhocQueryResponse();
             if (x instanceof XDSException) {
                 XDSUtil.addError(rsp, (XDSException) x);
             } else {
@@ -229,10 +230,9 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                 }
             }
         }
-        if (rsp == null)
-            rsp = iheFactory.createRetrieveDocumentSetResponseType();
-        return rsp;
+        return XDSUtil.finishResponse(rsp);
     }
+
     private RetrieveDocumentSetResponseType doRepoRetrieve(String repositoryID, RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
         try {

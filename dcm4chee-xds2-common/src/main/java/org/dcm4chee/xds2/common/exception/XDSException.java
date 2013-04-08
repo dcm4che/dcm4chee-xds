@@ -105,14 +105,16 @@ public class XDSException extends Exception {
     public String getLocation() {
         return location;
     }
-    public void setLocation(String location) {
+    public XDSException setLocation(String location) {
         this.location = location;
+        return this;
     }
     public String getSeverity() {
         return severity;
     }
-    public void setSeverity(String severity) {
+    public XDSException setSeverity(String severity) {
         this.severity = severity;
+        return this;
     }
 
     public String toString() {

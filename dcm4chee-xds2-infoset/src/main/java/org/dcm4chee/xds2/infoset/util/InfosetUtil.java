@@ -49,13 +49,20 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType.Document;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest.SeriesRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
+import org.dcm4chee.xds2.infoset.rim.RegistryErrorList;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
@@ -221,6 +228,12 @@ public class InfosetUtil {
         }
         slot.setValueList(valueList);
         ro.getSlot().add(slot);
+    }
+    
+    public static AdhocQueryResponse emptyAdhocQueryResponse() {
+        AdhocQueryResponse rsp = objFac.createAdhocQueryResponse();
+        rsp.setRegistryObjectList(objFac.createRegistryObjectListType());
+        return rsp;
     }
 
 }

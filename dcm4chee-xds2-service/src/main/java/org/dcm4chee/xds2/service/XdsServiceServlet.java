@@ -67,6 +67,7 @@ import javax.ws.rs.core.Response;
 import org.dcm4che.audit.AuditMessages;
 import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.api.DicomConfiguration;
+import org.dcm4che.conf.api.hl7.HL7Configuration;
 import org.dcm4che.conf.ldap.LdapDicomConfiguration;
 import org.dcm4che.conf.ldap.audit.LdapAuditLoggerConfiguration;
 import org.dcm4che.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
@@ -89,15 +90,21 @@ import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.conf.ldap.LdapXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXCARespondingGWConfiguration;
+import org.dcm4chee.xds2.conf.ldap.LdapXCAiInitiatingGWConfiguration;
+import org.dcm4chee.xds2.conf.ldap.LdapXCAiRespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXDSRepositoryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCARespondingGWConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiInitiatingGWConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiRespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
 import org.dcm4chee.xds2.registry.hl7.XdsHL7Service;
@@ -139,8 +146,7 @@ public class XdsServiceServlet extends HttpServlet {
                     config.getInitParameter("ldapPropertiesURL")));
         xdsDeviceName = System.getProperty("org.dcm4chee.xds.deviceName",
                 config.getInitParameter("xdsDeviceName"));
-        hl7AppName = System.getProperty("org.dcm4chee.xds.hl7AppName",
-                config.getInitParameter("hl7AppName"));
+        hl7AppName = config.getInitParameter("hl7AppName");
         XDSFileStorageMBean xdsStore = new XDSFileStorage("xds2-docs");
         try {
             mbean = ManagementFactory.getPlatformMBeanServer().registerMBean(xdsStore, new ObjectName("dcm4chee.xds2:service=Store"));
@@ -159,6 +165,7 @@ public class XdsServiceServlet extends HttpServlet {
     public void initXdsDevice() throws IOException, MalformedURLException,
             ConfigurationException, GeneralSecurityException {
         InputStream ldapConf = null;
+        HL7Configuration hl7config;
         try {
             ldapConf = new URL(ldapPropertiesURL).openStream();
             Properties p = new Properties();
@@ -168,10 +175,14 @@ public class XdsServiceServlet extends HttpServlet {
             ldapConfig.addDicomConfigurationExtension(new LdapXDSRepositoryConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapXCARespondingGWConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapXCAInitiatingGWConfiguration());
-            ldapConfig.addDicomConfigurationExtension(new LdapHL7Configuration());
+            ldapConfig.addDicomConfigurationExtension(new LdapXCAiRespondingGWConfiguration());
+            ldapConfig.addDicomConfigurationExtension(new LdapXCAiInitiatingGWConfiguration());
+            LdapHL7Configuration hl7cfg = new LdapHL7Configuration();
+            ldapConfig.addDicomConfigurationExtension(hl7cfg);
             ldapConfig.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
             ldapConfig.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
             xdsConfig = ldapConfig;
+            hl7config = hl7cfg;
         } catch(FileNotFoundException e) {
             log.info("Could not find " + ldapPropertiesURL
                     + " - use Java Preferences as Configuration Backend");
@@ -180,10 +191,14 @@ public class XdsServiceServlet extends HttpServlet {
             prefConfig.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesXCARespondingGWConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesXCAInitiatingGWConfiguration());
-            prefConfig.addDicomConfigurationExtension(new PreferencesHL7Configuration());
+            prefConfig.addDicomConfigurationExtension(new PreferencesXCAiRespondingGWConfiguration());
+            prefConfig.addDicomConfigurationExtension(new PreferencesXCAiInitiatingGWConfiguration());
+            PreferencesHL7Configuration hl7cfg = new PreferencesHL7Configuration();
+            prefConfig.addDicomConfigurationExtension(hl7cfg);
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
             prefConfig.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
             xdsConfig = prefConfig;
+            hl7config = hl7cfg;
         } finally {
             SafeClose.close(ldapConf);
         }
@@ -197,10 +212,14 @@ public class XdsServiceServlet extends HttpServlet {
         }
         XdsDevice.setLocalXdsDevice(device);
         
-        if (hl7AppName != null) {
+        if (device.getDeviceExtension(XdsRegistry.class) != null) {
             HL7DeviceExtension hl7 = device.getDeviceExtension(HL7DeviceExtension.class);
             if (hl7 != null) {
-                hl7App = hl7.getHL7Application(hl7AppName);
+                if (hl7AppName != null) {
+                    hl7App = hl7.getHL7Application(hl7AppName);
+                } else if (hl7.getHL7Applications().size() > 0) {
+                    hl7App = hl7.getHL7Applications().iterator().next();
+                }
                 if (hl7App != null) {
                     log.info("###### HL7 device:"+device);
                     log.info("###### HL7 Application Name:"+hl7App.getApplicationName());
@@ -211,12 +230,21 @@ public class XdsServiceServlet extends HttpServlet {
                     device.bindConnections();
                 } else if (hl7AppName != null) {
                     log.error("HL7 Application '"+hl7AppName+"' not found!");
+                } else {
+                    log.warn("No HL7 Application defined in XDS device! "+device);
                 }
             }
         } else {
-            log.info("No HL7 Application defined for this service!");
+            log.info("No HL7 Application defined for this device! device:"+device);
+        }
+        XCAInitiatingGWCfg xcai = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        if (xcai != null) {
+            xcai.init(hl7config);
         }
         XDSAudit.setAuditLogger(device.getDeviceExtension(AuditLogger.class));
+        if (AuditLogger.getDefaultLogger() == null) {
+            AuditLogger.setDefaultLogger(XDSAudit.getAuditLogger());
+        }
         log.info("###### Audit Logger:"+XDSAudit.info());
         XDSAudit.logApplicationActivity(AuditMessages.EventTypeCode.ApplicationStart, true);
     }
@@ -299,6 +327,8 @@ public class XdsServiceServlet extends HttpServlet {
             appendXdsRepo(sb, d.getDeviceExtension(XdsRepository.class), "\n</pre><h5>XDS Repository:</h5><pre>\n", null);
             appendXCARespGW(sb, d.getDeviceExtension(XCARespondingGWCfg.class), "\n</pre><h5>XCA Responding Gateway:</h5><pre>\n", null);
             appendXCAInitiatingGW(sb, d.getDeviceExtension(XCAInitiatingGWCfg.class), "\n</pre><h5>XCA Initiating Gateway:</h5><pre>\n", null);
+            appendXCAiRespGW(sb, d.getDeviceExtension(XCAiRespondingGWCfg.class), "\n</pre><h5>XCA-I Responding Gateway:</h5><pre>\n", null);
+            appendXCAiInitiatingGW(sb, d.getDeviceExtension(XCAiInitiatingGWCfg.class), "\n</pre><h5>XCA-I Initiating Gateway:</h5><pre>\n", null);
             sb.append("</pre><h4>Audit Logger:</h4><pre>");
             appendAuditLogger(sb, d.getDeviceExtension(AuditLogger.class), "\n\n", null);
             sb.append("</pre><h4>HL7 Applications:</h4><pre>");
@@ -420,10 +450,38 @@ public class XdsServiceServlet extends HttpServlet {
             sb.append(APPLICATION_NAME).append(gw.getApplicationName());
             append(sb, gw.getHomeCommunityID(), "\n  HomeCommunityID:", null, false);
             append(sb, gw.getRegistryURL(), "\n  Registry URL:", null, false);
-            sb.append("\n  Repository URLs:");
             appendArray(sb, gw.getRespondingGWURLs(), "\n  Responding Gateway URLs: (Query and Retrieve if no RespondingGWRetrieveURL configured)");
             appendArray(sb, gw.getRespondingGWRetrieveURLs(), "\n  Responding Gateway Retrieve URLs:");
             appendArray(sb, gw.getRepositoryURLs(), "\n  Repository URLs:");
+            append(sb, gw.getLocalPIXConsumerApplication(), "\n  HL7v2 PIX Consumer (application^facility):", null, false);
+            append(sb, gw.getRemotePIXManagerApplication(), "\n  HL7v2 PIX Manager  (application^facility):", null, false);
+            appendArray(sb, gw.getAssigningAuthoritiesMap(), "\n  Assigning Authorities:");
+            append(sb, gw.isAsync(), "\n  ASYNC:", null, false);
+            append(sb, gw.isAsyncHandler(), "\n  AsyncHandler:", null, false);
+            append(sb, gw.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
+        }
+    }
+    private void appendXCAiRespGW(StringBuilder sb, XCAiRespondingGWCfg rspGW, String prefix, String postfix) {
+        append(sb, prefix);
+        if (rspGW == null) {
+            sb.append("not configured");
+        } else {
+            sb.append(APPLICATION_NAME).append(rspGW.getApplicationName());
+            append(sb, rspGW.getHomeCommunityID(), "\n  HomeCommunityID:", null, false);
+            appendArray(sb, rspGW.getXDSiSourceURLs(), "\n  XDS-I Source URLs:");
+            append(sb, rspGW.getSoapLogDir(), "\n  SOAP logging dir:", null, true);
+        }
+    }
+
+    private void appendXCAiInitiatingGW(StringBuilder sb, XCAiInitiatingGWCfg gw, String prefix, String postfix) {
+        append(sb, prefix);
+        if (gw == null) {
+            sb.append("not configured");
+        } else {
+            sb.append(APPLICATION_NAME).append(gw.getApplicationName());
+            append(sb, gw.getHomeCommunityID(), "\n  HomeCommunityID:", null, false);
+            appendArray(sb, gw.getRespondingGWURLs(), "\n  Responding Gateway URLs: (Query and Retrieve if no RespondingGWRetrieveURL configured)");
+            appendArray(sb, gw.getXDSiSourceURLs(), "\n  XDS-I Source URLs:");
             append(sb, gw.isAsync(), "\n  ASYNC:", null, false);
             append(sb, gw.isAsyncHandler(), "\n  AsyncHandler:", null, false);
             append(sb, gw.getSoapLogDir(), "\n  SOAP logging dir:", null, true);

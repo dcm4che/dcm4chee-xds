@@ -231,7 +231,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 }
             }
         }
-        if (xadPatient == null) {
+        if (xadPatient == null && patID != null) {
             try {
                 xadPatient = new XADPatient(patID);
             } catch (Exception ignore) {
@@ -239,15 +239,19 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                         "PatientID not valid! patID:"+patID, null);
             }
         }
-        //save affinityDomain and AffinityDomainCodes in session
-        String affinityDomain = xadPatient.getIssuerOfPatientID().getUniversalID();
-        XADCfgRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
-        adCodes = codeRepository.getAffinityDomainCodes(affinityDomain);
-        if (adCodes.isEmpty() && !cfg.isCreateMissingCodes()) {
-            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                    "No codes configured for affinity domain! affinityDomain:"+affinityDomain, null);
+        if (xadPatient != null) {
+            //save affinityDomain and AffinityDomainCodes in session
+            String affinityDomain = xadPatient.getIssuerOfPatientID().getUniversalID();
+            XADCfgRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+            adCodes = codeRepository.getAffinityDomainCodes(affinityDomain);
+            if (adCodes.isEmpty() && !cfg.isCreateMissingCodes()) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "No codes configured for affinity domain! affinityDomain:"+affinityDomain, null);
+            }
+            checkAffinityDomain(xadPatient);
+        } else {
+            adCodes = new AffinityDomainCodes();
         }
-        checkAffinityDomain(xadPatient);
     }
 
     private void checkAffinityDomain(String patID) throws XDSException {
@@ -326,18 +330,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             XDSUtil.addError(rsp, e);
             rsp.setRegistryObjectList(factory.createRegistryObjectListType());
         }
-        try {
-            XDSAudit.logRegistryQuery(req.getAdhocQuery().getId(), 
-                qry == null ? null : qry.getPatientID(), 
-                (qry != null && qry.getQueryParam(XDSConstants.QRY_HOME_COMMUNITY_ID) != null) ? 
-                        qry.getQueryParam(XDSConstants.QRY_HOME_COMMUNITY_ID).getStringValue() : null,
-                InfosetUtil.marshallObject(req, true).getBytes("UTF-8"), 
-                new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
+        XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
-        } catch (Exception x) {
-            log.warn("Failed to log query audit message!");
-            log.debug("Stacktrace:", x);
-        }
         return rsp;
     }
 

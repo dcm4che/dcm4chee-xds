@@ -261,9 +261,6 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             eo = extrObjs.get(i);
             doc = docs.get(eo.getId());
             docUID = InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSDocumentEntry_uniqueId, eo);
-            log.info("####### Document id:"+doc.getId());
-            log.info("####### Document uuid:"+docUID);
-            log.info("####### Document mime:"+eo.getMimeType());
             if (mimetypes != null) {
                 boolean unsupportedMimetype = true;
                 for (int j = 0 ; j < mimetypes.length ; j++) {

@@ -19,10 +19,12 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
       <param-name>xdsDeviceName</param-name>
       <param-value>dcm4chee-xds2-registry</param-value>
     </init-param>
+    <!-- Uncomment to specify a concrete HL7 Application within the XDS device.
+         If not set -> use first HL7 Application.
     <init-param>
       <param-name>hl7AppName</param-name>
       <param-value>XDS^DCM4CHEE</param-value>
-    </init-param>
+    </init-param>  -->
     <load-on-startup>1</load-on-startup>
   </servlet>
 </web-app>

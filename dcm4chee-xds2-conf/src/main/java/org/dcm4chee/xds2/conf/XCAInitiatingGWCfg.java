@@ -42,8 +42,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dcm4che.conf.api.ConfigurationException;
+import org.dcm4che.conf.api.hl7.HL7ApplicationCache;
+import org.dcm4che.conf.api.hl7.HL7Configuration;
 import org.dcm4che.net.DeviceExtension;
+import org.dcm4che.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -56,12 +62,18 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
     private String homeCommunityID;
     private Map<String, String> respondingGWUrlMapping = new HashMap<String,String>();
     private Map<String, String> respondingGWRetrieveUrlMapping = new HashMap<String,String>();
+    private Map<String, String> homeIdToAssigningAuthotityMapping = new HashMap<String,String>();
     //AffinityDomain Option
     private String registryURL;
     private Map<String, String> repositoryUrlMapping = new HashMap<String,String>();
     private String soapLogDir;
     private boolean async;
     private boolean asyncHandler;
+    private String pixManagerApplication;
+    private String pixConsumerApplication;
+    private HL7ApplicationCache hl7AppCache;
+    
+    private static Logger log = LoggerFactory.getLogger(XCAInitiatingGWCfg.class);
 
     public String getApplicationName() {
         return applicationName;
@@ -125,6 +137,20 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
                 XDSUtil.getValue(homeCommunityID, "*", respondingGWUrlMapping) : url;
     }
 
+    public String[] getAssigningAuthoritiesMap() {
+        return XDSUtil.map2keyValueStrings(homeIdToAssigningAuthotityMapping, '|');
+    }
+    public void setAssigningAuthoritiesMap(String[] sa) {
+        XDSUtil.storeKeyValueStrings2map(sa, '|', "*", homeIdToAssigningAuthotityMapping);
+    }
+    public String[] getAssigningAuthorities() {
+        int size = homeIdToAssigningAuthotityMapping.size();
+        return size == 0 ? null : homeIdToAssigningAuthotityMapping.values().toArray(new String[size]);
+    }
+    public String getAssigningAuthority(String homeCommunityID) {
+        return XDSUtil.getValue(homeCommunityID, "*", homeIdToAssigningAuthotityMapping);
+    }
+
     public boolean isAsync() {
         return async;
     }
@@ -137,6 +163,42 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
     public void setAsyncHandler(boolean asyncHandler) {
         this.asyncHandler = asyncHandler;
     }
+    
+    public String getRemotePIXManagerApplication() {
+        return pixManagerApplication;
+    }
+
+    public void setRemotePIXManagerApplication(String appName) {
+        this.pixManagerApplication = appName;
+    }
+
+    public String getLocalPIXConsumerApplication() {
+        return pixConsumerApplication;
+    }
+
+    public void setLocalPIXConsumerApplication(String appName) {
+        this.pixConsumerApplication = appName;
+    }
+
+    public void init(HL7Configuration hl7Configuration) {
+        this.hl7AppCache = new HL7ApplicationCache(hl7Configuration);
+    }
+    
+    public HL7Application getPixConsumerApplication() {
+        return findHL7Application(pixConsumerApplication);
+    }
+    public HL7Application getPixManagerApplication() {
+        return findHL7Application(pixManagerApplication);
+    }
+    public HL7Application findHL7Application(String name) {
+        try {
+            return name == null ? null : hl7AppCache.findHL7Application(name);
+        } catch (ConfigurationException e) {
+            log.warn("HL7Application not found! name:"+name);
+            return null;
+        }
+    }
+    
     @Override
     public void reconfigure(DeviceExtension from) {
         XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
@@ -149,5 +211,8 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         setSoapLogDir(src.getSoapLogDir());
         setAsync(src.isAsync());
         setAsyncHandler(src.isAsyncHandler());
+        setRemotePIXManagerApplication(src.pixManagerApplication);
+        setLocalPIXConsumerApplication(src.pixConsumerApplication);
+        setAssigningAuthoritiesMap(src.getAssigningAuthoritiesMap());
     }
 }

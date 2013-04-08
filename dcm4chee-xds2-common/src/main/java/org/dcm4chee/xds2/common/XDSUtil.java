@@ -37,6 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,17 +46,24 @@ import javax.xml.bind.JAXBException;
 
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
+import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest.SeriesRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryError;
 import org.dcm4chee.xds2.infoset.rim.RegistryErrorList;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
+import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XDSUtil {
 
     public static ObjectFactory factory = new ObjectFactory();
+    public static org.dcm4chee.xds2.infoset.ihe.ObjectFactory iheFactory = new org.dcm4chee.xds2.infoset.ihe.ObjectFactory();
+    
     private static Logger log = LoggerFactory.getLogger(XDSUtil.class);
     
     private static final char[] HEX_STRINGS = "0123456789abcdef".toCharArray();
@@ -134,6 +142,24 @@ public class XDSUtil {
         }
     }
 
+    public static RetrieveDocumentSetResponseType finishResponse(RetrieveDocumentSetResponseType rsp) {
+        if (rsp == null)
+            rsp = iheFactory.createRetrieveDocumentSetResponseType();
+        RegistryResponseType regRsp = rsp.getRegistryResponse();
+        if (regRsp == null) {
+            regRsp = factory.createRegistryResponseType();
+            rsp.setRegistryResponse(regRsp);
+        }
+        if (regRsp.getRegistryErrorList() == null || regRsp.getRegistryErrorList().getRegistryError().isEmpty()) {
+            regRsp.setStatus(XDSConstants.XDS_B_STATUS_SUCCESS);
+        } else if (rsp.getDocumentResponse() == null || rsp.getDocumentResponse().isEmpty()) {
+            regRsp.setStatus(XDSConstants.XDS_B_STATUS_FAILURE);
+        } else {
+            regRsp.setStatus(XDSConstants.XDS_B_STATUS_PARTIAL_SUCCESS);
+        }
+        return rsp;
+    }
+
     public static final String toHexString(byte[] ba) {
         StringBuilder sb = new StringBuilder();
         int h;
@@ -145,6 +171,20 @@ public class XDSUtil {
         return sb.toString();
     }
 
+    public static String getQueryPatID(List<SlotType1> slots) {
+        String name;
+        for (SlotType1 slot : slots) {
+            name = slot.getName();
+            if ((XDSConstants.QRY_DOCUMENT_ENTRY_PATIENT_ID.equals(name) ||
+                    XDSConstants.QRY_FOLDER_PATIENT_ID.equals(name) ||
+                    XDSConstants.QRY_SUBMISSIONSET_PATIENT_ID.equals(name)) &&
+                    slot.getValueList() != null && slot.getValueList().getValue().size() > 0) {
+                return slot.getValueList().getValue().get(0);
+            }
+        }
+        return null;
+    }
+    
     public static String[] map2keyValueStrings(Map<String,String> map, char delimiter) {
         String[] sa = new String[map.size()];
         int i = 0;
@@ -181,5 +221,68 @@ public class XDSUtil {
         return value;
     }
     
-
+    public static Map<String, List<StudyRequest>> splitRequestPerSrcID(RetrieveImagingDocumentSetRequestType req) {
+        return splitRequest(req, false);
+    }
+    public static Map<String, List<StudyRequest>> splitRequestPerHomeCommunityID(RetrieveImagingDocumentSetRequestType req) {
+        return splitRequest(req, true);
+    }
+    private static Map<String, List<StudyRequest>> splitRequest(RetrieveImagingDocumentSetRequestType req, boolean splitByHomeCommunity) {
+        List<StudyRequest> docReq = req.getStudyRequest();
+        HashMap<String, List<StudyRequest>> srcRequests = new HashMap<String, List<StudyRequest>>();
+        if (docReq.size() > 0) {
+            HashMap<String, StudyRequest> srcId2StudyReq = new HashMap<String, StudyRequest>();
+            HashMap<String, SeriesRequest> srcId2SeriesReq = new HashMap<String, SeriesRequest>();
+            List<StudyRequest> tmpStudyList;
+            String key;
+            StudyRequest tmpStudy;
+            SeriesRequest tmpSeries;
+            for (StudyRequest study : docReq) {
+                srcId2StudyReq.clear();
+                for (SeriesRequest series : study.getSeriesRequest()) {
+                    srcId2SeriesReq.clear();
+                    for (DocumentRequest doc : series.getDocumentRequest()) {
+                        key = splitByHomeCommunity ? doc.getHomeCommunityId() : doc.getRepositoryUniqueId();
+                        tmpSeries = srcId2SeriesReq.get(key);
+                        if (tmpSeries == null) {
+                            tmpSeries = new SeriesRequest();
+                            tmpSeries.setSeriesInstanceUID(series.getSeriesInstanceUID());
+                            srcId2SeriesReq.put(key, tmpSeries);
+                            tmpStudy = srcId2StudyReq.get(key);
+                            if (tmpStudy == null) {
+                                tmpStudy = new StudyRequest();
+                                tmpStudy.setStudyInstanceUID(study.getStudyInstanceUID());
+                                srcId2StudyReq.put(key, tmpStudy);
+                                tmpStudyList = srcRequests.get(key);
+                                if (tmpStudyList == null) {
+                                    tmpStudyList = new ArrayList<StudyRequest>();
+                                    srcRequests.put(key, tmpStudyList);
+                                }
+                                tmpStudyList.add(tmpStudy);
+                            }
+                            tmpStudy.getSeriesRequest().add(tmpSeries);
+                        }
+                        tmpSeries.getDocumentRequest().add(doc);
+                    }
+                }
+            }
+        }
+        return srcRequests;
+    }
+    
+    public static void addResponse(RetrieveDocumentSetResponseType source, RetrieveDocumentSetResponseType target) {
+        if (source.getDocumentResponse().size() > 0)
+            target.getDocumentResponse().addAll(source.getDocumentResponse());
+        if (source.getRegistryResponse() != null) {
+            RegistryErrorList errs = source.getRegistryResponse().getRegistryErrorList();
+            if (errs != null && errs.getRegistryError().size() > 0) {
+                RegistryErrorList rspErr = target.getRegistryResponse().getRegistryErrorList();
+                if (rspErr == null) {
+                    target.getRegistryResponse().setRegistryErrorList(errs);
+                } else {
+                    rspErr.getRegistryError().addAll(errs.getRegistryError());
+                }
+            }
+        }
+    }
 }

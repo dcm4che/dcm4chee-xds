@@ -61,8 +61,12 @@ import org.dcm4che.net.Device;
 import org.dcm4che.net.IncompatibleConnectionException;
 import org.dcm4che.net.audit.AuditLogger;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
+import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -369,9 +373,14 @@ public class XDSAudit {
      * @param registryURL
      * @param success
      */
-    public static void logClientQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
+    public static void logClientQuery(AdhocQueryRequest req, 
             String srcUserID, String srcHostName, URL registryURL, boolean success) {
-        logQuery(queryUID, patID, homeCommunityID, adhocQuery, srcUserID, AuditLogger.processID(), srcHostName, 
+        logQuery(EventTypeCode.ITI_18_RegistryStoredQuery, req, srcUserID, AuditLogger.processID(), srcHostName, 
+                registryURL.toExternalForm(), null, registryURL.getHost(), success);
+    }
+    public static void logClientXCAQuery(AdhocQueryRequest req, 
+            String srcUserID, String srcHostName, URL registryURL, boolean success) {
+        logQuery(EventTypeCode.ITI_38_CrossGatewayQuery, req, srcUserID, AuditLogger.processID(), srcHostName, 
                 registryURL.toExternalForm(), null, registryURL.getHost(), success);
     }
     /**
@@ -391,19 +400,30 @@ public class XDSAudit {
      * @param info
      * @param success
      */
-    public static void logRegistryQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
-            AuditRequestInfo info, boolean success) {
-        logQuery(queryUID, patID, homeCommunityID, adhocQuery, info.getReplyTo(), null, info.getRemoteHost(), 
-                info.getRequestURI(), AuditLogger.processID(), info.getLocalHost(), success);
+    public static void logRegistryQuery(AdhocQueryRequest req, AuditRequestInfo info, boolean success) {
+        logRegistryQuery(EventTypeCode.ITI_18_RegistryStoredQuery, req, info, success);
+    }
+    public static void logXCAQuery(AdhocQueryRequest req, AuditRequestInfo info, boolean success) {
+        logRegistryQuery(EventTypeCode.ITI_38_CrossGatewayQuery, req, info, success);
     }
 
-    public static void logQuery(String queryUID, String patID, String homeCommunityID, byte[] adhocQuery, 
+    public static void logRegistryQuery(EventTypeCode eventTypeCode, AdhocQueryRequest req, AuditRequestInfo info, boolean success) {
+        logQuery(eventTypeCode, req, info.getReplyTo(), null, info.getRemoteHost(), 
+            info.getRequestURI(), AuditLogger.processID(), info.getLocalHost(), success);
+    }
+    public static void logQuery(EventTypeCode eventTypeCode, AdhocQueryRequest req, 
             String srcUserID, String altSrcUserID, String srcHostName, String destUserID, String altDestUserID, 
             String destHostName, boolean success) {
+
         if (logger != null && logger.isInstalled()) {
             try {
+                AdhocQueryType qry = req.getAdhocQuery();
+                String patID = XDSUtil.getQueryPatID(qry.getSlot());
+                String homeCommunityID = InfosetUtil.getSlotValue(qry.getSlot(), XDSConstants.QRY_HOME_COMMUNITY_ID, null);
+                if (srcHostName == null)
+                    srcHostName = AuditLogger.localHost().getHostName();
                 Calendar timeStamp = logger.timeStamp();
-                AuditMessage msg = XDSAudit.createQuery(queryUID, patID, homeCommunityID, adhocQuery, 
+                AuditMessage msg = XDSAudit.createQuery(eventTypeCode, qry.getId(), patID, homeCommunityID, InfosetUtil.marshallObject(req, true).getBytes("UTF-8"), 
                         srcUserID, altSrcUserID, srcHostName, destUserID, altDestUserID, destHostName, 
                         timeStamp, success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
                 sendAuditMessage(timeStamp, msg);
@@ -561,7 +581,7 @@ public class XDSAudit {
         return msg;
     }
 
-    public static AuditMessage createQuery(String queryUID, String patID, 
+    public static AuditMessage createQuery(EventTypeCode eventTypeCode, String queryUID, String patID, 
             String homeCommunityID, byte[] adhocQuery, 
             String srcUserID, String altSrcUserID, String srcHostName, 
             String destUserID, String altDestUserID, String destHostName, 
@@ -573,7 +593,7 @@ public class XDSAudit {
                 timeStamp,
                 outcomeIndicator,
                 null,
-                EventTypeCode.ITI_18_RegistryStoredQuery));
+                eventTypeCode));
         msg.getAuditSourceIdentification().add(
                 logger.createAuditSourceIdentification());
         String hostName = AuditLogger.localHost().getHostName();
@@ -623,7 +643,6 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
-        log.info("AuditMessage:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
     }
 

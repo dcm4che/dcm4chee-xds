@@ -86,6 +86,14 @@ public class XdsDevice {
         return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCAInitiatingGWCfg.class);
     }
 
+    public static XCAiRespondingGWCfg getXCAiRespondingGW() {
+        return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCAiRespondingGWCfg.class);
+    }
+
+    public static XCAiInitiatingGWCfg getXCAiInitiatingGW() {
+        return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCAiInitiatingGWCfg.class);
+    }
+
     public void reconfigure(Device from) throws IOException, GeneralSecurityException {
         if (localXdsDevice != null) {
             localXdsDevice.reconfigure(from);

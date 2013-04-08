@@ -139,6 +139,32 @@ attributetype ( 1.2.40.0.13.1.15.20.3.35 NAME 'xdsAsyncHandler'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
+attributetype ( 1.2.40.0.13.1.15.20.3.36 NAME 'xdsiSourceURL'
+  DESC 'XDS-I Source URL(s) which is used by XDS-i Consumer and XCA-I Initiating Gateway actors.'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.37 NAME 'xdsPIXConsumerApplication'
+  DESC 'Application and Facility of PIX Consumer. Format: <application>^<facility>'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.38 NAME 'xdsPIXManagerApplication'
+  DESC 'Application and Facility of PIX Manager. Format: <application>^<facility>'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+
+attributetype ( 1.2.40.0.13.1.15.20.3.39 NAME 'xdsAssigningAuthority'
+  DESC 'Assigning Authority'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+
 objectclass ( 1.2.40.0.13.1.15.20.4.1
   NAME 'xdsRegistry'
   DESC 'XDS Application information'
@@ -197,6 +223,32 @@ objectclass ( 1.2.40.0.13.1.15.20.4.4
     xdsRespondingGatewayRetrieveURL $
     xdsRegistryURL $
     xdsRepositoryURL $
+    xdsAsync $
+    xdsAsyncHandler $
+    xdsPIXConsumerApplication $
+    xdsPIXManagerApplication $
+    xdsAssigningAuthority $
+    xdsSoapMsgLogDir ) )
+objectclass ( 1.2.40.0.13.1.15.20.4.5
+  NAME 'xcaiRespondingGW'
+  DESC 'XCA-I Responding Gateway information'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsApplicationName $
+    xdsHomeCommunityID $
+    xdsiSourceURL )
+  MAY (
+    xdsSoapMsgLogDir ) )
+objectclass ( 1.2.40.0.13.1.15.20.4.6
+  NAME 'xcaiInitiatingGW'
+  DESC 'XCA-I Initiating Gateway information'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsApplicationName $
+    xdsHomeCommunityID $
+    xdsRespondingGatewayURL )
+  MAY (
+    xdsiSourceURL $
     xdsAsync $
     xdsAsyncHandler $
     xdsSoapMsgLogDir ) )
