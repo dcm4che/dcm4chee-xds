@@ -43,6 +43,7 @@ import static org.dcm4che.audit.AuditMessages.createEventIdentification;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -63,7 +64,9 @@ import org.dcm4che.net.audit.AuditLogger;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
 import org.dcm4chee.xds2.infoset.util.InfosetUtil;
@@ -241,6 +244,13 @@ public class XDSAudit {
                 AuditLogger.localHost().getHostName(), docReq, success);
         }
     }
+    public static void logConsumerXCAImport(String patID, URL repositoryURL, RetrieveDocumentSetRequestType docReq, boolean success) {
+        if (logger != null && logger.isInstalled()) {
+            logImport(EventTypeCode.ITI_39_CrossGatewayRetrieve, null, patID, repositoryURL.toExternalForm(),
+                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
+                AuditLogger.localHost().getHostName(), docReq, success);
+        }
+    }
     
     public static void logImport(EventTypeCode eventTypeCode, String submissionSetUID, String patID, 
             String srcUserID, String altSrcUserID, String srcHostName, 
@@ -335,6 +345,32 @@ public class XDSAudit {
             logExport(EventTypeCode.ITI_43_RetrieveDocumentSet, null, null, info.getRequestURI(), 
                 AuditLogger.processID(), info.getLocalHost(), info.getReplyTo(), null, info.getRemoteHost(),
                 docReq, docUIDs, success);
+        }
+    }
+    public static void logRepositoryRetrieveExport(RetrieveDocumentSetRequestType req, RetrieveDocumentSetResponseType rsp, AuditRequestInfo info) {
+        logExport(EventTypeCode.ITI_43_RetrieveDocumentSet, req, rsp, info); 
+    }
+    public static void logXCARetrieveExport(RetrieveDocumentSetRequestType req, RetrieveDocumentSetResponseType rsp, AuditRequestInfo info) {
+        logExport(EventTypeCode.ITI_39_CrossGatewayRetrieve, req, rsp, info); 
+    }
+    public static void logExport(EventTypeCode eventTypeCode, RetrieveDocumentSetRequestType req, RetrieveDocumentSetResponseType rsp, AuditRequestInfo info) {
+        if (logger == null || !logger.isInstalled())
+            return;
+        List<DocumentRequest> docReq = req.getDocumentRequest();
+        List<String> retrievedUIDs = new ArrayList<String>();
+        for (DocumentResponse doc : rsp.getDocumentResponse())
+            retrievedUIDs.add(doc.getDocumentUniqueId());
+        if (retrievedUIDs.size() > 0) {
+            logExport(eventTypeCode, null, null, info.getRequestURI(), AuditLogger.processID(), 
+                    info.getLocalHost(), info.getReplyTo(), null, info.getRemoteHost(), req, retrievedUIDs, true);
+        }
+        if (retrievedUIDs.size() < docReq.size()) {
+            List<String> failedUIDs = new ArrayList<String>();
+            for (DocumentRequest doc : req.getDocumentRequest())
+                if (!retrievedUIDs.contains(doc.getDocumentUniqueId())) 
+                    failedUIDs.add(doc.getDocumentUniqueId());
+            logExport(eventTypeCode, null, null, info.getRequestURI(), AuditLogger.processID(), 
+                    info.getLocalHost(), info.getReplyTo(), null, info.getRemoteHost(), req, failedUIDs, false);
         }
     }
     
@@ -643,6 +679,8 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
+        if (log.isDebugEnabled())
+            log.debug("Send audit message:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
     }
 

@@ -58,7 +58,10 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
@@ -81,6 +84,7 @@ import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
+import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.dcm4chee.xds2.ws.util.CxfUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -156,9 +160,10 @@ public class XCARespondingGW implements RespondingGatewayPortType {
 
     private AdhocQueryResponse doStoredQuery(AdhocQueryRequest req) {
         AdhocQueryResponse rsp;
+        URL registryURL = null;
         try {
             String url = XdsDevice.getXCARespondingGW().getRegistryURL();
-            URL xdsRegistryURI = new URL(url);
+            registryURL = new URL(url);
             DocumentRegistryPortType port = DocumentRegistryPortTypeFactory.getDocumentRegistryPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -181,11 +186,13 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logClientQuery(req, XDSConstants.WS_ADDRESSING_ANONYMOUS, null, registryURL, !XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getStatus()));
         return addHomeCommunityId(rsp);    
     }
 
     private RetrieveDocumentSetResponseType doRetrieve(RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp = null;
+        URL repositoryURL = null;
         List<DocumentRequest> docReq = req.getDocumentRequest();
         HashMap<String, List<DocumentRequest>> repoRequests = new HashMap<String, List<DocumentRequest>>();
         if (docReq != null && docReq.size() > 0) {
@@ -228,13 +235,18 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                         }
                     }
                 }
+                XDSAudit.logConsumerImport(null, repositoryURL, req, 
+                        !XDSConstants.XDS_B_STATUS_FAILURE.equals(tmpRsp.getRegistryResponse().getStatus()));
             }
         }
+        AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
+        XDSAudit.logXCARetrieveExport(req, rsp, info);
         return XDSUtil.finishResponse(rsp);
     }
 
     private RetrieveDocumentSetResponseType doRepoRetrieve(String repositoryID, RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
+        URL xdsRepositoryURI = null;
         try {
             String home = req.getDocumentRequest().get(0).getHomeCommunityId();
             if (home == null)
@@ -243,7 +255,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
-            URL xdsRepositoryURI = new URL(url);
+            xdsRepositoryURI = new URL(url);
             DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -265,6 +277,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logConsumerImport(null, xdsRepositoryURI, req, !XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()));
         return addHomeCommunityID(rsp);
     }
 

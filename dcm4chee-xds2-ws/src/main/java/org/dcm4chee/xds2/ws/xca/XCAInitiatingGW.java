@@ -315,7 +315,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
 
     private RetrieveDocumentSetResponseType doRetrieve(RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp = null;
-        URL registryURL = null;
         List<DocumentRequest> docReq = req.getDocumentRequest();
         try {
             XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
@@ -387,25 +386,11 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             regRsp.setStatus(XDSConstants.XDS_B_STATUS_PARTIAL_SUCCESS);
         }
         AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
-        List<String> retrievedUIDs = new ArrayList<String>();
-        for (DocumentResponse doc : rsp.getDocumentResponse())
-            retrievedUIDs.add(doc.getDocumentUniqueId());
-        if (retrievedUIDs.size() > 0) {
-            XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, true);
-        }
-        if (retrievedUIDs.size() < docReq.size()) {
-            List<String> failedUIDs = new ArrayList<String>();
-            for (DocumentRequest doc : req.getDocumentRequest())
-                if (!retrievedUIDs.contains(doc.getDocumentUniqueId())) 
-                    failedUIDs.add(doc.getDocumentUniqueId());
-            XDSAudit.logRepositoryRetrieveExport(info, req, failedUIDs, false);
-        }
+        XDSAudit.logRepositoryRetrieveExport(req, rsp, info);
         return rsp;
     }
 
-    private RetrieveDocumentSetResponseType addResponse(
-            RetrieveDocumentSetResponseType rsp,
-            RetrieveDocumentSetResponseType tmpRsp) {
+    private RetrieveDocumentSetResponseType addResponse(RetrieveDocumentSetResponseType rsp, RetrieveDocumentSetResponseType tmpRsp) {
         if (tmpRsp == null) {
             return rsp;
         }
@@ -431,12 +416,14 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     
     private RetrieveDocumentSetResponseType doRepoRetrieve(String repositoryID, RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
+        URL repositoryURL = null;
         try {
             String url = XdsDevice.getXCAInitiatingGW().getRepositoryURL(repositoryID);
             if (url == null) {
                 log.warn("Unknown home XDS Repository:"+repositoryID);
                 return null;
             }
+            repositoryURL = new URL(url);
             DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -458,17 +445,20 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                         "Unexpected error in Initiating Gateway !: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logConsumerImport(null, repositoryURL, req, !XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()));
         return addHomeCommunityID(rsp);
     }
 
     private RetrieveDocumentSetResponseType doXCARetrieve(String homeCommunityID, RetrieveDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
+        URL gatewayURL = null;
         try {
             String url = XdsDevice.getXCAInitiatingGW().getRespondingGWRetrieveURL(homeCommunityID);
             if (url == null) {
                 log.warn("Unknown Responding Gateway for homeCommunityID:"+homeCommunityID);
                 return null;
             }
+            gatewayURL = new URL(url);
             RespondingGatewayPortType port = RespondingGatewayPortTypeFactory.getRespondingGatewayPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -510,6 +500,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                         "Unexpected error in Initiating Gateway!: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logConsumerXCAImport(null, gatewayURL, req, !XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()));
         return addHomeCommunityID(rsp);
     }
     

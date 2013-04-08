@@ -215,18 +215,6 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                             XDSException.XDS_ERR_UNKNOWN_REPOSITORY_ID, msg, docUid));
                 }
             }
-            AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
-            if (retrievedUIDs.size() > 0) {
-                XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, true);
-            }
-            if (retrievedUIDs.size() < requestCount) {
-                ArrayList<String> failedUIDs = new ArrayList<String>(requestCount - retrievedUIDs.size());
-                for (DocumentRequest docReq : req.getDocumentRequest()) {
-                   if (!retrievedUIDs.contains(docReq.getDocumentUniqueId())) 
-                       failedUIDs.add(docReq.getDocumentUniqueId());
-                }
-                XDSAudit.logRepositoryRetrieveExport(info, req, failedUIDs, false);
-            }
             RegistryResponseType regRsp = factory.createRegistryResponseType();
             
             int nrOfDocs = rsp.getDocumentResponse().size();
@@ -252,6 +240,8 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
+        XDSAudit.logRepositoryRetrieveExport(req, rsp, info);
         return rsp;
     }
     
