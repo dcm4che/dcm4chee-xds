@@ -388,27 +388,19 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         }
         AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
         List<String> retrievedUIDs = new ArrayList<String>();
-        List<String> failedUIDs = new ArrayList<String>();
-        calcRetrieved(docReq, rsp.getDocumentResponse(), retrievedUIDs, failedUIDs);
+        for (DocumentResponse doc : rsp.getDocumentResponse())
+            retrievedUIDs.add(doc.getDocumentUniqueId());
         if (retrievedUIDs.size() > 0) {
             XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, true);
         }
-        if (failedUIDs.size() > 0) {
-            XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, false);
+        if (retrievedUIDs.size() < docReq.size()) {
+            List<String> failedUIDs = new ArrayList<String>();
+            for (DocumentRequest doc : req.getDocumentRequest())
+                if (!retrievedUIDs.contains(doc.getDocumentUniqueId())) 
+                    failedUIDs.add(doc.getDocumentUniqueId());
+            XDSAudit.logRepositoryRetrieveExport(info, req, failedUIDs, false);
         }
         return rsp;
-    }
-
-    private void calcRetrieved(List<DocumentRequest> docReq, List<DocumentResponse> docRsp, 
-            List<String> retrievedUIDs, List<String> failedUIDs) {
-        for (DocumentResponse doc : docRsp) {
-            retrievedUIDs.add(doc.getDocumentUniqueId());
-        }
-        if (docReq.size() > docRsp.size()) {
-            for (DocumentRequest doc : docReq)
-                failedUIDs.add(doc.getDocumentUniqueId());
-            failedUIDs.removeAll(retrievedUIDs);
-        }
     }
 
     private RetrieveDocumentSetResponseType addResponse(

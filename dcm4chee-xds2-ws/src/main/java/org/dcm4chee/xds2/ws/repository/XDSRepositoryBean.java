@@ -69,6 +69,7 @@ import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType.Document;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
@@ -185,7 +186,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             int requestCount = req.getDocumentRequest().size();
             RegistryErrorList regErrors = factory.createRegistryErrorList();
             List<RegistryError> mainErrors = regErrors.getRegistryError();
-            for ( RetrieveDocumentSetRequestType.DocumentRequest docReq : req.getDocumentRequest() ) {
+            for ( DocumentRequest docReq : req.getDocumentRequest() ) {
                 reqRepoUid = docReq.getRepositoryUniqueId();
                 docUid = docReq.getDocumentUniqueId();
                 if ( reqRepoUid.equals(repositoryUID)) {
@@ -219,7 +220,12 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                 XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, true);
             }
             if (retrievedUIDs.size() < requestCount) {
-                XDSAudit.logRepositoryRetrieveExport(info, req, retrievedUIDs, false);
+                ArrayList<String> failedUIDs = new ArrayList<String>(requestCount - retrievedUIDs.size());
+                for (DocumentRequest docReq : req.getDocumentRequest()) {
+                   if (!retrievedUIDs.contains(docReq.getDocumentUniqueId())) 
+                       failedUIDs.add(docReq.getDocumentUniqueId());
+                }
+                XDSAudit.logRepositoryRetrieveExport(info, req, failedUIDs, false);
             }
             RegistryResponseType regRsp = factory.createRegistryResponseType();
             
