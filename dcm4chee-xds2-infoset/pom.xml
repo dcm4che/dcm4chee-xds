@@ -87,8 +87,8 @@
 								<wsdl>${basedir}/src/main/resources/wsdl/XDS.b_DocumentRepository.wsdl</wsdl>
 							</wsdls>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl_repo.xml"</File>
-								<File>${basedir}/src/bindings/schemas_repo.xml"</File>
+								<File>${basedir}/src/bindings/wsdl_repo.xml</File>
+								<File>${basedir}/src/bindings/schemas_repo.xml</File>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
@@ -106,8 +106,8 @@
 								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGateway.wsdl</wsdl>
 							</wsdls>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl_xca.xml"</File>
-								<File>${basedir}/src/bindings/schemas_repo.xml"</File>
+								<File>${basedir}/src/bindings/wsdl_xca.xml</File>
+								<File>${basedir}/src/bindings/schemas_repo.xml</File>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
@@ -124,8 +124,8 @@
 								<wsdl>${basedir}/src/main/resources/wsdl/XDS-I.b_ImagingDocumentSource.wsdl</wsdl>
 							</wsdls>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl_src.xml"</File>
-								<File>${basedir}/src/bindings/schemas_src.xml"</File>
+								<File>${basedir}/src/bindings/wsdl_src.xml</File>
+								<File>${basedir}/src/bindings/schemas_src.xml</File>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
