@@ -41,7 +41,11 @@ package org.dcm4chee.xds2.conf;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
+import org.dcm4che.conf.api.ConfigurationException;
+import org.dcm4che.conf.api.hl7.HL7ApplicationCache;
+import org.dcm4che.conf.api.hl7.HL7Configuration;
 import org.dcm4che.net.Device;
+import org.dcm4che.net.hl7.HL7Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +58,7 @@ public class XdsDevice {
     private static final long serialVersionUID = 5891363555469614152L;
     
     private static Device localXdsDevice;
+    private static HL7ApplicationCache hl7AppCache;
 
     public static final Logger log = LoggerFactory.getLogger(XdsDevice.class);
 
@@ -70,6 +75,10 @@ public class XdsDevice {
         XdsDevice.localXdsDevice = localXdsDevice;
     }
     
+    public static void init(HL7Configuration hl7Configuration) {
+        hl7AppCache = new HL7ApplicationCache(hl7Configuration);
+    }
+
     public static XdsRegistry getXdsRegistry() {
         return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XdsRegistry.class);
     }
@@ -92,6 +101,15 @@ public class XdsDevice {
 
     public static XCAiInitiatingGWCfg getXCAiInitiatingGW() {
         return localXdsDevice == null ? null : localXdsDevice.getDeviceExtension(XCAiInitiatingGWCfg.class);
+    }
+
+    public static HL7Application findHL7Application(String name) {
+        try {
+            return name == null ? null : hl7AppCache.findHL7Application(name);
+        } catch (ConfigurationException e) {
+            log.warn("HL7Application not found! name:"+name);
+            return null;
+        }
     }
 
     public void reconfigure(Device from) throws IOException, GeneralSecurityException {

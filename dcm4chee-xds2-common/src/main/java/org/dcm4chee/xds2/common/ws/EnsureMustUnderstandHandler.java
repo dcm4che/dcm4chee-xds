@@ -48,7 +48,11 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class EnsureMustUnderstandHandler implements SOAPHandler<SOAPMessageContext> {
@@ -56,21 +60,34 @@ public class EnsureMustUnderstandHandler implements SOAPHandler<SOAPMessageConte
     private static final String SOAP_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
     private static final String WS_ADDR_NS = "http://www.w3.org/2005/08/addressing";
     
+    private static Logger log = LoggerFactory.getLogger(EnsureMustUnderstandHandler.class);
+    
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
         if (Boolean.TRUE.equals(ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
             try {
-                SOAPHeader hdr = ctx.getMessage().getSOAPHeader();
-                checkMustUnderstand(hdr.getElementsByTagNameNS(WS_ADDR_NS, "Action"));
+                SOAPHeader soapHdr = ctx.getMessage().getSOAPHeader();
+                checkMustUnderstand(soapHdr, "Action");
             } catch (SOAPException e) {
             }
         }
         return true;
     }
 
-    private void checkMustUnderstand(NodeList elementsByTagNameNS) {
-        // TODO Auto-generated method stub
-        
+    private void checkMustUnderstand(SOAPHeader soapHdr, String name) {
+        NodeList hdr = soapHdr.getElementsByTagNameNS(WS_ADDR_NS, name);
+        if (hdr != null) {
+            Node n;
+            NamedNodeMap attrs;
+            for (int i = 0, len = hdr.getLength() ; i < len ; i++) {
+                n = hdr.item(i);
+                attrs = n.getAttributes();
+                if (attrs != null && attrs.getNamedItemNS(SOAP_ENVELOPE_NS, "mustUnderstand") != null)
+                    continue;
+            }
+        } else {
+            log.warn("Missing mustUnderstand SOAP Header '"+name+"'!");
+        }
     }
 
     @Override

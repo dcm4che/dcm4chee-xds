@@ -211,7 +211,7 @@ public class XdsServiceServlet extends HttpServlet {
             throw new ConfigurationException(msg);
         }
         XdsDevice.setLocalXdsDevice(device);
-        
+        XdsDevice.init(hl7config);
         if (device.getDeviceExtension(XdsRegistry.class) != null) {
             HL7DeviceExtension hl7 = device.getDeviceExtension(HL7DeviceExtension.class);
             if (hl7 != null) {
@@ -236,10 +236,6 @@ public class XdsServiceServlet extends HttpServlet {
             }
         } else {
             log.info("No HL7 Application defined for this device! device:"+device);
-        }
-        XCAInitiatingGWCfg xcai = device.getDeviceExtension(XCAInitiatingGWCfg.class);
-        if (xcai != null) {
-            xcai.init(hl7config);
         }
         XDSAudit.setAuditLogger(device.getDeviceExtension(AuditLogger.class));
         if (AuditLogger.getDefaultLogger() == null) {

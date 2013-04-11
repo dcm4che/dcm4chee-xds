@@ -42,14 +42,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dcm4che.conf.api.ConfigurationException;
-import org.dcm4che.conf.api.hl7.HL7ApplicationCache;
-import org.dcm4che.conf.api.hl7.HL7Configuration;
 import org.dcm4che.net.DeviceExtension;
 import org.dcm4che.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -71,10 +66,7 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
     private boolean asyncHandler;
     private String pixManagerApplication;
     private String pixConsumerApplication;
-    private HL7ApplicationCache hl7AppCache;
     
-    private static Logger log = LoggerFactory.getLogger(XCAInitiatingGWCfg.class);
-
     public String getApplicationName() {
         return applicationName;
     }
@@ -180,23 +172,11 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         this.pixConsumerApplication = appName;
     }
 
-    public void init(HL7Configuration hl7Configuration) {
-        this.hl7AppCache = new HL7ApplicationCache(hl7Configuration);
-    }
-    
     public HL7Application getPixConsumerApplication() {
-        return findHL7Application(pixConsumerApplication);
+        return XdsDevice.findHL7Application(pixConsumerApplication);
     }
     public HL7Application getPixManagerApplication() {
-        return findHL7Application(pixManagerApplication);
-    }
-    public HL7Application findHL7Application(String name) {
-        try {
-            return name == null ? null : hl7AppCache.findHL7Application(name);
-        } catch (ConfigurationException e) {
-            log.warn("HL7Application not found! name:"+name);
-            return null;
-        }
+        return XdsDevice.findHL7Application(pixManagerApplication);
     }
     
     @Override
