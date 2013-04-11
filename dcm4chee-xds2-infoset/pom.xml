@@ -50,7 +50,14 @@
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>Infoset classes for XDS.b (ebRIM v3.0)</name>
-	<dependencies/>
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.1</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 	<build>
 		<plugins>
 			<plugin>

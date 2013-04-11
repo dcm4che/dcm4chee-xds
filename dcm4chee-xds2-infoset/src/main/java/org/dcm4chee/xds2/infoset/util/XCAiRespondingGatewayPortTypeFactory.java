@@ -1,18 +1,16 @@
 package org.dcm4chee.xds2.infoset.util;
 
 import java.net.URL;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.soap.AddressingFeature;
 
-import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayService;
 import org.dcm4chee.xds2.infoset.ws.xca.XCAIRespondingGateway;
 import org.dcm4chee.xds2.infoset.ws.xca.XCAIRespondingGatewayPortType;
 
-public class XCAiRespondingGatewayPortTypeFactory {
+public class XCAiRespondingGatewayPortTypeFactory extends BasePortTypeFactory {
 
     protected static XCAIRespondingGateway service = null;
     private final static URL WSDL_LOCATION = RespondingGatewayService.class.getResource("/wsdl/XCA-I-RespondingGateway.wsdl");
@@ -29,13 +27,7 @@ public class XCAiRespondingGatewayPortTypeFactory {
 
     public static XCAIRespondingGatewayPortType getXCAIRespondingGatewayPortSoap12(String endpointAddress) {
         XCAIRespondingGatewayPortType port = getXCAIRespondingGatewayPortSoap12();
-        configurePort(port, endpointAddress);
+        configurePort((BindingProvider)port, endpointAddress, false, true);
         return port;
     }
-
-    public static void configurePort(XCAIRespondingGatewayPortType port, String endpointAddress) {
-        BindingProvider bindingProvider = (BindingProvider)port;
-        Map<String, Object> reqCtx = bindingProvider.getRequestContext();
-        reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
-    }	
 }

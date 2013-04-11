@@ -35,9 +35,11 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.dcm4chee.xds2.common.ws;
+package org.dcm4chee.xds2.infoset.util;
 
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.namespace.QName;
@@ -50,44 +52,40 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Attr;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 public class EnsureMustUnderstandHandler implements SOAPHandler<SOAPMessageContext> {
 
-    private static final String SOAP_ENVELOPE_NS = "http://www.w3.org/2003/05/soap-envelope";
-    private static final String WS_ADDR_NS = "http://www.w3.org/2005/08/addressing";
+    private List<String> mustUnderstandHeaders; 
     
     private static Logger log = LoggerFactory.getLogger(EnsureMustUnderstandHandler.class);
     
+    public EnsureMustUnderstandHandler() {
+        this("Action", "To", "ReplyTo");
+    }
+    public EnsureMustUnderstandHandler(String... headernames) {
+        mustUnderstandHeaders = Arrays.asList(headernames);
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
+        log.debug("##########EnsureMustUnderstandHandler called!");
         if (Boolean.TRUE.equals(ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
             try {
                 SOAPHeader soapHdr = ctx.getMessage().getSOAPHeader();
-                checkMustUnderstand(soapHdr, "Action");
+                SOAPHeaderElement hdr;
+                for (Iterator<SOAPHeaderElement> iter = soapHdr.examineAllHeaderElements() ; iter.hasNext();) {
+                    hdr = iter.next();
+                    log.debug("##### hdr:{}",hdr.getNodeName());
+                    log.debug("##### hdr.getMustUnderstand:{}",hdr.getMustUnderstand());
+                    if (mustUnderstandHeaders.contains(hdr.getNodeName()))
+                            hdr.setMustUnderstand(true);
+                }
             } catch (SOAPException e) {
+                log.warn("Failed to ensure mustUnderstand SOAP Header!", e);
             }
         }
         return true;
-    }
-
-    private void checkMustUnderstand(SOAPHeader soapHdr, String name) {
-        NodeList hdr = soapHdr.getElementsByTagNameNS(WS_ADDR_NS, name);
-        if (hdr != null) {
-            Node n;
-            NamedNodeMap attrs;
-            for (int i = 0, len = hdr.getLength() ; i < len ; i++) {
-                n = hdr.item(i);
-                attrs = n.getAttributes();
-                if (attrs != null && attrs.getNamedItemNS(SOAP_ENVELOPE_NS, "mustUnderstand") != null)
-                    continue;
-            }
-        } else {
-            log.warn("Missing mustUnderstand SOAP Header '"+name+"'!");
-        }
     }
 
     @Override
