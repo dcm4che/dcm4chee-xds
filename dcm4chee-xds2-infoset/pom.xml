@@ -69,8 +69,8 @@
 								<wsdl>${basedir}/src/main/resources/wsdl/XDS.b_DocumentRegistry.wsdl</wsdl>
 							</wsdls>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl.xml"</File>
-								<File>${basedir}/src/bindings/schemas_rim.xml"</File>
+								<File>${basedir}/src/bindings/wsdl.xml</File>
+								<File>${basedir}/src/bindings/schemas_rim.xml</File>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
@@ -143,8 +143,8 @@
 								<!-- <wsdl>${basedir}/src/main/resources/wsdl/XCA-I-InitiatingGateway.wsdl</wsdl> -->
 							</wsdls>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl_xca.xml"</File>
-								<File>${basedir}/src/bindings/schemas_src.xml"</File>
+								<File>${basedir}/src/bindings/wsdl_xca.xml</File>
+								<File>${basedir}/src/bindings/schemas_src.xml</File>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
