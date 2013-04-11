@@ -64,7 +64,7 @@ public class Util {
     private static final String OBJECT_TYPE_CLASSIFICATION = "urn:oasis:names:tc:ebxmlregrep:ObjectType:RegistryObject:Classification";
     protected static ObjectFactory rimFactory = new ObjectFactory();
     
-    private static SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHssmm");
+    private static SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
     
     public static ExternalIdentifierType createExternalIdentifier(String id,
             String scheme, String registryObject, String value, String name) {
