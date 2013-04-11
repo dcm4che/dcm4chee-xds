@@ -145,4 +145,8 @@ public class AuditRequestInfo {
         }
         return toNodes.item(0).getTextContent();
     }
+    
+    public String getRemoteUser() {
+        return servletRequest == null ? null : servletRequest.getRemoteUser(); 
+    }
 }

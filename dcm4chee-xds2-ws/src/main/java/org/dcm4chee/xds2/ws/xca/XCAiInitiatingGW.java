@@ -60,6 +60,8 @@ import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XdsDevice;
@@ -89,6 +91,7 @@ import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.infoset.ws.src.ImagingDocumentSourcePortType;
 import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.XCAIRespondingGatewayPortType;
+import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.dcm4chee.xds2.ws.util.CxfUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -160,7 +163,9 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
         }
         if (rsp == null)
             rsp = iheFactory.createRetrieveDocumentSetResponseType();
-        return XDSUtil.finishResponse(rsp);
+        XDSUtil.finishResponse(rsp);
+        XDSAudit.logImgRetrieve(rsp, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext));
+        return rsp;
     }
 
     private RetrieveDocumentSetResponseType doSourceRetrieve(RetrieveImagingDocumentSetRequestType req) {
@@ -208,6 +213,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logStudyUsed(rsp, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext));
         return rsp;
     }
 
@@ -240,6 +246,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        XDSAudit.logStudyUsed(rsp, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext));
         return rsp;
     }
 

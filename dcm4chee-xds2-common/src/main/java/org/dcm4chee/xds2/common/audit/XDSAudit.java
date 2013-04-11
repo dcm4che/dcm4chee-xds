@@ -40,15 +40,30 @@ package org.dcm4chee.xds2.common.audit;
 
 import static org.dcm4che.audit.AuditMessages.createEventIdentification;
 
+import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+
+import org.apache.cxf.attachment.DelegatingInputStream;
 
 import org.dcm4che.audit.AuditMessage;
 import org.dcm4che.audit.AuditMessages;
+import org.dcm4che.audit.Instance;
+import org.dcm4che.audit.ParticipantObjectDescription;
+import org.dcm4che.audit.SOPClass;
 import org.dcm4che.audit.AuditMessages.EventActionCode;
 import org.dcm4che.audit.AuditMessages.EventID;
 import org.dcm4che.audit.AuditMessages.EventOutcomeIndicator;
@@ -57,10 +72,15 @@ import org.dcm4che.audit.AuditMessages.ParticipantObjectIDTypeCode;
 import org.dcm4che.audit.AuditMessages.RoleIDCode;
 import org.dcm4che.audit.ParticipantObjectDetail;
 import org.dcm4che.audit.ParticipantObjectIdentification;
+import org.dcm4che.data.Attributes;
+import org.dcm4che.data.Tag;
+import org.dcm4che.io.DicomInputStream;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.Device;
 import org.dcm4che.net.IncompatibleConnectionException;
 import org.dcm4che.net.audit.AuditLogger;
+import org.dcm4che.util.SafeClose;
+import org.dcm4chee.xds2.common.InputStreamDataSource;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
@@ -527,6 +547,149 @@ public class XDSAudit {
         }
     }
     
+    public static void logImgRetrieve(RetrieveDocumentSetResponseType rsp, AuditRequestInfo info) {
+        if (logger == null || !logger.isInstalled())
+            return;
+        try {
+            Calendar timeStamp = logger.timeStamp();
+            AuditMessage msg = createRetrieveImgLogMessage(rsp, info.getRemoteHost(), info.getRemoteUser(), timeStamp);
+            sendAuditMessage(timeStamp, msg);
+        } catch (Exception e) {
+            log.warn("Audit log instances stored failed!");
+            log.debug("AuditLog Exception:", e);
+        }
+    }
+
+    public static void logStudyUsed(RetrieveDocumentSetResponseType rsp, AuditRequestInfo info) {
+        if (logger == null || !logger.isInstalled())
+            return;
+        try {
+            Calendar timeStamp = logger.timeStamp();
+            AuditMessage msg = createStudyUsedLogMessage(rsp, info.getRemoteHost(), info.getRemoteUser(), timeStamp);
+            sendAuditMessage(timeStamp, msg);
+        } catch (Exception e) {
+            log.warn("Audit log of Study Used failed!");
+            log.debug("AuditLog Exception:", e);
+        }
+    }
+
+    public static AuditMessage createRetrieveImgLogMessage(RetrieveDocumentSetResponseType rsp, String remoteHost, 
+            String user, Calendar timeStamp) {
+        AuditMessage msg = new AuditMessage();
+        msg.setEventIdentification(AuditMessages.createEventIdentification(
+                EventID.DICOMInstancesTransferred, EventActionCode.Read, timeStamp, 
+                XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()) ? 
+                        EventOutcomeIndicator.MinorFailure : EventOutcomeIndicator.Success, 
+                null));
+        msg.getActiveParticipant().add(logger.createActiveParticipant(false, RoleIDCode.Source));
+        msg.getActiveParticipant().add(AuditMessages.createActiveParticipant(
+                user != null ? user : "ANONYMOUS", null, null, true, remoteHost, 
+                machineOrIP(remoteHost), null, AuditMessages.RoleIDCode.Destination));
+        String patientID = addStudyPOIsAndGetPatientID(msg.getParticipantObjectIdentification(), rsp);
+        msg.getParticipantObjectIdentification().add(AuditMessages.createParticipantObjectIdentification(
+                patientID,
+                AuditMessages.ParticipantObjectIDTypeCode.PatientNumber,
+                null,
+                null,
+                AuditMessages.ParticipantObjectTypeCode.Person,
+                AuditMessages.ParticipantObjectTypeCodeRole.Patient,
+                null,
+                null,
+                null));
+        return msg;
+    }
+
+    public static AuditMessage createStudyUsedLogMessage(RetrieveDocumentSetResponseType rsp, String remoteHost, 
+            String user, Calendar timeStamp) {
+        AuditMessage msg = new AuditMessage();
+        msg.setEventIdentification(AuditMessages.createEventIdentification(
+                EventID.DICOMInstancesAccessed, EventActionCode.Read, timeStamp, 
+                XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()) ? 
+                        EventOutcomeIndicator.MinorFailure : EventOutcomeIndicator.Success, 
+                null));
+        msg.getActiveParticipant().add(logger.createActiveParticipant(false, RoleIDCode.Application));
+        msg.getActiveParticipant().add(AuditMessages.createActiveParticipant(
+                user != null ? user : "ANONYMOUS", null, null, true, remoteHost, 
+                machineOrIP(remoteHost), null, AuditMessages.RoleIDCode.Application));
+        String patientID = addStudyPOIsAndGetPatientID(msg.getParticipantObjectIdentification(), rsp);
+        msg.getParticipantObjectIdentification().add(AuditMessages.createParticipantObjectIdentification(
+                patientID, AuditMessages.ParticipantObjectIDTypeCode.PatientNumber,
+                null, null, AuditMessages.ParticipantObjectTypeCode.Person,
+                AuditMessages.ParticipantObjectTypeCodeRole.Patient, null, null, null));
+        return msg;
+    }
+
+    private static String addStudyPOIsAndGetPatientID(List<ParticipantObjectIdentification> studyPOIs, RetrieveDocumentSetResponseType rsp) {
+        Attributes attrs = null;
+        String studyIUID, classUID;
+        HashMap<String,HashMap<String,List<String>>> studySopClassMap = new HashMap<String,HashMap<String,List<String>>>();
+        HashMap<String,List<String>> sopClassInstanceMap;
+        List<String> instances;
+        for (DocumentResponse doc : rsp.getDocumentResponse()) {
+            BufferedInputStream is = null;
+            DicomInputStream dis = null;
+            try {
+                DataHandler dh = doc.getDocument();
+                is = new BufferedInputStream(dh.getInputStream());
+                is.mark(8192);
+                dis = new DicomInputStream(is);
+                attrs = dis.readDataset(-1, Tag.SeriesInstanceUID);
+                is.reset();
+                doc.setDocument(new DataHandler(new InputStreamDataSource(is, dh.getContentType())));
+                studyIUID = attrs.getString(Tag.StudyInstanceUID);
+                classUID = attrs.getString(Tag.SOPClassUID);
+                sopClassInstanceMap = studySopClassMap.get(studyIUID);
+                if (sopClassInstanceMap == null) {
+                    sopClassInstanceMap = new HashMap<String,List<String>>();
+                    studySopClassMap.put(studyIUID, sopClassInstanceMap);
+                    instances = null;
+                } else {
+                    instances = sopClassInstanceMap.get(classUID);
+                }
+                if (instances == null) {
+                    instances = new ArrayList<String>();
+                    sopClassInstanceMap.put(classUID, instances);
+                }
+                instances.add(attrs.getString(Tag.SOPInstanceUID));
+            } catch (IOException x) {
+                log.warn("Failed to read DICOM attachment! instanceUID:"+doc.getDocumentUniqueId(),x);
+            } finally {
+                //Dont close DicomInputStream! SafeClose.close(dis);
+            }
+        }
+        for ( Entry<String, HashMap<String, List<String>>> e : studySopClassMap.entrySet()) {
+            ParticipantObjectDescription pod = new ParticipantObjectDescription();
+            studyPOIs.add(createStudyPOI(e.getKey(), pod));
+            for (Entry<String, List<String>> e1 : e.getValue().entrySet()) {
+                SOPClass sc = new SOPClass();
+                sc.setUID(e1.getKey());
+                sc.setNumberOfInstances(e1.getValue().size());
+                for (String iuid : e1.getValue()) {
+                    Instance inst = new Instance();
+                    inst.setUID(iuid);
+                    sc.getInstance().add(inst);
+                }
+                pod.getSOPClass().add(sc);
+                
+            }
+        }
+        return attrs == null ? null : attrs.getString(Tag.PatientID);
+    }
+
+    private static ParticipantObjectIdentification createStudyPOI(String studyIUID,
+            ParticipantObjectDescription pod) {
+        return AuditMessages.createParticipantObjectIdentification(
+                studyIUID, 
+                AuditMessages.ParticipantObjectIDTypeCode.StudyInstanceUID, 
+                null, 
+                null, 
+                AuditMessages.ParticipantObjectTypeCode.SystemObject, 
+                AuditMessages.ParticipantObjectTypeCodeRole.Report, 
+                null, 
+                null, 
+                pod);
+    }
+
     private static AuditMessage createApplicationActivity(
             EventTypeCode eventType, Calendar timeStamp, String outcomeIndicator) {
         AuditMessage msg = new AuditMessage();

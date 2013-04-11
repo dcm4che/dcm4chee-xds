@@ -38,9 +38,9 @@
 
 package org.dcm4chee.xds2.ws.xca;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -165,34 +165,42 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
 
     private AdhocQueryResponse doStoredQuery(AdhocQueryRequest req) {
         AdhocQueryResponse rsp = null;
+        String home = req.getAdhocQuery().getHome();
         try {
             XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
-            String url = cfg.getRegistryURL();
-            CxfUtil.disableMTOMResponse(wsContext);
-            if (url != null) {
-                rsp = sendStoredQuery(url, req);
+            boolean isHome = cfg.getHomeCommunityID().equals(home);
+            if (home == null || isHome) {
+                String url = cfg.getRegistryURL();
+                CxfUtil.disableMTOMResponse(wsContext);
+                if (url != null) {
+                    rsp = sendStoredQuery(url, req);
+                }
             }
-            PatSlot patSlot = pixQuery(req, cfg.getAssigningAuthorities());
-            for (String communityID : cfg.getCommunityIDs()) {
-                AdhocQueryResponse xcaRsp = sendXCAQuery(communityID, req, patSlot, cfg);
-                if (rsp == null) {
-                    rsp = xcaRsp;
-                } else {
-                    if (xcaRsp.getRegistryObjectList() != null) {
-                        if (rsp.getRegistryObjectList() == null) {
-                            rsp.setRegistryObjectList(xcaRsp.getRegistryObjectList());
-                        } else {
-                            rsp.getRegistryObjectList().getIdentifiable().addAll(xcaRsp.getRegistryObjectList().getIdentifiable());
+            if (!isHome) {
+                if (home != null && !cfg.getCommunityIDs().contains(home))
+                    throw new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, "Unknown communityID "+home, null);
+                PatSlot patSlot = pixQuery(req, cfg.getAssigningAuthorities());
+                for (String communityID : home == null ? cfg.getCommunityIDs() : Arrays.asList(home)) {
+                    AdhocQueryResponse xcaRsp = sendXCAQuery(communityID, req, patSlot, cfg);
+                    if (rsp == null) {
+                        rsp = xcaRsp;
+                    } else {
+                        if (xcaRsp.getRegistryObjectList() != null) {
+                            if (rsp.getRegistryObjectList() == null) {
+                                rsp.setRegistryObjectList(xcaRsp.getRegistryObjectList());
+                            } else {
+                                rsp.getRegistryObjectList().getIdentifiable().addAll(xcaRsp.getRegistryObjectList().getIdentifiable());
+                            }
                         }
-                    }
-                    if (xcaRsp.getRegistryErrorList() != null) {
-                        if (rsp.getRegistryErrorList() == null) {
-                            rsp.setRegistryErrorList(factory.createRegistryErrorList());
-                        }
-                        List<RegistryError> errors = rsp.getRegistryErrorList().getRegistryError();
-                        for (RegistryError err : xcaRsp.getRegistryErrorList().getRegistryError()) {
-                            if (!XDSException.XDS_ERR_UNKNOWN_PATID.equals(err.getErrorCode()))
-                                errors.add(err);
+                        if (xcaRsp.getRegistryErrorList() != null) {
+                            if (rsp.getRegistryErrorList() == null) {
+                                rsp.setRegistryErrorList(factory.createRegistryErrorList());
+                            }
+                            List<RegistryError> errors = rsp.getRegistryErrorList().getRegistryError();
+                            for (RegistryError err : xcaRsp.getRegistryErrorList().getRegistryError()) {
+                                if (!XDSException.XDS_ERR_UNKNOWN_PATID.equals(err.getErrorCode()))
+                                    errors.add(err);
+                            }
                         }
                     }
                 }
