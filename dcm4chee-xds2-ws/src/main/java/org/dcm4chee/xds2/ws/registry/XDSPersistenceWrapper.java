@@ -258,7 +258,7 @@ public class XDSPersistenceWrapper {
     public ClassificationNode toClassificationNode(ClassificationNodeType nodeType, Identifiable parent, List<Identifiable> objects) throws XDSException {
         ClassificationNode node = new ClassificationNode();
         toPersistenceObj(nodeType, node);
-        node.setParent(parent == null ? getRegistryObject(nodeType.getParent()) : parent);
+        node.setParent(parent == null ? getIdentifiable(nodeType.getParent()) : parent);
         node.setCode(nodeType.getCode());
         node.setPath(nodeType.getPath());
         objects.add(node);
@@ -474,6 +474,12 @@ public class XDSPersistenceWrapper {
             log.warn("####### Identifiable is not a RegistryObject! id:"+ro.getId());
         }
         return (RegistryObject) ro;
+    }
+    private Identifiable getIdentifiable(String id) {
+        if (id == null)
+            return null;
+        Identifiable obj = uuidMapping.get(id);
+        return (obj == null) ? session.getIdentifiableByUUID(id) : obj;
     }
     
     private JAXBElement<? extends IdentifiableType> toJAXBExtrinsicObject(

@@ -92,6 +92,7 @@ import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
+import org.dcm4chee.xds2.persistence.QIdentifiable;
 import org.dcm4chee.xds2.persistence.QRegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.Slot;
@@ -384,6 +385,12 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         JPAQuery query = new JPAQuery(em);
         QRegistryObject registryObject = QRegistryObject.registryObject;
         RegistryObject obj = query.from(registryObject).where(registryObject.id.eq(id)).uniqueResult(registryObject);
+        return obj;
+    }
+    public Identifiable getIdentifiableByUUID(String id) {
+        JPAQuery query = new JPAQuery(em);
+        QIdentifiable registryObject = QIdentifiable.identifiable;
+        Identifiable obj = query.from(registryObject).where(registryObject.id.eq(id)).uniqueResult(registryObject);
         return obj;
     }
     /**
