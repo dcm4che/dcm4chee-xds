@@ -56,7 +56,7 @@
   <portType name="XCAI_InitiatingGateway_PortType">
     <operation name="ImagingDocumentSource_RetrieveImagingDocumentSet">
       <input message="iherad:RetrieveImagingDocumentSetRequest_Message"
-        wsaw:Action="urn:ihe:rad:xdsi-b:2009:RetrieveImagingDocumentSet"/>
+        wsaw:Action="urn:ihe:rad:2009:RetrieveImagingDocumentSet"/>
       <output message="iherad:RetrieveDocumentSetResponse_Message"
         wsaw:Action="urn:ihe:iti:2007:RetrieveDocumentSetResponse"/>
     </operation>
@@ -64,7 +64,7 @@
   <binding name="XCAI_InitiatingGateway_Binding" type="iherad:XCAI_InitiatingGateway_PortType">
     <soap12:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
     <operation name="ImagingDocumentSource_RetrieveImagingDocumentSet">
-      <soap12:operation soapAction="urn:ihe:rad:xdsi-b:2009:RetrieveImagingDocumentSet"/>
+      <soap12:operation soapAction="urn:ihe:rad:2009:RetrieveImagingDocumentSet"/>
       <input>
         <soap12:body use="literal"/>
       </input>

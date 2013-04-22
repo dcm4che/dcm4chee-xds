@@ -38,11 +38,7 @@
 
 package org.dcm4chee.xds2.ws.xca;
 
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
 
@@ -50,7 +46,6 @@ import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
-import javax.xml.bind.JAXBElement;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.Response;
@@ -65,34 +60,14 @@ import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XdsDevice;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
-import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest.SeriesRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
-import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
-import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
-import org.dcm4chee.xds2.infoset.rim.RegistryError;
-import org.dcm4chee.xds2.infoset.rim.RegistryErrorList;
-import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
-import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
-import org.dcm4chee.xds2.infoset.util.DocumentRegistryPortTypeFactory;
-import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
 import org.dcm4chee.xds2.infoset.util.ImagingDocumentSourcePortTypeFactory;
 import org.dcm4chee.xds2.infoset.util.XCAiRespondingGatewayPortTypeFactory;
-import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
-import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.infoset.ws.src.ImagingDocumentSourcePortType;
-import org.dcm4chee.xds2.infoset.ws.xca.RespondingGatewayPortType;
 import org.dcm4chee.xds2.infoset.ws.xca.XCAIRespondingGatewayPortType;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
-import org.dcm4chee.xds2.ws.util.CxfUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,6 +127,8 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
                 XDSException x = new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, 
                         "HomeCommunityID '"+home+"' not known by XCA-I Initiating Gateway!", null);
                 x.setSeverity(XDSException.XDS_ERR_SEVERITY_WARNING);
+                if (rsp == null)
+                    rsp = iheFactory.createRetrieveDocumentSetResponseType();
                 XDSUtil.addError(rsp, x);
                 continue;
             }
@@ -191,7 +168,6 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
-            URL xdsiSourceURI = new URL(url);
             ImagingDocumentSourcePortType port = ImagingDocumentSourcePortTypeFactory.getImagingDocumentSourcePort(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -224,7 +200,6 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
-            URL xdsiSourceURI = new URL(url);
             XCAIRespondingGatewayPortType port = XCAiRespondingGatewayPortTypeFactory.getXCAIRespondingGatewayPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");

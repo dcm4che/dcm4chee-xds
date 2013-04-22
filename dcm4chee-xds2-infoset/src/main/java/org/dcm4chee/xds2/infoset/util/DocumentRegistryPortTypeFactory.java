@@ -27,7 +27,7 @@ public class DocumentRegistryPortTypeFactory extends BasePortTypeFactory{
 
     public static DocumentRegistryPortType getDocumentRegistryPortSoap12(String endpointAddress) {
         DocumentRegistryPortType port = getDocumentRegistryPortSoap12();
-        configurePort((BindingProvider)port, endpointAddress, false, true);
+        configurePort((BindingProvider)port, endpointAddress, false, true, true);
         return port;
     }
 }

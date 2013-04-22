@@ -30,7 +30,7 @@ public class DocumentRepositoryPortTypeFactory extends BasePortTypeFactory {
 
     public static DocumentRepositoryPortType getDocumentRepositoryPortSoap12(String endpointAddress) {
         DocumentRepositoryPortType port = getDocumentRepositoryPortSoap12();
-        configurePort((BindingProvider)port, endpointAddress, true, true);
+        configurePort((BindingProvider)port, endpointAddress, true, true, true);
         return port;
     }
 }

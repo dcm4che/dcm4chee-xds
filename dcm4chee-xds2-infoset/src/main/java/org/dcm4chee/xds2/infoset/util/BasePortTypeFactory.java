@@ -11,15 +11,19 @@ public class BasePortTypeFactory {
 
     protected final static String URN_IHE_ITI = "urn:ihe:iti:xds-b:2007";
     protected static final String URN_IHE_RAD_XDSI_B_2009 = "urn:ihe:rad:xdsi-b:2009";
+    protected static final String URN_IHE_RAD_2009 = "urn:ihe:rad:2009";
 
     @SuppressWarnings("rawtypes")
-    public static void configurePort(BindingProvider bindingProvider, String endpointAddress, boolean mtom, boolean mustUnderstand) {
+    public static void configurePort(BindingProvider bindingProvider, String endpointAddress, boolean mtom, boolean mustUnderstand, boolean addLogHandler) {
         SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding(); 
         binding.setMTOMEnabled(mtom);
-        if (mustUnderstand) {
+        if (mustUnderstand || addLogHandler) {
             ArrayList<Handler> l = new ArrayList<Handler>();
             l.addAll(binding.getHandlerChain());
-            l.add(new EnsureMustUnderstandHandler());
+            if (mustUnderstand)
+                l.add(new EnsureMustUnderstandHandler());
+            if (addLogHandler)
+                l.add(new LogHandler());
             binding.setHandlerChain(l);
         }
         Map<String, Object> reqCtx = bindingProvider.getRequestContext();

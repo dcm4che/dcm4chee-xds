@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-package org.dcm4chee.xds2.ws.handler;
+package org.dcm4chee.xds2.infoset.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +45,6 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.transform.Source;
@@ -56,8 +55,6 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
@@ -116,30 +113,12 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
 
     private void logMessage(SOAPMessageContext ctx) {
         String action = getAction(ctx);
-        String host = getHost(ctx);
-        String logDir = null;
+        String logDir = "/var/log/sentMessages";
         boolean logFullMessage = false;
-        try {
-            if ((action.endsWith(":RegisterDocumentSet-b") ||
-                 action.endsWith(":RegisterDocumentSet-bResponse")) && XdsDevice.getXdsRegistry() != null) {
-                logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
-            } else if ((action.endsWith(":CrossGatewayQuery") ||
-                        action.endsWith(":CrossGatewayQueryResponse")) && XdsDevice.getXCARespondingGW() != null) {
-                logDir = XdsDevice.getXCARespondingGW().getSoapLogDir();
-            } else if (XdsDevice.getXdsRepository() != null) {
-                logDir = XdsDevice.getXdsRepository().getSoapLogDir();
-            }
-/*            String [] hosts = XdsDevice.getXdsRepository().getLogFullMessageHosts(); 
-            if (hosts != null && hosts.length > 0) {
-                logFullMessage = true;
-            }*/
-        } catch (Exception ignore) {
-            log.warn("Failed to get logDir from XDS configuration!", ignore);
-        }
         if (logDir != null) {
             FileOutputStream out = null;
             try {
-                File f = getLogFile(host, action, ".xml", logDir);
+                File f = getLogFile(null, action, ".xml", logDir);
                 f.getParentFile().mkdirs();
                 log.info("SOAP message saved to file "+f);
                 out = new FileOutputStream(f);
@@ -152,7 +131,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                     t.transform(s, new StreamResult(out));
                 }
             } catch (Exception x) {
-                log.error("Error logging SOAP message to file!", x);
+                log.error("Error logging sent SOAP message to file!", x);
             } finally {
                 if (out != null)
                     try {
@@ -165,7 +144,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private String getAction(SOAPMessageContext ctx) {
         try {
             SOAPHeader hdr =ctx.getMessage().getSOAPHeader();
-            NodeList nodeList = hdr.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "Action");
+            NodeList nodeList = hdr.getElementsByTagNameNS("http://www.w3.org/2005/08/addressing", "Action");
             if (nodeList.getLength() == 0) {
                 return "noAction";
             }
@@ -180,25 +159,12 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         }
     }
 
-    private String getHost(SOAPMessageContext ctx) {
-        HttpServletRequest rq =(HttpServletRequest)ctx.get(SOAPMessageContext.SERVLET_REQUEST);
-        String host;
-        String xForward = (String) rq.getHeader("x-forwarded-for");
-        if (xForward != null) {
-            int pos = xForward.indexOf(',');
-            host = (pos > 0 ? xForward.substring(0,pos) : xForward).trim();
-        } else {
-            host = rq.getRemoteAddr();
-        }
-        return host;
-    }
-
     private File getLogFile(String host, String action, String extension, String logDir) {
         Calendar cal = Calendar.getInstance();
         StringBuilder sb = new StringBuilder();
         sb.append(logDir).append(sepChar).append(cal.get(Calendar.YEAR))
         .append(sepChar).append(cal.get(Calendar.MONTH)+1).append(sepChar)
-        .append(cal.get(Calendar.DAY_OF_MONTH)).append(sepChar).append(host)
+        .append(cal.get(Calendar.DAY_OF_MONTH))
         .append(sepChar).append(action).append('_')
         .append(Integer.toHexString((int)cal.getTimeInMillis()))
         .append(extension);

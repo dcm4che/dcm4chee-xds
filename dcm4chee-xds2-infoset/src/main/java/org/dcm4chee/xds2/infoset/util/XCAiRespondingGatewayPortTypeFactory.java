@@ -27,7 +27,7 @@ public class XCAiRespondingGatewayPortTypeFactory extends BasePortTypeFactory {
 
     public static XCAIRespondingGatewayPortType getXCAIRespondingGatewayPortSoap12(String endpointAddress) {
         XCAIRespondingGatewayPortType port = getXCAIRespondingGatewayPortSoap12();
-        configurePort((BindingProvider)port, endpointAddress, false, true);
+        configurePort((BindingProvider)port, endpointAddress, false, true, true);
         return port;
     }
 }

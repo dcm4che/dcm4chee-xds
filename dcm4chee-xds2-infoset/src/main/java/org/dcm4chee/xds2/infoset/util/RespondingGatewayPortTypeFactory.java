@@ -27,7 +27,7 @@ public class RespondingGatewayPortTypeFactory extends BasePortTypeFactory {
 
     public static RespondingGatewayPortType getRespondingGatewayPortSoap12(String endpointAddress) {
         RespondingGatewayPortType port = getRespondingGatewayPortSoap12();
-        configurePort((BindingProvider)port, endpointAddress, false, true);
+        configurePort((BindingProvider)port, endpointAddress, false, true, true);
         return port;
     }
 }

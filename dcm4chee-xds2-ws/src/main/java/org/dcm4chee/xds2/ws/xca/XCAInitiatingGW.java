@@ -38,12 +38,18 @@
 
 package org.dcm4chee.xds2.ws.xca;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
@@ -523,12 +529,42 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                             patSlot.addPatIDs(pixClient.queryXadPIDs(pid.substring(1, pid.length()-1), domains));
                         }
                     } catch (Exception x) {
+                        log.error("PIX QUERY FAILED!", x);
                         throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, "PIX Query failed!", x);
                     }
                     return patSlot;
                 }
             }
         } else {
+            File f = new File(System.getProperty("jboss.server.config.dir","/tmp"),"pix_patids.properties");
+            if (f.exists()) {
+                Properties p = new Properties();
+                FileInputStream fis = null;
+                try {
+                    PatSlot patSlot = null;
+                    for (SlotType1 slot : req.getAdhocQuery().getSlot()) {
+                        if (slot.getName().endsWith("PatientId")) {
+                            patSlot = new PatSlot(slot);
+                        }
+                        break;
+                    }
+                    if (patSlot != null) {
+                        fis = new FileInputStream(f);
+                        p.load(fis);
+                        for (Entry<Object, Object> e : p.entrySet()) {
+                            patSlot.addPatID(e.getKey().toString(), e.getValue().toString());
+                        }
+                    }
+                    return patSlot;
+                } catch (Exception x) {
+                    log.info("Failed to read dummy PIX patient IDs! file:"+f, x);
+                } finally {
+                    if (fis != null)
+                        try {
+                            fis.close();
+                        } catch (IOException e) {}
+                }
+            }
             String reason = domains == null ? "No domains (Assigning authorities) configured!" : "Missing or wrong HL7 configuration!";
             log.warn("PIX Query skipped!"+reason);
         }
@@ -612,6 +648,16 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                     pids.add(e.getValue());
                 }
             }
+        }
+        private void addPatID(String domain, String pid) {
+            log.info("######## Add PIX PatID:"+pid);
+            List<String> pids = this.get(domain);
+            if (pids == null) {
+                pids = new ArrayList<String>();
+                put(domain, pids);
+            }
+            log.info("######## Add PIX PatID:"+pid);
+            pids.add(pid);
         }
         
         private boolean updateSlotValuesForDomain(String domain) {

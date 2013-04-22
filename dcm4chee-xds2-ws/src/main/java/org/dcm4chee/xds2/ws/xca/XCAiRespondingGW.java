@@ -38,7 +38,6 @@
 
 package org.dcm4chee.xds2.ws.xca;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
@@ -140,7 +139,6 @@ public class XCAiRespondingGW implements XCAIRespondingGatewayPortType {
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
-            URL xdsiSourceURI = new URL(url);
             ImagingDocumentSourcePortType port = ImagingDocumentSourcePortTypeFactory.getImagingDocumentSourcePort(url);
             log.info("####################################################");
             log.info("####################################################");

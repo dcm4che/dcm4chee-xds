@@ -64,6 +64,7 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 
+import org.dcm4che.audit.AuditMessages;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
@@ -151,8 +152,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegisterDocumentSet-bResponse")
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
-        log.info("################ documentRegistryRegisterDocumentSetB called! CallerPrincipal:"+
-                context.getCallerPrincipal());
+        log.info("################ documentRegistryRegisterDocumentSetB called! Thread:"+Thread.currentThread().getName());
         RegistryResponseType rsp = factory.createRegistryResponseType();
         XDSPersistenceWrapper wrapper = new XDSPersistenceWrapper(this);
         try {
@@ -314,8 +314,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegistryStoredQueryResponse")
     public AdhocQueryResponse documentRegistryRegistryStoredQuery(
             AdhocQueryRequest req) {
-        log.info("################ documentRegistryRegistryStoredQuery called! CallerPrincipal:"
-                +context.getCallerPrincipal());
+        log.info("################ documentRegistryRegistryStoredQuery called! Thread:"
+                +Thread.currentThread().getName());
         log.debug("ReturnType:"+req.getResponseOption().getReturnType());
         AdhocQueryResponse rsp;
         StoredQuery qry = null;
@@ -356,7 +356,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             } else if (obj instanceof ClassificationNodeType) {//for initialization
                 wrapper.toClassificationNode((ClassificationNodeType)obj, null, objects);
             } else if (obj instanceof ObjectRefType) {//for initialization
-                RegistryObject tmp = getRegistryObjectByUUID(obj.getId());
+                Identifiable tmp = getIdentifiableByUUID(obj.getId());
                 log.info("#### found RegistryObject for ObjectRef:"+tmp);
                 if (tmp == null) {
                     log.info("#### add ObjectRef:"+obj.getId());
