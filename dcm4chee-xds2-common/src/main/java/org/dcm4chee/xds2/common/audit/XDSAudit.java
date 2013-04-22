@@ -41,6 +41,7 @@ package org.dcm4chee.xds2.common.audit;
 import static org.dcm4che.audit.AuditMessages.createEventIdentification;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -172,6 +173,7 @@ public class XDSAudit {
     private static final String UNKNOWN = "UNKNOWN";
 
     private static AuditLogger logger;
+    private static final int BUF_SIZE = 8192;
 
     private static final Logger log = LoggerFactory.getLogger(XDSAudit.class);
     
@@ -630,11 +632,13 @@ public class XDSAudit {
             DicomInputStream dis = null;
             try {
                 DataHandler dh = doc.getDocument();
-                is = new BufferedInputStream(dh.getInputStream());
-                is.mark(8192);
-                dis = new DicomInputStream(is);
-                attrs = dis.readDataset(-1, Tag.SeriesInstanceUID);
+                is = new BufferedInputStream(dh.getInputStream(), BUF_SIZE);
+                is.mark(BUF_SIZE);
+                byte[] buf = new byte[BUF_SIZE];
+                is.read(buf);
                 is.reset();
+                dis = new DicomInputStream(new ByteArrayInputStream(buf));
+                attrs = dis.readDataset(-1, Tag.SeriesInstanceUID);
                 doc.setDocument(new DataHandler(new InputStreamDataSource(is, dh.getContentType())));
                 studyIUID = attrs.getString(Tag.StudyInstanceUID);
                 classUID = attrs.getString(Tag.SOPClassUID);
@@ -654,7 +658,7 @@ public class XDSAudit {
             } catch (IOException x) {
                 log.warn("Failed to read DICOM attachment! instanceUID:"+doc.getDocumentUniqueId(),x);
             } finally {
-                //Dont close DicomInputStream! SafeClose.close(dis);
+                SafeClose.close(dis);
             }
         }
         for ( Entry<String, HashMap<String, List<String>>> e : studySopClassMap.entrySet()) {
@@ -842,9 +846,11 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
+        log.info(Thread.currentThread().getName()+" - Send audit message! EventId:"+msg.getEventIdentification().getEventID().getDisplayName());
         if (log.isDebugEnabled())
-            log.debug("Send audit message:"+AuditMessages.toXML(msg));
+            log.debug(Thread.currentThread().getName()+" - Send audit message:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
+        log.info(Thread.currentThread().getName()+" - Audit message sent!");
     }
 
     public static ParticipantObjectIdentification createPatient(String patID) {
