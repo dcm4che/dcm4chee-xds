@@ -842,11 +842,11 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
-        log.info(Thread.currentThread().getName()+" - Send audit message! EventId:"+msg.getEventIdentification().getEventID().getDisplayName());
+        log.info("Send audit message! EventId:"+msg.getEventIdentification().getEventID().getDisplayName());
         if (log.isDebugEnabled())
-            log.debug(Thread.currentThread().getName()+" - Send audit message:"+AuditMessages.toXML(msg));
+            log.debug("Send audit message:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
-        log.info(Thread.currentThread().getName()+" - Audit message sent!");
+        log.info("Audit message sent!");
     }
 
     public static ParticipantObjectIdentification createPatient(String patID) {

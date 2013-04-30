@@ -118,7 +118,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     @Override
     public RegistryResponseType documentRepositoryProvideAndRegisterDocumentSetB(
             ProvideAndRegisterDocumentSetRequestType req) {
-        log.info("################ documentRepositoryProvideAndRegisterDocumentSetB called! Thread:"+Thread.currentThread().getName());
+        log.info("################ documentRepositoryProvideAndRegisterDocumentSetB called!");
         RegistryResponseType rsp;
         String[] storedUIDs = null;
         URL registryURL = null;
@@ -147,7 +147,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         commit(storedUIDs, success);
         XDSAudit.logRepositoryImport(submUIDAndpatid[0], submUIDAndpatid[1], info, 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
-        log.info("################ documentRepositoryProvideAndRegisterDocumentSetB finished! Thread:"+Thread.currentThread().getName());
+        log.info("################ documentRepositoryProvideAndRegisterDocumentSetB finished!");
         return rsp;
     }
 
@@ -178,7 +178,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
 
     @Override
     public RetrieveDocumentSetResponseType documentRepositoryRetrieveDocumentSet(RetrieveDocumentSetRequestType req) {
-        log.info("################ documentRepositoryRetrieveDocumentSet called! Thread:"+Thread.currentThread().getName());
+        log.info("################ documentRepositoryRetrieveDocumentSet called!");
         RetrieveDocumentSetResponseType rsp = iheFactory.createRetrieveDocumentSetResponseType();
         try {
             String repositoryUID = getRepositoryUniqueId();
@@ -245,7 +245,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
         AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
         XDSAudit.logRepositoryRetrieveExport(req, rsp, info);
-        log.info("################ documentRepositoryRetrieveDocumentSet finished! Thread:"+Thread.currentThread().getName());
+        log.info("################ documentRepositoryRetrieveDocumentSet finished!");
         return rsp;
     }
     

@@ -152,7 +152,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegisterDocumentSet-bResponse")
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
-        log.info("################ documentRegistryRegisterDocumentSetB called! Thread:"+Thread.currentThread().getName());
+        log.info("################ documentRegistryRegisterDocumentSetB called!");
         RegistryResponseType rsp = factory.createRegistryResponseType();
         XDSPersistenceWrapper wrapper = new XDSPersistenceWrapper(this);
         try {
@@ -314,8 +314,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegistryStoredQueryResponse")
     public AdhocQueryResponse documentRegistryRegistryStoredQuery(
             AdhocQueryRequest req) {
-        log.info("################ documentRegistryRegistryStoredQuery called! Thread:"
-                +Thread.currentThread().getName());
+        log.info("################ documentRegistryRegistryStoredQuery called!");
         log.debug("ReturnType:"+req.getResponseOption().getReturnType());
         AdhocQueryResponse rsp;
         StoredQuery qry = null;
