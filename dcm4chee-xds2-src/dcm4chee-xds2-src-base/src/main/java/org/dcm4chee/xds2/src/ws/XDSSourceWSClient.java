@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XDSSourceWSClient {
 
-    //only effective if webservice stack supports javax.xml.ws.client.connectionTimeout property in BindingProvider (jbossws-3.4.0, JBoss7)
+    //only effective if webservice stack supports javax.xml.ws.client.connectionTimeout or BindingProviderProperties.CONNECT_TIMEOUT property in BindingProvider (jbossws-3.4.0, JBoss7)
     private int connectionTimeout = -1;
     private int receiveTimeout = -1;
     
@@ -84,12 +84,17 @@ public class XDSSourceWSClient {
 
     public RegistryResponseType sendProvideAndRegister(PnRRequest req, URL xdsRegistryURI) throws MetadataConfigurationException {
         DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(xdsRegistryURI.toString());
+        Map<String, Object> ctx = ((BindingProvider)port).getRequestContext();
         if (connectionTimeout >= 0) {
-            ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.connectionTimeout", String.valueOf(connectionTimeout));
+            ctx.put("javax.xml.ws.client.connectionTimeout", String.valueOf(connectionTimeout));
+            ctx.put("com.sun.xml.ws.connect.timeout", connectionTimeout);
+            ctx.put("com.sun.xml.internal.ws.connect.timeout", connectionTimeout);
             log.debug("Set connectionTimeout to {}", connectionTimeout);
         }
         if (receiveTimeout >= 0) {
-            ((BindingProvider)port).getRequestContext().put("javax.xml.ws.client.receiveTimeout", String.valueOf(receiveTimeout));
+            ctx.put("javax.xml.ws.client.receiveTimeout", String.valueOf(receiveTimeout));
+            ctx.put("com.sun.xml.internal.ws.request.timeout", receiveTimeout);
+            ctx.put("com.sun.xml.ws.request.timeout", receiveTimeout);
             log.debug("Set receiveTimeout to {}", receiveTimeout);
         }
         log.debug("Send {}", req);

@@ -41,6 +41,8 @@ package org.dcm4chee.xds2.ws.handler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -60,6 +62,7 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.w3c.dom.NodeList;
 
 public class LogHandler implements SOAPHandler<SOAPMessageContext> {
@@ -115,8 +118,8 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     private void logMessage(SOAPMessageContext ctx) {
-        String action = getAction(ctx);
-        String host = getHost(ctx);
+        String action = getWsaHeader(ctx, "Action", "noAction");
+        String msgID = getWsaHeader(ctx, "MessageID", null);
         String logDir = null;
         boolean logFullMessage = false;
         try {
@@ -139,9 +142,14 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         if (logDir != null) {
             FileOutputStream out = null;
             try {
-                File f = getLogFile(host, action, ".xml", logDir);
-                f.getParentFile().mkdirs();
-                log.info("SOAP message saved to file "+f);
+                File f;
+                if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
+                    logDir = MDC.get("initiatorLogDir");
+                    f = new File(logDir, action + ".xml");
+                } else {
+                    f = getLogFile(getHost(ctx), action, msgID, ".xml", logDir);
+                    f.getParentFile().mkdirs();
+                }
                 out = new FileOutputStream(f);
                 if (logFullMessage) {
                     ctx.getMessage().writeTo(out);
@@ -151,6 +159,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                     t.setOutputProperty("indent", "yes");
                     t.transform(s, new StreamResult(out));
                 }
+                log.info("SOAP message saved to file "+f);
             } catch (Exception x) {
                 log.error("Error logging SOAP message to file!", x);
             } finally {
@@ -160,14 +169,23 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                     } catch (IOException ignore) {}
             }
         }
+        if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
+            MDC.put("initiatorFinished", "true");
+            log.info("SOAP message "+getWsaHeader(ctx, "RelatesTo", null)+" finished!");
+            MDC.remove("initiatorLogDir");
+            MDC.remove("initiatorMsgID");
+            MDC.remove("initiatorFinished");
+        } else {
+            log.info("Start processing SOAP message "+msgID);
+        }
     }
 
-    private String getAction(SOAPMessageContext ctx) {
+    private String getWsaHeader(SOAPMessageContext ctx, String name, String def) {
         try {
             SOAPHeader hdr =ctx.getMessage().getSOAPHeader();
-            NodeList nodeList = hdr.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "Action");
+            NodeList nodeList = hdr.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, name);
             if (nodeList.getLength() == 0) {
-                return "noAction";
+                return def;
             }
             String action = nodeList.item(0).getTextContent();
             //remove 'urn:ihe:iti:2007:' to avoid ':' in filename!
@@ -182,28 +200,37 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
 
     private String getHost(SOAPMessageContext ctx) {
         HttpServletRequest rq =(HttpServletRequest)ctx.get(SOAPMessageContext.SERVLET_REQUEST);
-        String host;
+        String ip;
         String xForward = (String) rq.getHeader("x-forwarded-for");
         if (xForward != null) {
             int pos = xForward.indexOf(',');
-            host = (pos > 0 ? xForward.substring(0,pos) : xForward).trim();
+            ip = (pos > 0 ? xForward.substring(0,pos) : xForward).trim();
         } else {
-            host = rq.getRemoteAddr();
+            ip = rq.getRemoteHost();
         }
-        return host;
+        if (Boolean.valueOf(System.getProperty("org.dcm4chee.disableDNSLookups", "false")))
+            return ip;
+        try {
+            return InetAddress.getByName(ip).getHostName();
+        } catch (UnknownHostException ignore) {
+            return ip;
+        }
     }
 
-    private File getLogFile(String host, String action, String extension, String logDir) {
+    private File getLogFile(String host, String action, String msgID, String extension, String logDir) {
         Calendar cal = Calendar.getInstance();
+        msgID = msgID == null ? "xxxx" : Integer.toHexString(msgID.hashCode());
         StringBuilder sb = new StringBuilder();
         sb.append(logDir).append(sepChar).append(cal.get(Calendar.YEAR))
         .append(sepChar).append(cal.get(Calendar.MONTH)+1).append(sepChar)
         .append(cal.get(Calendar.DAY_OF_MONTH)).append(sepChar).append(host)
-        .append(sepChar).append(action).append('_')
-        .append(Integer.toHexString((int)cal.getTimeInMillis()))
-        .append(extension);
-        
-        return new File(sb.toString());
+        .append(sepChar).append(action).append('_').append(msgID);
+        File dir = new File(sb.toString());
+        MDC.put("initiatorLogDir", dir.getAbsolutePath());
+        MDC.put("initiatorMsgID", msgID);
+        MDC.put("remoteHost", host);
+        log.info("set MDC remoteHost:"+MDC.get("remoteHost"));
+        return new File(dir, action+".xml");
     }
 
 }
