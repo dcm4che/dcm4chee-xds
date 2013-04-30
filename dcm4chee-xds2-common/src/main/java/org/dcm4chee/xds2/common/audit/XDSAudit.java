@@ -634,11 +634,9 @@ public class XDSAudit {
                 DataHandler dh = doc.getDocument();
                 is = new BufferedInputStream(dh.getInputStream(), BUF_SIZE);
                 is.mark(BUF_SIZE);
-                byte[] buf = new byte[BUF_SIZE];
-                is.read(buf);
-                is.reset();
-                dis = new DicomInputStream(new ByteArrayInputStream(buf));
+                dis = new DicomInputStream(new BufferedInputStream(is));
                 attrs = dis.readDataset(-1, Tag.SeriesInstanceUID);
+                is.reset();
                 doc.setDocument(new DataHandler(new InputStreamDataSource(is, dh.getContentType())));
                 studyIUID = attrs.getString(Tag.StudyInstanceUID);
                 classUID = attrs.getString(Tag.SOPClassUID);
@@ -657,8 +655,6 @@ public class XDSAudit {
                 instances.add(attrs.getString(Tag.SOPInstanceUID));
             } catch (IOException x) {
                 log.warn("Failed to read DICOM attachment! instanceUID:"+doc.getDocumentUniqueId(),x);
-            } finally {
-                SafeClose.close(dis);
             }
         }
         for ( Entry<String, HashMap<String, List<String>>> e : studySopClassMap.entrySet()) {
