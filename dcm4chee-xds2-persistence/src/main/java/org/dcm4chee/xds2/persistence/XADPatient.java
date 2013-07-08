@@ -74,7 +74,7 @@ import javax.persistence.UniqueConstraint;
         query="SELECT p FROM XADPatient p WHERE p.patientID = ?1"),
     @NamedQuery(
         name="XADPatient.findByAffinityDomain",
-        query="SELECT p FROM XADPatient p WHERE p.issuerOfPatientID.universalID LIKE ?1 ORDER BY p.issuerOfPatientID"),
+        query="SELECT p FROM XADPatient p WHERE p.issuerOfPatientID.universalID LIKE ?1 ORDER BY p.issuerOfPatientID")
     })
 
 @Entity
