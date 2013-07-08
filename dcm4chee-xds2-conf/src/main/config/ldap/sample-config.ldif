@@ -30,7 +30,6 @@ xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
 xdsAcceptedMimeTypes: application/xml
 xdsAcceptedMimeTypes: application/dicom
 xdsAcceptedMimeTypes: text/xml
-xdsCheckAffinityDomain: false
 xdsCheckMimetype: false
 xdsSoapMsgLogDir: /var/log/xdslog
 
@@ -70,7 +69,7 @@ xdsiSourceURL: *|http://localhost:8080/service/ImagingDocumentSource/src
 xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/XCAIRespondingGateway/xcai
 xdsSoapMsgLogDir: /var/log/xdslog
 
-dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devi																																																																																																																																																																																																																																																																																																																																																																																																																																					ces,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
 dicomHostname: localhost
 dicomPort: 2576
 objectClass: dicomNetworkConnection
