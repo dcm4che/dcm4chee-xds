@@ -38,6 +38,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common.code;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,9 +55,11 @@ import javax.imageio.spi.ServiceRegistry;
  * @author franz.willer@agfa.com
  *
  */
-public class XADCfgRepository {
+public class XADCfgRepository implements Serializable {
 
-    private XADCfgProviderSPI codeProvider;;
+	private static final long serialVersionUID = 1L;
+	
+	private XADCfgProviderSPI codeProvider;;
     private HashMap<String, AffinityDomainCodes> adCodesMap = new HashMap<String,AffinityDomainCodes>();
     private HashMap<String, List<String>> adMimetypes = new HashMap<String,List<String>>();
     private HashMap<String, Map<String,String>> adMimetypeFileExt = new HashMap<String,Map<String,String>>();

@@ -39,6 +39,7 @@
 package org.dcm4chee.xds2.common.code;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -59,9 +60,11 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author franz.willer@agfa.com
  *
  */
-public class IheXmlCodeProvider implements XADCfgProviderSPI{
+public class IheXmlCodeProvider implements XADCfgProviderSPI, Serializable {
 
-    private File baseDir;
+	private static final long serialVersionUID = 1L;
+
+	private File baseDir;
     
     public static final String DEFAULT_DOMAIN = "default";
     
