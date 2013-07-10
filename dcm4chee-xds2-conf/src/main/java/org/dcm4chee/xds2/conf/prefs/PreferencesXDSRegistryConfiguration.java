@@ -74,9 +74,10 @@ public class PreferencesXDSRegistryConfiguration
         PreferencesUtils.storeNotNull(prefs, "xdsSoapMsgLogDir", registry.getSoapLogDir());
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingPIDs",registry.isCreateMissingPIDs(), false);
         PreferencesUtils.storeNotDef(prefs, "xdsCreateMissingCodes", registry.isCreateMissingPIDs(), false);
-        PreferencesUtils.storeNotDef(prefs, "xdsCheckAffinityDomain", registry.isCheckAffinityDomain(), false);
-        PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", registry.isCheckMimetype(), false);
+        PreferencesUtils.storeNotDef(prefs, "xdsCheckAffinityDomain", registry.isCheckAffinityDomain(), true);
+        PreferencesUtils.storeNotDef(prefs, "xdsCheckMimetype", registry.isCheckMimetype(), true);
         PreferencesUtils.storeNotDef(prefs, "xdsDontSaveCodeClassifications", registry.isDontSaveCodeClassifications(), false);
+        PreferencesUtils.storeNotDef(prefs, "xdsPreMetadataCheck", registry.isPreMetadataCheck(), false);
     }
 
     @Override

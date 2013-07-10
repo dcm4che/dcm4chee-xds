@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.dcm4che.audit.AuditMessages;
 import org.dcm4che.conf.api.ConfigurationException;
 import org.dcm4che.conf.api.ConfigurationNotFoundException;
 import org.dcm4che.conf.api.DicomConfiguration;
@@ -54,6 +55,8 @@ import org.dcm4che.data.Code;
 import org.dcm4che.data.Issuer;
 import org.dcm4che.net.Connection;
 import org.dcm4che.net.Device;
+import org.dcm4che.net.audit.AuditLogger;
+import org.dcm4che.net.audit.AuditRecordRepository;
 import org.dcm4che.net.hl7.HL7Application;
 import org.dcm4che.net.hl7.HL7DeviceExtension;
 import org.junit.After;
@@ -61,6 +64,22 @@ import org.junit.Test;
 
 public class XdsConfigTestBase {
 
+    private static final String PIX_MANAGER_APP2 = "PIX_MANAGER_APP2";
+    private static final String PIX_MANAGER_APP = "PIX_MANAGER_APP";
+    private static final String PIX_CONSUMER_APP2 = "PIX_CONSUMER_APP2";
+    private static final String PIX_CONSUMER_APP = "PIX_CONSUMER_APP";
+    private static final String LOG_XDSLOG = "log/xdslog";
+    private static final String VAR_LOG_XDSLOG = "var/log/xdslog";
+    private static final String HOME_COMMUNITY_ID = "1.3.5.7.9";
+    private static final String[] AUTHORITY_MAP = new String[]{"1.2.3.4.9.999|&1.2.3.4.9.99.2&ISO"};
+    private static final String[] AUTHORITY_MAP2 = new String[]{"1.2.3.4.9.999|&1.2.3.4.9.99.2&ISO", "1.2.3.4.9.990|&1.2.3.4.9.99.5&ISO"};
+    private static final String HOME_COMMUNITY2_ID = "1.3.5.7.9.111";
+    private static final String XCA_RESPONDING_GW = "XCARespondingGW";
+    private static final String XCA_INITIATING_GW = "XCAInitiatingGW";
+    private static final String XCAI_RESPONDING_GW = "XCAiRespondingGW";
+    private static final String XCAI_INITIATING_GW = "XCAiInitiatingGW";
+    private static final String DEFAULT_XDSLOG = "/var/log/xdslog";
+    protected static final String DEFAULT_XDS_DEVICE = "dcm4chee-xds2-default";
     private static final String XDS_REGISTRY1 = "XDS_REGISTRY1";
     private static final String XDS_REGISTRY2 = "XDS_REGISTRY2";
     private static final String XDS_REGISTRY3 = "XDS_REGISTRY3";
@@ -69,8 +88,17 @@ public class XdsConfigTestBase {
     private static final String XDS_REPOSITORY1 = "XDS_REPOSITORY1";
     private static final String XDS_REPO1_UID = "1.2.3.4";
     private static final String XDS_REPO2_UID = "4.3.2.1";
-    private static final String[] XDS_REPO1_URI = {"0|http:/xds/repo1"};
-    private static final String[] XDS_REPO2_URI = {"0|http:/xds/repo2"};
+    private static final String XDS_REGISTRY_URI = "http://xds/registry";
+    private static final String XDS_REGISTRY2_URI = "http://xds2/registry";
+    private static final String[] XDS_REGISTRY_URIS = {"0|http://xds/registry"};
+    private static final String[] XDS_REGISTRY2_URIS = {"0|http://xds1/registry","1.2.3.4|http://xds2/registry"};
+    private static final String[] DEFAULT_XDS_REGISTRY_URI = {"0|http://localhost:8080/dcm4chee-xds/XDSbRegistry/b"};
+    private static final String[] XDS_REPOSITORY_URIS = {"0|http://xds/repository"};
+    private static final String[] XDS_REPOSITORY2_URIS = {"0|http://xds1/repository", "1.2.3.4|http://xds2/repository"};
+    private static final String[] XDS_RESPGW_URIS = {"0|http://xds/respGW"};
+    private static final String[] XDS_RESPGW2_URIS = {"0|http://xds1/respGW", "1.2.3.4|http://xds2/respGW"};
+    private static final String[] XDSI_SRC_URI = {"0|http://xds/imgsrc"};
+    private static final String[] XDSI_SRC2_URI = {"0|http://xds1/imgsrc","1.2.3.4|http://xds2/imgsrc"};
     
     private static final String HL7_APP_NAME1 = "XDS^DCM4CHEE";
     private static final String HL7_APP_NAME2 = "XDS2^DCM4CHEE";
@@ -89,11 +117,13 @@ public class XdsConfigTestBase {
     private static final Code INST_A =
         new Code("111.1111", "99DCM4CHEE", null, "Site A");
     private static final String[] MIME_TYPES1 = new String[]{"application/dicom"};
-    private static final String[] MIME_TYPES2 = new String[]{"text/xml","application/dicom"};
+    private static final String[] MIME_TYPES2 = new String[]{"application/xml","application/dicom","application/pdf", "text/plain", "text/xml"};
     private String[] AFFINITY_DOMAIN = {"1.2.3.4.5"};
     private static final String[] AFFINITY_DOMAIN2 = {"5.4.3.2.1"};
 
     protected static int testCount = 0;
+    protected static String testDeviceName;
+    protected static String arrDeviceName;
     protected DicomConfiguration config;
 
     @After
@@ -104,87 +134,198 @@ public class XdsConfigTestBase {
             config.close();
     }
     @Test
-    public void testSimple() throws Exception {
-        config.persist(createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false));
+    public void testRegistry() throws Exception {
+        Device d = createDevice("registry", SITE_A, INST_A);
+        addRegistry(d, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false);
+        config.persist(d);
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false, true, null);
-        
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES1, null, false, false, true, true, false, null);
     }
     @Test
-    public void testWithOptional() throws Exception {
-        config.persist(createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true));
+    public void testRegistryWithOptional() throws Exception {
+        Device d = createDevice("registry", SITE_A, INST_A);
+        addRegistry(d, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true);
+        config.persist(d);
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true, true, null);
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY2, AFFINITY_DOMAIN, MIME_TYPES2, "/log/xdslog", true, true, true, true, false, null);
     }
     @Test
-    public void testWithHL7() throws Exception {
-        Device device = createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true);
-        HL7DeviceExtension hl7Ext = new HL7DeviceExtension();
-        device.addDeviceExtension(hl7Ext);
-        ArrayList<HL7Application> hl7Apps = new ArrayList<HL7Application>();
-        HL7Application hl7App = createHL7Application(HL7_APP_NAME1, "hl7-conn", "localhost", 2575, 2576, device);
-        hl7Apps.add(hl7App);
-        hl7Ext.addHL7Application(hl7App);
+    public void testRegistryWithHL7() throws Exception {
+        Device device = createDevice("registry_hl7", SITE_A, INST_A);
+        addRegistry(device, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true);
+        ArrayList<HL7Application> hl7Apps = addHL7(device);
         config.persist(device);
         afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true, true, hl7Apps);
-    }
-    
-    protected HL7Application findHL7Application(String hl7AppName1) throws ConfigurationException {
-        return null;
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY3, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog", true, true, true, true, false, hl7Apps);
     }
 
     @Test
     public void testModify() throws Exception {
-        Device device = createXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true);
+        Device d = createDevice("registry_modify", SITE_A, INST_A);
+        addRegistry(d, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true);
         HL7DeviceExtension hl7Ext = new HL7DeviceExtension();
-        device.addDeviceExtension(hl7Ext);
+        d.addDeviceExtension(hl7Ext);
         ArrayList<HL7Application> hl7Apps = new ArrayList<HL7Application>();
-        HL7Application hl7App = createHL7Application(HL7_APP_NAME2, "hl7-conn", "localhost", 2575, 2576, device);
+        HL7Application hl7App = createHL7Application(HL7_APP_NAME2, "hl7-conn", "localhost", 2575, 2576, d);
         hl7Apps.add(hl7App);
         hl7Ext.addHL7Application(hl7App);
-        config.persist(device);
-        afterPersist();
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, true, hl7Apps);
-        XdsRegistry xdsApp = device.getDeviceExtension(XdsRegistry.class);
+        config.persist(d);
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN, MIME_TYPES1, "/log/xdslog/m", true, true, true, true, false, hl7Apps);
+        XdsRegistry xdsApp = d.getDeviceExtension(XdsRegistry.class);
         xdsApp.setAffinityDomain(AFFINITY_DOMAIN2);
         xdsApp.setSoapLogDir("/log/xdslog/mod");
         xdsApp.setCreateMissingPIDs(false);
         xdsApp.setAcceptedMimeTypes(MIME_TYPES2);
         xdsApp.setCheckAffinityDomain(false);
         xdsApp.setCheckMimetype(false);
+        xdsApp.setPreMetadataCheck(true);
+
         for (Connection c : hl7App.getConnections()) {
             c.setPort(c.getPort()+10000);
             c.setHostname("changed");
         }
-        HL7Application hl7App2 = createHL7Application(HL7_APP_NAME3, "hl7-conn", "localhost", 3575, 3576, device);
+        HL7Application hl7App2 = createHL7Application(HL7_APP_NAME3, "hl7-conn", "localhost", 3575, 3576, d);
         hl7Apps.add(hl7App2);
         hl7Ext.addHL7Application(hl7App2);
-        config.merge(device);
-        checkXdsRegistryDevice("xds"+testCount, SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN2, MIME_TYPES2, "/log/xdslog/mod", false, true, false, hl7Apps);
+        config.merge(d);
+        afterPersist();
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY4, AFFINITY_DOMAIN2, MIME_TYPES2, "/log/xdslog/mod", false, true, false, false, true, hl7Apps);
     }
 
     @Test
     public void testRepository() throws Exception {
-        Device app = createXdsRepositoryDevice("xds"+testCount, SITE_A, INST_A, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null);
-        config.persist(app);
+        Device d = createDevice("repository", SITE_A, INST_A);
+        addRepository(d, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REGISTRY_URIS, MIME_TYPES1, null);
+        config.persist(d);
         afterPersist();
-        checkXdsRepositoryDevice("xds"+testCount, XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REPO1_URI, MIME_TYPES1, null, true);
-        XdsRepository rep = app.getDeviceExtension(XdsRepository.class);
+        checkXdsRepository(XDS_REPOSITORY1, XDS_REPO1_UID, XDS_REGISTRY_URIS, MIME_TYPES1, null, true);
+        XdsRepository rep = d.getDeviceExtension(XdsRepository.class);
         rep.setAcceptedMimeTypes(MIME_TYPES2);
         rep.setCheckMimetype(false);
         rep.setRepositoryUID(XDS_REPO2_UID);
-        rep.setRegistryURLs(XDS_REPO2_URI);
-        config.merge(app);
-        checkXdsRepositoryDevice("xds"+testCount, XDS_REPOSITORY1, XDS_REPO2_UID, XDS_REPO2_URI, MIME_TYPES2, null, false);
+        rep.setRegistryURLs(XDS_REGISTRY2_URIS);
+        config.merge(d);
+        checkXdsRepository(XDS_REPOSITORY1, XDS_REPO2_UID, XDS_REGISTRY2_URIS, MIME_TYPES2, null, false);
     }
     
+    @Test
+    public void testXCARespondingGW() throws Exception {
+        Device d = createDevice("xca_resp_gw", SITE_A, INST_A);
+        XCARespondingGWCfg respGW = addXCARespondingGW(d);
+        config.persist(d);
+        afterPersist();
+        checkXCARespondingGW(XCA_RESPONDING_GW, HOME_COMMUNITY_ID, XDS_REGISTRY_URI, XDS_REPOSITORY_URIS, LOG_XDSLOG);
+        respGW.setHomeCommunityID(HOME_COMMUNITY2_ID);
+        respGW.setRegistryURL(XDS_REGISTRY2_URI);
+        respGW.setRepositoryURLs(XDS_REPOSITORY2_URIS);
+        respGW.setSoapLogDir(VAR_LOG_XDSLOG);
+        config.merge(d);
+        checkXCARespondingGW(XCA_RESPONDING_GW, HOME_COMMUNITY2_ID, XDS_REGISTRY2_URI, XDS_REPOSITORY2_URIS, VAR_LOG_XDSLOG);
+    }
+    @Test
+    public void testXCAInitiatingGW() throws Exception {
+        Device d = createDevice("xca_init_gw", SITE_A, INST_A);
+        XCAInitiatingGWCfg initGW = addXCAInitiatingGW(d);
+        config.persist(d);
+        afterPersist();
+        checkXCAInitiatingGW(XCA_INITIATING_GW, HOME_COMMUNITY_ID, XDS_REGISTRY_URI, XDS_REPOSITORY_URIS, LOG_XDSLOG,
+                PIX_CONSUMER_APP, PIX_MANAGER_APP, AUTHORITY_MAP, false, true, XDS_RESPGW_URIS, XDS_RESPGW_URIS);
+        initGW.setHomeCommunityID(HOME_COMMUNITY2_ID);
+        initGW.setRegistryURL(XDS_REGISTRY2_URI);
+        initGW.setRepositoryURLs(XDS_REPOSITORY2_URIS);
+        initGW.setSoapLogDir(VAR_LOG_XDSLOG);
+        initGW.setLocalPIXConsumerApplication(PIX_CONSUMER_APP2);
+        initGW.setRemotePIXManagerApplication(PIX_MANAGER_APP2);
+        initGW.setAssigningAuthoritiesMap(AUTHORITY_MAP2);
+        initGW.setAsync(true);
+        initGW.setAsyncHandler(false);
+        initGW.setRespondingGWURLs(XDS_RESPGW2_URIS);
+        initGW.setRespondingGWRetrieveURLs(XDS_RESPGW2_URIS);
+        config.merge(d);
+        checkXCAInitiatingGW(XCA_INITIATING_GW, HOME_COMMUNITY2_ID, XDS_REGISTRY2_URI, XDS_REPOSITORY2_URIS, VAR_LOG_XDSLOG,
+            PIX_CONSUMER_APP2, PIX_MANAGER_APP2, AUTHORITY_MAP2, true, false, XDS_RESPGW2_URIS, XDS_RESPGW2_URIS);
+    }
+    
+    @Test
+    public void testXCAiRespondingGW() throws Exception {
+        Device d = createDevice("xcai_resp_gw", SITE_A, INST_A);
+        XCAiRespondingGWCfg respGW = addXCAiRespondingGW(d);
+        config.persist(d);
+        afterPersist();
+        checkXCAiRespondingGW(XCAI_RESPONDING_GW, HOME_COMMUNITY_ID, XDSI_SRC_URI, LOG_XDSLOG);
+        respGW.setHomeCommunityID(HOME_COMMUNITY2_ID);
+        respGW.setXDSiSourceURLs(XDSI_SRC2_URI);
+        respGW.setSoapLogDir(VAR_LOG_XDSLOG);
+        config.merge(d);
+        checkXCAiRespondingGW(XCAI_RESPONDING_GW, HOME_COMMUNITY2_ID, XDSI_SRC2_URI, VAR_LOG_XDSLOG);
+    }
+
+    @Test
+    public void testXCAiInitiatingGW() throws Exception {
+        Device d = createDevice("xcai_init_gw", SITE_A, INST_A);
+        XCAiInitiatingGWCfg initGW = addXCAiInitiatingGW(d);
+        config.persist(d);
+        afterPersist();
+        checkXCAiInitiatingGW(XCAI_INITIATING_GW, HOME_COMMUNITY_ID, XDSI_SRC_URI, LOG_XDSLOG,
+                false, true, XDS_RESPGW_URIS);
+        initGW.setHomeCommunityID(HOME_COMMUNITY2_ID);
+        initGW.setXDSiSourceURLs(XDSI_SRC2_URI);
+        initGW.setSoapLogDir(VAR_LOG_XDSLOG);
+        initGW.setAsync(true);
+        initGW.setAsyncHandler(false);
+        initGW.setRespondingGWURLs(XDS_RESPGW2_URIS);
+        config.merge(d);
+        checkXCAiInitiatingGW(XCAI_INITIATING_GW, HOME_COMMUNITY2_ID, XDSI_SRC2_URI, VAR_LOG_XDSLOG,
+            true, false, XDS_RESPGW2_URIS);
+    }
+    
+    @Test
+    public void testDefaultConfig() throws Exception {
+        testDeviceName = DEFAULT_XDS_DEVICE;
+        Device d = createDevice(DEFAULT_XDS_DEVICE, SITE_A, INST_A);
+        XdsRegistry reg = addRegistry(d, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES2, DEFAULT_XDSLOG, true, true);
+        reg.setCheckAffinityDomain(false);
+        reg.setCheckMimetype(false);
+        XdsRepository rep = new XdsRepository();
+        d.addDeviceExtension(rep);
+        rep.setApplicationName(XDS_REPOSITORY1);
+        rep.setRepositoryUID(XDS_REPO1_UID);
+        rep.setRegistryURLs(DEFAULT_XDS_REGISTRY_URI);
+        rep.setAcceptedMimeTypes(MIME_TYPES2);
+        rep.setSoapLogDir(DEFAULT_XDSLOG);
+        rep.setCheckMimetype(false);
+        rep.setAllowedCipherHostname("*");
+        rep.setLogFullMessageHosts(new String[]{});
+        this.addXCARespondingGW(d);
+        this.addXCAInitiatingGW(d);
+        this.addXCAiRespondingGW(d);
+        this.addXCAiInitiatingGW(d);
+        ArrayList<HL7Application> hl7Apps = this.addHL7(d);
+        this.addAuditLogger(d);
+        config.persist(d);
+        afterPersist();
+        checkXdsRegistry(SITE_A, INST_A, XDS_REGISTRY1, AFFINITY_DOMAIN, MIME_TYPES2, DEFAULT_XDSLOG, true, true, false, false, false, hl7Apps);
+        checkXdsRepository(XDS_REPOSITORY1, XDS_REPO1_UID, DEFAULT_XDS_REGISTRY_URI, MIME_TYPES2, DEFAULT_XDSLOG, false);
+        checkXCARespondingGW(XCA_RESPONDING_GW, HOME_COMMUNITY_ID, XDS_REGISTRY_URI, XDS_REPOSITORY_URIS, LOG_XDSLOG);
+        checkXCAInitiatingGW(XCA_INITIATING_GW, HOME_COMMUNITY_ID, XDS_REGISTRY_URI, XDS_REPOSITORY_URIS, LOG_XDSLOG,
+                PIX_CONSUMER_APP, PIX_MANAGER_APP, AUTHORITY_MAP, false, true, XDS_RESPGW_URIS, XDS_RESPGW_URIS);
+        checkXCAiRespondingGW(XCAI_RESPONDING_GW, HOME_COMMUNITY_ID, XDSI_SRC_URI, LOG_XDSLOG);
+        checkXCAiInitiatingGW(XCAI_INITIATING_GW, HOME_COMMUNITY_ID, XDSI_SRC_URI, LOG_XDSLOG,
+                false, true, XDS_RESPGW_URIS);
+    }
+
     protected void cleanUp() throws Exception {
         if (config == null || testCount==0)
             return;
         try {
-            config.removeDevice("xds"+testCount);
+            config.removeDevice(testDeviceName);
         } catch (ConfigurationNotFoundException e) {}
+        if ( arrDeviceName != null) {
+            try {
+                config.removeDevice(arrDeviceName);
+            } catch (ConfigurationNotFoundException e) {}
+            arrDeviceName = null;
+        }
     }
 
     public void afterPersist() throws Exception {
@@ -202,28 +343,33 @@ public class XdsConfigTestBase {
     }
 
 
-    private Device createXdsRegistryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode) throws Exception {
-         Device device = new Device(name);
-         init(device, issuer, institutionCode);
-         XdsRegistry registry = new XdsRegistry();
+    private Device createDevice(String name, Issuer issuer, Code institutionCode) throws Exception {
+        testDeviceName = name;
+        Device device = new Device(name);
+        init(device, issuer, institutionCode);
+        return device;
+    }
+    
+    private XdsRegistry addRegistry(Device device, String appName, String[] affinityDomain,
+            String[] mime, String logDir, boolean createPID,
+            boolean createCode) {
+        XdsRegistry registry = new XdsRegistry();
          device.addDeviceExtension(registry);
          registry.setApplicationName(appName);
          registry.setAffinityDomain(affinityDomain);
-         registry.setAffinityDomainConfigDir("/domainconfig");
+         registry.setAffinityDomainConfigDir("${jboss.server.config.dir}/affinitydomain");
          registry.setAcceptedMimeTypes(mime);
          registry.setSoapLogDir(logDir);
          registry.setCreateMissingPIDs(createPID);
          registry.setCreateMissingCodes(createCode);
          registry.setCheckAffinityDomain(true);
          registry.setCheckMimetype(true);
-         return device;
-     }
+         registry.setPreMetadataCheck(false);
+         return registry;
+    }
 
-    private Device createXdsRepositoryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String repositoryUID, String[] registryURLs, String[] mime, String logDir) throws Exception {
-         Device device = new Device(name);
-         init(device, issuer, institutionCode);
+    private XdsRepository addRepository(Device device, String appName, String repositoryUID,
+            String[] registryURLs, String[] mime, String logDir) {
          XdsRepository rep = new XdsRepository();
          device.addDeviceExtension(rep);
          rep.setApplicationName(appName);
@@ -234,19 +380,94 @@ public class XdsConfigTestBase {
          rep.setCheckMimetype(true);
          rep.setAllowedCipherHostname("*");
          rep.setLogFullMessageHosts(new String[]{});
-         return device;
-     }
-    
+         return rep;
+    }
+    private XCARespondingGWCfg addXCARespondingGW(Device d) {
+        XCARespondingGWCfg respGW = new XCARespondingGWCfg();
+        d.addDeviceExtension(respGW);
+        respGW.setApplicationName(XCA_RESPONDING_GW);
+        respGW.setHomeCommunityID(HOME_COMMUNITY_ID);
+        respGW.setRegistryURL(XDS_REGISTRY_URI);
+        respGW.setRepositoryURLs(XDS_REPOSITORY_URIS);
+        respGW.setSoapLogDir(LOG_XDSLOG);
+        return respGW;
+    }
+    private XCAInitiatingGWCfg addXCAInitiatingGW(Device d) {
+        XCAInitiatingGWCfg initGW = new XCAInitiatingGWCfg();
+        d.addDeviceExtension(initGW);
+        initGW.setApplicationName(XCA_INITIATING_GW);
+        initGW.setHomeCommunityID(HOME_COMMUNITY_ID);
+        initGW.setRegistryURL(XDS_REGISTRY_URI);
+        initGW.setRepositoryURLs(XDS_REPOSITORY_URIS);
+        initGW.setSoapLogDir(LOG_XDSLOG);
+        initGW.setLocalPIXConsumerApplication(PIX_CONSUMER_APP);
+        initGW.setRemotePIXManagerApplication(PIX_MANAGER_APP);
+        initGW.setAssigningAuthoritiesMap(AUTHORITY_MAP);
+        initGW.setAsync(false);
+        initGW.setAsyncHandler(true);
+        initGW.setRespondingGWURLs(XDS_RESPGW_URIS);
+        initGW.setRespondingGWRetrieveURLs(XDS_RESPGW_URIS);
+        return initGW;
+    }
+    private XCAiRespondingGWCfg addXCAiRespondingGW(Device d) {
+        XCAiRespondingGWCfg respGW = new XCAiRespondingGWCfg();
+        d.addDeviceExtension(respGW);
+        respGW.setApplicationName(XCAI_RESPONDING_GW);
+        respGW.setHomeCommunityID(HOME_COMMUNITY_ID);
+        respGW.setXDSiSourceURLs(XDSI_SRC_URI);
+        respGW.setSoapLogDir(LOG_XDSLOG);
+        return respGW;
+    }
+    private XCAiInitiatingGWCfg addXCAiInitiatingGW(Device d) {
+        XCAiInitiatingGWCfg initGW = new XCAiInitiatingGWCfg();
+        d.addDeviceExtension(initGW);
+        initGW.setApplicationName(XCAI_INITIATING_GW);
+        initGW.setHomeCommunityID(HOME_COMMUNITY_ID);
+        initGW.setXDSiSourceURLs(XDSI_SRC_URI);
+        initGW.setSoapLogDir(LOG_XDSLOG);
+        initGW.setAsync(false);
+        initGW.setAsyncHandler(true);
+        initGW.setRespondingGWURLs(XDS_RESPGW_URIS);
+        return initGW;
+    }
+    private ArrayList<HL7Application> addHL7(Device device) throws Exception {
+        HL7DeviceExtension hl7Ext = new HL7DeviceExtension();
+        device.addDeviceExtension(hl7Ext);
+        ArrayList<HL7Application> hl7Apps = new ArrayList<HL7Application>();
+        HL7Application hl7App = createHL7Application(HL7_APP_NAME1, "hl7-conn", "localhost", 2575, 2576, device);
+        hl7Apps.add(hl7App);
+        hl7Ext.addHL7Application(hl7App);
+        return hl7Apps;
+    }
+    private AuditLogger addAuditLogger(Device device) throws Exception {
+        Connection udp = new Connection("audit-udp", "localhost");
+        udp.setProtocol(Connection.Protocol.SYSLOG_UDP);
+        udp.setPort(514);
+        device.addConnection(udp);
+        arrDeviceName = "dcm4cheARR";
+        Device arrDevice = new Device(arrDeviceName);
+        AuditRecordRepository arr = new AuditRecordRepository();
+        arrDevice.addDeviceExtension(arr);
+        Connection arrUDP = new Connection("audit-udp", "arr.dcm4che.org");
+        arrUDP.setProtocol(Connection.Protocol.SYSLOG_UDP);
+        arrUDP.setPort(514);
+        arrDevice.addConnection(arrUDP);
+        arr.addConnection(arrUDP);
+        config.persist(arrDevice);
+
+        AuditLogger logger = new AuditLogger();
+        device.addDeviceExtension(logger);
+        logger.addConnection(udp);
+        logger.setAuditRecordRepositoryDevice(arrDevice);
+        logger.setSchemaURI(AuditMessages.SCHEMA_URI);
+        return logger;
+    }
+
     private HL7Application createHL7Application(String appName, String connName,
             String host, int port, int tlsPort, Device xdsDevice) throws Exception {
          HL7Application hl7App = new HL7Application(appName);
          Connection conn = getOrCreateConnection(connName, host, port, xdsDevice);
          hl7App.addConnection(conn);
-         Connection connTLS = getOrCreateConnection(connName+"-tls", host, tlsPort, xdsDevice);
-         connTLS.setTlsCipherSuites(
-                 Connection.TLS_RSA_WITH_AES_128_CBC_SHA, 
-                 Connection.TLS_RSA_WITH_3DES_EDE_CBC_SHA);
-         hl7App.addConnection(connTLS);
          hl7App.setAcceptedMessageTypes(HL7_MESSAGE_TYPES);
          return hl7App;
      }
@@ -263,19 +484,21 @@ public class XdsConfigTestBase {
         return conn;
     }
 /*_*/    
-    private void checkXdsRegistryDevice(String name, Issuer issuer, Code institutionCode, String appName, 
-            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode, boolean check, Collection<HL7Application> hl7Apps) throws Exception {
-        Device device = config.findDevice(name);
+    private void checkXdsRegistry(Issuer issuer, Code institutionCode, String appName, 
+            String[] affinityDomain, String[] mime, String logDir, boolean createPID, boolean createCode,
+            boolean checkAD, boolean checkMime, boolean preMetaCheck, Collection<HL7Application> hl7Apps) throws Exception {
+        Device device = config.findDevice(testDeviceName);
         XdsRegistry app = device.getDeviceExtension(XdsRegistry.class);
-        String prefix = name+"-"+appName;
+        String prefix = testDeviceName+"-"+appName;
         assertArrayEquals(prefix + "-AffinityDomain: count:", affinityDomain, app.getAffinityDomain());
         assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
         assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
         assertArrayEquals(prefix + "-MimeTypes", mime, app.getAcceptedMimeTypes());
         assertEquals(prefix + "-createCode", createCode, app.isCreateMissingCodes());
         assertEquals(prefix + "-createPIDs", createPID, app.isCreateMissingPIDs());
-        assertEquals(prefix + "-checkAffinityDomain", check, app.isCheckAffinityDomain());
-        assertEquals(prefix + "-checkMimetype", check, app.isCheckMimetype());
+        assertEquals(prefix + "-checkAffinityDomain", checkAD, app.isCheckAffinityDomain());
+        assertEquals(prefix + "-checkMimetype", checkMime, app.isCheckMimetype());
+        assertEquals(prefix + "-preMetadataCheck", preMetaCheck, app.isPreMetadataCheck());
         HL7DeviceExtension foundHL7ext = device.getDeviceExtension(HL7DeviceExtension.class);
         assertEquals(prefix + "-NumberOfHL7Apps", 
                 hl7Apps == null ? 0 : hl7Apps.size(), 
@@ -307,17 +530,77 @@ public class XdsConfigTestBase {
 /*_*/
     }
 
-    private void checkXdsRepositoryDevice(String name, String appName, 
+    private void checkXdsRepository(String appName, 
             String repUID, String[] urls, String[] mime, String logDir, boolean check) throws Exception {
-        Device device = config.findDevice(name);
+        Device device = config.findDevice(testDeviceName);
         XdsRepository app = device.getDeviceExtension(XdsRepository.class);
-        String prefix = name+"-"+appName;
+        String prefix = testDeviceName+"-"+appName;
         assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
         assertEquals(prefix + "-repositoryUID", repUID, app.getRepositoryUID());
-        assertArrayEquals(prefix + "-RegistryURLs", urls, app.getRegistryURLs());
+        assertArrayEqualContent(prefix + "-RegistryURLs", urls, app.getRegistryURLs());
         assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
         assertArrayEquals(prefix + "-MimeTypes", mime, app.getAcceptedMimeTypes());
         assertEquals(prefix + "-checkMimetype", check, app.isCheckMimetype());
+    }
+    
+    private void checkXCARespondingGW(String appName, 
+            String homeID, String regUrl, String[] repUrls, String logDir) throws Exception {
+        Device device = config.findDevice(testDeviceName);
+        XCARespondingGWCfg app = device.getDeviceExtension(XCARespondingGWCfg.class);
+        String prefix = testDeviceName+"-"+appName;
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-HomeCommunityID", homeID, app.getHomeCommunityID());
+        assertEquals(prefix + "-RegistryURL", regUrl, app.getRegistryURL());
+        assertArrayEqualContent(prefix + "-RepositoryURLs", repUrls, app.getRepositoryURLs());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+    }
+    private void checkXCAInitiatingGW(String appName, String homeID, String regUrl, 
+            String[] repUrls, String logDir, String pixConsumer, String pixMgr, String[] authMap,
+            boolean async, boolean asyncHandler, String[] rspGWurls, String[] rspGWRetrUrls) throws Exception {
+        Device device = config.findDevice(testDeviceName);
+        XCAInitiatingGWCfg app = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+        String prefix = testDeviceName+"-"+appName;
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-HomeCommunityID", homeID, app.getHomeCommunityID());
+        assertEquals(prefix + "-RegistryURL", regUrl, app.getRegistryURL());
+        assertArrayEqualContent(prefix + "-RepositoryURLs", repUrls, app.getRepositoryURLs());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+
+        assertEquals(prefix + "-PIXConsumer", pixConsumer, app.getLocalPIXConsumerApplication());
+        assertEquals(prefix + "-PIXManager", pixMgr, app.getRemotePIXManagerApplication());
+        assertArrayEqualContent(prefix + "-AssigningAuthMap", authMap, app.getAssigningAuthoritiesMap());
+        assertEquals(prefix + "-Async", async, app.isAsync());
+        assertEquals(prefix + "-AsyncHandler", asyncHandler, app.isAsyncHandler());
+        assertArrayEqualContent(prefix + "-RespondingGWURLs", rspGWurls, app.getRespondingGWURLs());
+        assertArrayEqualContent(prefix + "-RespondingGWRetrieveURLs", rspGWRetrUrls, app.getRespondingGWRetrieveURLs());
+    }
+    private void checkXCAiRespondingGW(String appName, 
+            String homeID, String[] imgsrcUrls, String logDir) throws Exception {
+        Device device = config.findDevice(testDeviceName);
+        XCAiRespondingGWCfg app = device.getDeviceExtension(XCAiRespondingGWCfg.class);
+        String prefix = testDeviceName+"-"+appName;
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-HomeCommunityID", homeID, app.getHomeCommunityID());
+        assertArrayEqualContent(prefix + "-ImagingSourceURL", imgsrcUrls, app.getXDSiSourceURLs());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+    }
+    private void checkXCAiInitiatingGW(String appName, String homeID, 
+            String[] imgsrcUrls, String logDir, boolean async, boolean asyncHandler, String[] rspGWurls) throws Exception {
+        Device device = config.findDevice(testDeviceName);
+        XCAiInitiatingGWCfg app = device.getDeviceExtension(XCAiInitiatingGWCfg.class);
+        String prefix = testDeviceName+"-"+appName;
+        assertEquals(prefix + "-ApplicationName", appName, app.getApplicationName());
+        assertEquals(prefix + "-HomeCommunityID", homeID, app.getHomeCommunityID());
+        assertArrayEqualContent(prefix + "-ImagingSourceURL", imgsrcUrls, app.getXDSiSourceURLs());
+        assertEquals(prefix + "-SoapLogDir", logDir, app.getSoapLogDir());
+
+        assertEquals(prefix + "-Async", async, app.isAsync());
+        assertEquals(prefix + "-AsyncHandler", asyncHandler, app.isAsyncHandler());
+        assertArrayEqualContent(prefix + "-RespondingGWURLs", rspGWurls, app.getRespondingGWURLs());
+    }
+   
+    protected HL7Application findHL7Application(String hl7AppName1) throws ConfigurationException {
+        return null;
     }
     
     private boolean isEqual(Object o1, Object o2) {
@@ -326,4 +609,29 @@ public class XdsConfigTestBase {
         }
         return o1.equals(o2);
     }
+    
+    private void assertArrayEqualContent(String msg, String[] expected,
+            String[] actual) {
+        if (expected == null) {
+            if (actual != null) 
+                fail(msg+" expected null! String[].length:"+actual.length);
+            return;
+        } else if (actual == null) {
+            fail(msg+" expected not null!");
+        }
+        if (expected.length != actual.length)
+            fail(msg+" array length is different! expected:"+expected.length+" but was "+actual.length);
+        String a;
+        loop: for (String e : expected) {
+            for (int i = 0 ; i < actual.length ; i++) {
+                a = actual[i];
+                if ((e == null && a == null) || (e != null && e.equals(a))) {
+                    actual[i]="@"+a+"@DELETED";
+                    continue loop;
+                }
+            }
+            fail(msg+" Expected element not found:"+e);
+        }
+    }
+
 }

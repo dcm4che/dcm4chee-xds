@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.bind.JAXBElement;
 
@@ -65,6 +66,10 @@ public class Util {
     protected static ObjectFactory rimFactory = new ObjectFactory();
     
     private static SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static SimpleDateFormat dfUTC = new SimpleDateFormat("yyyyMMddHHmmss");
+    static {
+        dfUTC.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
     
     public static ExternalIdentifierType createExternalIdentifier(String id,
             String scheme, String registryObject, String value, String name) {
@@ -229,10 +234,17 @@ public class Util {
         ro.setName(is);
     }
     
-    public static String toTimeString(Date d) {
+    public static String toUTCTimeString(Date d) {
+        return d == null ? null : dfUTC.format(d);
+    }
+    public static String toLocalTimeString(Date d) {
         return d == null ? null : df.format(d);
     }
     public static Date toDate(String d) throws ParseException {
-        return d == null ? null : "now()".equals(d) ? new Date() : df.parse(d);
+        return toDate(d, false);
+    }
+    public static Date toDate(String d, boolean utc) throws ParseException {
+        return d == null ? null : "now()".equals(d) ? new Date() : 
+            utc ? dfUTC.parse(d) : df.parse(d);
     }
 }

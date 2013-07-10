@@ -283,7 +283,7 @@ public class PnRRequest {
     public ProvideAndRegisterDocumentSetRequestType createInfoset() throws MetadataConfigurationException {
         checkMetadata();
         Util.addCode(nextID(), submissionSet, XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, contentTypeCode);
-        Util.addSlot(submissionSet, XDSConstants.SLOT_NAME_SUBMISSION_TIME, null, Util.toTimeString(submissionTime));
+        Util.addSlot(submissionSet, XDSConstants.SLOT_NAME_SUBMISSION_TIME, null, Util.toUTCTimeString(submissionTime));
         if (title != null)
             Util.setName(submissionSet, title);
         if (comments != null)

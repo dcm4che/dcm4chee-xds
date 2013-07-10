@@ -170,8 +170,9 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             }
         }
         if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
-            MDC.put("initiatorFinished", "true");
             log.info("SOAP message "+getWsaHeader(ctx, "RelatesTo", null)+" finished!");
+            MDC.put("initiatorFinished", "true");
+            log.info("Close log file after request finished!");
             MDC.remove("initiatorLogDir");
             MDC.remove("initiatorMsgID");
             MDC.remove("initiatorFinished");

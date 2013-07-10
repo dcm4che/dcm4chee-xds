@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.conf;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.prefs.Preferences;
@@ -47,6 +48,10 @@ import org.dcm4che.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
 import org.dcm4che.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
 import org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che.util.SafeClose;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAInitiatingGWConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCARespondingGWConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiInitiatingGWConfiguration;
+import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiRespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
 import org.junit.Before;
@@ -66,6 +71,10 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
         PreferencesDicomConfiguration cfg = new PreferencesDicomConfiguration(Preferences.userRoot());
         cfg.addDicomConfigurationExtension(new PreferencesXDSRegistryConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesXCARespondingGWConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesXCAInitiatingGWConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesXCAiRespondingGWConfiguration());
+        cfg.addDicomConfigurationExtension(new PreferencesXCAiInitiatingGWConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesHL7Configuration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
@@ -76,15 +85,27 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
     @Override
     public void afterPersist() throws Exception{
         String export = System.getProperty("export");
-        if (export == null)
-            return;
-
-        OutputStream os = new FileOutputStream(export);
-        try {
-            ((PreferencesDicomConfiguration) config)
-                    .getDicomConfigurationRoot().exportSubtree(os);
-        } finally {
-            SafeClose.close(os);
+        PreferencesDicomConfiguration cfg = (PreferencesDicomConfiguration) config;
+        String defaultCfgNodePath = cfg.deviceRef(DEFAULT_XDS_DEVICE);
+        if (DEFAULT_XDS_DEVICE.equals(testDeviceName) && cfg.getRootPrefs().nodeExists(defaultCfgNodePath)) {
+            new File("target/prefs").mkdirs();
+            OutputStream os = new FileOutputStream("target/prefs/defaultXDSDevice.xml");
+            try {
+                cfg.getRootPrefs().node(defaultCfgNodePath).exportSubtree(os);
+            } finally {
+                SafeClose.close(os);
+            }
+        } else if (export != null) {
+            File f = new File(export);
+            f.mkdirs();
+            OutputStream os = new FileOutputStream(new File(f, testDeviceName+".prefs.xml"));
+            try {
+                ((PreferencesDicomConfiguration) config)
+                        .getDicomConfigurationRoot().exportSubtree(os);
+            } finally {
+                SafeClose.close(os);
+            }
         }
+        
     }
 }

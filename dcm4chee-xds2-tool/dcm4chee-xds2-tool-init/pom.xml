@@ -32,9 +32,7 @@
 		<artifactId>dcm4chee-xds2-tool</artifactId>
 		<version>2.0.0</version>
 	</parent>
-	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-tool-init</artifactId>
-	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>XDS Tool Init</name>
 	<dependencies>
@@ -82,4 +80,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<description>Commandline tool for XDS initialization (ebXML classifications defined for XDS)</description>
 </project>

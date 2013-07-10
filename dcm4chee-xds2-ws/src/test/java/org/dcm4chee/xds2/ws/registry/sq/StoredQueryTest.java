@@ -49,6 +49,7 @@ import javax.ejb.EJB;
 import javax.xml.bind.JAXBException;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
@@ -124,6 +125,7 @@ public class StoredQueryTest {
     @Before
     public void prepare() {
         if (testCount++ == 0) {
+            XDSAudit.setAuditLogger(null); 
             findDocTests = new SQFindDocumentsTests(session);
             findSubmTests = new SQFindSubmissionSetTests(session);
             findFolderTests = new SQFindFolderTests(session);

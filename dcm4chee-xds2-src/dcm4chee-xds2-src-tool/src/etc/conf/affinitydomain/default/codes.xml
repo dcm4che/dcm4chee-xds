@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-	<!--
-		29 Oct 09 - Added codes for NHIN - labeled NHIN 2009
-		
-		Document : codes.xml Created on : October 13, 2004, 2:51 PM Last
-		updated on : February 20, 2008 Author : bill Description: Required
-		values for XDS Codes for Pre-Connectathon and Connectathon testing
-
-		Change Log: 2/20/08 - major update to confidentialityCode section -
-		update to BPPC and HIMSS showcase 2/20/08 - added comment about
-		multiple Affinity Domain patient ID domains
-	-->
+<!-- 29 Oct 09 - Added codes for NHIN - labeled NHIN 2009 Document : codes.xml 
+	Created on : October 13, 2004, 2:51 PM Last updated on : February 20, 2008 
+	Author : bill Description: Required values for XDS Codes for Pre-Connectathon 
+	and Connectathon testing Change Log: 2/20/08 - major update to confidentialityCode 
+	section - update to BPPC and HIMSS showcase 2/20/08 - added comment about 
+	multiple Affinity Domain patient ID domains -->
 <Codes>
 	<CodeType name="contentTypeCode" classScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500">
 		<Code code="unobtainable" display="unobtainable"
@@ -106,15 +101,15 @@
 
 	</CodeType>
 	<CodeType name="classCode" classScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a">
-		
+
 		<!-- Added for NHIN Sept. 2009 -->
 		<Code code="10160-0" codingScheme="2.16.840.1.113883.6.1"
 			display="History of MEdication Use" />
 		<Code code="44943-9" codingScheme="2.16.840.1.113883.6.1"
 			display="Self management - Patient" />
-		
-		
-		
+
+
+
 		<Code code="unobtainable" display="unobtainable" codingScheme="Connect-a-thon classCodes" />
 		<Code code="Consent" display="Consent" codingScheme="Connect-a-thon classCodes" />
 		<Code code="Communication" display="Communication" codingScheme="Connect-a-thon classCodes" />
@@ -203,11 +198,11 @@
 			display="CYTOLOGY STUDIES" />
 		<Code code="11502-2" codingScheme="2.16.840.1.113883.6.1"
 			display="LABORATORY REPORT.TOTAL" />
-		
+
 		<!-- Added for NHIN Sept. 2009 -->
 		<Code code="44943-9" codingScheme="2.16.840.1.113883.6.1"
 			display="Self management - Patient" />
-		
+
 		<Code code="18717-9" codingScheme="2.16.840.1.113883.6.1"
 			display="BLOOD BANK STUDIES" />
 		<Code code="18719-5" codingScheme="2.16.840.1.113883.6.1"
@@ -238,36 +233,33 @@
 			display="MOLECULAR PATHOLOGY STUDIES" />
 		<Code code="26438-2" codingScheme="2.16.840.1.113883.6.1"
 			display="CYTOLOGY STUDIES" />
-		
-		
-			
-		<!--  Codes for testing MPQ - since no patient id restrictions are used we need to have
-		some really restricted codes that are not used elsewhere.  Do not submit metadata with 
-		these codes unless you are testing MPQ -->
 
-		<Code code="MPQ-classcode-1" codingScheme="MPQ Testing"
-			display="MPQ-classcode-1" />
 
-		<Code code="MPQ-classcode-2" codingScheme="MPQ Testing"
-			display="MPQ-classcode-2" />
-			
-	    <!--  added for BPPC -->
+
+		<!-- Codes for testing MPQ - since no patient id restrictions are used 
+			we need to have some really restricted codes that are not used elsewhere. 
+			Do not submit metadata with these codes unless you are testing MPQ -->
+
+		<Code code="MPQ-classcode-1" codingScheme="MPQ Testing" display="MPQ-classcode-1" />
+
+		<Code code="MPQ-classcode-2" codingScheme="MPQ Testing" display="MPQ-classcode-2" />
+
+		<!-- added for BPPC -->
 		<Code code="57016-8" codingScheme="2.16.840.1.113883.6.1"
 			display="Privacy Policy Acknowledgement" />
-		
+
 	</CodeType>
 	<CodeType name="confidentialityCode" classScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f">
 		<!-- Added Sept. 2009 NHIN -->
 		<Code code="N" display="Normal" codingScheme="2.16.840.1.113883.5.25" />
 		<Code code="R" display="Restricted" codingScheme="2.16.840.1.113883.5.25" />
 		<Code code="V" display="very restricted" codingScheme="2.16.840.1.113883.5.25" />
-		
-		<!--
-			The following codes are defined by HL7 and are not used in XDS
-			Metadata, but may show up in CDA documents. They will be removed from
-			this table at the end of the European testing season
-		-->
-		<Code code="unobtainable" display="unobtainable" codingScheme="Connect-a-thon confidentialityCodes" />
+
+		<!-- The following codes are defined by HL7 and are not used in XDS Metadata, 
+			but may show up in CDA documents. They will be removed from this table at 
+			the end of the European testing season -->
+		<Code code="unobtainable" display="unobtainable"
+			codingScheme="Connect-a-thon confidentialityCodes" />
 		<Code code="C" display="Celebrity" codingScheme="Connect-a-thon confidentialityCodes" />
 		<Code code="D" display="Clinician" codingScheme="Connect-a-thon confidentialityCodes" />
 		<Code code="I" display="Individual" codingScheme="Connect-a-thon confidentialityCodes" />
@@ -279,16 +271,12 @@
 
 
 
-		<!--
-			The following codes represent policies that may be used as XDS
-			Metadata ConfidentialityCodes to indicate the policy that must be
-			followed as defined BPPC options
-		-->
+		<!-- The following codes represent policies that may be used as XDS Metadata 
+			ConfidentialityCodes to indicate the policy that must be followed as defined 
+			BPPC options -->
 
-		<!--
-			The following codes were used in the past, but are not used this
-			year. They will be removed at the end of the European testing season
-		-->
+		<!-- The following codes were used in the past, but are not used this year. 
+			They will be removed at the end of the European testing season -->
 		<Code code="1.3.6.1.4.1.21367.2006.7.101" display="Clinical-Staff"
 			codingScheme="Connect-a-thon confidentialityCodes" />
 		<Code code="1.3.6.1.4.1.21367.2006.7.102" display="Clinical-Spouse"
@@ -309,25 +297,28 @@
 
 		<Code code="1.3.6.1.4.1.21367.2006.7.106" display="No Sharing"
 			codingScheme="Connect-a-thon confidentialityCodes" />
-			
+
 		<Code code="1.3.6.1.4.1.21367.2006.7.107" display="Normal Sharing"
 			codingScheme="Connect-a-thon confidentialityCodes" />
-			
+
 		<Code code="1.3.6.1.4.1.21367.2006.7.108" display="Normal Sharing Plus Research Use"
 			codingScheme="Connect-a-thon confidentialityCodes" />
 		<Code code="1.3.6.1.4.1.21367.2006.7.109" display="Restricted VIP Sharing"
 			codingScheme="Connect-a-thon confidentialityCodes" />
 	</CodeType>
 	<CodeType name="formatCode" classScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d">
-		
+
 		<!-- Added Sept. 2009 NHIN -->
-		<Code code="urn:ihe:pcc:apr:lab:2008" display="PDF embedded in CDA per XDS-SD profile" codingScheme="IHE-PCC"/>
-		<Code code="urn:ihe:pcc:apr:lab:2008" display="Test embedded in CDA per XDS-SD profile" codingScheme="IHE-PCC" />
-		<Code code="2.16.840.1.113883.10.20.1" display="HL7 CCD Document" codingScheme="HITSP"/>
-		<Code code="1.3.6.1.4.1.19376.1.3.3" display="IHE XD-Lab Document" codingScheme="IHE-LAB"/>
-		
-		<Code code="unobtainable" display="unobtainable"
-			codingScheme="Connect-a-thon formatCodes" />
+		<Code code="urn:ihe:pcc:apr:lab:2008" display="PDF embedded in CDA per XDS-SD profile"
+			codingScheme="IHE-PCC" />
+		<Code code="urn:ihe:pcc:apr:lab:2008" display="Test embedded in CDA per XDS-SD profile"
+			codingScheme="IHE-PCC" />
+		<Code code="2.16.840.1.113883.10.20.1" display="HL7 CCD Document"
+			codingScheme="HITSP" />
+		<Code code="1.3.6.1.4.1.19376.1.3.3" display="IHE XD-Lab Document"
+			codingScheme="IHE-LAB" />
+
+		<Code code="unobtainable" display="unobtainable" codingScheme="Connect-a-thon formatCodes" />
 		<Code code="ScanTEXT/IHE 1.x" display="ScanTEXT/IHE 1.x"
 			codingScheme="Connect-a-thon formatCodes" />
 		<Code code="ScanPDF/IHE 1.x" display="ScanPDF/IHE 1.x"
@@ -354,7 +345,7 @@
 			codingScheme="Connect-a-thon formatCodes" />
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.7" display="Privacy Consent Policy"
 			codingScheme="IHE BPPC" />
-		<!--  new PCC codes Nov 20, 2007 -->
+		<!-- new PCC codes Nov 20, 2007 -->
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.3" display="urn:ihe:pcc:xds-ms:2007"
 			codingScheme="IHE PCC" />
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.10" display="urn:ihe:pcc:edr:2007"
@@ -363,10 +354,8 @@
 			codingScheme="IHE PCC" />
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.11.2" display="urn:ihe:pcc:aps:2007"
 			codingScheme="IHE PCC" />
-		<!--
-			removed Nov 2,2006 <Code code="IHE/PCC/MS/1.0" display="XDS-MS"
-			codingScheme="Connect-a-thon formatCodes"/>
-		-->
+		<!-- removed Nov 2,2006 <Code code="IHE/PCC/MS/1.0" display="XDS-MS" codingScheme="Connect-a-thon 
+			formatCodes"/> -->
 		<!-- added for XDS-I -->
 		<Code code="IHE/multipart" display="multipart" codingScheme="Connect-a-thon formatCodes" />
 		<Code code="1.2.840.10008.5.1.4.1.1.88.59" display="Key Object Selection Document"
@@ -378,31 +367,47 @@
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.16.1.3" display="urn:ihe:pcc:apr:edu:2008"
 			codingScheme="IHE PCC" />
 		<Code code="1.3.6.1.4.1.19376.1.5.3.1.1.18.1.2" display="urn:ihe:pcc:irc:2008"
-		codingScheme="IHE PCC" />
-		
+			codingScheme="IHE PCC" />
+
 		<!-- Added 2/22/09 -->
-		<Code code="urn:ihe:pcc:xds-ms:2007" display="Medical Summaries" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:xphr:2007" display="Exchange of Personal Health Records" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:edr:2007" display="Emergency Department Referral" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:aps:2007" display="Antepartum Summary" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:edes:2007" display="Emergency Department Encounter Summary" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:apr:handp:2008" display="Antepartum Record History and Physical" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:apr:lab:2008" display="Antepartum Record Laboratory" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:apr:edu:2008" display="Antepartum Record Education" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:pcc:irc:2008" display="Immunization Registry Content" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:iti:xds-sd:pdf:2008" display="Scanned Documents PDF" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:iti:xds-sd:text:2008" display="Scanned Documents Text" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:iti:bppc:2007" display="Basic Patient Privacy Consents" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:iti:bppc-sd:2007" display="Basic Patient Privacy Consents with Scanned Document" codingScheme="IHE PCC" />
-		<Code code="urn:ihe:lab:xd-lab:2008" display="CDA Laboratory Report" codingScheme="IHE PCC" />
-		
-		<Code code="urn:ihe:iti:xds-sd:pdf:2008" display="Scanned Documents PDF" codingScheme="1.3.6.1.4.1.19376.1.2.3" />
-		<Code code="urn:ihe:iti:xds-sd:text:2008" display="Scanned Documents Text" codingScheme="1.3.6.1.4.1.19376.1.2.3" />
-		
-		
+		<Code code="urn:ihe:pcc:xds-ms:2007" display="Medical Summaries"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:xphr:2007" display="Exchange of Personal Health Records"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:edr:2007" display="Emergency Department Referral"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:aps:2007" display="Antepartum Summary"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:edes:2007" display="Emergency Department Encounter Summary"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:apr:handp:2008" display="Antepartum Record History and Physical"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:apr:lab:2008" display="Antepartum Record Laboratory"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:apr:edu:2008" display="Antepartum Record Education"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:pcc:irc:2008" display="Immunization Registry Content"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:iti:xds-sd:pdf:2008" display="Scanned Documents PDF"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:iti:xds-sd:text:2008" display="Scanned Documents Text"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:iti:bppc:2007" display="Basic Patient Privacy Consents"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:iti:bppc-sd:2007" display="Basic Patient Privacy Consents with Scanned Document"
+			codingScheme="IHE PCC" />
+		<Code code="urn:ihe:lab:xd-lab:2008" display="CDA Laboratory Report"
+			codingScheme="IHE PCC" />
+
+		<Code code="urn:ihe:iti:xds-sd:pdf:2008" display="Scanned Documents PDF"
+			codingScheme="1.3.6.1.4.1.19376.1.2.3" />
+		<Code code="urn:ihe:iti:xds-sd:text:2008" display="Scanned Documents Text"
+			codingScheme="1.3.6.1.4.1.19376.1.2.3" />
+
+
 	</CodeType>
 	<CodeType name="healthcareFacilityTypeCode" classScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1">
-		
+
 		<!-- Added Sept. 2009 NHIN -->
 		<Code code="281PC2000N" display="Hospitals; Chronic Disease Hospital; Children"
 			codingScheme="2.16.840.1.113883.5.11" />
@@ -418,132 +423,90 @@
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="2865M2000N" display="Hospitals; Military Hospital; Medical Center"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="2865X1600N" display="Hospitals; Military Hospital; Operational Component Facility"
+		<Code code="2865X1600N"
+			display="Hospitals; Military Hospital; Operational Component Facility"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ACC" display="Accident Site"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ALL" display="Allergy clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="AMB" display="Ambulance"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="AMPUT" display="Amputee clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ACC" display="Accident Site" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ALL" display="Allergy clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="AMB" display="Ambulance" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="AMPUT" display="Amputee clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="BMTC" display="Bone marrow transplant clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="BMTU" display="Bone marrow transplant unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="BREAST" display="Breast clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="BREAST" display="Breast clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="CANC" display="Child and adolescent neurology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="CAPC" display="Child and adolescent psychiatry clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="CARD" display="Ambulatory Health Care Facilities; Clinic/Center; Rehabilitation; Cardiac Facilities"
+		<Code code="CARD"
+			display="Ambulatory Health Care Facilities; Clinic/Center; Rehabilitation; Cardiac Facilities"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="CATH" display="Cardiac catheterization lab"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="CCU" display="Coronary care unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="CHEST" display="Chest unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="CHR" display="Chronic care unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="COAG" display="Coagulation clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="COMM" display="Community Location"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="CCU" display="Coronary care unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="CHEST" display="Chest unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="CHR" display="Chronic care unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="COAG" display="Coagulation clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="COMM" display="Community Location" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="CRS" display="Colon and rectal surgery clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="CVDX" display="Cardiovascular diagnostics or therepeutics unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="DADDR" display="Delvery Address"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="DERM" display="Dermatology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="DADDR" display="Delvery Address" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="DERM" display="Dermatology clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="DX" display="Diagnostics or therapeutics unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ECHO" display="Echocardiography lab"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ENDO" display="Endocrinology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ENDOS" display="Endoscopy lab"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ECHO" display="Echocardiography lab" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ENDO" display="Endocrinology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ENDOS" display="Endoscopy lab" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="ENT" display="Otorhimolaryngology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="EPIL" display="Epilepsy unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ER" display="Emergency room"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ETU" display="Emergency Trauma unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="FMC" display="Family medicine clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="EPIL" display="Epilepsy unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ER" display="Emergency room" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ETU" display="Emergency Trauma unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="FMC" display="Family medicine clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="GACH" display="Hospitals; General Acute Care Hospital"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="GI" display="Gastroenterology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="GI" display="Gastroenterology clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="GIDX" display="Gasteroenterology diagnosis or theraputics lab"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="GIM" display="General internal medicine clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="GYN" display="Gynecology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HAND" display="Hand clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HD" display="Hemodialysis unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HEM" display="Hemotology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HOSP" display="Hospitals"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HTN" display="Hypertension clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="HU" display="Hospital unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ICU" display="Intesnive care unit"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="GYN" display="Gynecology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HAND" display="Hand clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HD" display="Hemodialysis unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HEM" display="Hemotology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HOSP" display="Hospitals" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HTN" display="Hypertension clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="HU" display="Hospital unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ICU" display="Intesnive care unit" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="IEC" display="Impairment evaluation center"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="INFD" display="Infectious disease center"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="INV" display="Infertility clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="LYMPH" display="Lympedema clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="MGEN" display="Medical genetics clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="MHSP" display="Military Hospital"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="MOBL" display="Mobile unit"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="INV" display="Infertility clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="LYMPH" display="Lympedema clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="MGEN" display="Medical genetics clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="MHSP" display="Military Hospital" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="MOBL" display="Mobile unit" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="NCCF" display="Nursing or custodial care facility"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="NCCS" display="Neurology critical care and stroke unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="NEPH" display="Nephrology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="NEUR" display="Neurology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="NS" display="Neurosurgery unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="OB" display="Obstetrics clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="OF" display="Outpatient facility"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="NEPH" display="Nephrology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="NEUR" display="Neurology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="NS" display="Neurosurgery unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="OB" display="Obstetrics clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="OF" display="Outpatient facility" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="OMS" display="Oral and maxillofacial surgery clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ONCL" display="Medical oncology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="OPH" display="Opthamology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="ORTHO" display="Orthopedics clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PAINCL" display="Pain clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PC" display="Primary care clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PEDC" display="Pediatrics clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ONCL" display="Medical oncology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="OPH" display="Opthamology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="ORTHO" display="Orthopedics clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PAINCL" display="Pain clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PC" display="Primary care clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PEDC" display="Pediatrics clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PEDCARD" display="Pediatric cardiology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PEDE" display="Pediatric  endocrinolgy clinci"
@@ -552,7 +515,7 @@
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PEDHEM" display="Pediatric hematology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		
+
 		<Code code="PEDHO" display="Pediatric oncology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PEDICU" display="Pediatric intensive care unit"
@@ -565,78 +528,55 @@
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PEDRHEUM" display="Pediatric rheumatology clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PEDU" display="Pediatric unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PHARM" display="Pharmacy"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PEDU" display="Pediatric unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PHARM" display="Pharmacy" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PHU" display="Pyschiatric hospital unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PLS" display="Plastic surgery clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="POD" display="Podiatry clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PLS" display="Plastic surgery clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="POD" display="Podiatry clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PRC" display="Pain rehabilitation center"
 			codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PREV" display="Preventive medicine clinic"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PROCTO" display="Proctology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PROFF" display="Provider's office"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PROS" display="Prosthodontics clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PSI" display="Phychology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PSY" display="Psychiatry clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PROCTO" display="Proctology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PROFF" display="Provider's office" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PROS" display="Prosthodontics clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PSI" display="Phychology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PSY" display="Psychiatry clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="PSYCHF" display="Psychiatric care facility"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="PTRES" display="Patient's residence"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="PTRES" display="Patient's residence" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="RADDX" display="Radiology diagnostics or therapeutics unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="RADO" display="Radiation oncology unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="RH" display="Rehabilitation hospital"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="RHEUM" display="Rheumatology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="RADO" display="Radiation oncology unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="RH" display="Rehabilitation hospital" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="RHEUM" display="Rheumatology clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="RHU" display="Rehabilitation hospital unit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="RNEU" display="Neuroradiology unit"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="RNEU" display="Neuroradiology unit" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="RTF" display="Residential treatment Facility"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="SCHOOL" display="school"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="SLEEP" display="Sleep disporders unit"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="SNF" display="Skilled nursing facility"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="SPMED" display="Sports medicine clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="SU" display="Surgery clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="SCHOOL" display="school" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="SLEEP" display="Sleep disporders unit" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="SNF" display="Skilled nursing facility" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="SPMED" display="Sports medicine clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="SU" display="Surgery clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="SURF" display="Substance use rehabilitation facility"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="TR" display="Transplant clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="TR" display="Transplant clinic" codingScheme="2.16.840.1.113883.5.11" />
 		<Code code="TRAVEL" display="Travel and geographic medicine clinit"
 			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="URO" display="Urology clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="WND" display="Wound clinic"
-			codingScheme="2.16.840.1.113883.5.11" />
-		<Code code="WORK" display="work site"
-			codingScheme="2.16.840.1.113883.5.11" />
-		
+		<Code code="URO" display="Urology clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="WND" display="Wound clinic" codingScheme="2.16.840.1.113883.5.11" />
+		<Code code="WORK" display="work site" codingScheme="2.16.840.1.113883.5.11" />
+
 		<!-- End NHIN 2009 -->
-		
-		
-		
+
+
+
 		<Code code="unobtainable" display="unobtainable"
 			codingScheme="Connect-a-thon healthcareFacilityTypeCodes" />
-		
+
 		<Code code="Home" display="Home"
 			codingScheme="Connect-a-thon healthcareFacilityTypeCodes" />
 		<Code code="Assisted Living" display="Assisted Living"
@@ -665,30 +605,26 @@
 			codingScheme="Connect-a-thon healthcareFacilityTypeCodes" />
 		<Code code="Outpatient" display="Outpatient"
 			codingScheme="Connect-a-thon healthcareFacilityTypeCodes 2" />
-			
-		<!--  Codes for testing MPQ - since no patient id restrictions are used we need to have
-		some really restricted codes that are not used elsewhere.  Do not submit metadata with 
-		these codes unless you are testing MPQ -->
 
-		<Code code="MPQ-hcftcode-1" codingScheme="MPQ Testing"
-			display="MPQ-hcftcode-1" />
-		<Code code="MPQ-hcftcode-2" codingScheme="MPQ Testing"
-			display="MPQ-hcftcode-2" />
-		
+		<!-- Codes for testing MPQ - since no patient id restrictions are used 
+			we need to have some really restricted codes that are not used elsewhere. 
+			Do not submit metadata with these codes unless you are testing MPQ -->
+
+		<Code code="MPQ-hcftcode-1" codingScheme="MPQ Testing" display="MPQ-hcftcode-1" />
+		<Code code="MPQ-hcftcode-2" codingScheme="MPQ Testing" display="MPQ-hcftcode-2" />
+
 	</CodeType>
 	<CodeType name="practiceSettingCode" classScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead">
-		
+
 		<!-- Added Sept, 2009 NHIN -->
-		<Code code="394802001" display="General Medicine"
-			codingScheme="2.16.840.1.113883.6.96" />
+		<Code code="394802001" display="General Medicine" codingScheme="2.16.840.1.113883.6.96" />
 		<Code code="408478003" display="Critical Care Medicine"
 			codingScheme="2.16.840.1.113883.6.96" />
-		<Code code="410001006" display="Military Medicine"
-			codingScheme="2.16.840.1.113883.6.96" />
-		
-		
-		
-		
+		<Code code="410001006" display="Military Medicine" codingScheme="2.16.840.1.113883.6.96" />
+
+
+
+
 		<Code code="unobtainable" display="unobtainable"
 			codingScheme="Connect-a-thon practiceSettingCodes" />
 		<Code code="Anesthesia" display="Anesthesia"
@@ -784,9 +720,7 @@
 			codingScheme="Connect-a-thon practiceSettingCodes" />
 	</CodeType>
 	<CodeType name="eventCodeList" classScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4">
-		<!-- 
-        These codes were generated for RSNA 2008
-        -->
+		<!-- These codes were generated for RSNA 2008 -->
 
 		<Code code="TRID1001" display="XRAY CHEST Orderable"
 			codingScheme="RSNA2008 eventCodeList" />
@@ -858,10 +792,8 @@
 			display="MR ACQUISITION CORONAL PD-2D(SE_M)_N/M  KNEE RIGHT Procedure Step"
 			codingScheme="RSNA2008 eventCodeList" />
 
-		<!--
-			The following codes represent policies that may be Acknowledged by
-			the patient using the BPPC Content Profile
-		-->
+		<!-- The following codes represent policies that may be Acknowledged by 
+			the patient using the BPPC Content Profile -->
 
 		<Code code="1.3.6.1.4.1.21367.2006.7.106" display="OPT-OUT"
 			codingScheme="Connect-a-thon eventCodeList" />
@@ -1300,86 +1232,66 @@
 		<Code codingScheme="DCM" code="XA" display="X-Ray Angiography" />
 		<Code codingScheme="DCM" code="NONE" display="None" />
 		<!-- End of CID 29 -->
-		
-				<!--  Codes for testing MPQ - since no patient id restrictions are used we need to have
-		some really restricted codes that are not used elsewhere.  Do not submit metadata with 
-		these codes unless you are testing MPQ -->
 
-		<Code code="MPQ-eventcode-1" codingScheme="MPQ Testing"
-			display="MPQ-eventcode-1" />
-		<Code code="MPQ-eventcode-2" codingScheme="MPQ Testing"
-			display="MPQ-eventcode-2" />
-		
+		<!-- Codes for testing MPQ - since no patient id restrictions are used 
+			we need to have some really restricted codes that are not used elsewhere. 
+			Do not submit metadata with these codes unless you are testing MPQ -->
+
+		<Code code="MPQ-eventcode-1" codingScheme="MPQ Testing" display="MPQ-eventcode-1" />
+		<Code code="MPQ-eventcode-2" codingScheme="MPQ Testing" display="MPQ-eventcode-2" />
+
 	</CodeType>
-	
-	<!-- 
-		
-		This section replaced by folderCodeList below.
-		
-		
-	<CodeType name="codeList" classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5">
-		<Code code="Anesthesia" display="Anesthesia" codingScheme="Connect-a-thon codeList" />
-		<Code code="Cardiology" display="Cardiology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Case Manager" display="Case Manager" codingScheme="Connect-a-thon codeList" />
-		<Code code="Chaplain" display="Chaplain" codingScheme="Connect-a-thon codeList" />
-		<Code code="Chemotherapy" display="Chemotherapy" codingScheme="Connect-a-thon codeList" />
-		<Code code="Chiropractic" display="Chiropractic" codingScheme="Connect-a-thon codeList" />
-		<Code code="Critical Care" display="Critical Care" codingScheme="Connect-a-thon codeList" />
-		<Code code="Dentistry" display="Dentistry" codingScheme="Connect-a-thon codeList" />
-		<Code code="Diabetology" display="Diabetology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Dialysis" display="Dialysis" codingScheme="Connect-a-thon codeList" />
-		<Code code="Emergency" display="Emergency" codingScheme="Connect-a-thon codeList" />
-		<Code code="Endocrinology" display="Endocrinology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Gastroenterology" display="Gastroenterology"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="General Medicine" display="General Medicine"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="General Surgery" display="General Surgery"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Gynecology" display="Gynecology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Labor and Delivery" display="Labor and Delivery"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Laboratory" display="Laboratory" codingScheme="Connect-a-thon codeList" />
-		<Code code="Multidisciplinary" display="Multidisciplinary"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Neonatal Intensive Care" display="Neonatal Intensive Care"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Neurosurgery" display="Neurosurgery" codingScheme="Connect-a-thon codeList" />
-		<Code code="Nursery" display="Nursery" codingScheme="Connect-a-thon codeList" />
-		<Code code="Nursing" display="Nursing" codingScheme="Connect-a-thon codeList" />
-		<Code code="Obstetrics" display="Obstetrics" codingScheme="Connect-a-thon codeList" />
-		<Code code="Occupational Therapy" display="Occupational Therapy"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Ophthalmology" display="Ophthalmology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Optometry" display="Optometry" codingScheme="Connect-a-thon codeList" />
-		<Code code="Orthopedics" display="Orthopedics" codingScheme="Connect-a-thon codeList" />
-		<Code code="Otorhinolaryngology" display="Otorhinolaryngology"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Pathology" display="Pathology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Perioperative" display="Perioperative" codingScheme="Connect-a-thon codeList" />
-		<Code code="Pharmacacy" display="Pharmacacy" codingScheme="Connect-a-thon codeList" />
-		<Code code="Physical Medicine" display="Physical Medicine"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Plastic Surgery" display="Plastic Surgery"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Podiatry" display="Podiatry" codingScheme="Connect-a-thon codeList" />
-		<Code code="Psychiatry" display="Psychiatry" codingScheme="Connect-a-thon codeList" />
-		<Code code="Pulmonary" display="Pulmonary" codingScheme="Connect-a-thon codeList" />
-		<Code code="Radiology" display="Radiology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Social Services" display="Social Services"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Speech Therapy" display="Speech Therapy"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Thyroidology" display="Thyroidology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Tumor Board" display="Tumor Board" codingScheme="Connect-a-thon codeList" />
-		<Code code="Urology" display="Urology" codingScheme="Connect-a-thon codeList" />
-		<Code code="Veterinary Medicine" display="Veterinary Medicine"
-			codingScheme="Connect-a-thon codeList" />
-		<Code code="Blood Pressure" display="Blood Pressure"
-			codingScheme="Connect-a-thon codeList" />
-	</CodeType>
-	
-	-->
+
+	<!-- This section replaced by folderCodeList below. <CodeType name="codeList" 
+		classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5"> <Code code="Anesthesia" 
+		display="Anesthesia" codingScheme="Connect-a-thon codeList" /> <Code code="Cardiology" 
+		display="Cardiology" codingScheme="Connect-a-thon codeList" /> <Code code="Case 
+		Manager" display="Case Manager" codingScheme="Connect-a-thon codeList" /> 
+		<Code code="Chaplain" display="Chaplain" codingScheme="Connect-a-thon codeList" 
+		/> <Code code="Chemotherapy" display="Chemotherapy" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Chiropractic" display="Chiropractic" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Critical Care" display="Critical Care" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Dentistry" display="Dentistry" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Diabetology" display="Diabetology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Dialysis" display="Dialysis" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Emergency" display="Emergency" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Endocrinology" display="Endocrinology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Gastroenterology" display="Gastroenterology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="General Medicine" display="General Medicine" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="General Surgery" display="General Surgery" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Gynecology" display="Gynecology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Labor and Delivery" display="Labor and Delivery" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Laboratory" display="Laboratory" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Multidisciplinary" 
+		display="Multidisciplinary" codingScheme="Connect-a-thon codeList" /> <Code 
+		code="Neonatal Intensive Care" display="Neonatal Intensive Care" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Neurosurgery" display="Neurosurgery" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Nursery" display="Nursery" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Nursing" display="Nursing" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Obstetrics" display="Obstetrics" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Occupational Therapy" display="Occupational Therapy" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Ophthalmology" display="Ophthalmology" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Optometry" display="Optometry" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Orthopedics" display="Orthopedics" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Otorhinolaryngology" 
+		display="Otorhinolaryngology" codingScheme="Connect-a-thon codeList" /> <Code 
+		code="Pathology" display="Pathology" codingScheme="Connect-a-thon codeList" 
+		/> <Code code="Perioperative" display="Perioperative" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Pharmacacy" display="Pharmacacy" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Physical Medicine" display="Physical Medicine" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Plastic Surgery" display="Plastic Surgery" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Podiatry" display="Podiatry" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Psychiatry" display="Psychiatry" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Pulmonary" display="Pulmonary" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Radiology" display="Radiology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Social Services" display="Social Services" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Speech Therapy" display="Speech Therapy" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Thyroidology" display="Thyroidology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Tumor Board" display="Tumor Board" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Urology" display="Urology" codingScheme="Connect-a-thon 
+		codeList" /> <Code code="Veterinary Medicine" display="Veterinary Medicine" 
+		codingScheme="Connect-a-thon codeList" /> <Code code="Blood Pressure" display="Blood 
+		Pressure" codingScheme="Connect-a-thon codeList" /> </CodeType> -->
 	<CodeType name="typeCode" classScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983">
 		<Code code="34096-8" display="Nursing Home Comprehensive History and Physical Note"
 			codingScheme="LOINC" />
@@ -1598,12 +1510,8 @@
 			codingScheme="LOINC" />
 		<Code code="Laboratory Report" display="Laboratory Report"
 			codingScheme="Connect-a-thon TypeCode" />
-		<Code code="unobtainable" display="unobtainable"
-			codingScheme="Connect-a-thon TypeCode" />
-		<!--
-			<Code code="X-CCR" display="Continuity of Care Record"
-			codingScheme="LOINC"/>
-		-->
+		<Code code="unobtainable" display="unobtainable" codingScheme="Connect-a-thon TypeCode" />
+		<!-- <Code code="X-CCR" display="Continuity of Care Record" codingScheme="LOINC"/> -->
 		<Code code="34138-3" display="Remote Health Reading"
 			codingScheme="LOINC" />
 
@@ -1642,17 +1550,12 @@
 			display="LABORATORY REPORT.TOTAL" />
 
 	</CodeType>
-	<!--
-		This section is used to validate mime type requests and to map mime
-		types into repository file types. The mapping from repository file
-		types back into mime types is done in /usr/local/tomcat1/conf/web.xml
-	-->
+	<!-- This section is used to validate mime type requests and to map mime 
+		types into repository file types. The mapping from repository file types 
+		back into mime types is done in /usr/local/tomcat1/conf/web.xml -->
 	<CodeType name="mimeType">
 		<Code code="application/pdf" ext="pdf" />
-		<!--
-			used only by ACC, I think, now obsolete <Code
-			code="text/x-cda-r2+xml"/>
-		-->
+		<!-- used only by ACC, I think, now obsolete <Code code="text/x-cda-r2+xml"/> -->
 		<Code code="text/xml" ext="xml" />
 		<Code code="application/x-hl7" ext="hl7" />
 		<Code code="application/dicom" ext="dicom" />
@@ -1661,35 +1564,30 @@
 		<Code code="image/tiff" ext="tiff" />
 		<Code code="image/jpeg" ext="jpeg" />
 		<Code code="image/gif" ext="gif" />
-		<Code code="text/goofy" ext="gfy" />  <!--  fake mimetype for testing -->
+		<Code code="text/goofy" ext="gfy" />  <!-- fake mimetype for testing -->
 	</CodeType>
-	
-	<!--
-		This section is used to validate XDSFolder.folderCodeList attribute. 
-		As of TF 6, this attribute is no longer tied to the DocumentEntry 
-		objects it contains.  This attribute is separately controlled by
-		Affinity Domain configuration. 
-	 -->
-	 
-	 <CodeType name="folderCodeList" classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5">
+
+	<!-- This section is used to validate XDSFolder.folderCodeList attribute. 
+		As of TF 6, this attribute is no longer tied to the DocumentEntry objects 
+		it contains. This attribute is separately controlled by Affinity Domain configuration. -->
+
+	<CodeType name="folderCodeList" classScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5">
 		<Code code="Referrals" codingScheme="Connect-a-thon folderCodeList"
 			display="Referrals" />
 		<Code code="Alergy Treatments" codingScheme="Connect-a-thon folderCodeList"
 			display="Alergy Treatments" />
-	 </CodeType>
-	 
-	 <CodeType name="associationDocumentation" classScheme="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3">
+	</CodeType>
+
+	<CodeType name="associationDocumentation" classScheme="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3">
 		<Code code="Additional_Information" codingScheme="Connect-a-thon associationDocumentation"
 			display="Additional Information" />
 		<Code code="Corrected_Information" codingScheme="Connect-a-thon associationDocumentation"
 			display="Corrected Information" />
-	 </CodeType>
-	 
-	<!--
-		This element is now repeated since this server must support testing
-		for multiple events simultaneous and each event has an Assiging
-		Authority defined for the event.
-	-->
+	</CodeType>
+
+	<!-- This element is now repeated since this server must support testing 
+		for multiple events simultaneous and each event has an Assiging Authority 
+		defined for the event. -->
 	<AssigningAuthority id="&amp;1.3.6.1.4.1.21367.2005.3.7&amp;ISO" />
 	<AssigningAuthority id="&amp;1.3.6.1.4.1.21367.2008.2.1&amp;ISO" />
 	<AssigningAuthority id="&amp;1.19.6.24.109.42.1.3&amp;ISO" />

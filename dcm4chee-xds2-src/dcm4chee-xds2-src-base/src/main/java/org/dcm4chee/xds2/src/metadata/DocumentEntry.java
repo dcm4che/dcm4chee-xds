@@ -277,11 +277,11 @@ public class DocumentEntry {
 
         Util.addCodes(pnrRequest.nextID(), metadata, XDSConstants.UUID_XDSDocumentEntry_confidentialityCode, confidentialityCodes);
         Util.addCodes(pnrRequest.nextID(), metadata, XDSConstants.UUID_XDSDocumentEntry_eventCodeList, eventCodeList);
-        Util.addSlot(metadata, XDSConstants.SLOT_NAME_CREATION_TIME, null, Util.toTimeString(creationTime));
+        Util.addSlot(metadata, XDSConstants.SLOT_NAME_CREATION_TIME, null, Util.toUTCTimeString(creationTime));
         Util.addSlot(metadata, XDSConstants.SLOT_NAME_LANGUAGE_CODE, null, languageCode);
 
-        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_START_TIME, null, Util.toTimeString(serviceStartTime));
-        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME, null, Util.toTimeString(serviceStopTime));
+        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_START_TIME, null, Util.toUTCTimeString(serviceStartTime));
+        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME, null, Util.toUTCTimeString(serviceStopTime));
         if (comments != null) {
             Util.setDescription(metadata, comments);
         }

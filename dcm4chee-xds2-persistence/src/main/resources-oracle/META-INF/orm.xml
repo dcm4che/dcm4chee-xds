@@ -1,89 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entity-mappings xmlns="http://java.sun.com/xml/ns/persistence/orm"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
-  version="2.0">
-  
-  <package>org.dcm4chee.xds2.persistence</package>
-  
-  <access>FIELD</access>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
+	version="2.0">
 
-  <entity class="Description">
-    <table name="description" />
-    <sequence-generator name="seq" sequence-name="description_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-    </attributes>
-  </entity>
-  <entity class="Identifiable">
-    <table name="identifiable" />
-    <inheritance strategy="SINGLE_TABLE"/>
-    <sequence-generator name="seq" sequence-name="identifiable_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-    </attributes>
-  </entity>
-  <entity class="Name">
-    <table name="name" />
-    <sequence-generator name="seq" sequence-name="name_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-    </attributes>
-  </entity>
-  <entity class="Slot">
-    <table name="slot" />
-    <sequence-generator name="seq" sequence-name="slot_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-     <basic name="value" optional = "false">
-        <column name="value" column-definition="nvarchar2(255)"/>
-      </basic>
-    </attributes>
-  </entity>
-  <entity class="XADIssuer">
-    <table name="xad_issuer" />
-    <sequence-generator name="seq" sequence-name="xadissuer_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-    </attributes>
-  </entity>
-  <entity class="XADPatient">
-    <table name="xad_patient" />
-    <sequence-generator name="seq" sequence-name="xadpatient_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-    </attributes>
-  </entity>
-  <entity class="XDSCode">
-    <table name="xds_code" />
-    <sequence-generator name="seq" sequence-name="xdscode_pk_seq" allocation-size="1"/>
-    <attributes>
-      <id name="pk">
-        <column name="pk" />
-        <generated-value strategy="SEQUENCE" generator="seq" />
-      </id>
-     <basic name="codeMeaning" optional = "false">
-        <column name="meaning" column-definition="nvarchar2(255)"/>
-      </basic>
-    </attributes>
-  </entity>
+	<package>org.dcm4chee.xds2.persistence</package>
+
+	<access>FIELD</access>
+
+	<entity class="Description">
+		<table name="description" />
+		<sequence-generator name="seq" sequence-name="description_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+		</attributes>
+	</entity>
+	<entity class="Identifiable">
+		<table name="identifiable" />
+		<inheritance strategy="SINGLE_TABLE" />
+		<sequence-generator name="seq" sequence-name="identifiable_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+		</attributes>
+	</entity>
+	<entity class="Name">
+		<table name="name" />
+		<sequence-generator name="seq" sequence-name="name_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+		</attributes>
+	</entity>
+	<entity class="Slot">
+		<table name="slot" />
+		<sequence-generator name="seq" sequence-name="slot_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+			<basic name="value" optional="false">
+				<column name="value" column-definition="nvarchar2(255)" />
+			</basic>
+		</attributes>
+	</entity>
+	<entity class="XADIssuer">
+		<table name="xad_issuer" />
+		<sequence-generator name="seq" sequence-name="xadissuer_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+		</attributes>
+	</entity>
+	<entity class="XADPatient">
+		<table name="xad_patient" />
+		<sequence-generator name="seq" sequence-name="xadpatient_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+		</attributes>
+	</entity>
+	<entity class="XDSCode">
+		<table name="xds_code" />
+		<sequence-generator name="seq" sequence-name="xdscode_pk_seq"
+			allocation-size="1" />
+		<attributes>
+			<id name="pk">
+				<column name="pk" />
+				<generated-value strategy="SEQUENCE" generator="seq" />
+			</id>
+			<basic name="codeMeaning" optional="false">
+				<column name="meaning" column-definition="nvarchar2(255)" />
+			</basic>
+		</attributes>
+	</entity>
 
 </entity-mappings>

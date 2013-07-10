@@ -127,23 +127,27 @@ public class AuditRequestInfo {
     }
 
     public String getReplyTo() {
-        NodeList replyToNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "ReplyTo");
-        if (replyToNodes.getLength() < 1) {
-            return XDSConstants.WS_ADDRESSING_ANONYMOUS;
+        if (soapHeader != null) {
+            NodeList replyToNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "ReplyTo");
+            if (replyToNodes.getLength() > 0) {
+                return replyToNodes.item(0).getTextContent();
+            }
         }
-        return replyToNodes.item(0).getTextContent();
+        return XDSConstants.WS_ADDRESSING_ANONYMOUS;
     }
 
     public String getRequestURI() {
-        NodeList toNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "To");
-        if (toNodes.getLength() < 1) {
-            if (servletRequest != null) {
-                return "http://"+getLocalHost()+":"+servletRequest.getLocalPort()+
-                    servletRequest.getRequestURI();
+        if (soapHeader != null) {
+            NodeList toNodes = soapHeader.getElementsByTagNameNS(XDSConstants.WS_ADDRESSING_NS, "To");
+            if (toNodes.getLength() > 0) {
+                return toNodes.item(0).getTextContent();
             }
-            return UNKNOWN;
         }
-        return toNodes.item(0).getTextContent();
+        if (servletRequest != null) {
+            return "http://"+getLocalHost()+":"+servletRequest.getLocalPort()+
+                servletRequest.getRequestURI();
+        }
+        return UNKNOWN;
     }
     
     public String getRemoteUser() {

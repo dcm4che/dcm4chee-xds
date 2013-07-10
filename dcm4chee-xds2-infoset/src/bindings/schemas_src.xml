@@ -27,13 +27,15 @@
 			<jaxb:package name="org.dcm4chee.xds2.infoset.rim" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings schemaLocation="../main/resources/schema/IHE/XDS.b_DocumentRepository.xsd"
+	<jaxb:bindings
+		schemaLocation="../main/resources/schema/IHE/XDS.b_DocumentRepository.xsd"
 		node="//xsd:schema[@targetNamespace='urn:ihe:iti:xds-b:2007']">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.dcm4chee.xds2.infoset.ihe" />
 		</jaxb:schemaBindings>
 	</jaxb:bindings>
-	<jaxb:bindings schemaLocation="../main/resources/schema/IHE/XDSI.b_ImagingDocumentSource.xsd"
+	<jaxb:bindings
+		schemaLocation="../main/resources/schema/IHE/XDSI.b_ImagingDocumentSource.xsd"
 		node="//xsd:schema[@targetNamespace='urn:ihe:rad:xdsi-b:2009']">
 		<jaxb:schemaBindings>
 			<jaxb:package name="org.dcm4chee.xds2.infoset.iherad" />

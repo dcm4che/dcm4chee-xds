@@ -44,9 +44,7 @@
 		<artifactId>dcm4chee-xds2</artifactId>
 		<version>2.0.0</version>
 	</parent>
-	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-persistence</artifactId>
-	<version>2.0.0</version>
 	<packaging>ejb</packaging>
 	<name>dcm4chee-xds2-entities</name>
 	<properties>
