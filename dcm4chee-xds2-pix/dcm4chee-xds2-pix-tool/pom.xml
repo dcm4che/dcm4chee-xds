@@ -45,14 +45,11 @@
         <artifactId>dcm4chee-xds2-pix</artifactId>
         <version>2.0.0</version>
     </parent>
-    <groupId>org.dcm4che</groupId>
     <artifactId>dcm4chee-xds2-pix-tool</artifactId>
-    <version>2.0.0</version>
     <packaging>jar</packaging>
     <name>PIX Client tool</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
     </properties>
   <build>
     <plugins>

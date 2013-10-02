@@ -46,14 +46,11 @@
 		<artifactId>dcm4chee-xds2</artifactId>
 		<version>2.0.0</version>
 	</parent>
-	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-ear</artifactId>
-	<version>2.0.0</version>
 	<packaging>ear</packaging>
 	<name>Build EAR for XDS.b Registry (ebRS v3.0)</name>
 	<properties>
 		<db>hsql</db>
-    	<dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
 	</properties>
 	<dependencies>
 		<dependency>

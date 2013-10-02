@@ -10,7 +10,6 @@
   <version>2.0.0</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
     <skipTests>false</skipTests>
   </properties>
   <dependencies>

@@ -39,7 +39,6 @@
 	<name>EJB Webservice classes for XDS.b (ebRS v3.0)</name>
 	<properties>
 		<db>hsql</db>
-		<dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
 	</properties>
 	<dependencies>
 		<dependency>

@@ -50,7 +50,6 @@
     <name>PIX Client</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dcm4che.version>3.0.2-SNAPSHOT</dcm4che.version>
     </properties>
     <dependencies>
         <dependency>

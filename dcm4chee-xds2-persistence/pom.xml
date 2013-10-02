@@ -54,7 +54,7 @@
 	    <hbm2ddl.auto>update</hbm2ddl.auto>
         <hibernate.version>4.0.1.Final</hibernate.version>
 		<arquillian.version>1.0.0.Alpha5</arquillian.version>
-		<shrinkwrap.version>1.0.0-alpha-12</shrinkwrap.version>
+		<shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
 		<jboss.version>6.0.0.Final</jboss.version>
 	</properties>
 	<profiles>
@@ -188,13 +188,11 @@
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>
 			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
-			<version>1.0.0.Final</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -213,13 +211,13 @@
 		<dependency>
 			<groupId>org.jboss.shrinkwrap</groupId>
 			<artifactId>shrinkwrap-api</artifactId>
-			<version>${shrinkwrap.version}</version>
+			<version>${shrinkwrap.version}</version><!--$NO-MVN-MAN-VER$-->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.shrinkwrap</groupId>
 			<artifactId>shrinkwrap-impl-base</artifactId>
-			<version>${shrinkwrap.version}</version>
+			<version>${shrinkwrap.version}</version><!--$NO-MVN-MAN-VER$-->
 			<scope>test</scope> <!-- Don't rely upon internals for compilation -->
 		</dependency>
 	</dependencies>
@@ -271,5 +269,59 @@
 	        <filtering>true</filtering>
 	      </resource>
 	    </resources>
+	    <pluginManagement>
+	    	<plugins>
+	    		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+	    		<plugin>
+	    			<groupId>org.eclipse.m2e</groupId>
+	    			<artifactId>lifecycle-mapping</artifactId>
+	    			<version>1.0.0</version>
+	    			<configuration>
+	    				<lifecycleMappingMetadata>
+	    					<pluginExecutions>
+	    						<pluginExecution>
+	    							<pluginExecutionFilter>
+	    								<groupId>
+	    									com.mysema.maven
+	    								</groupId>
+	    								<artifactId>
+	    									maven-apt-plugin
+	    								</artifactId>
+	    								<versionRange>
+	    									[1.0.3,)
+	    								</versionRange>
+	    								<goals>
+	    									<goal>process</goal>
+	    								</goals>
+	    							</pluginExecutionFilter>
+	    							<action>
+	    								<ignore></ignore>
+	    							</action>
+	    						</pluginExecution>
+	    						<pluginExecution>
+	    							<pluginExecutionFilter>
+	    								<groupId>
+	    									org.codehaus.mojo
+	    								</groupId>
+	    								<artifactId>
+	    									exec-maven-plugin
+	    								</artifactId>
+	    								<versionRange>
+	    									[1.1.1,)
+	    								</versionRange>
+	    								<goals>
+	    									<goal>java</goal>
+	    								</goals>
+	    							</pluginExecutionFilter>
+	    							<action>
+	    								<ignore></ignore>
+	    							</action>
+	    						</pluginExecution>
+	    					</pluginExecutions>
+	    				</lifecycleMappingMetadata>
+	    			</configuration>
+	    		</plugin>
+	    	</plugins>
+	    </pluginManagement>
 	</build>
 </project>
