@@ -55,7 +55,7 @@ import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 public class PreferencesXCAiInitiatingGWConfiguration
         extends PreferencesDicomConfigurationExtension {
 
-    private static final String NODE_NAME = "xcai_InitiatingGW";
+    private static final String NODE_NAME = "xcaiInitiatingGW";
 
     @Override
     protected void storeChilds(Device device, Preferences deviceNode) {

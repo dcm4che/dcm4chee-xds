@@ -55,7 +55,7 @@ import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 public class PreferencesXCAiRespondingGWConfiguration
         extends PreferencesDicomConfigurationExtension {
 
-    private static final String NODE_NAME = "xcai_RespondingGW";
+    private static final String NODE_NAME = "xcaiRespondingGW";
 
     @Override
     protected void storeChilds(Device device, Preferences deviceNode) {
