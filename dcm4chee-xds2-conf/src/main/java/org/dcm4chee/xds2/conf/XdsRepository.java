@@ -54,8 +54,8 @@ public class XdsRepository extends DeviceExtension {
     private String repositoryUID;
     private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();
     private String soapLogDir;
-    private String[] mimeTypes;
-    private String[] logFullMessageHosts;
+    private String[] mimeTypes = new String[]{};
+    private String[] logFullMessageHosts = new String[]{};
     private boolean checkMimetype;
     private String allowedCipherHostname;
     private boolean forceMTOM;

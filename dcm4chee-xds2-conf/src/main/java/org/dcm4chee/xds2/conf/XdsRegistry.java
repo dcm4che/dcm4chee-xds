@@ -52,9 +52,9 @@ public class XdsRegistry extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
     private String applicationName;
-    private String[] affinityDomain;
+    private String[] affinityDomain = new String[]{};
     private String affinityDomainConfigDir;
-    private String[] mimeTypes;
+    private String[] mimeTypes = new String[]{};
     private String soapLogDir;
     
     private boolean createMissingPIDs;
