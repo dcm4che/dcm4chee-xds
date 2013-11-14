@@ -37,9 +37,6 @@
 	<version>2.0.0</version>
 	<packaging>ejb</packaging>
 	<name>EJB Webservice classes for XDS.b (ebRS v3.0)</name>
-	<properties>
-		<db>hsql</db>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
@@ -182,6 +179,7 @@
 								<exclude>**/SubmissionSetTest.java</exclude>
 								<exclude>**/SubmitObjReqTest.java</exclude>
 							</excludes>
+          						<skipTests>${skipTests}</skipTests>
 						</configuration>
 					</plugin>
 				</plugins>

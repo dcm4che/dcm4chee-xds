@@ -47,16 +47,6 @@
 	<artifactId>dcm4chee-xds2-persistence</artifactId>
 	<packaging>ejb</packaging>
 	<name>dcm4chee-xds2-entities</name>
-	<properties>
-		<db>hsql</db>
-		<ds>java:/xdsDS</ds>
-	    <show_sql>false</show_sql>
-	    <hbm2ddl.auto>update</hbm2ddl.auto>
-        <hibernate.version>4.0.1.Final</hibernate.version>
-		<arquillian.version>1.0.0.Alpha5</arquillian.version>
-		<shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
-		<jboss.version>6.0.0.Final</jboss.version>
-	</properties>
 	<profiles>
 		<profile>
 			<id>default</id>

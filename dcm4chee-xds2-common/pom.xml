@@ -50,9 +50,6 @@
 	<version>2.0.0</version>
 	<packaging>jar</packaging>
 	<name>dcm4chee-xds2-common</name>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 	<dependencies>
     	<dependency>
       		<groupId>org.dcm4che</groupId>

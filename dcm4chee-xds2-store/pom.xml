@@ -7,9 +7,6 @@
 	</parent>
   <artifactId>dcm4chee-xds2-store</artifactId>
   <packaging>jar</packaging>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <dependencies>
     <dependency>
 		<groupId>org.dcm4che</groupId>

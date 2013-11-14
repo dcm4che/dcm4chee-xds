@@ -7,9 +7,6 @@
 	</parent>
   <artifactId>dcm4chee-xds2-service</artifactId>
   <packaging>war</packaging>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <dependencies>
     <dependency>
 		<groupId>org.dcm4che</groupId>
