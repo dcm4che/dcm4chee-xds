@@ -107,7 +107,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Dependencies>org.dcm4che.core, org.dcm4che.conf.api-hl7, org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit</Dependencies>
+              <Dependencies>${profile.dependencies}</Dependencies>
             </manifestEntries>
           </archive>
           <webResources>
@@ -124,10 +124,19 @@
   <profiles>
     <profile>
       <id>prefs</id>
+      <properties>
+        <config-class>org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration</config-class>
+        <skipTests>true</skipTests>
+        <profile.dependencies>org.dcm4che.core, org.dcm4che.conf.api-hl7, org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit</profile.dependencies>
+      </properties>
+    </profile>
+    <profile>
+      <id>jdbc-prefs</id>
       <activation><activeByDefault>true</activeByDefault></activation>
       <properties>
         <config-class>org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration</config-class>
         <skipTests>true</skipTests>
+        <profile.dependencies>org.dcm4che.core, org.dcm4che.conf.api-hl7, org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit,deployment.dcm4che-jdbc-prefs-ejb-1.0.0.jar</profile.dependencies>
       </properties>
     </profile>
     <profile>
@@ -135,6 +144,7 @@
       <activation><property><name>ldap</name></property></activation>
       <properties>
         <skipTests>true</skipTests>
+        <profile.dependencies>org.dcm4che.core, org.dcm4che.conf.api-hl7, org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit</profile.dependencies>
       </properties>
       <build>
         <filters>
