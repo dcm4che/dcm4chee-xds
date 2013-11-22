@@ -42,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
+import java.net.BindException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
@@ -301,6 +302,54 @@ public class XdsServiceServlet extends HttpServlet {
             }
         }
     }
+
+    @GET
+    @Path("/running")
+    public Response isRunning() {
+        Device device = XdsDevice.getLocalXdsDevice();
+        return device.getExecutor() != null 
+                ? Response.ok().entity(Boolean.TRUE.toString()).build() 
+                        : Response.serverError().entity(Boolean.FALSE.toString()).build();
+    }
+
+    @GET
+    @Path("/restart")
+    public Response restart() throws InterruptedException {
+        Device device = XdsDevice.getLocalXdsDevice();
+        try {
+            device.unbindConnections();
+            device.reconfigure(xdsConfig.findDevice(device.getDeviceName()));
+            int count = getRestartTimeout();
+            while (device.getExecutor() == null) {
+                try {
+                    device.rebindConnections();
+                } catch (BindException e) {
+                    if (count < 0) {
+                        log.error("Error restarting {}: {}", xdsDeviceName, e.getMessage());
+                        return Response.serverError().entity(null).build();
+                    }
+                    count--;
+                    Thread.sleep(1000);
+                }
+            }
+            log.info("Device " + device.getDeviceName() + " restarted");
+            return Response.noContent().entity(null).build();
+        } catch (Exception e) {
+            log.error("Error restarting {}: {}", xdsDeviceName, e.getMessage());
+            return Response.serverError().entity(null).build();
+        }
+    }
+
+    private static int getRestartTimeout() {
+        String timeoutString = System.getProperty("org.dcm4chee.xds.restart.timeout","10");
+        try {
+            return Integer.parseInt(timeoutString);
+        } catch (NumberFormatException e) {
+            log.error("{} ({})", new Object[] { e, "org.dcm4chee.xds.restart.timeout" });
+            return 10;
+        }
+    }
+
     @GET
     @Path("/show")
     public Response showConfiguration() {
