@@ -89,17 +89,17 @@ public class AffinityDomainCodes {
         return codes.isEmpty();
     }
     
-    public boolean isDefinded(String codeType, Code code) {
+    public boolean isDefined(String codeType, Code code) {
         return codes.get(codeType).contains(code);
     }
     
-    public boolean isDefinded(String codeType, String codeValue, String codeDesignator) {
+    public boolean isDefined(String codeType, String codeValue, String codeDesignator) {
         return codes.get(codeType).contains(new Code(codeValue, codeDesignator, ""));
     }
-    public boolean isClassSchemeCodeDefinded(String scheme, String codeValue, String codeDesignator) {
-        return isClassSchemeCodeDefinded(scheme, new Code(codeValue, codeDesignator, ""));
+    public boolean isClassSchemeCodeDefined(String scheme, String codeValue, String codeDesignator) {
+        return isClassSchemeCodeDefined(scheme, new Code(codeValue, codeDesignator, ""));
     }
-    public boolean isClassSchemeCodeDefinded(String scheme, Code code) {
+    public boolean isClassSchemeCodeDefined(String scheme, Code code) {
         List<Code> l = codes.get(classSchemesToCodeTypes.get(scheme));
         return l == null ? false : l.contains(code);
     }

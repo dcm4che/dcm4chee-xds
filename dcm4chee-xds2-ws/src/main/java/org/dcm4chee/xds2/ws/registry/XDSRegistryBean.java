@@ -601,7 +601,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         String codeValue = clType.getNodeRepresentation();
         String codeDesignator = clType.getSlot().get(0).getValueList().getValue().get(0);
         if (!createMissing) {
-            if (!adCodes.isClassSchemeCodeDefinded(scheme, codeValue, codeDesignator)) {
+            if (!adCodes.isClassSchemeCodeDefined(scheme, codeValue, codeDesignator)) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Unknown code:"+
                             codeValue+"^^"+codeDesignator+" ("+scheme+")", null);
             }
