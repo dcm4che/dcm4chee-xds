@@ -69,8 +69,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
-import com.mysema.query.jpa.impl.JPASubQuery;
 import com.mysema.query.types.ExpressionUtils;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.path.CollectionPath;
