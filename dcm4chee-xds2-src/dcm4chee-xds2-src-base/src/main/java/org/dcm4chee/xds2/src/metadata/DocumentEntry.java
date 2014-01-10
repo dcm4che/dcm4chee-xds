@@ -280,8 +280,12 @@ public class DocumentEntry {
         Util.addSlot(metadata, XDSConstants.SLOT_NAME_CREATION_TIME, null, Util.toUTCTimeString(creationTime));
         Util.addSlot(metadata, XDSConstants.SLOT_NAME_LANGUAGE_CODE, null, languageCode);
 
-        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_START_TIME, null, Util.toUTCTimeString(serviceStartTime));
-        Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME, null, Util.toUTCTimeString(serviceStopTime));
+        if (serviceStartTime != null) {
+        	Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_START_TIME, null, Util.toUTCTimeString(serviceStartTime));
+        }
+        if (serviceStopTime != null) {
+        	Util.addSlot(metadata, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME, null, Util.toUTCTimeString(serviceStopTime));
+        }
         if (comments != null) {
             Util.setDescription(metadata, comments);
         }
