@@ -500,6 +500,8 @@ Setup JBoss AS 7
 
         [standalone@localhost:9999 /] undeploy dcm4chee-xds2-ear-2.0.0-mysql.ear
 
+12. Init ebXML data model for XDS.b:
+    Call xdsinit.sh or xdsinit.bat in bin directory of your JBoss instance.
 
 Testing DCM4CHEE XDS 2.x
 ----------------------------
