@@ -10,8 +10,10 @@ XDS.b Implementation running on JBoss 7 application server
 Build
 -----
 After installation of [Maven 3](http://maven.apache.org):
-
-    > mvn install -D db={db2|firebird|h2|mysql|oracle|psql|sqlserver}
+  for java preferences config profile:
+    > mvn install -Ddb={db2|firebird|h2|mysql|oracle|psql|sqlserver}
+  for ldap config profile:
+    > mvn install -Ddb={db2|firebird|h2|mysql|oracle|psql|sqlserver} -Pldap -Dldap={apacheds|opends|slapd}
 
 Installation
 ------------
