@@ -167,13 +167,27 @@
         <enabled>true</enabled>
         <updatePolicy>never</updatePolicy>
       </releases>
-    </repository>
+    </repository> 
   </repositories>
   <pluginRepositories>
     <pluginRepository>
       <id>jboss-public-repository-group</id>
       <name>JBoss Public Maven Repository Group</name>
       <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </pluginRepository>
+    <pluginRepository>
+      <id>dcm4che-repository</id>
+      <name>DCM4CHE Public Maven Repository</name>
+      <url>http://www.dcm4che.org/maven2/</url>
       <layout>default</layout>
       <releases>
         <enabled>true</enabled>
