@@ -357,12 +357,13 @@ Setup JBoss AS 7
 
     to your LDAP Server configuration.
 
-2.  Install DCM4CHE 3.0.1 libraries as JBoss AS 7 module:
+2.  Install libraries as JBoss AS 7 modules:
+a.  Install DCM4CHE 3.0.1 libraries as JBoss AS 7 module:
 
         > cd  $JBOSS_HOME
         > unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.0.1.zip
 
-3.  Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
+b.  Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
 
         > cd  $JBOSS_HOME
         > unzip $DCM4CHEE_ARC/jboss-module/querydsl-jboss-modules-2.8.1.zip
