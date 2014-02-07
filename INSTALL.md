@@ -357,17 +357,32 @@ Setup JBoss AS 7
 
     to your LDAP Server configuration.
 
-2.  Install DCM4CHE 3.0.1 libraries as JBoss AS 7 module:
+2.  Install required libraries as JBoss AS 7 modules:
+    
+    Install DCM4CHE 3.2.1 libraries as JBoss AS 7 module:
+    ```
+        cd  $JBOSS_HOME
+        unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.2.1.zip
+    ```
+    Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
+    ```
+        cd  $JBOSS_HOME
+        unzip $DCM4CHEE_XDS2/jboss-module/querydsl-jboss-modules-3.2.3.zip
+    ```
+3.  Install XDS command line tools
 
-        > cd  $JBOSS_HOME
-        > unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.0.1.zip
+    Install DCM4CHEE XDS2 tools libraries as JBoss AS 7 module:
+    ```
+        cd  $JBOSS_HOME
+        cp -r $DCM4CHEE_XDS2/modules .
+    ```
+    Install shellscripts:
+    ```
+        cd  $JBOSS_HOME
+        cp -r $DCM4CHEE_XDS2/bin .
+    ```
 
-3.  Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
-
-        > cd  $JBOSS_HOME
-        > unzip $DCM4CHEE_ARC/jboss-module/querydsl-jboss-modules-2.8.1.zip
-
-4.  Install JDBC Driver. DCM4CHEE Archive 4.x binary distributions do not include
+4.  Install JDBC Driver. DCM4CHEE XDS 2.x binary distributions do not include
     a JDBC driver for the database for license issues. You may download it from:
     -   [MySQL](http://www.mysql.com/products/connector/)
     -   [PostgreSQL]( http://jdbc.postgresql.org/)
@@ -382,12 +397,12 @@ Setup JBoss AS 7
     
     Installation as deployment is limited to JDBC 4-compliant driver consisting of **one** JAR.
 
-    For installation as a core module, `$DCM4CHEE_ARC/jboss-module/jdbc-jboss-modules-1.0.0-<database>.zip`
+    For installation as a core module, `$DCM4CHEE_XDS2/jboss-module/jdbc-jboss-modules-1.0.0-<database>.zip`
     already provides a module definition file `module.xml`. You just need to extract the ZIP file into
     $JBOSS_HOME and copy the JDBC Driver file(s) into the sub-directory, e.g.:
 
         > cd $JBOSS_HOME
-        > unzip $DCM4CHEE_ARC/jboss-module/jdbc-jboss-modules-1.0.0-db2.zip
+        > unzip $DCM4CHEE_XDS2/jboss-module/jdbc-jboss-modules-1.0.0-db2.zip
         > cd $DB2_HOME/java
         > cp db2jcc4.jar db2jcc_license_cu.jar $JBOSS_HOME/modules/com/ibm/db2/main/
 
@@ -491,15 +506,33 @@ Setup JBoss AS 7
 
 10. Deploy DCM4CHEE XDS 2.x using JBoss AS 7 CLI, e.g.:
 
-        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-ear-2.0.0-mysql.ear
+        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-ear-2.0.0-<database-name>.ear
 
     Verify that DCM4CHEE XDS was deployed and started successfully, e.g.:
 
 
 11. You may undeploy DCM4CHEE XDS at any time using JBoss AS 7 CLI, e.g.:
 
-        [standalone@localhost:9999 /] undeploy dcm4chee-xds2-ear-2.0.0-mysql.ear
+        [standalone@localhost:9999 /] undeploy dcm4chee-xds2-ear-2.0.0-<database-name>.ear
 
+12. Initialize XDS Registry with ebXML Classifications and Associations defined by XDS:
+
+    a) Default XDS configuration on default local installation
+    ```
+    > $JBOSS_HOME/bin/xdsinit.sh [UNIX]
+    > %JBOSS_HOME%\bin\xdsinit.bat [Windows]
+    ```
+    b) Default XDS configuration on user specific (different port) or remote installation
+    ```
+    e.g.: initialize XDS Registry on host 'xdsserver' port 8180 with defaults:
+    > $JBOSS_HOME/bin/xdsinit.sh -wsdl http://xdsserver:8180/XDSbRegistry?wsdl [UNIX]
+    > %JBOSS_HOME%\bin\xdsinit.bat -wsdl http://xdsserver:8180/XDSbRegistry?wsdl [Windows]
+    ```
+    c) Add new ebXML Classifications and Associations given by XML files (SubmitObjectRequest)
+    ```
+    > $JBOSS_HOME/bin/xdsinit.sh <filename1> [<filename2> [..]] [UNIX]
+    > %JBOSS_HOME%\bin\xdsinit.bat <filename1> [<filename2> [..]] [Windows]
+    ```
 
 Testing DCM4CHEE XDS 2.x
 ----------------------------
