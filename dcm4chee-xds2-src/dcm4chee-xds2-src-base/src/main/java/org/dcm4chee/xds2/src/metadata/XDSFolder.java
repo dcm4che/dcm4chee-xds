@@ -83,6 +83,7 @@ public class XDSFolder {
                 id, pnrRequest.getPatientID(), XDS_FOLDER_PATIENT_ID));
         metadata.getExternalIdentifier().add(Util.createExternalIdentifier(pnrRequest.nextID(), XDSConstants.UUID_XDSFolder_uniqueId, 
                 id, uniqueID, XDS_FOLDER_UNIQUE_ID));
+        metadata.getClassification().add(Util.createClassification(pnrReq.nextID(), XDSConstants.UUID_XDSFolder, id));
         this.uniqueID = uniqueID;
         assoc = pnrReq.addAssociation(PnRRequest.SUBMISSION_SET_ID, id, XDSConstants.HAS_MEMBER);
     }
