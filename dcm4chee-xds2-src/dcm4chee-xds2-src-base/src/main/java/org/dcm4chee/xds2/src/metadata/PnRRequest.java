@@ -299,11 +299,26 @@ public class PnRRequest {
         }
         List<JAXBElement<? extends IdentifiableType>> list = this.registryObjectList.getIdentifiable();
         for (int i = 0, len = associations.size() ; i < len ; i++) {
-            Util.addAssociation(list, associations.get(i));
+            XDSAssociation assoc = associations.get(i);
+            String targetID = assoc.getTargetObject();
+            if(isDocumentID(targetID)) {
+                Util.addAssociation(list, assoc);
+            } else {
+                Util.addNonDocumentAssociation(list, assoc);
+            }
         }
         return this.provideAndRegisterDocumentSetRequest;
     }
     
+    private boolean isDocumentID(String targetID) {
+        for(DocumentEntry docEntry : documents) {
+            if(docEntry.getID() != null && docEntry.getID().equals(targetID)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void checkMetadata() throws MetadataConfigurationException {
         MetadataConfigurationException x = new MetadataConfigurationException("Provide and Register Document Set Metadata error:");
         checkSubmissionSet(x);

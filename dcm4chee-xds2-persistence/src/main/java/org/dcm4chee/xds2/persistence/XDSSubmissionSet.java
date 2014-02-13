@@ -87,7 +87,7 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
     public static final String FIND_BY_UUIDS = "XDSSubmissionSet.findByUUIDs";
     
     @Basic(optional = false)
-    @Column(name = "unique_id", unique=true)
+    @Column(name = "unique_id")
     @Index(name="uniqueId_idx")
     private String uniqueId;
 

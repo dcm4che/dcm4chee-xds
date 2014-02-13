@@ -198,13 +198,22 @@ public class Util {
         list.add(rimFactory.createAssociation(createAssociation(xdsAssoc)));
     }
     public static AssociationType1 createAssociation(XDSAssociation xdsAssoc) {
+        AssociationType1 assoc = createNonDocumentAssociation(xdsAssoc);
+        assoc.getSlot().add(Util.createSlot(XDSConstants.SLOT_NAME_SUBMISSIONSET_STATUS, null, xdsAssoc.getSubmissionSetStatus()));
+        return assoc;
+    }
+    
+    public static void addNonDocumentAssociation(List<JAXBElement<? extends IdentifiableType>> list, XDSAssociation xdsAssoc) {
+        list.add(rimFactory.createAssociation(createNonDocumentAssociation(xdsAssoc)));
+    }
+    
+    public static AssociationType1 createNonDocumentAssociation(XDSAssociation xdsAssoc) {
         AssociationType1 assoc = rimFactory.createAssociationType1();
         assoc.setId(xdsAssoc.getID());
         assoc.setSourceObject(xdsAssoc.getSourceObject());
         assoc.setTargetObject(xdsAssoc.getTargetObject());
         assoc.setAssociationType(xdsAssoc.getAssociationType());
         assoc.setObjectType("urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association");
-        assoc.getSlot().add(Util.createSlot(XDSConstants.SLOT_NAME_SUBMISSIONSET_STATUS, null, xdsAssoc.getSubmissionSetStatus()));
         return assoc;
     }
 
