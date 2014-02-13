@@ -260,18 +260,24 @@ public class XDSAudit {
      * @param success
      */
     public static void logConsumerImport(String patID, URL repositoryURL, RetrieveDocumentSetRequestType docReq, boolean success) {
-        if (logger != null && logger.isInstalled()) {
-            logImport(EventTypeCode.ITI_43_RetrieveDocumentSet, null, patID, repositoryURL.toExternalForm(),
-                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
-                AuditLogger.localHost().getHostName(), docReq, success);
-        }
+    	logImport(EventTypeCode.ITI_43_RetrieveDocumentSet,patID,repositoryURL,docReq,success);
     }
+
     public static void logConsumerXCAImport(String patID, URL repositoryURL, RetrieveDocumentSetRequestType docReq, boolean success) {
-        if (logger != null && logger.isInstalled()) {
-            logImport(EventTypeCode.ITI_39_CrossGatewayRetrieve, null, patID, repositoryURL.toExternalForm(),
-                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
-                AuditLogger.localHost().getHostName(), docReq, success);
-        }
+    	logImport(EventTypeCode.ITI_39_CrossGatewayRetrieve,patID,repositoryURL,docReq,success);
+    }	
+
+    public static void logImport(EventTypeCode eventTypeCode, String patID, URL repositoryURL, RetrieveDocumentSetRequestType docReq, boolean success) {
+	    try {
+	    	if (logger != null && logger.isInstalled()) {
+	            logImport(eventTypeCode, null, patID, repositoryURL.toExternalForm(),
+	                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
+	                AuditLogger.localHost().getHostName(), docReq, success);
+	        }
+	    } catch (Exception e ){
+	        log.warn("Audit log of Import ({}) failed!",eventTypeCode.getDisplayName());    	
+            log.debug("AuditLog Exception:", e);
+	    }
     }
     
     public static void logImport(EventTypeCode eventTypeCode, String submissionSetUID, String patID, 

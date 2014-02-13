@@ -248,14 +248,19 @@ public class XCARespondingGW implements RespondingGatewayPortType {
         RetrieveDocumentSetResponseType rsp;
         URL xdsRepositoryURI = null;
         try {
-            String home = req.getDocumentRequest().get(0).getHomeCommunityId();
-            if (home == null)
-                throw new XDSException( XDSException.XDS_ERR_MISSING_HOME_COMMUNITY_ID, "Missing Home Community ID in request! repositoryID: "+repositoryID, null);
-            String url = XdsDevice.getXCARespondingGW().getRepositoryURL(repositoryID);
+            
+        	// Get the URI for the repo
+        	String url = XdsDevice.getXCARespondingGW().getRepositoryURL(repositoryID);
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
             xdsRepositoryURI = new URL(url);
+
+            // Check if home community id is provided
+            String home = req.getDocumentRequest().get(0).getHomeCommunityId();
+            if (home == null)
+                throw new XDSException( XDSException.XDS_ERR_MISSING_HOME_COMMUNITY_ID, "Missing Home Community ID in request! repositoryID: "+repositoryID, null);
+
             DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(url);
             log.info("####################################################");
             log.info("####################################################");
@@ -277,6 +282,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
                         "Unexpected error in XDS service !: "+x.getMessage(),x));
             }
         }
+        
         XDSAudit.logConsumerImport(null, xdsRepositoryURI, req, !XDSConstants.XDS_B_STATUS_FAILURE.equals(rsp.getRegistryResponse().getStatus()));
         return addHomeCommunityID(rsp);
     }
