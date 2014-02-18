@@ -461,12 +461,12 @@ Setup JBoss AS 7
 
         > $JBOSS_HOME/bin/jboss-cli.sh -c [UNIX]
         > %JBOSS_HOME%\bin\jboss-cli.bat -c [Windows]
-        [standalone@localhost:9999 /] /subsystem=datasources/jdbc-driver=<driver-name>:add(driver-module-name=<module-name>)
+        [standalone@localhost:9999 /] /subsystem=datasources/jdbc-driver=<driver-name>:add(driver-module-name=<module-name>,driver-name=<driver-name>)
 
     You may choose any `<driver-name>` for the JDBC Driver, `<module-name>` must match the name
     defined in the module definition file `module.xml` of the JDBC driver, e.g.:
 
-        [standalone@localhost:9999 /] /subsystem=datasources/jdbc-driver=db2:add(driver-module-name=com.ibm.db2)
+        [standalone@localhost:9999 /] /subsystem=datasources/jdbc-driver=db2:add(driver-module-name=com.ibm.db2,driver-name=db2)
 
 7.  Create and enable a new Data Source bound to JNDI name `java:/xdsDS` using JBoss AS 7 CLI:
 
