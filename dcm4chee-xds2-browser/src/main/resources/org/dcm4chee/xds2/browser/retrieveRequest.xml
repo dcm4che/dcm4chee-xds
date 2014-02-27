@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RetrieveDocumentSetRequest xmlns="urn:ihe:iti:xds-b:2007">
+                    <DocumentRequest>
+                        <RepositoryUniqueId>1.2.3.4.5.99</RepositoryUniqueId>
+                        <DocumentUniqueId>1.42.20140210150651.16</DocumentUniqueId>
+                    </DocumentRequest>
+                    <DocumentRequest>
+                        <RepositoryUniqueId>1.2.3.4.5.99</RepositoryUniqueId>
+                        <DocumentUniqueId>1.42.20140210150651.17</DocumentUniqueId>
+                    </DocumentRequest>
+</RetrieveDocumentSetRequest>
