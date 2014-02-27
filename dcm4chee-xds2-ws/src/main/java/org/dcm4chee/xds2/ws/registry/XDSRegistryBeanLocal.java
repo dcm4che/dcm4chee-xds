@@ -45,7 +45,6 @@ import javax.ejb.Local;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.persistence.XADPatient;
 
-@Local
 public interface XDSRegistryBeanLocal {
 
     boolean newPatientID(String pid) throws XDSException;

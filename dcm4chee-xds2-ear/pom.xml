@@ -82,6 +82,14 @@
 			<type>war</type>
 			<version>2.0.2</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-browser</artifactId>
+			<type>war</type>
+			<version>2.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-ws</artifactId>
@@ -89,6 +97,7 @@
 			<version>2.0.2</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-conf</artifactId>
@@ -136,6 +145,10 @@
 						<webModule>
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-service</artifactId>
+						</webModule>
+						<webModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-xds2-browser</artifactId>
 						</webModule>
 					</modules>
 					<version>6</version>

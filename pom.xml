@@ -73,6 +73,7 @@
     <module>dcm4chee-xds2-persistence</module>
     <module>dcm4chee-xds2-service</module>
     <module>dcm4chee-xds2-ear</module>
+    <module>dcm4chee-xds2-browser</module>
     <module>dcm4chee-xds2-tool</module>
     <module>dcm4chee-xds2-src</module>
     <module>dcm4chee-xds2-pix</module>
