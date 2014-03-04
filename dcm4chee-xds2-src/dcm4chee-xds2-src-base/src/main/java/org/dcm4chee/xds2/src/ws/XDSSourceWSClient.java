@@ -126,7 +126,9 @@ public class XDSSourceWSClient {
             currentHandlers = new ArrayList<Handler>();
         }
         for (Handler<?> handler : handlers) {
-            currentHandlers.add(handler);
+            if(handler!=null) {
+                currentHandlers.add(handler);
+            }
         }
         bind.setHandlerChain(currentHandlers);
     }
