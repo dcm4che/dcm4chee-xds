@@ -41,11 +41,11 @@ package org.dcm4chee.xds2.conf;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
-import org.dcm4che.conf.api.ConfigurationException;
-import org.dcm4che.conf.api.hl7.HL7ApplicationCache;
-import org.dcm4che.conf.api.hl7.HL7Configuration;
-import org.dcm4che.net.Device;
-import org.dcm4che.net.hl7.HL7Application;
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
+import org.dcm4che3.conf.api.hl7.HL7Configuration;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.hl7.HL7Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

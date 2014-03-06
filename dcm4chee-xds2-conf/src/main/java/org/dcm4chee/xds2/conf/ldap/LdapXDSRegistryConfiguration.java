@@ -48,10 +48,10 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 import javax.naming.directory.ModificationItem;
 
-import org.dcm4che.conf.api.ConfigurationException;
-import org.dcm4che.conf.ldap.LdapDicomConfigurationExtension;
-import org.dcm4che.conf.ldap.LdapUtils;
-import org.dcm4che.net.Device;
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.ldap.LdapDicomConfigurationExtension;
+import org.dcm4che3.conf.ldap.LdapUtils;
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 
 /**

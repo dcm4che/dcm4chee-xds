@@ -41,19 +41,19 @@ package org.dcm4chee.xds2.registry.hl7;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import org.dcm4che.audit.AuditMessages.EventActionCode;
-import org.dcm4che.hl7.HL7Exception;
-import org.dcm4che.hl7.HL7Message;
-import org.dcm4che.hl7.HL7Segment;
-import org.dcm4che.net.Connection;
-import org.dcm4che.net.hl7.HL7Application;
-import org.dcm4che.net.hl7.HL7MessageListener;
+import org.dcm4che3.audit.AuditMessages.EventActionCode;
+import org.dcm4che3.hl7.HL7Exception;
+import org.dcm4che3.hl7.HL7Message;
+import org.dcm4che3.hl7.HL7Segment;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.hl7.HL7Application;
+import org.dcm4che3.net.hl7.HL7MessageListener;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XdsHL7Service extends HL7MessageListener {
+public class XdsHL7Service implements HL7MessageListener {
 
     private XDSRegistryBeanLocal xdsRegistryBean;
     

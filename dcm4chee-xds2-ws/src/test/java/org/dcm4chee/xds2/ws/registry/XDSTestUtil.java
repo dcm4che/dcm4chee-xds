@@ -54,7 +54,7 @@ import javax.xml.bind.Unmarshaller;
 
 import junit.framework.Assert;
 
-import org.dcm4che.net.Device;
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;

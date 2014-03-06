@@ -46,7 +46,7 @@ import javax.xml.soap.SOAPHeader;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
-import org.dcm4che.audit.AuditMessages;
+import org.dcm4che3.audit.AuditMessages;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
