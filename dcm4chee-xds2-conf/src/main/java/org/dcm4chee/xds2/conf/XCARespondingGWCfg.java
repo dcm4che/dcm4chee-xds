@@ -40,21 +40,43 @@ package org.dcm4chee.xds2.conf;
 
 import java.util.HashMap;
 
+import org.dcm4che3.conf.api.generic.ConfigClass;
+import org.dcm4che3.conf.api.generic.ConfigField;
+import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-public class XCARespondingGWCfg extends DeviceExtension {
+@ConfigClass(commonName = "XCARespondingGW", objectClass = "xcaRespondingGW", nodeName = "xcaRespondingGW")
 
+public class XCARespondingGWCfg extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
-    private String applicationName;
+	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	private String applicationName;
+	
+
+	@ConfigField(name = "xdsHomeCommunityID", store = StoreType.storeNotNull)
     private String homeCommunityID;
-    private String registryURL;
-    private HashMap<String, String> repositoryUrlMapping = new HashMap<String,String>();
-    private String soapLogDir;
+
+
+	@ConfigField(name = "xdsRegistryURL", store = StoreType.storeNotNull)
+	private String registryURL;
+
+	/**
+	 * Ghost property, actual data is stored in a map
+	 */
+	@ConfigField(name = "xdsRepositoryURL", store = StoreType.storeNotEmpty)
+	private String[] repositoryURLs;
+
+	private HashMap<String, String> repositoryUrlMapping = new HashMap<String,String>();
+	
+	
+	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	private String soapLogDir;
 
     public String getApplicationName() {
         return applicationName;
@@ -95,11 +117,7 @@ public class XCARespondingGWCfg extends DeviceExtension {
 
     @Override
     public void reconfigure(DeviceExtension from) {
-        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
-        setApplicationName(src.getApplicationName());
-        setHomeCommunityID(src.getHomeCommunityID());
-        setRegistryURL(src.getRegistryURL());
-        setRepositoryURLs(src.getRepositoryURLs());
-        setSoapLogDir(src.getSoapLogDir());
+    	XCARespondingGWCfg src = (XCARespondingGWCfg) from;
+        ReflectiveConfig.reconfigure(src, this);
     }
 }

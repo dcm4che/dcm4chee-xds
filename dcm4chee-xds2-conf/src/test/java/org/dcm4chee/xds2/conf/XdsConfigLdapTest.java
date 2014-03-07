@@ -41,13 +41,8 @@ package org.dcm4chee.xds2.conf;
 import org.dcm4che3.conf.ldap.LdapDicomConfiguration;
 import org.dcm4che3.conf.ldap.audit.LdapAuditLoggerConfiguration;
 import org.dcm4che3.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.ldap.generic.LdapGenericConfigExtension;
 import org.dcm4che3.conf.ldap.hl7.LdapHL7Configuration;
-import org.dcm4chee.xds2.conf.ldap.LdapXCAInitiatingGWConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXCARespondingGWConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXCAiInitiatingGWConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXCAiRespondingGWConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXDSRegistryConfiguration;
-import org.dcm4chee.xds2.conf.ldap.LdapXDSRepositoryConfiguration;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -63,12 +58,13 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
     public void setUp() throws Exception {
         testCount++;
         LdapDicomConfiguration cfg = new LdapDicomConfiguration();
-        cfg.addDicomConfigurationExtension(new LdapXDSRegistryConfiguration());
-        cfg.addDicomConfigurationExtension(new LdapXDSRepositoryConfiguration());
-        cfg.addDicomConfigurationExtension(new LdapXCARespondingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new LdapXCAInitiatingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new LdapXCAiRespondingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new LdapXCAiInitiatingGWConfiguration());
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRepository>(XdsRepository.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+        
         cfg.addDicomConfigurationExtension(new LdapHL7Configuration());
         cfg.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
         cfg.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
