@@ -43,7 +43,6 @@ import org.dcm4che3.util.StringUtils;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
 /**
@@ -57,37 +56,37 @@ public class XdsRegistry extends DeviceExtension {
 
 	private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
 	private String applicationName;
 
-	@ConfigField(name = "xdsAffinityDomain", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsAffinityDomain")
 	private String[] affinityDomain = new String[] {};
 
-	@ConfigField(name = "xdsAffinityDomainConfigDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsAffinityDomainConfigDir")
 	private String affinityDomainConfigDir;
 
-	@ConfigField(name = "xdsAcceptedMimeTypes", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsAcceptedMimeTypes")
 	private String[] acceptedMimeTypes = new String[] {};
 
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
 	private String soapLogDir;
 
-	@ConfigField(name = "xdsCreateMissingPIDs", store = StoreType.storeNotDef, def = "false")
+	@ConfigField(name = "xdsCreateMissingPIDs", def = "false")
 	private boolean createMissingPIDs;
 
-	@ConfigField(name = "xdsCreateMissingCodes", store = StoreType.storeNotDef, def = "false")
+	@ConfigField(name = "xdsCreateMissingCodes", def = "false")
 	private boolean createMissingCodes;
 
-	@ConfigField(name = "xdsDontSaveCodeClassifications", store = StoreType.storeNotDef, def = "false")
+	@ConfigField(name = "xdsDontSaveCodeClassifications", def = "false")
 	private boolean dontSaveCodeClassifications;
 
-	@ConfigField(name = "xdsCheckAffinityDomain", store = StoreType.storeNotDef, def = "true")
+	@ConfigField(name = "xdsCheckAffinityDomain", def = "true")
 	private boolean checkAffinityDomain;
 
-	@ConfigField(name = "xdsCheckMimetype", store = StoreType.storeNotDef, def = "true")
+	@ConfigField(name = "xdsCheckMimetype", def = "true")
 	private boolean checkMimetype;
 
-	@ConfigField(name = "xdsPreMetadataCheck", store = StoreType.storeNotDef, def = "false")
+	@ConfigField(name = "xdsPreMetadataCheck", def = "false")
 	private boolean preMetadataCheck;
 
 	private XADCfgRepository xadCfgRepository;

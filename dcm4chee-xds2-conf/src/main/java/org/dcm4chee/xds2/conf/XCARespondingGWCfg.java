@@ -43,7 +43,6 @@ import java.util.HashMap;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
@@ -55,27 +54,27 @@ import org.dcm4chee.xds2.common.XDSUtil;
 public class XCARespondingGWCfg extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
 	private String applicationName;
 	
 
-	@ConfigField(name = "xdsHomeCommunityID", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsHomeCommunityID")
     private String homeCommunityID;
 
 
-	@ConfigField(name = "xdsRegistryURL", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsRegistryURL")
 	private String registryURL;
 
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsRepositoryURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsRepositoryURL")
 	private String[] repositoryURLs;
 
 	private HashMap<String, String> repositoryUrlMapping = new HashMap<String,String>();
 	
 	
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
 	private String soapLogDir;
 
     public String getApplicationName() {

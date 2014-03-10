@@ -45,7 +45,6 @@ import java.util.Map;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
@@ -57,26 +56,26 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
     private String applicationName;
 	
-	@ConfigField(name = "xdsHomeCommunityID", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsHomeCommunityID")
     private String homeCommunityID;
 	
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 	
-	@ConfigField(name = "xdsAsync", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsAsync")
     private boolean async;
 
-	@ConfigField(name = "xdsAsyncHandler", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsAsyncHandler")
     private boolean asyncHandler;
 
 	
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsiSourceURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsiSourceURL")
 	private String[] XDSiSourceURLs;
 
     //AffinityDomain Option
@@ -85,7 +84,7 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsRespondingGatewayURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsRespondingGatewayURL")
 	private String[] respondingGWURLs;
     
     private Map<String, String> respondingGWUrlMapping = new HashMap<String,String>();

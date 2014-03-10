@@ -43,7 +43,6 @@ import java.util.HashMap;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
@@ -55,21 +54,21 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
     private String applicationName;
 
 
-	@ConfigField(name = "xdsHomeCommunityID", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsHomeCommunityID")
 	private String homeCommunityID;
 	
 	
-	@ConfigField(name = "xdsiSourceURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsiSourceURL")
 	private String[] XDSiSourceURLs;
 	
     private HashMap<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
 
     
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 
 	

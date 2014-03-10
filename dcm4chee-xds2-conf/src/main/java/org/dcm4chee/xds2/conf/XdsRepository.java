@@ -44,7 +44,6 @@ import java.util.Map;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 
 /**
@@ -56,34 +55,34 @@ public class XdsRepository extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
     private String applicationName;
     
-	@ConfigField(name="xdsRepositoryUID", store = StoreType.storeNotNull)
+	@ConfigField(name="xdsRepositoryUID")
     private String repositoryUID;
     
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
     
-	@ConfigField(name = "xdsAcceptedMimeTypes", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsAcceptedMimeTypes")
     private String[] acceptedMimeTypes = new String[]{};
     
-	@ConfigField(name = "xdsLogFullMessageHosts", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsLogFullMessageHosts")
     private String[] logFullMessageHosts = new String[]{};
 	
-	@ConfigField(name="xdsCheckMimetype", store = StoreType.storeNotNull)
+	@ConfigField(name="xdsCheckMimetype")
 	private boolean checkMimetype;
     
-	@ConfigField(name="xdsAllowedCipherHostname", store = StoreType.storeNotNull)
+	@ConfigField(name="xdsAllowedCipherHostname")
     private String allowedCipherHostname;
     
-	@ConfigField(name="xdsForceMTOM", store = StoreType.storeNotNull)
+	@ConfigField(name="xdsForceMTOM")
     private boolean forceMTOM;
 
 	/**
      * Ghost property, needed only for annotation, actual getter&setter user the map below
      */
-    @ConfigField(name = "xdsRegistryURL", store = StoreType.storeNotEmpty)
+    @ConfigField(name = "xdsRegistryURL")
     private String[] registryURLs;
     
     private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();

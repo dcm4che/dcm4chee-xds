@@ -45,7 +45,6 @@ import java.util.Map;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ConfigField.StoreType;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -58,18 +57,18 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 
 	private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsApplicationName")
 	private String applicationName;
 
 	
-	@ConfigField(name = "xdsHomeCommunityID", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsHomeCommunityID")
 	private String homeCommunityID;
 
 	
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsRespondingGatewayURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsRespondingGatewayURL")
 	private String[] respondingGWURLs;
 
 	private Map<String, String> respondingGWUrlMapping = new HashMap<String, String>();
@@ -78,7 +77,7 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsRespondingGatewayRetrieveURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsRespondingGatewayRetrieveURL")
 	private String[] respondingGWRetrieveURLs;
 
 	private Map<String, String> respondingGWRetrieveUrlMapping = new HashMap<String, String>();
@@ -87,42 +86,42 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsAssigningAuthority", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsAssigningAuthority")
 	private String[] assigningAuthoritiesMap;
 
 	private Map<String, String> homeIdToAssigningAuthotityMapping = new HashMap<String, String>();
 
 	
 	// AffinityDomain Option
-	@ConfigField(name = "xdsRegistryURL", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsRegistryURL")
 	private String registryURL;
 
 	/**
 	 * Ghost property, actual data is stored in a map
 	 */
-	@ConfigField(name = "xdsRepositoryURL", store = StoreType.storeNotEmpty)
+	@ConfigField(name = "xdsRepositoryURL")
 	private String[] repositoryURLs;
 
 	private Map<String, String> repositoryUrlMapping = new HashMap<String, String>();
 
 
-	@ConfigField(name = "xdsSoapMsgLogDir", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsSoapMsgLogDir")
 	private String soapLogDir;
 	
 	
-	@ConfigField(name = "xdsAsync", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsAsync")
 	private boolean async;
 
 	
-	@ConfigField(name = "xdsAsyncHandler", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsAsyncHandler")
 	private boolean asyncHandler;
 	
 	
-	@ConfigField(name = "xdsPIXManagerApplication", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsPIXManagerApplication")
 	private String remotePIXManagerApplication;
 	
 
-	@ConfigField(name = "xdsPIXConsumerApplication", store = StoreType.storeNotNull)
+	@ConfigField(name = "xdsPIXConsumerApplication")
 	private String localPIXConsumerApplication;
 
 	public String getApplicationName() {
