@@ -41,16 +41,16 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dcm4che</groupId>
-  <artifactId>dcm4chee-xds2</artifactId>
-  <version>2.0.0</version>
+  <artifactId>dcm4chee-xds2-parent</artifactId>
+  <version>2.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>XDS implementation for JBoss7/EJB3</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dcm4che.version>3.2.1</dcm4che.version>
+    <dcm4che.version>3.3.0</dcm4che.version>
     <slf4j.version>1.6.1</slf4j.version>
     <hibernate.version>4.0.1.Final</hibernate.version>
-    <querydsl.version>3.2.3</querydsl.version>
+    <querydsl.version>3.3.1</querydsl.version>
     <javaee6.with.tools.version>1.0.0.M1</javaee6.with.tools.version>
     <db>oracle</db>
     <ds>java:/xdsDS</ds>
@@ -59,22 +59,32 @@
     <arquillian.version>1.0.0.Alpha5</arquillian.version>
     <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
     <jboss.version>6.0.0.Final</jboss.version>
-    <skipTests>true</skipTests>
+    <skipTests>false</skipTests>
   </properties>
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>
     <module>dcm4chee-xds2-infoset</module>
     <module>dcm4chee-xds2-common</module>
-    <module>dcm4chee-xds2-ws</module>
-    <module>dcm4chee-xds2-store</module>
-    <module>dcm4chee-xds2-hl7</module>
+    <module>dcm4chee-xds2-common-ws</module>
     <module>dcm4chee-xds2-conf</module>
-    <module>dcm4chee-xds2-persistence</module>
-    <module>dcm4chee-xds2-service</module>
-    <module>dcm4chee-xds2-ear</module>
+    <module>dcm4chee-xds2-registry-persistence</module>
+    <module>dcm4chee-xds2-registry-ws</module>
+    <module>dcm4chee-xds2-registry-service</module>
+    <module>dcm4chee-xds2-hl7</module>
+    <module>dcm4chee-xds2-repository-ws</module>
+    <module>dcm4chee-xds2-store-api</module>
+    <module>dcm4chee-xds2-store-file</module>
+    <module>dcm4chee-xds2-registry-ear</module>
+    <module>dcm4chee-xds2-repository-ear</module>
+   <!-- <module>dcm4chee-xds2-persistence</module> 
     <module>dcm4chee-xds2-tool</module>
-    <module>dcm4chee-xds2-src</module>
-    <module>dcm4chee-xds2-pix</module>
+    <module>dcm4chee-xds2-src</module> -->
+    <module>dcm4chee-xds2-pix-client</module>
+    <module>dcm4chee-xds2-pix-tool</module>
+    <module>dcm4chee-xds2-xca-ws</module>
+    <module>dcm4chee-xds2-xca-ear</module>
+    <module>dcm4chee-xds2-xcai-ws</module>
+    <module>dcm4chee-xds2-xcai-ear</module>
     <module>dcm4chee-xds2-dist</module>
   </modules>
   <dependencyManagement>

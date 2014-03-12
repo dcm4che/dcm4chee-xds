@@ -38,7 +38,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common.audit;
 
-import static org.dcm4che.audit.AuditMessages.createEventIdentification;
+import static org.dcm4che3.audit.AuditMessages.createEventIdentification;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -60,27 +60,27 @@ import javax.activation.DataSource;
 
 import org.apache.cxf.attachment.DelegatingInputStream;
 
-import org.dcm4che.audit.AuditMessage;
-import org.dcm4che.audit.AuditMessages;
-import org.dcm4che.audit.Instance;
-import org.dcm4che.audit.ParticipantObjectDescription;
-import org.dcm4che.audit.SOPClass;
-import org.dcm4che.audit.AuditMessages.EventActionCode;
-import org.dcm4che.audit.AuditMessages.EventID;
-import org.dcm4che.audit.AuditMessages.EventOutcomeIndicator;
-import org.dcm4che.audit.AuditMessages.EventTypeCode;
-import org.dcm4che.audit.AuditMessages.ParticipantObjectIDTypeCode;
-import org.dcm4che.audit.AuditMessages.RoleIDCode;
-import org.dcm4che.audit.ParticipantObjectDetail;
-import org.dcm4che.audit.ParticipantObjectIdentification;
-import org.dcm4che.data.Attributes;
-import org.dcm4che.data.Tag;
-import org.dcm4che.io.DicomInputStream;
-import org.dcm4che.net.Connection;
-import org.dcm4che.net.Device;
-import org.dcm4che.net.IncompatibleConnectionException;
-import org.dcm4che.net.audit.AuditLogger;
-import org.dcm4che.util.SafeClose;
+import org.dcm4che3.audit.AuditMessage;
+import org.dcm4che3.audit.AuditMessages;
+import org.dcm4che3.audit.Instance;
+import org.dcm4che3.audit.ParticipantObjectDescription;
+import org.dcm4che3.audit.SOPClass;
+import org.dcm4che3.audit.AuditMessages.EventActionCode;
+import org.dcm4che3.audit.AuditMessages.EventID;
+import org.dcm4che3.audit.AuditMessages.EventOutcomeIndicator;
+import org.dcm4che3.audit.AuditMessages.EventTypeCode;
+import org.dcm4che3.audit.AuditMessages.ParticipantObjectIDTypeCode;
+import org.dcm4che3.audit.AuditMessages.RoleIDCode;
+import org.dcm4che3.audit.ParticipantObjectDetail;
+import org.dcm4che3.audit.ParticipantObjectIdentification;
+import org.dcm4che3.data.Attributes;
+import org.dcm4che3.data.Tag;
+import org.dcm4che3.io.DicomInputStream;
+import org.dcm4che3.net.Connection;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.IncompatibleConnectionException;
+import org.dcm4che3.net.audit.AuditLogger;
+import org.dcm4che3.util.SafeClose;
 import org.dcm4chee.xds2.common.InputStreamDataSource;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;

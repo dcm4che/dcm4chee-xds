@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.dcm4che.net.DeviceExtension;
+import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
 /**

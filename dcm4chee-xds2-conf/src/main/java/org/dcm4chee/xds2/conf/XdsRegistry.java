@@ -38,8 +38,8 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che.net.DeviceExtension;
-import org.dcm4che.util.StringUtils;
+import org.dcm4che3.net.DeviceExtension;
+import org.dcm4che3.util.StringUtils;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
 /**

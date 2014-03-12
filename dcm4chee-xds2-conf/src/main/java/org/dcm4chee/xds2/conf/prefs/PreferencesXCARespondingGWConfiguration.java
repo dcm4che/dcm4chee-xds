@@ -41,10 +41,10 @@ package org.dcm4chee.xds2.conf.prefs;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
-import org.dcm4che.conf.api.ConfigurationException;
-import org.dcm4che.conf.prefs.PreferencesDicomConfigurationExtension;
-import org.dcm4che.conf.prefs.PreferencesUtils;
-import org.dcm4che.net.Device;
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.prefs.PreferencesDicomConfigurationExtension;
+import org.dcm4che3.conf.prefs.PreferencesUtils;
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 
 /**
