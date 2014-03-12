@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<webservices xmlns="http://www.jboss.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
+	<context-root>xcai</context-root>
+	<port-component>
+		<ejb-name>XCAiInitiatingGW</ejb-name>
+		<port-component-name>XCAI_InitiatingGateway_Port_Soap12</port-component-name>
+		<port-component-uri>/InitiatingGW/*</port-component-uri>
+	</port-component>
+	<port-component>
+		<ejb-name>XCAiRespondingGW</ejb-name>
+		<port-component-name>XCAIRespondingGateway_Port</port-component-name>
+		<port-component-uri>/RespondingGW/*</port-component-uri>
+	</port-component>
+</webservices>

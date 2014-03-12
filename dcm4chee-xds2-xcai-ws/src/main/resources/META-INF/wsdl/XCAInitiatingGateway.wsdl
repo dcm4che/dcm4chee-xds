@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This wsdl file is for an XCA Initiating Gateway Actor which implements 
+	the XDS Affinity Domain Option. -->
+<!-- IHE Cross Community Access (XCA) WSDL defintions for Initiating Gateway -->
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:ihe="urn:ihe:iti:xds-b:2007" xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+	xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+	targetNamespace="urn:ihe:iti:xds-b:2007" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" name="InitiatingGateway">
+	<documentation>IHE XCA Initiating Gateway</documentation>
+	<types>
+		<xsd:schema elementFormDefault="qualified">
+			<xsd:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+				schemaLocation="schema/ebRS/rs.xsd" />
+			<xsd:import namespace="urn:ihe:iti:xds-b:2007"
+				schemaLocation="schema/IHE/XDS.b_DocumentRepository.xsd" />
+			<xsd:import namespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+				schemaLocation="schema/ebRS/query.xsd" />
+		</xsd:schema>
+	</types>
+	<message name="RegistryStoredQuery_Message">
+		<documentation>Registry Stored Query</documentation>
+		<part name="body" element="query:AdhocQueryRequest" />
+	</message>
+	<message name="RegistryStoredQueryResponse_Message">
+		<documentation>Registry Stored Query Response</documentation>
+		<part name="body" element="query:AdhocQueryResponse" />
+	</message>
+	<message name="RetrieveDocumentSet_Message">
+		<documentation>Retrieve Document Set</documentation>
+		<part name="body" element="ihe:RetrieveDocumentSetRequest" />
+	</message>
+	<message name="RetrieveDocumentSetResponse_Message">
+		<documentation>Retrieve Document Set Response</documentation>
+		<part name="body" element="ihe:RetrieveDocumentSetResponse" />
+	</message>
+
+	<portType name="InitiatingGateway_PortType">
+		<operation name="DocumentRegistry_RegistryStoredQuery">
+			<input message="ihe:RegistryStoredQuery_Message" wsaw:Action="urn:ihe:iti:2007:RegistryStoredQuery" />
+			<output message="ihe:RegistryStoredQueryResponse_Message"
+				wsaw:Action="urn:ihe:iti:2007:RegistryStoredQueryResponse" />
+		</operation>
+		<operation name="DocumentRepository_RetrieveDocumentSet">
+			<input message="ihe:RetrieveDocumentSet_Message" wsaw:Action="urn:ihe:iti:2007:RetrieveDocumentSet" />
+			<output message="ihe:RetrieveDocumentSetResponse_Message"
+				wsaw:Action="urn:ihe:iti:2007:RetrieveDocumentSetResponse" />
+		</operation>
+	</portType>
+
+
+
+	<binding name="InitiatingGateway_Binding_Soap12" type="ihe:InitiatingGateway_PortType">
+		<soap12:binding style="document"
+			transport="http://schemas.xmlsoap.org/soap/http" />
+
+		<operation name="DocumentRegistry_RegistryStoredQuery">
+			<soap12:operation soapAction="urn:ihe:iti:2007:RegistryStoredQuery" />
+			<input>
+				<soap12:body use="literal" />
+			</input>
+			<output>
+				<soap12:body use="literal" />
+			</output>
+		</operation>
+		<operation name="DocumentRepository_RetrieveDocumentSet">
+			<soap12:operation soapAction="urn:ihe:iti:2007:RetrieveDocumentSet" />
+			<input>
+				<soap12:body use="literal" />
+			</input>
+			<output>
+				<soap12:body use="literal" />
+			</output>
+		</operation>
+
+	</binding>
+
+	<service name="InitiatingGateway">
+		<port name="InitiatingGateway_Port_Soap12" binding="ihe:InitiatingGateway_Binding_Soap12">
+			<soap12:address location="http://servicelocation/InitiatingGateway" />
+		</port>
+	</service>
+</definitions>

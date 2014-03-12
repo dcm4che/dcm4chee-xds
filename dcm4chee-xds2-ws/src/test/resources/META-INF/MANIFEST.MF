@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Archiver-Version: Plexus Archiver
-Created-By: Apache Maven
-Built-By: AWPRC
-Build-Jdk: 1.6.0_30
-Dependencies: com.mysema.querydsl, org.dcm4che.audit, org.dcm4che.net-audit
-

@@ -1,0 +1,49 @@
+version: 1
+
+
+dn: dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomInstalled: TRUE
+dicomDeviceName: dcm4chee-xds2-registry
+objectClass: dicomDevice
+
+dn: xdsApplicationName=XDS_REGISTRY,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+objectClass: xdsApplication
+xdsApplicationName: XDS_REGISTRY
+xdsAffinityDomain: 1.2.3.4.5&ISO
+xdsAcceptedMimeTypes: application/pdf
+xdsAcceptedMimeTypes: application/xml
+xdsAcceptedMimeTypes: application/dicom
+xdsAcceptedMimeTypes: text/xml
+xdsSoapMsgLogDir: /var/log/xdslog
+
+dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomHostname: localhost
+dicomPort: 2576
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+cn: hl7
+
+dn: cn=hl7-tls,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomHostname: localhost
+dicomPort: 12576
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+dicomTLSCipherSuite: TLS_RSA_WITH_AES_128_CBC_SHA
+dicomTLSCipherSuite: SSL_RSA_WITH_3DES_EDE_CBC_SHA
+dcmTLSProtocol: TLSv1
+dcmTLSProtocol: SSLv3
+cn: hl7-tls
+
+dn: hl7ApplicationName=XDS^DCM4CHEE,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+objectClass: hl7Application
+dicomNetworkConnectionReference: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+dicomNetworkConnectionReference: cn=hl7-tls,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=XDS Configuration,dc=example,dc=com
+hl7ApplicationName: XDS^DCM4CHEE
+hl7AcceptedMessageType: ADT^A02
+hl7AcceptedMessageType: ADT^A03
+hl7AcceptedMessageType: ADT^A06
+hl7AcceptedMessageType: ADT^A07
+hl7AcceptedMessageType: ADT^A08
+hl7AcceptedMessageType: ADT^A40
+
+
