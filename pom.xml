@@ -59,7 +59,7 @@
     <arquillian.version>1.0.0.Alpha5</arquillian.version>
     <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
     <jboss.version>6.0.0.Final</jboss.version>
-    <skipTests>true</skipTests>
+    <skipTests>false</skipTests>
   </properties>
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>

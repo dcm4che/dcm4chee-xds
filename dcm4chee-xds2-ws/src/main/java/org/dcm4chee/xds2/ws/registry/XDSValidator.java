@@ -104,7 +104,7 @@ public class XDSValidator {
     }
     
     public static void checkAlreadyExists(String uniqueId, ExtrinsicObjectType eoType, XDSRegistryBean session) throws XDSException {
-        List<XDSDocumentEntry> docs = session.getDocumentEntriesByUniqueId(false, uniqueId);
+        List<XDSDocumentEntry> docs = session.getDocumentEntriesByUniqueId(uniqueId);
         if (docs.size() > 0) {
             List<String> hash1 = getSlotTypeValues(eoType.getSlot(), "hash");;
             if (hash1 == null || hash1.isEmpty()) {

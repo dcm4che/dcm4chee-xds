@@ -405,7 +405,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         return (List<XDSDocumentEntry>) getObjectsByNamedQuery(XDSDocumentEntry.FIND_BY_UUIDS, XDSDocumentEntry.FIND_BY_UUIDS_NAME, ids);
     }
     @SuppressWarnings("unchecked")
-    public List<XDSDocumentEntry> getDocumentEntriesByUniqueId(boolean fetch, String... ids) {
+    public List<XDSDocumentEntry> getDocumentEntriesByUniqueId(String... ids) {
         return (List<XDSDocumentEntry>) getObjectsByNamedQuery(XDSDocumentEntry.FIND_BY_UNIQUE_IDS, XDSDocumentEntry.FIND_BY_UNIQUE_IDS_NAME, ids);
     }
 

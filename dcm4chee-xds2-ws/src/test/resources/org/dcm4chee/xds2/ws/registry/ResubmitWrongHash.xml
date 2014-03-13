@@ -294,7 +294,7 @@
 				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
 				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
 				registryObject="urn:uuid:aabbccdd-bdda-424e-bbbb-df4873be8502"
-				value="1.42.20120430135820.37">
+				value="1.42.20120430135820.37.0.2">
 				<rim:Name>
 					<rim:LocalizedString value="XDSSubmissionSet.uniqueId" />
 				</rim:Name>

@@ -42,8 +42,9 @@ package org.dcm4chee.xds2.ws.registry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-
+import static org.junit.Assert.assertFalse;
 import java.io.File;
+import java.util.List;
 
 import javax.ejb.EJB;
 import javax.xml.bind.JAXBElement;
@@ -223,14 +224,15 @@ public class RegisterDocumentSetTest {
         String uniqueId = XDSTestUtil.getExternalIdentifierValue(obj.getExternalIdentifier(), 
                 XDSConstants.UUID_XDSDocumentEntry_uniqueId);
         if (uniqueId != null) {
-            XDSDocumentEntry doc = session.getDocumentEntryByUniqueId(uniqueId);
-            assertNotNull(msgPrefix+" not found by uniqueId! :"+uniqueId, doc);
+            List<XDSDocumentEntry> docs = session.getDocumentEntriesByUniqueId(uniqueId);
+            assertFalse(msgPrefix+" not found by uniqueId! :"+uniqueId, docs.isEmpty());
             try {
                 testSession.checkExtrinsicObjectType(obj);
             } catch (XDSRegistryTestBeanException x) {
                 throw x.getAssertionEror();
             }
-            assertNotNull("Check SourcePatientID", doc.getSourcePatient());
+            for (XDSDocumentEntry doc : docs)
+                assertNotNull("Check SourcePatientID", doc.getSourcePatient());
         } else {
             fail(msgPrefix+" is not an XDSDocumentEntry! (missing uniqueId)");  
         }
