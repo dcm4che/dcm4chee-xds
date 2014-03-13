@@ -56,6 +56,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -80,11 +81,9 @@ public class SubmitObjReqTest {
     @EJB
     private XDSRegistryBean session;
 
-    @After
-    public void clearDB() {
-        long t1 = System.currentTimeMillis();
-        log.info("\n################################# CLEAR DB #################################");
-        log.info("\n###### CLEAR done in "+(System.currentTimeMillis()-t1)+"ms ######");
+    @Before
+    public void prepare() {
+        XDSTestUtil.prepareTests(session, log);
     }
 
     @Test
