@@ -54,6 +54,12 @@ import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiRespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRegistryConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXDSRepositoryConfiguration;
+import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.prefs.generic.PreferencesGenericConfigExtension;
+import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
+import org.dcm4che3.util.SafeClose;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 
@@ -69,12 +75,14 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
     public void setUp() throws Exception {
         testCount++;
         PreferencesDicomConfiguration cfg = new PreferencesDicomConfiguration(Preferences.userRoot());
-        cfg.addDicomConfigurationExtension(new PreferencesXDSRegistryConfiguration());
-        cfg.addDicomConfigurationExtension(new PreferencesXDSRepositoryConfiguration());
-        cfg.addDicomConfigurationExtension(new PreferencesXCARespondingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new PreferencesXCAInitiatingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new PreferencesXCAiRespondingGWConfiguration());
-        cfg.addDicomConfigurationExtension(new PreferencesXCAiInitiatingGWConfiguration());
+        
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRepository>(XdsRepository.class));
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+
         cfg.addDicomConfigurationExtension(new PreferencesHL7Configuration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());

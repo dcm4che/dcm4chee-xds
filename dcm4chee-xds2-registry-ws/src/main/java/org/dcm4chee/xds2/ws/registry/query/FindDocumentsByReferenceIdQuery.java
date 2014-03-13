@@ -38,20 +38,13 @@
 
 package org.dcm4chee.xds2.ws.registry.query;
 
-import java.util.List;
-
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.persistence.QXDSDocumentEntry;
-import org.dcm4chee.xds2.ws.registry.XDSPersistenceWrapper;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
 
 /**
  * Stored Query Implementation for FindDocumentsByReferenceIdQuery 
@@ -62,15 +55,13 @@ import com.mysema.query.jpa.impl.JPAQuery;
  */
 public class FindDocumentsByReferenceIdQuery extends FindDocumentsQuery {
 
-    private static Logger log = LoggerFactory.getLogger(FindDocumentsByReferenceIdQuery.class);
-
     public FindDocumentsByReferenceIdQuery(AdhocQueryRequest req, XDSRegistryBean session) throws XDSException {
         super(req, session);
     }
     @Override
 	protected void buildQuery(BooleanBuilder builder) throws XDSException {
 		super.buildQuery(builder);
-		this.addSlotValueMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_AUTHOR_PERSON), 
+		this.addSlotValueMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST), 
 				XDSConstants.SLOT_NAME_REFERENCE_ID_LIST, QXDSDocumentEntry.xDSDocumentEntry.pk);
 	}
 

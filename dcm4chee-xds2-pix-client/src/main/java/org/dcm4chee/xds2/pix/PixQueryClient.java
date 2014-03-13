@@ -340,5 +340,4 @@ public class PixQueryClient {
         }
         return domains;
     }
-    
 }

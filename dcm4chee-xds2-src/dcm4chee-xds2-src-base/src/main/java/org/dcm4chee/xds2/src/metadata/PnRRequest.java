@@ -301,7 +301,8 @@ public class PnRRequest {
         for (int i = 0, len = associations.size() ; i < len ; i++) {
             XDSAssociation assoc = associations.get(i);
             String targetID = assoc.getTargetObject();
-            if(isDocumentID(targetID)) {
+            String sourceID = assoc.getSourceObject();
+            if(isSubmissionSet(sourceID) && isDocumentID(targetID)) {
                 Util.addAssociation(list, assoc);
             } else {
                 Util.addNonDocumentAssociation(list, assoc);
@@ -310,6 +311,10 @@ public class PnRRequest {
         return this.provideAndRegisterDocumentSetRequest;
     }
     
+    private boolean isSubmissionSet(String sourceID) {
+        return sourceID!=null && sourceID.equals(submissionSet.getId());
+    }
+
     private boolean isDocumentID(String targetID) {
         for(DocumentEntry docEntry : documents) {
             if(docEntry.getID() != null && docEntry.getID().equals(targetID)) {

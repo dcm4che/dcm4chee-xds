@@ -39,15 +39,11 @@ package org.dcm4chee.xds2.ws.registry.sq;
 
 
 
-import java.util.List;
-
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
-import org.dcm4chee.xds2.ws.registry.XDSTestUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -95,8 +91,8 @@ public class SQFindDocumentsByReferenceIDsTests extends AbstractSQTests {
      */
     public void findDocumentsByAccession112233() {
         AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
-        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, REF_ID_ACCESSION_112233);
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         QueryResultCheck chk = new QueryResultCheck();
         chk.setDocUUIDs(DOC_A_UUID);
         chk.setDocNames(DOC_A);

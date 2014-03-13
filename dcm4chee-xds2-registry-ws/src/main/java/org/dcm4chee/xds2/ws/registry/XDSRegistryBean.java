@@ -64,13 +64,12 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 
-import org.dcm4che3.audit.AuditMessages;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
-import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
+import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
@@ -89,7 +88,6 @@ import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
-import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
@@ -737,3 +735,4 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         return em;
     }
 }
+

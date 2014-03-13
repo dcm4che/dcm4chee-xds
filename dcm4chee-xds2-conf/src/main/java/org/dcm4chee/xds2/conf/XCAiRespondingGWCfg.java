@@ -40,21 +40,38 @@ package org.dcm4chee.xds2.conf;
 
 import java.util.HashMap;
 
+import org.dcm4che3.conf.api.generic.ConfigClass;
+import org.dcm4che3.conf.api.generic.ConfigField;
+import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
+@ConfigClass(commonName = "XCAiRespondingGW", objectClass = "xcaiRespondingGW", nodeName = "xcaiRespondingGW")
 public class XCAiRespondingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
+	@ConfigField(name = "xdsApplicationName")
     private String applicationName;
-    private String homeCommunityID;
+
+
+	@ConfigField(name = "xdsHomeCommunityID")
+	private String homeCommunityID;
+	
+	
+	@ConfigField(name = "xdsiSourceURL")
+	private String[] XDSiSourceURLs;
+	
     private HashMap<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
+
+    
+	@ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 
+	
     public String getApplicationName() {
         return applicationName;
     }
@@ -88,10 +105,7 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
 
     @Override
     public void reconfigure(DeviceExtension from) {
-        XCAiRespondingGWCfg src = (XCAiRespondingGWCfg) from;
-        setApplicationName(src.getApplicationName());
-        setHomeCommunityID(src.getHomeCommunityID());
-        setXDSiSourceURLs(src.getXDSiSourceURLs());
-        setSoapLogDir(src.getSoapLogDir());
+    	XCAiRespondingGWCfg src = (XCAiRespondingGWCfg) from;
+        ReflectiveConfig.reconfigure(src, this);
     }
 }
