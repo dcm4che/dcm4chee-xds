@@ -53,11 +53,14 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -80,6 +83,17 @@ public class SubmissionSetTest {
     @EJB
     private XDSRegistryBean session;
 
+    // Audit logger	testing 
+    @Before
+    public void prepareAuditLogger() {
+    	AuditTestManager.prepareAuditLogger(); 
+    }
+    @After
+    public void checkAudits() 
+    {
+    	AuditTestManager.checkAudits();
+    }
+    
     @Test
     public void storeSubmissionSet() throws Exception {
         log.info("\n############################# TEST: storeSubmissionSet ############################");

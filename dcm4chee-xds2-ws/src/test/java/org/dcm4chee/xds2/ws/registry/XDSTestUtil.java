@@ -58,6 +58,7 @@ import javax.xml.bind.Unmarshaller;
 
 
 
+
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.code.Code;
@@ -75,6 +76,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.XDSCode;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.GenericArchive;
@@ -119,7 +121,7 @@ public class XDSTestUtil {
     public static WebArchive createDeploymentArchive(@SuppressWarnings("rawtypes") Class testClazz) {
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
         .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
-                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class)
+                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/ws/registry/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/ws/registry/handlers.xml")
         .add(new FileAsset(new File("src/main/resources/META-INF/wsdl/XDS.b_DocumentRegistry.wsdl")),
