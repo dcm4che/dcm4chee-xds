@@ -234,7 +234,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                 regRsp.setRegistryErrorList(regErrors);
             }
             rsp.setRegistryResponse(regRsp);
-            return rsp;
+
         } catch (Exception x) {
             if (x instanceof XDSException) {
                 XDSUtil.addError(rsp, (XDSException) x);

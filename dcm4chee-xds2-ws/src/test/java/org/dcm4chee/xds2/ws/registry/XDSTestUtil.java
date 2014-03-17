@@ -52,7 +52,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
-import junit.framework.Assert;
+
+
+
+
+
+
 
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
@@ -71,15 +76,20 @@ import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.XDSCode;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.GenericArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.ByteArrayAsset;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
+import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
-import org.jboss.shrinkwrap.resolver.api.DependencyResolvers;
-import org.jboss.shrinkwrap.resolver.api.maven.MavenDependencyResolver;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.jboss.shrinkwrap.resolver.api.maven.ScopeType;
+import org.jboss.shrinkwrap.resolver.api.maven.archive.importer.MavenImporter;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 
@@ -109,10 +119,9 @@ public class XDSTestUtil {
     }
 
     public static WebArchive createDeploymentArchive(@SuppressWarnings("rawtypes") Class testClazz) {
-    	String mavenConfigFile = resolveMavenConfigFile();
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
         .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
-                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class)
+                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/ws/registry/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/ws/registry/handlers.xml")
         .add(new FileAsset(new File("src/main/resources/META-INF/wsdl/XDS.b_DocumentRegistry.wsdl")),
@@ -147,22 +156,11 @@ public class XDSTestUtil {
         .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/ws/registry/testCodeClassifications.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/ws/registry/testCodeClassifications.xml") 
         .addAsWebResource(new ByteArrayAsset(new byte[0]), ArchivePaths.create("WEB-INF/beans.xml"))
-        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-        .configureFrom(mavenConfigFile)
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-infoset:2.0.0")
-             .resolveAs(GenericArchive.class))
-        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-        .configureFrom(mavenConfigFile)
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-common:2.0.0")
-             .resolveAs(GenericArchive.class))
-        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-        .configureFrom(mavenConfigFile)
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-conf:2.0.0")
-             .resolveAs(GenericArchive.class))
-        .addAsLibraries(DependencyResolvers.use(MavenDependencyResolver.class)
-        .configureFrom(mavenConfigFile)
-        .goOffline().artifacts("org.dcm4che:dcm4chee-xds2-persistence:jar:" + System.getProperty("db") + ":2.0.0")
-             .resolveAs(GenericArchive.class));
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-infoset:2.0.0").withoutTransitivity().as(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-common:2.0.0").withoutTransitivity().asSingle(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-conf:2.0.0").withoutTransitivity().asSingle(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-persistence:jar:" + System.getProperty("db") + ":2.0.0").withoutTransitivity().asSingle(File.class));
+
         war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;
     }
@@ -388,7 +386,7 @@ public class XDSTestUtil {
     }
     
     private static String resolveMavenConfigFile() {
-		String filePath;
+		String filePath = null;
 		Assert.assertTrue(new File(filePath = 
 				System.getenv().get("M2_HOME") != null ?
 						System.getenv().get("M2_HOME") + "/conf/settings.xml" :

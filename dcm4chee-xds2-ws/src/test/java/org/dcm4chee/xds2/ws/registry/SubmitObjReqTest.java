@@ -50,6 +50,7 @@ import javax.xml.bind.Unmarshaller;
 
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -81,11 +82,23 @@ public class SubmitObjReqTest {
     @EJB
     private XDSRegistryBean session;
 
+
+    // Audit logger testing 
+    @Before
+    public void prepareAuditLogger() {
+    	AuditTestManager.prepareAuditLogger(); 
+    }
+    @After
+    public void checkAudits() 
+    {
+    	AuditTestManager.checkAudits();
+    }
+
     @Before
     public void prepare() {
         XDSTestUtil.prepareTests(session, log);
     }
-
+    
     @Test
     public void storeAssocTypes() throws Exception {
         log.info("\n############################# TEST: storeAssocTypes ############################");
