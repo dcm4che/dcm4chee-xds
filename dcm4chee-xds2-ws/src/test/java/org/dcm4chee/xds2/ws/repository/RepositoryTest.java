@@ -36,14 +36,6 @@ public class RepositoryTest {
 		  
        return web;
     }
-
-    @BeforeClass
-    public static void prepare() {
-    	
-    }
-    
-    @EJB
-    private XDSRepositoryBean repo;
     
     @Test
     public void storeAndRetrieve() {

@@ -181,7 +181,6 @@
 								<propertyName>db</propertyName>
 							</systemPropertyVariables>
 							<excludes>
-								<exclude>**/SubmissionSetTest.java</exclude>
 								<exclude>**/SubmitObjReqTest.java</exclude>
 							</excludes>
       						<skipTests>${skipTests}</skipTests>
@@ -244,138 +243,9 @@
 						<version>2.11</version>
 						<configuration>
 							<excludes>
-								<exclude>**/SubmissionSetTest.java</exclude>
 								<exclude>**/RegisterDocumentSetTest.java</exclude>
 								<exclude>**/CheckErrorsTest.java</exclude>
 								<exclude>**/StoredQueryTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-remote</artifactId>
-					<version>7.1.1.Final</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>test</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<!-- We add the JBoss repository as we need the JBoss AS connectors for 
-				Arquillian -->
-			<repositories>
-				<!-- The JBoss Community public repository is a composite repository 
-					of several major repositories -->
-				<!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
-				<repository>
-					<id>jboss-public-repository</id>
-					<name>JBoss Repository</name>
-					<url>http://repository.jboss.org/nexus/content/groups/public</url>
-					<!-- These optional flags are designed to speed up your builds by reducing 
-						remote server calls -->
-					<releases>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-
-			<pluginRepositories>
-				<pluginRepository>
-					<id>jboss-public-repository</id>
-					<name>JBoss Repository</name>
-					<url>http://repository.jboss.org/nexus/content/groups/public</url>
-					<releases>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-			</pluginRepositories>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.11</version>
-						<configuration>
-							<excludes>
-								<exclude>**/SubmitObjReqTest.java</exclude>
-								<exclude>**/RegisterDocumentSetTest.java</exclude>
-								<exclude>**/CheckErrorsTest.java</exclude>
-								<exclude>**/StoredQueryTest.java</exclude>
-							</excludes>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-			<dependencies>
-				<dependency>
-					<groupId>org.jboss.as</groupId>
-					<artifactId>jboss-as-arquillian-container-remote</artifactId>
-					<version>7.1.1.Final</version>
-					<scope>test</scope>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>SQ</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<!-- We add the JBoss repository as we need the JBoss AS connectors for 
-				Arquillian -->
-			<repositories>
-				<!-- The JBoss Community public repository is a composite repository 
-					of several major repositories -->
-				<!-- see http://community.jboss.org/wiki/MavenGettingStarted-Users -->
-				<repository>
-					<id>jboss-public-repository</id>
-					<name>JBoss Repository</name>
-					<url>http://repository.jboss.org/nexus/content/groups/public</url>
-					<!-- These optional flags are designed to speed up your builds by reducing 
-						remote server calls -->
-					<releases>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</repository>
-			</repositories>
-
-			<pluginRepositories>
-				<pluginRepository>
-					<id>jboss-public-repository</id>
-					<name>JBoss Repository</name>
-					<url>http://repository.jboss.org/nexus/content/groups/public</url>
-					<releases>
-					</releases>
-					<snapshots>
-						<enabled>false</enabled>
-					</snapshots>
-				</pluginRepository>
-			</pluginRepositories>
-
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-surefire-plugin</artifactId>
-						<version>2.11</version>
-						<configuration>
-							<excludes>
-								<exclude>**/SubmissionSetTest.java</exclude>
-								<exclude>**/SubmitObjReqTest.java</exclude>
-								<exclude>**/RegisterDocumentSetTest.java</exclude>
-								<exclude>**/CheckErrorsTest.java</exclude>
 							</excludes>
 						</configuration>
 					</plugin>

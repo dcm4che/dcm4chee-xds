@@ -82,7 +82,8 @@ public class SubmitObjReqTest {
     @EJB
     private XDSRegistryBean session;
 
-    // Audit logger	testing 
+
+    // Audit logger testing 
     @Before
     public void prepareAuditLogger() {
     	AuditTestManager.prepareAuditLogger(); 
@@ -93,14 +94,11 @@ public class SubmitObjReqTest {
     	AuditTestManager.checkAudits();
     }
 
-    
-    @After
-    public void clearDB() {
-        long t1 = System.currentTimeMillis();
-        log.info("\n################################# CLEAR DB #################################");
-        log.info("\n###### CLEAR done in "+(System.currentTimeMillis()-t1)+"ms ######");
+    @Before
+    public void prepare() {
+        XDSTestUtil.prepareTests(session, log);
     }
-
+    
     @Test
     public void storeAssocTypes() throws Exception {
         log.info("\n############################# TEST: storeAssocTypes ############################");
