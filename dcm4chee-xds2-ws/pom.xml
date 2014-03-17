@@ -158,6 +158,11 @@
 			<artifactId>shrinkwrap-impl-base</artifactId>
 			<scope>test</scope>
 		</dependency>
+	  <dependency>
+	    <groupId>org.jboss.shrinkwrap.resolver</groupId>
+	    <artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+	    <scope>test</scope>
+	  </dependency> 		
 	</dependencies>
 	<profiles>
 		<profile>
@@ -179,7 +184,7 @@
 								<exclude>**/SubmissionSetTest.java</exclude>
 								<exclude>**/SubmitObjReqTest.java</exclude>
 							</excludes>
-          						<skipTests>${skipTests}</skipTests>
+      						<skipTests>${skipTests}</skipTests>
 						</configuration>
 					</plugin>
 				</plugins>
@@ -188,6 +193,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+					<version>7.1.1.Final</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -251,6 +257,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+					<version>7.1.1.Final</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -314,6 +321,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+					<version>7.1.1.Final</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -377,6 +385,7 @@
 				<dependency>
 					<groupId>org.jboss.as</groupId>
 					<artifactId>jboss-as-arquillian-container-remote</artifactId>
+					<version>7.1.1.Final</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
