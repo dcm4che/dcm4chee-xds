@@ -44,6 +44,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.AsyncHandler;
@@ -58,7 +59,7 @@ import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XdsDevice;
+import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
@@ -91,7 +92,9 @@ public class XCAiRespondingGW implements XCAIRespondingGatewayPortType {
     @Resource
     WebServiceContext wsContext;
 
-
+    @Inject
+    XCAiRespondingGWCfg cfg;
+    
     @Override
     public Response<RetrieveDocumentSetResponseType> respondingGatewayCrossGatewayRetrieveImagingDocumentSetAsync(
             RetrieveImagingDocumentSetRequestType body) {
@@ -135,7 +138,7 @@ public class XCAiRespondingGW implements XCAIRespondingGatewayPortType {
     private RetrieveDocumentSetResponseType doSourceRetrieve(String sourceID, RetrieveImagingDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
         try {
-            String url = XdsDevice.getXCAiRespondingGW().getXDSiSourceURL(sourceID);
+            String url = cfg.getXDSiSourceURL(sourceID);
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }

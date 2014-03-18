@@ -44,6 +44,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.ws.AsyncHandler;
@@ -59,7 +60,6 @@ import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
@@ -93,6 +93,9 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
     @Resource
     WebServiceContext wsContext;
 
+    @Inject
+    XCAiInitiatingGWCfg cfg;
+    
     @Override
     public Response<RetrieveDocumentSetResponseType> imagingDocumentSourceRetrieveImagingDocumentSetAsync(RetrieveImagingDocumentSetRequestType body) {
         return null;
@@ -111,7 +114,6 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
 
     private RetrieveDocumentSetResponseType doRetrieve(RetrieveImagingDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp = null, tmpRsp;
-        XCAiInitiatingGWCfg cfg = XdsDevice.getXCAiInitiatingGW();
         String homeCommunityID = cfg.getHomeCommunityID();
         String home;
         for (Entry<String, List<StudyRequest>> entry : XDSUtil.splitRequestPerHomeCommunityID(req).entrySet()) {
@@ -164,7 +166,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
     private RetrieveDocumentSetResponseType doSourceRetrieve(String sourceID, RetrieveImagingDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp;
         try {
-            String url = XdsDevice.getXCAiInitiatingGW().getXDSiSourceURL(sourceID);
+            String url = cfg.getXDSiSourceURL(sourceID);
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }

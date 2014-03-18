@@ -49,6 +49,7 @@ import javax.annotation.Resource;
 import javax.ejb.EJBContext;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
@@ -64,6 +65,7 @@ import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
@@ -71,7 +73,6 @@ import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
@@ -137,6 +138,9 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
+    
+    @Inject
+    Device device;
 
     private static Logger log = LoggerFactory.getLogger(XDSRegistryBean.class);
     
@@ -187,7 +191,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     }
 
     private void preMetadataCheck(SubmitObjectsRequest req) throws XDSException {
-        XdsRegistry cfg = XdsDevice.getXdsRegistry();
+        XdsRegistry cfg = device.getDeviceExtension(XdsRegistry.class);
         List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
         IdentifiableType obj;
         List<ExternalIdentifierType> list;
@@ -241,19 +245,19 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         if (xadPatient != null) {
             //save affinityDomain and AffinityDomainCodes in session
             String affinityDomain = xadPatient.getIssuerOfPatientID().getUniversalID();
-            XADCfgRepository codeRepository = XdsDevice.getXdsRegistry().getCodeRepository();
+            XADCfgRepository codeRepository = cfg.getCodeRepository();
             adCodes = codeRepository.getAffinityDomainCodes(affinityDomain);
             if (adCodes.isEmpty() && !cfg.isCreateMissingCodes()) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "No codes configured for affinity domain! affinityDomain:"+affinityDomain, null);
             }
-            checkAffinityDomain(xadPatient);
+            checkAffinityDomain(xadPatient, cfg);
         } else {
             adCodes = new AffinityDomainCodes();
         }
     }
 
-    private void checkAffinityDomain(String patID) throws XDSException {
+    private void checkAffinityDomain(String patID, XdsRegistry cfg) throws XDSException {
         XADPatient pat;
         try {
             pat = new XADPatient(patID);
@@ -261,16 +265,16 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
                     "Unknown patient ID: patientID:"+patID+" - "+x.getMessage(), null);
         }
-        checkAffinityDomain(pat);
+        checkAffinityDomain(pat, cfg);
     }
-    private void checkAffinityDomain(XADPatient pat) throws XDSException {
-        if (XdsDevice.getXdsRegistry().isCheckAffinityDomain()) {
+    private void checkAffinityDomain(XADPatient pat, XdsRegistry cfg) throws XDSException {
+        if (cfg.isCheckAffinityDomain()) {
                 if (!"ISO".equals(pat.getIssuerOfPatientID().getUniversalIdType())) {
                     throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, 
                             "PatientID with wrong UniversalId type (must be ISO)! pid:"+pat.getXADPatientID(), null);
                 }
                 String universalID = pat.getIssuerOfPatientID().getUniversalID();
-                String[] ads = XdsDevice.getXdsRegistry().getAffinityDomain();
+                String[] ads = cfg.getAffinityDomain();
                 for (int i = 0 ; i < ads.length ; i++) {
                     if (ads[i].equals(universalID)) {
                         return;
@@ -530,7 +534,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     }
     
     public boolean newPatientID(String pid) throws XDSException {
-        checkAffinityDomain(pid);
+        checkAffinityDomain(pid, device.getDeviceExtension(XdsRegistry.class));
         XADPatient qryPat = new XADPatient(pid);
         try {
             em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)

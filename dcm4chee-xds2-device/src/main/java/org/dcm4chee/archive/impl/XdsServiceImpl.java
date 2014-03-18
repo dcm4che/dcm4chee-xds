@@ -57,7 +57,7 @@ import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.archive.XdsService;
 
 /**
- * @author Gunter Zeilinger <gunterze@gmail.com>
+ * @author Franz Willer <franz.willer@gmail.com>
  *
  */
 @ApplicationScoped

@@ -68,7 +68,6 @@ import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.registry.hl7.XdsHL7Service;
@@ -94,43 +93,6 @@ public class XdsServiceServlet extends HttpServlet {
     
     private static final String BR = "<br />";
     
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        log.info("############ Servlet INIT called! config:"+config);
-        super.init(config);
-        ldapPropertiesURL = System.getProperty(XdsDevice.PROP_LDAP_PROPERTIES_URL);
-        if (ldapPropertiesURL == null) {
-        	ldapPropertiesURL = config.getInitParameter("ldapPropertiesURL");
-        	if (ldapPropertiesURL != null)
-        		System.setProperty(XdsDevice.PROP_LDAP_PROPERTIES_URL, ldapPropertiesURL);
-        }
-        ldapPropertiesURL = StringUtils.replaceSystemProperties(ldapPropertiesURL);
-        xdsDeviceName = System.getProperty(XdsDevice.PROP_XDS_DEVICE_NAME);
-        if (xdsDeviceName == null) {
-        	xdsDeviceName = config.getInitParameter("xdsDeviceName");
-        	if (xdsDeviceName != null)
-        		System.setProperty(XdsDevice.PROP_XDS_DEVICE_NAME, xdsDeviceName);
-        }
-        hl7AppName = System.getProperty(XdsDevice.PROP_XDS_HL7_APP_NAME);
-        if (hl7AppName == null) {
-        	hl7AppName = config.getInitParameter("hl7AppName");
-        	if (hl7AppName != null)
-        		System.setProperty(XdsDevice.PROP_XDS_HL7_APP_NAME, hl7AppName);
-        }
-        initXdsDevice();
-    }
-
-    public void initXdsDevice() {
-        log.info("###### add HL7 message listener!");
-        XdsDevice.setHL7MessageListener(new XdsHL7Service(xdsRegistryBean));
-        XDSAudit.logApplicationActivity(AuditMessages.EventTypeCode.ApplicationStart, true);
-    }
-
-    @Override
-    public void destroy() {
-    	XdsDevice.destroyCfg();
-        XDSAudit.logApplicationActivity(AuditMessages.EventTypeCode.ApplicationStop, true);
-    }
 /*
  * RESTFUL Services    
  */

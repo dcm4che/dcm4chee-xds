@@ -49,11 +49,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.inject.Inject;
 import javax.xml.bind.JAXBElement;
 
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
@@ -105,7 +105,10 @@ public class XDSPersistenceWrapper {
 
     private XDSRegistryBean session;
     private ObjectFactory factory = new ObjectFactory();
+    
+    @Inject
     private XdsRegistry cfg;
+    
     XDSSubmissionSet submissionSet;
 
     private HashMap<String, Identifiable> uuidMapping = new HashMap<String, Identifiable>();
@@ -116,7 +119,6 @@ public class XDSPersistenceWrapper {
 
     public XDSPersistenceWrapper(XDSRegistryBean session) {
         this.session = session;
-        cfg = XdsDevice.getXdsRegistry();
     }
     
     public ExtrinsicObject toExtrinsicObject(ExtrinsicObjectType eoType) throws XDSException {

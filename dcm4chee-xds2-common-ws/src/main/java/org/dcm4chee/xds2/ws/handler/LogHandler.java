@@ -59,7 +59,6 @@ import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -121,8 +120,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         String action = getWsaHeader(ctx, "Action", "noAction");
         String msgID = getWsaHeader(ctx, "MessageID", null);
         String logDir = null;
-        boolean logFullMessage = false;
-        try {
+        /*try {
             if ((action.endsWith(":RegisterDocumentSet-b") ||
                  action.endsWith(":RegisterDocumentSet-bResponse")) && XdsDevice.getXdsRegistry() != null) {
                 logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
@@ -132,13 +130,10 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             } else if (XdsDevice.getXdsRepository() != null) {
                 logDir = XdsDevice.getXdsRepository().getSoapLogDir();
             }
-/*            String [] hosts = XdsDevice.getXdsRepository().getLogFullMessageHosts(); 
-            if (hosts != null && hosts.length > 0) {
-                logFullMessage = true;
-            }*/
         } catch (Exception ignore) {
             log.warn("Failed to get logDir from XDS configuration!", ignore);
-        }
+        }*/
+        logDir = "/var/log/xdsLog";
         if (logDir != null) {
             FileOutputStream out = null;
             try {
@@ -151,14 +146,10 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                     f.getParentFile().mkdirs();
                 }
                 out = new FileOutputStream(f);
-                if (logFullMessage) {
-                    ctx.getMessage().writeTo(out);
-                } else {
-                    Source s = ctx.getMessage().getSOAPPart().getContent();
-                    Transformer t = TransformerFactory.newInstance().newTransformer();
-                    t.setOutputProperty("indent", "yes");
-                    t.transform(s, new StreamResult(out));
-                }
+                Source s = ctx.getMessage().getSOAPPart().getContent();
+                Transformer t = TransformerFactory.newInstance().newTransformer();
+                t.setOutputProperty("indent", "yes");
+                t.transform(s, new StreamResult(out));
                 log.info("SOAP message saved to file "+f);
             } catch (Exception x) {
                 log.error("Error logging SOAP message to file!", x);

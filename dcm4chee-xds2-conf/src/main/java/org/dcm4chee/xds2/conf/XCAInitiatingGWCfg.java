@@ -249,11 +249,11 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 	}
 
 	public HL7Application getPixConsumerApplication() {
-		return XdsDevice.findHL7Application(localPIXConsumerApplication);
+		return null;//XdsDevice.findHL7Application(localPIXConsumerApplication);
 	}
 
 	public HL7Application getPixManagerApplication() {
-		return XdsDevice.findHL7Application(remotePIXManagerApplication);
+		return null;//XdsDevice.findHL7Application(remotePIXManagerApplication);
 	}
 
 	@Override

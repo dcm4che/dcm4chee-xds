@@ -47,6 +47,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.bind.JAXBElement;
@@ -63,7 +64,6 @@ import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -112,6 +112,9 @@ public class XCARespondingGW implements RespondingGatewayPortType {
     @Resource
     WebServiceContext wsContext;
 
+    @Inject 
+    XCARespondingGW cfg;
+    
     @Override
     public Response<RetrieveDocumentSetResponseType> respondingGatewayCrossGatewayRetrieveAsync(
             RetrieveDocumentSetRequestType req) {
@@ -162,7 +165,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
         AdhocQueryResponse rsp;
         URL registryURL = null;
         try {
-            String url = XdsDevice.getXCARespondingGW().getRegistryURL();
+            String url = cfg.getRegistryURL();
             registryURL = new URL(url);
             DocumentRegistryPortType port = DocumentRegistryPortTypeFactory.getDocumentRegistryPortSoap12(url);
             log.info("####################################################");
@@ -251,7 +254,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
             String home = req.getDocumentRequest().get(0).getHomeCommunityId();
             if (home == null)
                 throw new XDSException( XDSException.XDS_ERR_MISSING_HOME_COMMUNITY_ID, "Missing Home Community ID in request! repositoryID: "+repositoryID, null);
-            String url = XdsDevice.getXCARespondingGW().getRepositoryURL(repositoryID);
+            String url = cfg.getRepositoryURL(repositoryID);
             if (url == null) {
                 return iheFactory.createRetrieveDocumentSetResponseType();
             }
@@ -283,7 +286,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
 
     
     private AdhocQueryResponse addHomeCommunityId(AdhocQueryResponse rsp) {
-        String home = XdsDevice.getXCARespondingGW().getHomeCommunityID();
+        String home = cfg.getHomeCommunityID();
         IdentifiableType obj;
         if (rsp.getRegistryObjectList() != null) {
             List<JAXBElement<? extends IdentifiableType>> objList = rsp.getRegistryObjectList().getIdentifiable();
@@ -304,7 +307,7 @@ public class XCARespondingGW implements RespondingGatewayPortType {
     }
 
     private RetrieveDocumentSetResponseType addHomeCommunityID(RetrieveDocumentSetResponseType rsp) {
-        String home = XdsDevice.getXCARespondingGW().getHomeCommunityID();
+        String home = cfg.getHomeCommunityID();
         if (rsp.getDocumentResponse() != null) {
             for (DocumentResponse docRsp : rsp.getDocumentResponse()) {
                 docRsp.setHomeCommunityId(home);

@@ -63,7 +63,6 @@ import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.ProvideAndRegisterDocumentSetRequestType.Document;
@@ -424,8 +423,8 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
     }
     private XdsRepository getConfig() {
-        if (cfg == null)
-            cfg = XdsDevice.getXdsRepository();
+        //if (cfg == null)
+        //    cfg = XdsDevice.getXdsRepository();
         return cfg;
     }
     private String[] getSubmissionUIDandPatID(SubmitObjectsRequest req) {

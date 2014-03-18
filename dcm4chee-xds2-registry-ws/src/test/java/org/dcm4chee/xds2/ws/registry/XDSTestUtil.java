@@ -58,7 +58,6 @@ import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.infoset.rim.ClassificationNodeType;
 import org.dcm4chee.xds2.infoset.rim.ClassificationSchemeType;
@@ -270,7 +269,7 @@ public class XDSTestUtil {
     public static void prepareTests(XDSRegistryBean session, Logger log) {
         long t1 = System.currentTimeMillis();
         log.info("\n################################# Prepare Tests #################################");
-        if (XdsDevice.getLocalXdsDevice() == null) {
+        /*if (XdsDevice.getLocalXdsDevice() == null) {
             Device d = new Device("TEST");
             d.addDeviceExtension(new XdsRegistry());
             XdsDevice.setLocalXdsDevice(d);
@@ -291,11 +290,11 @@ public class XDSTestUtil {
         oldCheckAffinity = xdsRegistry.isCheckAffinityDomain();
         xdsRegistry.setCreateMissingCodes(true);
         xdsRegistry.setCreateMissingPIDs(true);
-        xdsRegistry.setCheckAffinityDomain(false);
+        xdsRegistry.setCheckAffinityDomain(false); */
         XDSTestUtil.prepareTestPatients(session, log);
         XDSTestUtil.prepareTestCodes(session, log);
-        xdsRegistry.setCreateMissingCodes(false);
-        xdsRegistry.setCreateMissingPIDs(false);
+        /*xdsRegistry.setCreateMissingCodes(false);
+        xdsRegistry.setCreateMissingPIDs(false);*/
         log.info("\n###### PREPARE done in "+(System.currentTimeMillis()-t1)+"ms ######");
     }
 
@@ -318,10 +317,10 @@ public class XDSTestUtil {
         log.info("remove test XDSCodes");
         testSession.removeXDSCodes();
         log.info("\n###### CLEAR done in "+(System.currentTimeMillis()-t1)+"ms ######");
-        XdsRegistry xdsRegistry = XdsDevice.getXdsRegistry();
+        /*XdsRegistry xdsRegistry = XdsDevice.getXdsRegistry();
         xdsRegistry.setCreateMissingCodes(oldCreateMissingPatient);
         xdsRegistry.setCreateMissingPIDs(oldCreateMissingCodes);
-        xdsRegistry.setCheckAffinityDomain(oldCheckAffinity);
+        xdsRegistry.setCheckAffinityDomain(oldCheckAffinity);*/
     }
 
 
@@ -347,8 +346,8 @@ public class XDSTestUtil {
                 Code c = new Code(code.getCodeValue(), code.getCodingSchemeDesignator(), code.getCodeMeaning());
                 adCodes.addCode(code.getCodeClassification(), code.getCodeClassification(), c);
             }
-            XdsDevice.getXdsRegistry().setAffinityDomainConfigDir("dummy");
-            XdsDevice.getXdsRegistry().getCodeRepository().addAffinityDomainCodes("default", adCodes);
+            //XdsDevice.getXdsRegistry().setAffinityDomainConfigDir("dummy");
+            //XdsDevice.getXdsRegistry().getCodeRepository().addAffinityDomainCodes("default", adCodes);
         } catch (Exception x) {
             log.error("Failed to add test codes!", x);
         }
@@ -388,7 +387,7 @@ public class XDSTestUtil {
     }
     
     private static String resolveMavenConfigFile() {
-		String filePath;
+		String filePath = null;
 		Assert.assertTrue(new File(filePath = 
 				System.getenv().get("M2_HOME") != null ?
 						System.getenv().get("M2_HOME") + "/conf/settings.xml" :
