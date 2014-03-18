@@ -44,7 +44,7 @@
 	<parent>
 		<groupId>org.dcm4che</groupId>
 		<artifactId>dcm4chee-xds2</artifactId>
-		<version>2.0.0</version>
+		<version>2.0.2</version>
 	</parent>
 	<artifactId>dcm4chee-xds2-ear</artifactId>
 	<packaging>ear</packaging>
@@ -53,52 +53,52 @@
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-infoset</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-persistence</artifactId>
 			<classifier>${db}</classifier>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 	    <dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-store</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 	    </dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-hl7</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-service</artifactId>
 			<type>war</type>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-ws</artifactId>
 			<type>ejb</type>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-conf</artifactId>
 			<type>jar</type>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-pix-client</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
