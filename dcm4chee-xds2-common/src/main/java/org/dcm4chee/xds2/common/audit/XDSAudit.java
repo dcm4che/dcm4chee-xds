@@ -41,12 +41,7 @@ package org.dcm4chee.xds2.common.audit;
 import static org.dcm4che3.audit.AuditMessages.createEventIdentification;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PushbackInputStream;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -56,23 +51,20 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
-
-import org.apache.cxf.attachment.DelegatingInputStream;
 
 import org.dcm4che3.audit.AuditMessage;
 import org.dcm4che3.audit.AuditMessages;
-import org.dcm4che3.audit.Instance;
-import org.dcm4che3.audit.ParticipantObjectDescription;
-import org.dcm4che3.audit.SOPClass;
 import org.dcm4che3.audit.AuditMessages.EventActionCode;
 import org.dcm4che3.audit.AuditMessages.EventID;
 import org.dcm4che3.audit.AuditMessages.EventOutcomeIndicator;
 import org.dcm4che3.audit.AuditMessages.EventTypeCode;
 import org.dcm4che3.audit.AuditMessages.ParticipantObjectIDTypeCode;
 import org.dcm4che3.audit.AuditMessages.RoleIDCode;
+import org.dcm4che3.audit.Instance;
+import org.dcm4che3.audit.ParticipantObjectDescription;
 import org.dcm4che3.audit.ParticipantObjectDetail;
 import org.dcm4che3.audit.ParticipantObjectIdentification;
+import org.dcm4che3.audit.SOPClass;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.io.DicomInputStream;
@@ -80,13 +72,12 @@ import org.dcm4che3.net.Connection;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.IncompatibleConnectionException;
 import org.dcm4che3.net.audit.AuditLogger;
-import org.dcm4che3.util.SafeClose;
 import org.dcm4chee.xds2.common.InputStreamDataSource;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
@@ -878,7 +869,7 @@ public class XDSAudit {
         for (DocumentRequest docReq : docRequests) {
             if (isAddDocument(docReq.getDocumentUniqueId(), docUIDs, success)) {
                 ParticipantObjectIdentification poi = AuditMessages.createParticipantObjectIdentification(
-                        docReq.getDocumentUniqueId(), ParticipantObjectIDTypeCode.ReportNumber,
+                        docReq.getDocumentUniqueId(), ParticipantObjectIDTypeCode.ITI_ReportNumber,
                         null, (byte[])null, AuditMessages.ParticipantObjectTypeCode.SystemObject, 
                         AuditMessages.ParticipantObjectTypeCodeRole.Report, null, null, null);
                 details = poi.getParticipantObjectDetail();

@@ -61,6 +61,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -109,6 +110,18 @@ public class RegisterDocumentSetTest {
     @EJB
     private XDSRegistryTestBean testSession;
 
+    // Audit logger	testing 
+    @Before
+    public void prepareAuditLogger() {
+    	AuditTestManager.prepareAuditLogger(); 
+    }
+    @After
+    public void checkAudits() 
+    {
+    	AuditTestManager.checkAudits();
+    }
+    
+    
     @Before
     public void prepare() {
         if (testCount++ == 0) {
@@ -166,6 +179,8 @@ public class RegisterDocumentSetTest {
         XDSTestUtil.setSlotValue(obj.getSlot(), XDSConstants.SLOT_NAME_HASH, hash);
         rsp = session.documentRegistryRegisterDocumentSetB(req);
         assertEquals("Resubmission with same hash: response status", XDSConstants.XDS_B_STATUS_SUCCESS, rsp.getStatus());
+        
+        AuditTestManager.expectNumberOfMessages(3);
     }
 
     private void doRegisterDocumentTest(String testName) throws Exception {

@@ -48,6 +48,7 @@ import java.util.List;
 import javax.ejb.EJB;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
@@ -57,13 +58,18 @@ import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Verifier;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +100,19 @@ public class CheckErrorsTest {
     @EJB
     private XDSRegistryTestBean testSession;
 
+    
+    // Audit logger	testing 
+    @Before
+    public void prepareAuditLogger() {
+    	AuditTestManager.prepareAuditLogger(); 
+    }
+    @After
+    public void checkAudits() 
+    {
+    	AuditTestManager.checkAudits();
+    }
+    
+    
     @Before
     public void prepare() {
         if (testCount++ == 0) {
@@ -159,6 +178,8 @@ public class CheckErrorsTest {
         "Check Missing EntryUUID of Folder");
         checkEntryUUID(req, req.getRegistryObjectList().getIdentifiable().get(2).getValue(), 
         "Check Missing EntryUUID of SubmissionSet");
+        
+        AuditTestManager.expectNumberOfMessages(3);
     }
 
     @Test
@@ -194,6 +215,8 @@ public class CheckErrorsTest {
         checkRequiredSlots(req, new String[]{XDSConstants.SLOT_NAME_SUBMISSION_TIME}, 
                 req.getRegistryObjectList().getIdentifiable().get(2).getValue().getSlot(),
                 "Check missing Slots in SubmissionSet");
+
+        AuditTestManager.expectNumberOfMessages(7);
     }
 
     /**
@@ -226,6 +249,8 @@ public class CheckErrorsTest {
         checkRequiredCodes(req, new String[]{XDSConstants.UUID_XDSSubmissionSet_contentTypeCode}, 
                 ((RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(2).getValue()).getClassification(),
                 "Check missing Slots in SubmissionSet");
+
+        AuditTestManager.expectNumberOfMessages(8);
     }
 
     /**
@@ -258,6 +283,8 @@ public class CheckErrorsTest {
                 XDSConstants.UUID_XDSSubmissionSet_uniqueId, XDSConstants.UUID_XDSSubmissionSet_sourceId}, 
                 ((RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(2).getValue()).getExternalIdentifier(),
                 "Check missing ExternalIdentifier in SubmissionSet");
+
+        AuditTestManager.expectNumberOfMessages(7);
     }
 
     private void doRegisterDocumentAndCheckError(SubmitObjectsRequest req, String errorCode, String prefix) {

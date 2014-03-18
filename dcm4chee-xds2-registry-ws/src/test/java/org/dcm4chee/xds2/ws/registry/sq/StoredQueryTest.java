@@ -52,6 +52,7 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
+import org.dcm4chee.xds2.ws.AuditTestManager;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryBean;
 import org.dcm4chee.xds2.ws.registry.XDSRegistryTestBean;
 import org.dcm4chee.xds2.ws.registry.XDSTestUtil;
@@ -110,6 +111,17 @@ public class StoredQueryTest {
     @EJB
     private XDSRegistryTestBean testSession;
 
+    // Audit logger	testing 
+    @Before
+    public void prepareAuditLogger() {
+    	AuditTestManager.prepareAuditLogger(); 
+    }
+    @After
+    public void checkAudits() 
+    {
+    	AuditTestManager.checkAudits();
+    }
+    
     /**
      * Preload test data for Stored Query testing.
      * Uses SubmitObjectsRequest's with same data as test 12346 of Pre-Con Test tool (XDS Toolkit build.number 144)
@@ -194,6 +206,9 @@ public class StoredQueryTest {
         obj = session.getDocumentEntryByUUID("urn:uuid:aabbccdd-bdda-424e-8c96-df4873ba4001");
         assertNotNull("Preparation failed! Missing replaced document.", obj);
         assertEquals("replaced document status:", XDSConstants.STATUS_DEPRECATED, obj.getStatus());
+        
+        AuditTestManager.expectNumberOfMessages(0);
+        
     }
 // FindDocuments Tests. (like Pre-Con Test 11897 SQ.b FindDocuments Stored Query)
     @Test

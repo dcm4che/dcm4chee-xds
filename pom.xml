@@ -42,22 +42,23 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dcm4che</groupId>
   <artifactId>dcm4chee-xds2-parent</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.0.2</version>
   <packaging>pom</packaging>
   <name>XDS implementation for JBoss7/EJB3</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dcm4che.version>3.3.1-SNAPSHOT</dcm4che.version>
+    <dcm4che.version>3.3.1</dcm4che.version>
     <slf4j.version>1.6.1</slf4j.version>
     <hibernate.version>4.0.1.Final</hibernate.version>
-    <querydsl.version>3.3.1</querydsl.version>
-    <javaee6.with.tools.version>1.0.0.M1</javaee6.with.tools.version>
-    <db>mysql</db>
+    <querydsl.version>3.2.3</querydsl.version>
+    <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
+    <db>oracle</db>
     <ds>java:/xdsDS</ds>
     <show_sql>false</show_sql>
     <hbm2ddl.auto>update</hbm2ddl.auto>
-    <arquillian.version>1.0.0.Alpha5</arquillian.version>
-    <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
+    <!-- <arquillian.version>1.0.0.Alpha5</arquillian.version>
+    <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version> -->
+    <shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
     <jboss.version>6.0.0.Final</jboss.version>
     <skipTests>false</skipTests>
   </properties>
@@ -89,6 +90,18 @@
   </modules>
   <dependencyManagement>
     <dependencies>
+    
+        <!-- Override dependency resolver with latest version.
+	         This must go *BEFORE* the Arquillian BOM. -->
+	
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${shrinkwrap.resolver.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency> 
+    
       <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
           of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
           of artifacts. We use this here so that we always get the correct versions 

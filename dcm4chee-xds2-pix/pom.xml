@@ -37,50 +37,22 @@
    -
    - ***** END LICENSE BLOCK *****  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.dcm4che</groupId>
-        <artifactId>dcm4chee-xds2-src</artifactId>
-        <version>2.0.2</version>
-    </parent>
-    <artifactId>dcm4chee-xds2-src-base</artifactId>
-    <packaging>jar</packaging>
-    <name>XDS.b Source Base</name>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-audit</artifactId>
-            <version>${dcm4che.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-net-audit</artifactId>
-            <version>${dcm4che.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4chee-xds2-infoset</artifactId>
-            <version>2.0.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4chee-xds2-common</artifactId>
-            <version>2.0.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.dcm4che</groupId>
+    <artifactId>dcm4chee-xds2</artifactId>
+    <version>2.0.2</version>
+  </parent>
+  <artifactId>dcm4chee-xds2-pix</artifactId>
+  <packaging>pom</packaging>
+  <name>PIX Query client implementation</name>
+
+  <modules>
+    <module>dcm4chee-xds2-pix-client</module>
+    <module>dcm4chee-xds2-pix-tool</module>
+  </modules>
 </project>
+
