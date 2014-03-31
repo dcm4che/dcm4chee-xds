@@ -81,7 +81,7 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-browser</artifactId>
 			<type>war</type>
-			<version>2.0.0</version>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
