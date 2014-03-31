@@ -60,7 +60,7 @@
     <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version> -->
     <shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
     <jboss.version>6.0.0.Final</jboss.version>
-    <skipTests>false</skipTests>
+    <skipTests>true</skipTests>
   </properties>
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>
