@@ -44,7 +44,7 @@
 	<parent>
 		<groupId>org.dcm4che</groupId>
 		<artifactId>dcm4chee-xds2-parent</artifactId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>2.0.2</version>
 	</parent>
 	<artifactId>dcm4chee-xds2-xcai-ear</artifactId>
 	<packaging>ear</packaging>
@@ -64,6 +64,24 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common-ws</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-service</artifactId>
+			<type>ejb</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-ctrl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-ctrl-war</artifactId>
+			<version>${project.version}</version>
+			<classifier>xcai</classifier>
+			<type>war</type>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
@@ -121,6 +139,16 @@
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-xcai-ws</artifactId>
 						</ejbModule>
+						<ejbModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-xds2-service</artifactId>
+						</ejbModule>
+						<webModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-xds2-ctrl-war</artifactId>
+							<classifier>xcai</classifier>
+							<contextRoot>/xcai-rs</contextRoot>
+						</webModule>
 					</modules>
 					<version>6</version>
 				</configuration>

@@ -124,7 +124,7 @@ public class XdsRegistry extends DeviceExtension {
 		this.affinityDomainConfigDir = dir;
 		dir = StringUtils.replaceSystemProperties(dir == null ? DEFAULT_AFFINITYDOMAIN_CFG_DIR : dir);
 		if (xadCfgRepository == null || xadCfgRepository.configChanged(null, dir)) {
-			xadCfgRepository = new XADCfgRepository(null, dir);
+			xadCfgRepository = new XADCfgRepository(System.getProperty("org.dcm4chee.xds.codeprovider.name", "IHECodeProvider"), dir);
 		}
 	}
 

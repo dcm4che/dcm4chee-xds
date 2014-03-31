@@ -41,6 +41,8 @@ package org.dcm4chee.xds2.registry.hl7;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.ejb.EJB;
+
 import org.dcm4che3.audit.AuditMessages.EventActionCode;
 import org.dcm4che3.hl7.HL7Exception;
 import org.dcm4che3.hl7.HL7Message;
@@ -49,19 +51,16 @@ import org.dcm4che3.net.Connection;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
-import org.dcm4chee.xds2.ws.registry.XDSRegistryBeanLocal;
+import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XdsHL7Service implements HL7Service {
 
+	@EJB
     private XDSRegistryBeanLocal xdsRegistryBean;
     
     private static final Logger log = LoggerFactory.getLogger(XdsHL7Service.class);
-    
-    public XdsHL7Service(XDSRegistryBeanLocal bean) {
-        this.xdsRegistryBean = bean;
-    }
     
     @Override
     public byte[] onMessage(HL7Application hl7App, Connection conn,
@@ -71,8 +70,7 @@ public class XdsHL7Service implements HL7Service {
         String srcUserID = msh.getField(3, "") + '|' + msh.getField(2, "");
         String destUserID = msh.getField(5, "") + '|' + msh.getField(4, "");
         String msgType = msh.getField(9, "ADT-A01");
-        String eventActionCode = msgType.endsWith("08") ? 
-                EventActionCode.Update : EventActionCode.Create;
+        boolean isUpdate = msgType.endsWith("08");
         byte[] msh10 = msh.getField(10, "").getBytes();
         String remoteHost;
         try {
@@ -107,12 +105,16 @@ public class XdsHL7Service implements HL7Service {
                 throw new HL7Exception(HL7Exception.AE, e);
             }
         } finally {
-            XDSAudit.logPatientFeed(pid, eventActionCode, msh10, srcUserID, remoteHost, destUserID, success);
+        	if (success == true || !isUpdate) {
+        		XDSAudit.logPatientFeed(pid, EventActionCode.Create, msh10, srcUserID, remoteHost, destUserID, success);
+        	} else {
+        		log.info("ADT-A08 message (Patient update) ignored!");
+        	}
         }
     }
 
 	@Override
 	public String[] getMessageTypes() {
-		return null;
+		return new String[]{"*"};
 	}
 }

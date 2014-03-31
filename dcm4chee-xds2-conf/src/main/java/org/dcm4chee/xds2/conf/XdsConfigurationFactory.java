@@ -44,7 +44,6 @@ import java.util.Properties;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 
 import org.dcm4che3.conf.api.ConfigurationException;
@@ -53,25 +52,75 @@ import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
 import org.dcm4che3.conf.ldap.LdapDicomConfiguration;
-import org.dcm4che3.conf.ldap.LdapDicomConfigurationExtension;
 import org.dcm4che3.conf.ldap.audit.LdapAuditLoggerConfiguration;
 import org.dcm4che3.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.ldap.generic.LdapGenericConfigExtension;
 import org.dcm4che3.conf.ldap.hl7.LdapHL7Configuration;
-import org.dcm4che3.conf.ldap.hl7.LdapHL7ConfigurationExtension;
+import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.prefs.generic.PreferencesGenericConfigExtension;
+import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che3.util.StreamUtils;
+import org.dcm4che3.util.StringUtils;
 
 /**
- * @author Gunter Zeilinger <gunterze@gmail.com>
+ * @author Franz Willer <franz.willer@gmail.com>
  *
  */
 public class XdsConfigurationFactory {
 
     private static final String LDAP_PROPERTIES_PROPERTY =
-            "org.dcm4chee.xds.ldap";
+            "org.dcm4chee.xds.ldapPropertiesURL";
+
+
+    @Produces @ApplicationScoped
+    public static DicomConfiguration createDicomConfiguration() throws ConfigurationException {
+    	return System.getProperty(LDAP_PROPERTIES_PROPERTY) != null ?
+    		getLdapConfiguration() : getPrefsConfiguration();
+    }
+
+	protected static DicomConfiguration getLdapConfiguration() throws ConfigurationException {
+		LdapDicomConfiguration conf = new LdapDicomConfiguration(ldapEnv());
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRepository>(XdsRepository.class));
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
+		conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
+		conf.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
+		conf.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
+		conf.addDicomConfigurationExtension(new LdapHL7Configuration());
+		return conf;
+	}
+
+	protected static DicomConfiguration getPrefsConfiguration() throws ConfigurationException {
+		PreferencesDicomConfiguration conf = new PreferencesDicomConfiguration();
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRepository>(XdsRepository.class));
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
+		conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
+		conf.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
+		conf.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
+		conf.addDicomConfigurationExtension(new PreferencesHL7Configuration());
+		return conf;
+	}
+
+    public static void disposeDicomConfiguration(@Disposes DicomConfiguration conf) {
+        conf.close();
+    }
+
+    @Produces @ApplicationScoped
+    public static  IHL7ApplicationCache getHL7ApplicationCache(DicomConfiguration conf) {
+        return new HL7ApplicationCache(
+                conf.getDicomConfigurationExtension(HL7Configuration.class));
+    }
 
     private static Properties ldapEnv() throws ConfigurationException {
         String url = System.getProperty(LDAP_PROPERTIES_PROPERTY);
-
+        url = StringUtils.replaceSystemProperties(url);
         Properties p = new Properties();
         try ( InputStream in = StreamUtils.openFileOrURL(url); ) {
             p.load(in);
@@ -81,45 +130,5 @@ public class XdsConfigurationFactory {
         return p;
     }
 
-    @Produces
-    public static LdapDicomConfigurationExtension auditLoggerConfiguration() {
-        return new LdapAuditLoggerConfiguration();
-    }
-
-    @Produces 
-    public static LdapDicomConfigurationExtension auditRecordRepositoryConfiguration() {
-        return new LdapAuditRecordRepositoryConfiguration();
-    }
-
-    @Produces
-    public static LdapDicomConfigurationExtension hL7Configuration(
-            Instance<LdapHL7ConfigurationExtension> hl7Exts) {
-        LdapHL7Configuration hl7Conf = new LdapHL7Configuration();
-        for (LdapHL7ConfigurationExtension hl7Ext : hl7Exts) {
-            hl7Conf.addHL7ConfigurationExtension(hl7Ext);
-        }
-        return hl7Conf;
-    }
-
-    @Produces @ApplicationScoped
-    public static DicomConfiguration createDicomConfiguration(
-            Instance<LdapDicomConfigurationExtension> exts)
-            throws ConfigurationException {
-        LdapDicomConfiguration conf = new LdapDicomConfiguration(ldapEnv());
-        for (LdapDicomConfigurationExtension ext : exts) {
-            conf.addDicomConfigurationExtension(ext);
-        }
-        return conf;
-    }
-
-    public static  void disposeDicomConfiguration(@Disposes DicomConfiguration conf) {
-        conf.close();
-    }
-
-    @Produces @ApplicationScoped
-    public static  IHL7ApplicationCache getHL7ApplicationCache(DicomConfiguration conf) {
-        return new HL7ApplicationCache(
-                conf.getDicomConfigurationExtension(HL7Configuration.class));
-    }
 
 }

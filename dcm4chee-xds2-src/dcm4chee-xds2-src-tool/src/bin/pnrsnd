@@ -4,7 +4,7 @@
 # -------------------------------------------------------------------------
 
 MAIN_CLASS=org.dcm4chee.xds2.src.tool.pnrsnd.PnRSnd
-MAIN_JAR=dcm4chee-xds2-src-tool-2.0.0.jar
+MAIN_JAR=dcm4chee-xds2-src-tool-2.0.2.jar
 
 DIRNAME="`dirname "$0"`"
 
@@ -39,13 +39,13 @@ fi
 # Setup the classpath
 CP="$DCM4CHE_HOME/etc/hl7snd/"
 CP="$CP:$DCM4CHE_HOME/lib/$MAIN_JAR"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-src-base-2.0.0.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-common-2.0.0.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-infoset-2.0.0.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4che-audit-3.0.1.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4che-core-3.0.1.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-audit-3.0.1.jar"
-CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-3.0.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-src-base-2.0.2.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-common-2.0.2.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4chee-xds2-infoset-2.0.2.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-audit-3.3.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-core-3.3.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-audit-3.3.1.jar"
+CP="$CP:$DCM4CHE_HOME/lib/dcm4che-net-3.3.1.jar"
 CP="$CP:$DCM4CHE_HOME/lib/slf4j-api-1.6.1.jar"
 CP="$CP:$DCM4CHE_HOME/lib/slf4j-log4j12-1.6.1.jar"
 CP="$CP:$DCM4CHE_HOME/lib/log4j-1.2.16.jar"

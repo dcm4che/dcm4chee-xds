@@ -51,6 +51,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -65,6 +66,7 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -126,10 +128,16 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     private static Logger log = LoggerFactory.getLogger(XCAInitiatingGW.class);
 
     @Resource
-    WebServiceContext wsContext;
+    private WebServiceContext wsContext;
     
     @Inject
-    XCAInitiatingGWCfg cfg;
+    private Device device;
+    private XCAInitiatingGWCfg cfg;
+    
+    @PostConstruct
+    public void init() {
+    	cfg = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+    }
 
     @Override
     public Response<AdhocQueryResponse> documentRegistryRegistryStoredQueryAsync(AdhocQueryRequest req) {

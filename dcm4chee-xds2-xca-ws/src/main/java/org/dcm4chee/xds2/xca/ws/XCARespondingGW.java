@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -59,11 +60,13 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -110,10 +113,16 @@ public class XCARespondingGW implements RespondingGatewayPortType {
     private static Logger log = LoggerFactory.getLogger(XCARespondingGW.class);
 
     @Resource
-    WebServiceContext wsContext;
+    private WebServiceContext wsContext;
 
     @Inject 
-    XCARespondingGW cfg;
+    private Device device;
+    private XCARespondingGWCfg cfg;
+    
+    @PostConstruct
+    public void init() {
+    	cfg = device.getDeviceExtension(XCARespondingGWCfg.class);
+    }
     
     @Override
     public Response<RetrieveDocumentSetResponseType> respondingGatewayCrossGatewayRetrieveAsync(

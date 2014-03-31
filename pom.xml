@@ -52,7 +52,7 @@
     <hibernate.version>4.0.1.Final</hibernate.version>
     <querydsl.version>3.2.3</querydsl.version>
     <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
-    <db>oracle</db>
+    <db>mysql</db>
     <ds>java:/xdsDS</ds>
     <show_sql>false</show_sql>
     <hbm2ddl.auto>update</hbm2ddl.auto>
@@ -69,17 +69,20 @@
     <module>dcm4chee-xds2-common-ws</module>
     <module>dcm4chee-xds2-conf</module>
     <module>dcm4chee-xds2-registry-persistence</module>
+    <module>dcm4chee-xds2-service</module>
+    <module>dcm4chee-xds2-ctrl</module>
+    <module>dcm4chee-xds2-ctrl-war</module>
     <module>dcm4chee-xds2-registry-ws</module>
-    <module>dcm4chee-xds2-registry-service</module>
+    <module>dcm4chee-xds2-registry-ctrl</module>
+    <module>dcm4chee-xds2-registry-war</module>
     <module>dcm4chee-xds2-hl7</module>
     <module>dcm4chee-xds2-repository-ws</module>
     <module>dcm4chee-xds2-store-api</module>
     <module>dcm4chee-xds2-store-file</module>
     <module>dcm4chee-xds2-registry-ear</module>
     <module>dcm4chee-xds2-repository-ear</module>
-   <!-- <module>dcm4chee-xds2-persistence</module> 
     <module>dcm4chee-xds2-tool</module>
-    <module>dcm4chee-xds2-src</module> -->
+    <module>dcm4chee-xds2-src</module> 
     <module>dcm4chee-xds2-pix-client</module>
     <module>dcm4chee-xds2-pix-tool</module>
     <module>dcm4chee-xds2-xca-ws</module>

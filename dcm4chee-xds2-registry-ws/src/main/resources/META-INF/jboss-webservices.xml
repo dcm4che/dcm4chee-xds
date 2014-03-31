@@ -2,10 +2,10 @@
 <webservices xmlns="http://www.jboss.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_webservices_1_0.xsd">
-	<context-root>xds</context-root>
+	<context-root>xds/registry</context-root>
 	<port-component>
 		<ejb-name>XDSRegistryBean</ejb-name>
 		<port-component-name>DocumentRegistry_Port_Soap12</port-component-name>
-		<port-component-uri>/registry/*</port-component-uri>
+		<port-component-uri>/*</port-component-uri>
 	</port-component>
 </webservices>
