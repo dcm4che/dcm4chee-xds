@@ -38,10 +38,10 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che.conf.ldap.LdapDicomConfiguration;
-import org.dcm4che.conf.ldap.audit.LdapAuditLoggerConfiguration;
-import org.dcm4che.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
-import org.dcm4che.conf.ldap.hl7.LdapHL7Configuration;
+import org.dcm4che3.conf.ldap.LdapDicomConfiguration;
+import org.dcm4che3.conf.ldap.audit.LdapAuditLoggerConfiguration;
+import org.dcm4che3.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.ldap.hl7.LdapHL7Configuration;
 import org.dcm4chee.xds2.conf.ldap.LdapXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.ldap.LdapXCAiInitiatingGWConfiguration;

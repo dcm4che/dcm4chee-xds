@@ -43,11 +43,11 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.prefs.Preferences;
 
-import org.dcm4che.conf.prefs.PreferencesDicomConfiguration;
-import org.dcm4che.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
-import org.dcm4che.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
-import org.dcm4che.conf.prefs.hl7.PreferencesHL7Configuration;
-import org.dcm4che.util.SafeClose;
+import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
+import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
+import org.dcm4che3.util.SafeClose;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCAInitiatingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCARespondingGWConfiguration;
 import org.dcm4chee.xds2.conf.prefs.PreferencesXCAiInitiatingGWConfiguration;

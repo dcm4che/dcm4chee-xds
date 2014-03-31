@@ -61,28 +61,29 @@
 		<fileSet>
 			<directory>src/etc</directory>
 			<includes>
-				<include>codes.xml</include>
+				<include>configuration/affinitydomain/default/codes.xml</include>
+				<include>configuration/keystore</include>
 			</includes>
-			<outputDirectory>support/xml</outputDirectory>
-			<fileMode>0755</fileMode>
-			<lineEnding>unix</lineEnding>
-		</fileSet>
-		<fileSet>
-			<directory>target/generated-resources/sql</directory>
-			<includes>
-				<include>codes.sql</include>
-			</includes>
-			<outputDirectory>support/sql</outputDirectory>
+			<outputDirectory>.</outputDirectory>
 			<fileMode>0755</fileMode>
 			<lineEnding>unix</lineEnding>
 		</fileSet>
 	</fileSets>
 	<dependencySets>
 		<dependencySet>
-			<outputDirectory>deploy</outputDirectory>
+			<outputDirectory>deployments</outputDirectory>
 			<includes>
 				<include>org.dcm4che:dcm4chee-xds2-ear:ear:${db}</include>
 			</includes>
+		</dependencySet>
+		<dependencySet>
+			<outputDirectory>jboss-module</outputDirectory>
+			<includes>
+				<include>org.dcm4che:dcm4che-jboss-modules</include>
+				<include>org.dcm4che:querydsl-jboss-modules</include>
+				<include>org.dcm4che:jdbc-jboss-modules</include>
+			</includes>
+			<useProjectArtifact>false</useProjectArtifact>
 		</dependencySet>
 		<dependencySet>
 			<outputDirectory>modules/org/dcm4chee/xds2/tool/init/main</outputDirectory>

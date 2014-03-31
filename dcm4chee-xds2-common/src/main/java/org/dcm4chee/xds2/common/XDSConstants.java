@@ -95,6 +95,7 @@ public interface XDSConstants {
     
     //Stored Query
     public static final String XDS_FindDocuments = "urn:uuid:14d4debf-8f97-4251-9a74-a90016b0af0d";      
+    public static final String XDS_FindDocumentsByReferenceId = "urn:uuid:12941a89-e02e-4be5-967cce4bfc8fe492";      
     public static final String XDS_FindSubmissionSets = "urn:uuid:f26abbcb-ac74-4422-8a30-edb644bbc1a9";         
     public static final String XDS_FindFolders = "urn:uuid:958f3006-baad-4929-a4de-ff1114824431";        
     public static final String XDS_GetAll = "urn:uuid:10b545ea-725c-446d-9b95-8aeb444eddf3";     
@@ -125,6 +126,7 @@ public interface XDSConstants {
     public static final String QRY_DOCUMENT_ENTRY_AUTHOR_PERSON = "$XDSDocumentEntryAuthorPerson";
     public static final String QRY_DOCUMENT_ENTRY_FORMAT_CODE = "$XDSDocumentEntryFormatCode";
     public static final String QRY_DOCUMENT_ENTRY_STATUS = "$XDSDocumentEntryStatus";
+    public static final String QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST = "$XDSDocumentEntryReferenceIdList";
     //FindSubmissionSet
     public static final String QRY_SUBMISSIONSET_PATIENT_ID = "$XDSSubmissionSetPatientId";
     public static final String QRY_SUBMISSIONSET_SOURCE_ID = "$XDSSubmissionSetSourceId";
@@ -176,6 +178,7 @@ public interface XDSConstants {
     public static final String SLOT_NAME_LANGUAGE_CODE = "languageCode";
     public static final String SLOT_NAME_INTENDED_RECIPIENT = "intendedRecipient";
     public static final String SLOT_NAME_LEGAL_AUTHENTICATOR = "legalAuthenticator";
+    public static final String SLOT_NAME_REFERENCE_ID_LIST = "urn:ihe:iti:xds:2013:referenceIdList";
     //Other
     public static final String WS_ADDRESSING_NS = "http://www.w3.org/2005/08/addressing";
     public static final String WS_ADDRESSING_ANONYMOUS = "http://www.w3.org/2005/08/addressing/anonymous";
