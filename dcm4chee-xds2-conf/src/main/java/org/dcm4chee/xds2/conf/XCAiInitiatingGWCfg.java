@@ -46,6 +46,7 @@ import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
@@ -57,44 +58,68 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName")
+    @ConfigField(name = "xdsApplicationName")
     private String applicationName;
-	
-	@ConfigField(name = "xdsHomeCommunityID")
+
+    @ConfigField(name = "xdsHomeCommunityID")
     private String homeCommunityID;
-	
-	@ConfigField(name = "xdsSoapMsgLogDir")
+
+    @ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
-	
-	@ConfigField(name = "xdsAsync")
+
+    @ConfigField(name = "xdsAsync")
     private boolean async;
 
-	@ConfigField(name = "xdsAsyncHandler")
+    @ConfigField(name = "xdsAsyncHandler")
     private boolean asyncHandler;
 
-	
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsiSourceURL")
-	private String[] XDSiSourceURLs;
+    @ConfigField(mapName = "xdsRespondingGateways", mapKey = "xdsHomeCommunityId", name = "xdsRespondingGateway", mapElementObjectClass = "xdsRespondingGatewayByHomeCommunityId")
+    private Map<String, Device> respondingGWDevicebyHomeCommunityId;
 
-    //AffinityDomain Option
-    private Map<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
+    @ConfigField(mapName = "xdsImagingSources", mapKey = "xdsSourceUid", name = "xdsImagingSource", mapElementObjectClass = "xdsImagingSourceByUid")
+    private Map<String, Device> srcDevicebySrcIdMap;
 
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsRespondingGatewayURL")
-	private String[] respondingGWURLs;
-    
-    private Map<String, String> respondingGWUrlMapping = new HashMap<String,String>();
-    
-    
-    
+    public String getRespondingGWURL(String homeCommunityID) {
+        try {
+            return respondingGWDevicebyHomeCommunityId.get(homeCommunityID).getDeviceExtensionNotNull(XCAiRespondingGWCfg.class)
+                    .getRetrieveUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve URL of responding GW for homeCommunityId " + homeCommunityID, e);
+        }
+    }
+
+    public Collection<String> getCommunityIDs() {
+        return respondingGWDevicebyHomeCommunityId.keySet();
+    }
+
+    public String getXDSiSourceURL(String sourceID) {
+        try {
+            return srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve URL of XDSiSource for source id " + sourceID, e);
+        }
+    }
+
+    public Map<String, Device> getRespondingGWDevicebyHomeCommunityId() {
+        return respondingGWDevicebyHomeCommunityId;
+    }
+
+    public void setRespondingGWDevicebyHomeCommunityId(Map<String, Device> respondingGWDevicebyHomeCommunityId) {
+        this.respondingGWDevicebyHomeCommunityId = respondingGWDevicebyHomeCommunityId;
+    }
+
+    public Map<String, Device> getSrcDevicebySrcIdMap() {
+        return srcDevicebySrcIdMap;
+    }
+
+    public void setSrcDevicebySrcIdMap(Map<String, Device> srcDevicebySrcIdMap) {
+        this.srcDevicebySrcIdMap = srcDevicebySrcIdMap;
+    }
+
     public String getApplicationName() {
         return applicationName;
     }
+
     public final void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
@@ -102,9 +127,11 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
     public String getHomeCommunityID() {
         return homeCommunityID;
     }
+
     public void setHomeCommunityID(String homeCommunityID) {
         this.homeCommunityID = homeCommunityID;
     }
+
     public String getSoapLogDir() {
         return soapLogDir;
     }
@@ -112,46 +139,26 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
     }
-    
-    public String[] getXDSiSourceURLs() {
-        return XDSUtil.map2keyValueStrings(xdsiSrcUrlMapping, '|');
-    }
-    public void setXDSiSourceURLs(String[] repositoryURLs) {
-        XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", xdsiSrcUrlMapping);
-    }
-    public String getXDSiSourceURL(String repositoryID) {
-        return XDSUtil.getValue(repositoryID, "*", xdsiSrcUrlMapping);
-    }
-
-    public String[] getRespondingGWURLs() {
-        return XDSUtil.map2keyValueStrings(respondingGWUrlMapping, '|');
-    }
-    public void setRespondingGWURLs(String[] urls) {
-        XDSUtil.storeKeyValueStrings2map(urls, '|', "*", respondingGWUrlMapping);
-    }
-    
-    public Collection<String> getCommunityIDs() {
-        return respondingGWUrlMapping.keySet();
-    }
-    public String getRespondingGWURL(String homeCommunityID) {
-        return XDSUtil.getValue(homeCommunityID, "*", respondingGWUrlMapping);
-    }
 
     public boolean isAsync() {
         return async;
     }
+
     public void setAsync(boolean async) {
         this.async = async;
     }
+
     public boolean isAsyncHandler() {
         return asyncHandler;
     }
+
     public void setAsyncHandler(boolean asyncHandler) {
         this.asyncHandler = asyncHandler;
     }
+
     @Override
     public void reconfigure(DeviceExtension from) {
-    	XCAiInitiatingGWCfg src = (XCAiInitiatingGWCfg) from;
+        XCAiInitiatingGWCfg src = (XCAiInitiatingGWCfg) from;
         ReflectiveConfig.reconfigure(src, this);
     }
 }

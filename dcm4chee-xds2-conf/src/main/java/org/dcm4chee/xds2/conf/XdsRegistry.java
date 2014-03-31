@@ -52,153 +52,175 @@ import org.dcm4chee.xds2.common.code.XADCfgRepository;
 @ConfigClass(commonName = "XDSRegistry", objectClass = "xdsRegistry", nodeName = "xdsRegistry")
 public class XdsRegistry extends DeviceExtension {
 
-	private static final String DEFAULT_AFFINITYDOMAIN_CFG_DIR = "${jboss.server.config.dir}/affinitydomain";
+    private static final String DEFAULT_AFFINITYDOMAIN_CFG_DIR = "${jboss.server.config.dir}/affinitydomain";
 
-	private static final long serialVersionUID = -8258532093950989486L;
+    private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName")
-	private String applicationName;
+    @ConfigField(name = "xdsApplicationName")
+    private String applicationName;
 
-	@ConfigField(name = "xdsAffinityDomain")
-	private String[] affinityDomain = new String[] {};
+    @ConfigField(name = "xdsAffinityDomain")
+    private String[] affinityDomain = new String[] {};
 
-	@ConfigField(name = "xdsAffinityDomainConfigDir")
-	private String affinityDomainConfigDir;
+    @ConfigField(name = "xdsAffinityDomainConfigDir")
+    private String affinityDomainConfigDir;
 
-	@ConfigField(name = "xdsAcceptedMimeTypes")
-	private String[] acceptedMimeTypes = new String[] {};
+    @ConfigField(name = "xdsAcceptedMimeTypes")
+    private String[] acceptedMimeTypes = new String[] {};
 
-	@ConfigField(name = "xdsSoapMsgLogDir")
-	private String soapLogDir;
+    @ConfigField(name = "xdsSoapMsgLogDir")
+    private String soapLogDir;
 
-	@ConfigField(name = "xdsCreateMissingPIDs", def = "false")
-	private boolean createMissingPIDs;
+    @ConfigField(name = "xdsCreateMissingPIDs", def = "false")
+    private boolean createMissingPIDs;
 
-	@ConfigField(name = "xdsCreateMissingCodes", def = "false")
-	private boolean createMissingCodes;
+    @ConfigField(name = "xdsCreateMissingCodes", def = "false")
+    private boolean createMissingCodes;
 
-	@ConfigField(name = "xdsDontSaveCodeClassifications", def = "false")
-	private boolean dontSaveCodeClassifications;
+    @ConfigField(name = "xdsDontSaveCodeClassifications", def = "false")
+    private boolean dontSaveCodeClassifications;
 
-	@ConfigField(name = "xdsCheckAffinityDomain", def = "true")
-	private boolean checkAffinityDomain;
+    @ConfigField(name = "xdsCheckAffinityDomain", def = "true")
+    private boolean checkAffinityDomain;
 
-	@ConfigField(name = "xdsCheckMimetype", def = "true")
-	private boolean checkMimetype;
+    @ConfigField(name = "xdsCheckMimetype", def = "true")
+    private boolean checkMimetype;
 
-	@ConfigField(name = "xdsPreMetadataCheck", def = "false")
-	private boolean preMetadataCheck;
+    @ConfigField(name = "xdsPreMetadataCheck", def = "false")
+    private boolean preMetadataCheck;
 
-	private XADCfgRepository xadCfgRepository;
+    @ConfigField(name = "xdsRegisterUrl")
+    private String registerUrl;
 
-	public String getApplicationName() {
-		return applicationName;
-	}
+    @ConfigField(name = "xdsQueryUrl")
+    private String queryUrl;
 
-	public final void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
+    private XADCfgRepository xadCfgRepository;
 
-	public String[] getAffinityDomain() {
-		return affinityDomain;
-	}
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-	public void setAffinityDomain(String[] ads) {
-		this.affinityDomain = ads;
-		if (ads != null) {
-			String ad;
-			for (int i = 0; i < ads.length; i++) {
-				ad = ads[i];
-				if (ad.endsWith("&ISO")) {
-					affinityDomain[i] = ad.substring(0, ad.length() - 4);
-				}
-			}
-		}
-	}
+    public String getRegisterUrl() {
+        return registerUrl;
+    }
 
-	public String getAffinityDomainConfigDir() {
-		return affinityDomainConfigDir;
-	}
+    public void setRegisterUrl(String registerUrl) {
+        this.registerUrl = registerUrl;
+    }
 
-	public void setAffinityDomainConfigDir(String dir) {
-		this.affinityDomainConfigDir = dir;
-		dir = StringUtils.replaceSystemProperties(dir == null ? DEFAULT_AFFINITYDOMAIN_CFG_DIR : dir);
-		if (xadCfgRepository == null || xadCfgRepository.configChanged(null, dir)) {
-			xadCfgRepository = new XADCfgRepository(System.getProperty("org.dcm4chee.xds.codeprovider.name", "IHECodeProvider"), dir);
-		}
-	}
+    public String getQueryUrl() {
+        return queryUrl;
+    }
 
-	public XADCfgRepository getCodeRepository() {
-		return xadCfgRepository;
-	}
+    public void setQueryUrl(String queryUrl) {
+        this.queryUrl = queryUrl;
+    }
 
-	public String[] getAcceptedMimeTypes() {
-		return acceptedMimeTypes;
-	}
+    public final void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-	public void setAcceptedMimeTypes(String[] mimeTypes) {
-		this.acceptedMimeTypes = mimeTypes;
-	}
+    public String[] getAffinityDomain() {
+        return affinityDomain;
+    }
 
-	public String getSoapLogDir() {
-		return soapLogDir;
-	}
+    public void setAffinityDomain(String[] ads) {
+        this.affinityDomain = ads;
+        if (ads != null) {
+            String ad;
+            for (int i = 0; i < ads.length; i++) {
+                ad = ads[i];
+                if (ad.endsWith("&ISO")) {
+                    affinityDomain[i] = ad.substring(0, ad.length() - 4);
+                }
+            }
+        }
+    }
 
-	public void setSoapLogDir(String soapLogDir) {
-		this.soapLogDir = soapLogDir;
-	}
+    public String getAffinityDomainConfigDir() {
+        return affinityDomainConfigDir;
+    }
 
-	public boolean isCreateMissingPIDs() {
-		return createMissingPIDs;
-	}
+    public void setAffinityDomainConfigDir(String dir) {
+        this.affinityDomainConfigDir = dir;
+        dir = StringUtils.replaceSystemProperties(dir == null ? DEFAULT_AFFINITYDOMAIN_CFG_DIR : dir);
+        if (xadCfgRepository == null || xadCfgRepository.configChanged(null, dir)) {
+            xadCfgRepository = new XADCfgRepository(System.getProperty("org.dcm4chee.xds.codeprovider.name", "IHECodeProvider"), dir);
+        }
+    }
 
-	public void setCreateMissingPIDs(boolean createMissingPIDs) {
-		this.createMissingPIDs = createMissingPIDs;
-	}
+    public XADCfgRepository getCodeRepository() {
+        return xadCfgRepository;
+    }
 
-	public boolean isCreateMissingCodes() {
-		return createMissingCodes;
-	}
+    public String[] getAcceptedMimeTypes() {
+        return acceptedMimeTypes;
+    }
 
-	public void setCreateMissingCodes(boolean createMissingCodes) {
-		this.createMissingCodes = createMissingCodes;
-	}
+    public void setAcceptedMimeTypes(String[] mimeTypes) {
+        this.acceptedMimeTypes = mimeTypes;
+    }
 
-	public boolean isDontSaveCodeClassifications() {
-		return dontSaveCodeClassifications;
-	}
+    public String getSoapLogDir() {
+        return soapLogDir;
+    }
 
-	public void setDontSaveCodeClassifications(boolean dontSaveCodeClassifications) {
-		this.dontSaveCodeClassifications = dontSaveCodeClassifications;
-	}
+    public void setSoapLogDir(String soapLogDir) {
+        this.soapLogDir = soapLogDir;
+    }
 
-	public boolean isCheckAffinityDomain() {
-		return checkAffinityDomain;
-	}
+    public boolean isCreateMissingPIDs() {
+        return createMissingPIDs;
+    }
 
-	public void setCheckAffinityDomain(boolean checkAffinityDomain) {
-		this.checkAffinityDomain = checkAffinityDomain;
-	}
+    public void setCreateMissingPIDs(boolean createMissingPIDs) {
+        this.createMissingPIDs = createMissingPIDs;
+    }
 
-	public boolean isCheckMimetype() {
-		return checkMimetype;
-	}
+    public boolean isCreateMissingCodes() {
+        return createMissingCodes;
+    }
 
-	public void setCheckMimetype(boolean checkMimetype) {
-		this.checkMimetype = checkMimetype;
-	}
+    public void setCreateMissingCodes(boolean createMissingCodes) {
+        this.createMissingCodes = createMissingCodes;
+    }
 
-	public boolean isPreMetadataCheck() {
-		return preMetadataCheck;
-	}
+    public boolean isDontSaveCodeClassifications() {
+        return dontSaveCodeClassifications;
+    }
 
-	public void setPreMetadataCheck(boolean b) {
-		preMetadataCheck = b;
-	}
+    public void setDontSaveCodeClassifications(boolean dontSaveCodeClassifications) {
+        this.dontSaveCodeClassifications = dontSaveCodeClassifications;
+    }
 
-	@Override
-	public void reconfigure(DeviceExtension from) {
-		XdsRegistry src = (XdsRegistry) from;
-		ReflectiveConfig.reconfigure(src, this);
-	}
+    public boolean isCheckAffinityDomain() {
+        return checkAffinityDomain;
+    }
+
+    public void setCheckAffinityDomain(boolean checkAffinityDomain) {
+        this.checkAffinityDomain = checkAffinityDomain;
+    }
+
+    public boolean isCheckMimetype() {
+        return checkMimetype;
+    }
+
+    public void setCheckMimetype(boolean checkMimetype) {
+        this.checkMimetype = checkMimetype;
+    }
+
+    public boolean isPreMetadataCheck() {
+        return preMetadataCheck;
+    }
+
+    public void setPreMetadataCheck(boolean b) {
+        preMetadataCheck = b;
+    }
+
+    @Override
+    public void reconfigure(DeviceExtension from) {
+        XdsRegistry src = (XdsRegistry) from;
+        ReflectiveConfig.reconfigure(src, this);
+    }
 }

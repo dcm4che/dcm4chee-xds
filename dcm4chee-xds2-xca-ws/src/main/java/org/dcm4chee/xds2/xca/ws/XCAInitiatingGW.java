@@ -192,10 +192,10 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                 }
             }
             if (!isHome) {
-                if (home != null && !cfg.getCommunityIDs().contains(home))
+                if (home != null && !cfg.getHomeCommunityIDs().contains(home))
                     throw new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, "Unknown communityID "+home, null);
                 PatSlot patSlot = pixQuery(req, cfg.getAssigningAuthorities());
-                for (String communityID : home == null ? cfg.getCommunityIDs() : Arrays.asList(home)) {
+                for (String communityID : home == null ? cfg.getHomeCommunityIDs() : Arrays.asList(home)) {
                     AdhocQueryResponse xcaRsp = sendXCAQuery(communityID, req, patSlot, cfg);
                     if (rsp == null) {
                         rsp = xcaRsp;
@@ -304,6 +304,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                 if (cfg.isAsyncHandler()) {
                     AsyncResponseHandler<AdhocQueryResponse> handler = new AsyncResponseHandler<AdhocQueryResponse>();
                     Future<?> rspAh = port.respondingGatewayCrossGatewayQueryAsync(req, handler);
+                    
                     while (!rspAh.isDone()) {
                         Thread.sleep(100);
                     }
@@ -311,6 +312,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                     log.info("Async Response via handler:"+rsp);
                 } else if (cfg.isAsync()) {
                     Response<AdhocQueryResponse> rspA = port.respondingGatewayCrossGatewayQueryAsync(req);
+                    
                     while (!rspA.isDone()) {
                         Thread.sleep(100);
                     }

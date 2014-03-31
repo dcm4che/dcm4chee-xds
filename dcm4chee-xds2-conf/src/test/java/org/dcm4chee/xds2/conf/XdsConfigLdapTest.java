@@ -51,7 +51,8 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
 
     //Used by IgnoreableJUnitTestRunner to check if all tests of this class should be ignored
     public static boolean ignoreTests() {
-        return System.getProperty("ldap") == null;
+        return false;
+        //return System.getProperty("ldap") == null;
     }
     
     @Before
@@ -64,6 +65,7 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsSource>(XdsSource.class));
         
         cfg.addDicomConfigurationExtension(new LdapHL7Configuration());
         cfg.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());

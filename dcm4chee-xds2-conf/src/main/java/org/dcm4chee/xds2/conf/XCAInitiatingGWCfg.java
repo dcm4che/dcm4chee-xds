@@ -41,12 +41,12 @@ package org.dcm4chee.xds2.conf;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -57,208 +57,220 @@ import org.dcm4chee.xds2.common.XDSUtil;
 @ConfigClass(commonName = "XCAInitiatingGW", objectClass = "xcaInitiatingGW", nodeName = "xcaInitiatingGW")
 public class XCAInitiatingGWCfg extends DeviceExtension {
 
-	private static final long serialVersionUID = -8258532093950989486L;
+    @ConfigClass(objectClass = "xdsGatewayRef")
+    public static class GatewayReference {
 
-	@ConfigField(name = "xdsApplicationName")
-	private String applicationName;
+        @ConfigField(name = "xdsAffinityDomain")
+        private String affinityDomain;
 
-	
-	@ConfigField(name = "xdsHomeCommunityID")
-	private String homeCommunityID;
+        @ConfigField(name = "xdsRespondingGateway")
+        private Device respondingGWdevice;
 
-	
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsRespondingGatewayURL")
-	private String[] respondingGWURLs;
+        public String getAffinityDomain() {
+            return affinityDomain;
+        }
 
-	private Map<String, String> respondingGWUrlMapping = new HashMap<String, String>();
+        public void setAffinityDomain(String affinityDomain) {
+            this.affinityDomain = affinityDomain;
+        }
 
-	
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsRespondingGatewayRetrieveURL")
-	private String[] respondingGWRetrieveURLs;
+        public Device getRespondingGWdevice() {
+            return respondingGWdevice;
+        }
 
-	private Map<String, String> respondingGWRetrieveUrlMapping = new HashMap<String, String>();
+        public void setRespondingGWdevice(Device respondingGWdevice) {
+            this.respondingGWdevice = respondingGWdevice;
+        }
 
-	
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsAssigningAuthority")
-	private String[] assigningAuthoritiesMap;
+        public GatewayReference() {
+            super();
+        }
 
-	private Map<String, String> homeIdToAssigningAuthotityMapping = new HashMap<String, String>();
+    }
 
-	
-	// AffinityDomain Option
-	@ConfigField(name = "xdsRegistryURL")
-	private String registryURL;
+    private static final long serialVersionUID = -8258532093950989486L;
 
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsRepositoryURL")
-	private String[] repositoryURLs;
+    @ConfigField(name = "xdsApplicationName")
+    private String applicationName;
 
-	private Map<String, String> repositoryUrlMapping = new HashMap<String, String>();
+    @ConfigField(name = "xdsHomeCommunityID")
+    private String homeCommunityID;
 
+    @ConfigField(name = "xdsRespondingGateways", mapKey = "xdsHomeCommunityID")
+    private Map<String, GatewayReference> respondingGWByHomeCommunityIdMap;
 
-	@ConfigField(name = "xdsSoapMsgLogDir")
-	private String soapLogDir;
-	
-	
-	@ConfigField(name = "xdsAsync")
-	private boolean async;
+    @ConfigField(mapName = "xdsRepositories", mapKey = "xdsRepositoryUid", name = "xdsRepository", mapElementObjectClass = "xdsRepositoryByUid")
+    private Map<String, Device> repositoryDeviceByUidMap;
 
-	
-	@ConfigField(name = "xdsAsyncHandler")
-	private boolean asyncHandler;
-	
-	
-	@ConfigField(name = "xdsPIXManagerApplication")
-	private String remotePIXManagerApplication;
-	
+    // AffinityDomain Option
+    @ConfigField(name = "xdsRegistry")
+    private Device registry;
 
-	@ConfigField(name = "xdsPIXConsumerApplication")
-	private String localPIXConsumerApplication;
+    @ConfigField(name = "xdsSoapMsgLogDir")
+    private String soapLogDir;
 
-	public String getApplicationName() {
-		return applicationName;
-	}
+    @ConfigField(name = "xdsAsync")
+    private boolean async;
 
-	public final void setApplicationName(String applicationName) {
-		this.applicationName = applicationName;
-	}
+    @ConfigField(name = "xdsAsyncHandler")
+    private boolean asyncHandler;
 
-	public String getHomeCommunityID() {
-		return homeCommunityID;
-	}
+    @ConfigField(name = "xdsPIXManagerApplication")
+    private String remotePIXManagerApplication;
 
-	public void setHomeCommunityID(String homeCommunityID) {
-		this.homeCommunityID = homeCommunityID;
-	}
+    @ConfigField(name = "xdsPIXConsumerApplication")
+    private String localPIXConsumerApplication;
 
-	public String getRegistryURL() {
-		return registryURL;
-	}
+    public Collection<String> getHomeCommunityIDs() {
+        return respondingGWByHomeCommunityIdMap.keySet();
+    }
 
-	public void setRegistryURL(String registryURL) {
-		this.registryURL = registryURL;
-	}
+    public String getRespondingGWQueryURL(String homeCommunityID) {
+        try {
+            return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getRespondingGWdevice()
+                    .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getQueryUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve QueryURL of responding GW for homeCommunityId " + homeCommunityID, e);
+        }
+    }
 
-	public String getSoapLogDir() {
-		return soapLogDir;
-	}
+    public String getRespondingGWRetrieveURL(String homeCommunityID) {
+        try {
+            return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getRespondingGWdevice()
+                    .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getRetrieveUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve retrieveURL of responding GW for homeCommunityId " + homeCommunityID, e);
+        }
+    }
 
-	public void setSoapLogDir(String soapLogDir) {
-		this.soapLogDir = soapLogDir;
-	}
+    public String getAssigningAuthority(String homeCommunityID) {
+        try {
+            return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getAffinityDomain();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve AffinityDomain for homeCommunityId " + homeCommunityID, e);
+        }
+    }
 
-	public String[] getRepositoryURLs() {
-		return XDSUtil.map2keyValueStrings(repositoryUrlMapping, '|');
-	}
+    public String[] getAssigningAuthorities() {
 
-	public void setRepositoryURLs(String[] repositoryURLs) {
-		XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", repositoryUrlMapping);
-	}
+        String[] authorities = new String[respondingGWByHomeCommunityIdMap.size()];
 
-	public String getRepositoryURL(String repositoryID) {
-		return XDSUtil.getValue(repositoryID, "*", repositoryUrlMapping);
-	}
+        int i = 0;
+        for (Entry<String, GatewayReference> e : respondingGWByHomeCommunityIdMap.entrySet()) {
+            authorities[i++] = e.getValue().getAffinityDomain();
+        }
 
-	public String[] getRespondingGWURLs() {
-		return XDSUtil.map2keyValueStrings(respondingGWUrlMapping, '|');
-	}
+        return authorities;
+    }
 
-	public void setRespondingGWURLs(String[] urls) {
-		XDSUtil.storeKeyValueStrings2map(urls, '|', "*", respondingGWUrlMapping);
-	}
+    public String getRegistryURL() {
+        try {
+            return registry.getDeviceExtensionNotNull(XdsRegistry.class).getQueryUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve registry URL", e);
+        }
+    }
 
-	public String[] getRespondingGWRetrieveURLs() {
-		return XDSUtil.map2keyValueStrings(respondingGWRetrieveUrlMapping, '|');
-	}
+    public String getRepositoryURL(String repositoryID) {
+        try {
+            return repositoryDeviceByUidMap.get(repositoryID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+        }
+    }
 
-	public void setRespondingGWRetrieveURLs(String[] urls) {
-		XDSUtil.storeKeyValueStrings2map(urls, '|', "*", respondingGWRetrieveUrlMapping);
-	}
+    public Map<String, GatewayReference> getRespondingGWByHomeCommunityIdMap() {
+        return respondingGWByHomeCommunityIdMap;
+    }
 
-	public Collection<String> getCommunityIDs() {
-		return respondingGWUrlMapping.keySet();
-	}
+    public void setRespondingGWByHomeCommunityIdMap(Map<String, GatewayReference> respondingGWByHomeCommunityIdMap) {
+        this.respondingGWByHomeCommunityIdMap = respondingGWByHomeCommunityIdMap;
+    }
 
-	public String getRespondingGWQueryURL(String homeCommunityID) {
-		return XDSUtil.getValue(homeCommunityID, "*", respondingGWUrlMapping);
-	}
+    public Map<String, Device> getRepositoryDeviceByUidMap() {
+        return repositoryDeviceByUidMap;
+    }
 
-	public String getRespondingGWRetrieveURL(String homeCommunityID) {
-		String url = XDSUtil.getValue(homeCommunityID, "*", respondingGWRetrieveUrlMapping);
-		return url == null || "query".equalsIgnoreCase(url) ? XDSUtil.getValue(homeCommunityID, "*", respondingGWUrlMapping) : url;
-	}
+    public void setRepositoryDeviceByUidMap(Map<String, Device> repositoryDeviceByUidMap) {
+        this.repositoryDeviceByUidMap = repositoryDeviceByUidMap;
+    }
 
-	public String[] getAssigningAuthoritiesMap() {
-		return XDSUtil.map2keyValueStrings(homeIdToAssigningAuthotityMapping, '|');
-	}
+    public Device getRegistry() {
+        return registry;
+    }
 
-	public void setAssigningAuthoritiesMap(String[] sa) {
-		XDSUtil.storeKeyValueStrings2map(sa, '|', "*", homeIdToAssigningAuthotityMapping);
-	}
+    public void setRegistry(Device registry) {
+        this.registry = registry;
+    }
 
-	public String[] getAssigningAuthorities() {
-		int size = homeIdToAssigningAuthotityMapping.size();
-		return size == 0 ? null : homeIdToAssigningAuthotityMapping.values().toArray(new String[size]);
-	}
+    public String getApplicationName() {
+        return applicationName;
+    }
 
-	public String getAssigningAuthority(String homeCommunityID) {
-		return XDSUtil.getValue(homeCommunityID, "*", homeIdToAssigningAuthotityMapping);
-	}
+    public final void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 
-	public boolean isAsync() {
-		return async;
-	}
+    public String getHomeCommunityID() {
+        return homeCommunityID;
+    }
 
-	public void setAsync(boolean async) {
-		this.async = async;
-	}
+    public void setHomeCommunityID(String homeCommunityID) {
+        this.homeCommunityID = homeCommunityID;
+    }
 
-	public boolean isAsyncHandler() {
-		return asyncHandler;
-	}
+    public String getSoapLogDir() {
+        return soapLogDir;
+    }
 
-	public void setAsyncHandler(boolean asyncHandler) {
-		this.asyncHandler = asyncHandler;
-	}
+    public void setSoapLogDir(String soapLogDir) {
+        this.soapLogDir = soapLogDir;
+    }
 
-	public String getRemotePIXManagerApplication() {
-		return remotePIXManagerApplication;
-	}
+    public boolean isAsync() {
+        return async;
+    }
 
-	public void setRemotePIXManagerApplication(String appName) {
-		this.remotePIXManagerApplication = appName;
-	}
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
 
-	public String getLocalPIXConsumerApplication() {
-		return localPIXConsumerApplication;
-	}
+    public boolean isAsyncHandler() {
+        return asyncHandler;
+    }
 
-	public void setLocalPIXConsumerApplication(String appName) {
-		this.localPIXConsumerApplication = appName;
-	}
+    public void setAsyncHandler(boolean asyncHandler) {
+        this.asyncHandler = asyncHandler;
+    }
 
-	public HL7Application getPixConsumerApplication() {
-		return null;//XdsDevice.findHL7Application(localPIXConsumerApplication);
-	}
+    public String getRemotePIXManagerApplication() {
+        return remotePIXManagerApplication;
+    }
 
-	public HL7Application getPixManagerApplication() {
-		return null;//XdsDevice.findHL7Application(remotePIXManagerApplication);
-	}
+    public void setRemotePIXManagerApplication(String appName) {
+        this.remotePIXManagerApplication = appName;
+    }
 
-	@Override
-	public void reconfigure(DeviceExtension from) {
-		XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
+    public String getLocalPIXConsumerApplication() {
+        return localPIXConsumerApplication;
+    }
+
+    public void setLocalPIXConsumerApplication(String appName) {
+        this.localPIXConsumerApplication = appName;
+    }
+
+    public HL7Application getPixConsumerApplication() {
+        return null;
+    }
+
+    public HL7Application getPixManagerApplication() {
+        return null;
+    }
+
+    @Override
+    public void reconfigure(DeviceExtension from) {
+        XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
         ReflectiveConfig.reconfigure(src, this);
-	}
+    }
+
 }

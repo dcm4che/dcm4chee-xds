@@ -41,9 +41,11 @@ package org.dcm4chee.xds2.conf;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 
 /**
@@ -55,43 +57,83 @@ public class XdsRepository extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName")
+    @ConfigField(name = "xdsApplicationName")
     private String applicationName;
-    
-	@ConfigField(name="xdsRepositoryUID")
+
+    @ConfigField(name = "xdsRepositoryUID")
     private String repositoryUID;
-    
-	@ConfigField(name = "xdsSoapMsgLogDir")
+
+    @ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
-    
-	@ConfigField(name = "xdsAcceptedMimeTypes")
-    private String[] acceptedMimeTypes = new String[]{};
-    
-	@ConfigField(name = "xdsLogFullMessageHosts")
-    private String[] logFullMessageHosts = new String[]{};
-	
-	@ConfigField(name="xdsCheckMimetype")
-	private boolean checkMimetype;
-    
-	@ConfigField(name="xdsAllowedCipherHostname")
+
+    @ConfigField(name = "xdsAcceptedMimeTypes")
+    private String[] acceptedMimeTypes = new String[] {};
+
+    @ConfigField(name = "xdsLogFullMessageHosts")
+    private String[] logFullMessageHosts = new String[] {};
+
+    @ConfigField(name = "xdsCheckMimetype")
+    private boolean checkMimetype;
+
+    @ConfigField(name = "xdsAllowedCipherHostname")
     private String allowedCipherHostname;
-    
-	@ConfigField(name="xdsForceMTOM")
+
+    @ConfigField(name = "xdsForceMTOM")
     private boolean forceMTOM;
 
-	/**
-     * Ghost property, needed only for annotation, actual getter&setter user the map below
-     */
-    @ConfigField(name = "xdsRegistryURL")
-    private String[] registryURLs;
-    
-    private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();
+    @ConfigField(name = "xdsProvideUrl")
+    private String provideUrl;
+
+    @ConfigField(name = "xdsRetrieveUrl")
+    private String retrieveUrl;
+
+    @ConfigField(mapName = "xdsSources", mapKey = "xdsSourceUid", name = "xdsSource", mapElementObjectClass = "xdsSourceByUid")
+    private Map<String, Device> srcDevicebySrcIdMap;
+
+    public String getRegistryURL(String sourceID) {
+        try {
+
+            XdsSource src = srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class);
+            XdsRegistry reg = src.getRegistry().getDeviceExtensionNotNull(XdsRegistry.class);
+
+            return reg.getRegisterUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve the registry URL for source id " + sourceID, e);
+        }
+    }
+
+    // Getters&setters
 
     public String getApplicationName() {
         return applicationName;
     }
+
+    public Map<String, Device> getSrcDevicebySrcIdMap() {
+        return srcDevicebySrcIdMap;
+    }
+
+    public void setSrcDevicebySrcIdMap(Map<String, Device> srcDevicebySrcIdMap) {
+        this.srcDevicebySrcIdMap = srcDevicebySrcIdMap;
+    }
+
     public final void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+    }
+
+    public String getProvideUrl() {
+        return provideUrl;
+    }
+
+    public void setProvideUrl(String provideUrl) {
+        this.provideUrl = provideUrl;
+    }
+
+    public String getRetrieveUrl() {
+        return retrieveUrl;
+    }
+
+    public void setRetrieveUrl(String retrieveUrl) {
+        this.retrieveUrl = retrieveUrl;
     }
 
     public String getSoapLogDir() {
@@ -101,41 +143,13 @@ public class XdsRepository extends DeviceExtension {
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
     }
+
     public String getRepositoryUID() {
         return repositoryUID;
     }
+
     public void setRepositoryUID(String repsitoryUID) {
         this.repositoryUID = repsitoryUID;
-    }
-    public String[] getRegistryURLs() {
-        String[] sa = new String[registryUrlMapping.size()];
-        int i = 0;
-        for (Map.Entry<String, String> e : registryUrlMapping.entrySet()) {
-            sa[i++] = e.getKey()+"|"+e.getValue();
-        }
-        return sa;
-    }
-
-    public void setRegistryURLs(String[] registryURLs) {
-        registryUrlMapping.clear();
-        int pos;
-        String value;
-        for (int i = 0 ; i < registryURLs.length ; i++) {
-            value = registryURLs[i];
-            pos = value.indexOf('|');
-            if (pos == -1) {
-                registryUrlMapping.put("*", value);
-            } else {
-                registryUrlMapping.put(value.substring(0, pos), value.substring(++pos));
-            }
-        }
-    }
-    
-    public String getRegistryURL(String docSrcUID) {
-        String url = registryUrlMapping.get(docSrcUID);
-        if (url == null)
-            url = registryUrlMapping.get("*");
-        return url;
     }
 
     public String[] getAcceptedMimeTypes() {
@@ -149,29 +163,35 @@ public class XdsRepository extends DeviceExtension {
     public boolean isCheckMimetype() {
         return checkMimetype;
     }
+
     public void setCheckMimetype(boolean checkMimetype) {
         this.checkMimetype = checkMimetype;
     }
+
     public String[] getLogFullMessageHosts() {
         return logFullMessageHosts;
     }
+
     public void setLogFullMessageHosts(String[] logFullMessageHosts) {
         this.logFullMessageHosts = logFullMessageHosts;
     }
+
     public String getAllowedCipherHostname() {
         return allowedCipherHostname;
     }
+
     public void setAllowedCipherHostname(String allowedCipherHostnames) {
         this.allowedCipherHostname = allowedCipherHostnames;
     }
-    
+
     public boolean isForceMTOM() {
         return forceMTOM;
     }
+
     public void setForceMTOM(boolean forceMTOM) {
         this.forceMTOM = forceMTOM;
     }
-    
+
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;

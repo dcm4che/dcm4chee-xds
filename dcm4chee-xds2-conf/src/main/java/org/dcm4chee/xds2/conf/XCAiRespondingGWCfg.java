@@ -39,10 +39,12 @@
 package org.dcm4chee.xds2.conf;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
 
@@ -54,27 +56,49 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName")
+    @ConfigField(name = "xdsApplicationName")
     private String applicationName;
 
+    @ConfigField(name = "xdsHomeCommunityID")
+    private String homeCommunityID;
 
-	@ConfigField(name = "xdsHomeCommunityID")
-	private String homeCommunityID;
-	
-	
-	@ConfigField(name = "xdsiSourceURL")
-	private String[] XDSiSourceURLs;
-	
-    private HashMap<String, String> xdsiSrcUrlMapping = new HashMap<String,String>();
+    @ConfigField(mapName = "xdsImagingSources", mapKey = "xdsSourceUid", name = "xdsImagingSource", mapElementObjectClass = "xdsImagingSourceByUid")
+    private Map<String, Device> srcDevicebySrcIdMap;
 
-    
-	@ConfigField(name = "xdsSoapMsgLogDir")
+    @ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 
-	
+    @ConfigField(name = "xdsRetrieveUrl")
+    private String retrieveUrl;
+
+    public String getXDSiSourceURL(String homeCommunityID) {
+        try {
+            return srcDevicebySrcIdMap.get(homeCommunityID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve source URL for homeCommunityId " + homeCommunityID, e);
+        }
+    }
+
+    public Map<String, Device> getSrcDevicebySrcIdMap() {
+        return srcDevicebySrcIdMap;
+    }
+
+    public void setSrcDevicebySrcIdMap(Map<String, Device> srcDevicebySrcIdMap) {
+        this.srcDevicebySrcIdMap = srcDevicebySrcIdMap;
+    }
+
+    public String getRetrieveUrl() {
+        return retrieveUrl;
+    }
+
+    public void setRetrieveUrl(String retrieveUrl) {
+        this.retrieveUrl = retrieveUrl;
+    }
+
     public String getApplicationName() {
         return applicationName;
     }
+
     public final void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
@@ -82,9 +106,11 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
     public String getHomeCommunityID() {
         return homeCommunityID;
     }
+
     public void setHomeCommunityID(String homeCommunityID) {
         this.homeCommunityID = homeCommunityID;
     }
+
     public String getSoapLogDir() {
         return soapLogDir;
     }
@@ -92,20 +118,10 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
     }
-    
-    public String[] getXDSiSourceURLs() {
-        return XDSUtil.map2keyValueStrings(xdsiSrcUrlMapping, '|');
-    }
-    public void setXDSiSourceURLs(String[] xdsiSrcURLs) {
-        XDSUtil.storeKeyValueStrings2map(xdsiSrcURLs, '|', "*", xdsiSrcUrlMapping);
-    }
-    public String getXDSiSourceURL(String homeCommunityID) {
-        return XDSUtil.getValue(homeCommunityID, "*", xdsiSrcUrlMapping);
-    }
 
     @Override
     public void reconfigure(DeviceExtension from) {
-    	XCAiRespondingGWCfg src = (XCAiRespondingGWCfg) from;
+        XCAiRespondingGWCfg src = (XCAiRespondingGWCfg) from;
         ReflectiveConfig.reconfigure(src, this);
     }
 }

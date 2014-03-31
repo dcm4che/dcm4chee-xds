@@ -49,8 +49,9 @@ public class AuditTestManager {
 		}
 		
 		@Override
-		public void write(Calendar timeStamp, AuditMessage message) throws IncompatibleConnectionException, GeneralSecurityException {
+		public SendStatus write(Calendar timeStamp, AuditMessage message) throws IncompatibleConnectionException, GeneralSecurityException {
 			AuditTestManager.lastMessages.add(message);
+            return SendStatus.SENT;
 		}
 		
 		// set audit source id

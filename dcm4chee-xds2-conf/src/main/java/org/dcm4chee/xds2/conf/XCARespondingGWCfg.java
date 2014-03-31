@@ -38,48 +38,94 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.XDSUtil;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 @ConfigClass(commonName = "XCARespondingGW", objectClass = "xcaRespondingGW", nodeName = "xcaRespondingGW")
-
 public class XCARespondingGWCfg extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
-	@ConfigField(name = "xdsApplicationName")
-	private String applicationName;
-	
+    @ConfigField(name = "xdsApplicationName")
+    private String applicationName;
 
-	@ConfigField(name = "xdsHomeCommunityID")
+    @ConfigField(name = "xdsHomeCommunityID")
     private String homeCommunityID;
 
+    @ConfigField(name = "xdsSoapMsgLogDir")
+    private String soapLogDir;
 
-	@ConfigField(name = "xdsRegistryURL")
-	private String registryURL;
+    @ConfigField(name = "xdsQueryUrl")
+    private String queryUrl;
 
-	/**
-	 * Ghost property, actual data is stored in a map
-	 */
-	@ConfigField(name = "xdsRepositoryURL")
-	private String[] repositoryURLs;
+    @ConfigField(name = "xdsRetrieveUrl")
+    private String retrieveUrl;
 
-	private HashMap<String, String> repositoryUrlMapping = new HashMap<String,String>();
-	
-	
-	@ConfigField(name = "xdsSoapMsgLogDir")
-	private String soapLogDir;
+    @ConfigField(name = "xdsRegistry")
+    private Device registry;
+
+    @ConfigField(mapName = "xdsRepositories", mapKey = "xdsRepositoryUid", name = "xdsRepository", mapElementObjectClass = "xdsRepositoryByUid")
+    private Map<String, Device> repositoryDeviceByUidMap;
+
+    public String getRepositoryURL(String repositoryID) {
+        try {
+            return repositoryDeviceByUidMap.get(repositoryID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+        }
+    }
+
+    public String getRegistryURL() {
+        try {
+            return registry.getDeviceExtensionNotNull(XdsRegistry.class).getQueryUrl();
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot retrieve registry URL", e);
+        }
+    }
+
+    public String getQueryUrl() {
+        return queryUrl;
+    }
+
+    public void setQueryUrl(String queryUrl) {
+        this.queryUrl = queryUrl;
+    }
+
+    public String getRetrieveUrl() {
+        return retrieveUrl;
+    }
+
+    public void setRetrieveUrl(String retrieveUrl) {
+        this.retrieveUrl = retrieveUrl;
+    }
+
+    public Device getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(Device registry) {
+        this.registry = registry;
+    }
+
+    public Map<String, Device> getRepositoryDeviceByUidMap() {
+        return repositoryDeviceByUidMap;
+    }
+
+    public void setRepositoryDeviceByUidMap(Map<String, Device> repositoryDeviceByUidMap) {
+        this.repositoryDeviceByUidMap = repositoryDeviceByUidMap;
+    }
 
     public String getApplicationName() {
         return applicationName;
     }
+
     public final void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
     }
@@ -87,15 +133,11 @@ public class XCARespondingGWCfg extends DeviceExtension {
     public String getHomeCommunityID() {
         return homeCommunityID;
     }
+
     public void setHomeCommunityID(String homeCommunityID) {
         this.homeCommunityID = homeCommunityID;
     }
-    public String getRegistryURL() {
-        return registryURL;
-    }
-    public void setRegistryURL(String registryURL) {
-        this.registryURL = registryURL;
-    }
+
     public String getSoapLogDir() {
         return soapLogDir;
     }
@@ -103,20 +145,11 @@ public class XCARespondingGWCfg extends DeviceExtension {
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
     }
-    
-    public String[] getRepositoryURLs() {
-        return XDSUtil.map2keyValueStrings(repositoryUrlMapping, '|');
-    }
-    public void setRepositoryURLs(String[] repositoryURLs) {
-        XDSUtil.storeKeyValueStrings2map(repositoryURLs, '|', "*", repositoryUrlMapping);
-    }
-    public String getRepositoryURL(String repositoryID) {
-        return XDSUtil.getValue(repositoryID, "*", repositoryUrlMapping);
-    }
 
     @Override
     public void reconfigure(DeviceExtension from) {
-    	XCARespondingGWCfg src = (XCARespondingGWCfg) from;
+        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
         ReflectiveConfig.reconfigure(src, this);
     }
+
 }

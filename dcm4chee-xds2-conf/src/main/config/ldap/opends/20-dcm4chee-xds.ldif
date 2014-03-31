@@ -14,7 +14,8 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.2 NAME 'xdsAffinityDomain'
   DESC 'Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)'
   EQUALITY caseExactMatch
   SUBSTR caseExactSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.3 NAME 'xdsAcceptedMimeTypes'
   DESC 'Accepted MIME types in the affinity domain'
   EQUALITY caseIgnoreMatch
@@ -37,7 +38,7 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.6 NAME 'xdsCreateMissingCodes'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.7 NAME 'xdsDontSaveCodeClassifications'
-  DESC 'Specifies to save codes only as XDSCode entities and not as Classifications in ebRIM format'
+  DESC 'Specifies to not save Code Classifications in ebXML structure. i.e. that code values are only stored in code table and ebXML Classifications must be reconstructed!)'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
@@ -47,12 +48,12 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsCheckAffinityDomain'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsCheckMimetype'
-  DESC 'Enable check  of mimetype'
+  DESC 'Enable check mimetype'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.10 NAME 'xdsPreMetadataCheck'
-  DESC 'Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests)'
+  DESC 'Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
@@ -63,13 +64,13 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.11 NAME 'xdsAffinityDomainConfigDir'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.20 NAME 'xdsRepositoryUID'
-  DESC 'Unique ID of XDS.b Repository'
-  EQUALITY caseExactMatch
-  SUBSTR caseExactSubstringsMatch
+  DESC 'Log directory where request and response SOAP messages are stored'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
-attributeTypes: ( 1.2.40.0.13.1.15.20.3.21 NAME 'xdsRegistryURL'
-  DESC 'Registry URL which is used by Repository to register document.'
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.21 NAME 'xdsRegistry'
+  DESC 'The name of the device that contains a xdsRegistry extension which will be used by the repository'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
@@ -90,22 +91,17 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.24 NAME 'xdsForceMTOM'
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.30 NAME 'xdsHomeCommunityID'
   DESC 'XDS/XCA HomeCommunityID'
-  EQUALITY caseExactMatch
-  SUBSTR caseExactSubstringsMatch
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
-attributeTypes: ( 1.2.40.0.13.1.15.20.3.31 NAME 'xdsRepositoryURL'
-  DESC 'Repository URL(s) which is used by Source, Consumer and XCA Actors.'
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.31 NAME 'xdsRepository'
+  DESC 'Name of device(s) with a repository extension which is used by Source, Consumer and XCA Actors.'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-attributeTypes: ( 1.2.40.0.13.1.15.20.3.32 NAME 'xdsRespondingGatewayURL'
-  DESC 'Responding Gateway URL(s) which is used by XCA Initiating Gateway Actors.'
-  EQUALITY caseIgnoreMatch
-  SUBSTR caseIgnoreSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-attributeTypes: ( 1.2.40.0.13.1.15.20.3.33 NAME 'xdsRespondingGatewayRetrieveURL'
-  DESC 'Optional Responding Gateway Retrieve URL(s) if Query and Retrieve Service use different URLs.'
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.32 NAME 'xdsRespondingGateway'
+  DESC 'Name of device with Responding Gateway extension which is used by XCA Initiating Gateway Actors.'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
@@ -126,30 +122,73 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.36 NAME 'xdsiSourceURL'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.37 NAME 'xdsPIXConsumerApplication'
   DESC 'Application and Facility of PIX Consumer. Format: <application>^<facility>'
-  EQUALITY caseExactMatch
-  SUBSTR caseExactSubstringsMatch
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.38 NAME 'xdsPIXManagerApplication'
   DESC 'Application and Facility of PIX Manager. Format: <application>^<facility>'
-  EQUALITY caseExactMatch
-  SUBSTR caseExactSubstringsMatch
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
   SINGLE-VALUE )
 attributeTypes: ( 1.2.40.0.13.1.15.20.3.39 NAME 'xdsAssigningAuthority'
   DESC 'Assigning Authority'
-  EQUALITY caseExactMatch
-  SUBSTR caseExactSubstringsMatch
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.1 NAME 'xdsRegistry'
-  DESC 'XDS Registry information'
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.40 NAME 'xdsRetrieveURL'
+  DESC 'URL to access retrieve service'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.41 NAME 'xdsQueryURL'
+  DESC 'URL to access query service'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )  
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.42 NAME 'xdsProvideURL'
+  DESC 'URL to access provide service'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.43 NAME 'xdsRegisterURL'
+  DESC 'URL to access register service'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.44 NAME 'xdsSource'
+  DESC 'Device name with Source extension'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.45 NAME 'xdsImagingSource'
+  DESC 'Device name with imaging Source extension'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.46 NAME 'xdsSourceUid'
+  DESC 'Source UID'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.47 NAME 'xdsURL'
+  DESC 'URL to access provide service'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )  
+objectClasses: ( 1.2.40.0.13.1.15.20.4.1
+  NAME 'xdsRegistry'
+  DESC 'XDS Application information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
     xdsAffinityDomain $
-    xdsAffinityDomainConfigDir )
+    xdsAffinityDomainConfigDir $ 
+    xdsRegisterUrl $
+    xdsQueryUrl )
   MAY (
+    cn $
     xdsAcceptedMimeTypes $
     xdsSoapMsgLogDir $
     xdsCreateMissingPIDs $
@@ -158,70 +197,133 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.1 NAME 'xdsRegistry'
     xdsCheckAffinityDomain $
     xdsCheckMimetype $
     xdsPreMetadataCheck ) )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.2 NAME 'xdsRepository'
-  DESC 'XDS Repository information'
+objectClasses: ( 1.2.40.0.13.1.15.20.4.2
+  NAME 'xdsRepository'
+  DESC 'XDS Application information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
-    xdsRegistryURL $
-    xdsRepositoryUID )
+    xdsRepositoryUID $ 
+    xdsProvideUrl $
+    xdsRetrieveUrl )
   MAY (
+    cn $  
     xdsAcceptedMimeTypes $
     xdsCheckMimetype $
     xdsSoapMsgLogDir $
     xdsAllowedCipherHostname $
     xdsForceMTOM $
     xdsLogFullMessageHosts ) )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.3 NAME 'xcaRespondingGW'
+objectClasses: ( 1.2.40.0.13.1.15.20.4.3
+  NAME 'xcaRespondingGW'
   DESC 'XCA Responding Gateway information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
     xdsHomeCommunityID $
-    xdsRegistryURL $
-    xdsRepositoryURL )
+    xdsRegistry $
+    xdsQueryUrl $
+    xdsRetrieveUrl )
   MAY (
+    cn $
     xdsSoapMsgLogDir ) )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.4 NAME 'xcaInitiatingGW'
+objectClasses: ( 1.2.40.0.13.1.15.20.4.4
+  NAME 'xcaInitiatingGW'
   DESC 'XCA Initiating Gateway information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
-    xdsHomeCommunityID $
-    xdsRespondingGatewayURL )
+    xdsHomeCommunityID )
   MAY (
-    xdsRespondingGatewayRetrieveURL $
-    xdsRegistryURL $
-    xdsRepositoryURL $
+    cn $  
+    xdsRegistry $
     xdsAsync $
     xdsAsyncHandler $
     xdsPIXConsumerApplication $
     xdsPIXManagerApplication $
     xdsAssigningAuthority $
     xdsSoapMsgLogDir ) )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.5 NAME 'xcaiRespondingGW'
+objectClasses: ( 1.2.40.0.13.1.15.20.4.5
+  NAME 'xcaiRespondingGW'
   DESC 'XCA-I Responding Gateway information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
     xdsHomeCommunityID $
-    xdsiSourceURL )
+    xdsRetrieveUrl )
   MAY (
+    cn $
     xdsSoapMsgLogDir ) )
-objectClasses: ( 1.2.40.0.13.1.15.20.4.6 NAME 'xcaiInitiatingGW'
+objectClasses: ( 1.2.40.0.13.1.15.20.4.6
+  NAME 'xcaiInitiatingGW'
   DESC 'XCA-I Initiating Gateway information'
   SUP top STRUCTURAL
-  MUST (
-    cn $
+  MUST ( 
     xdsApplicationName $
-    xdsHomeCommunityID $
-    xdsRespondingGatewayURL )
+    xdsHomeCommunityID )
   MAY (
-    xdsiSourceURL $
+    cn $
     xdsAsync $
     xdsAsyncHandler $
     xdsSoapMsgLogDir ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.7
+  NAME 'xdsSource'
+  DESC 'Xds Source'
+  SUP top STRUCTURAL
+  MUST (
+    cn $ 
+    xdsSourceUid )
+  MAY (
+    xdsRegistry $
+    xdsRepository $
+    xdsUrl )
+ )   
+objectClasses: ( 1.2.40.0.13.1.15.20.4.8
+  NAME 'xdsGatewayRef'
+  DESC 'Map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsHomeCommunityID $
+    xdsAffinityDomain $
+    xdsRespondingGateway )
+ )     
+objectClasses: ( 1.2.40.0.13.1.15.20.4.9
+  NAME 'xdsRegistryBySource'
+  DESC 'Source-registry map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsSource $
+    xdsRegistry 
+ ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.10
+  NAME 'xdsRespondingGatewayByHomeCommunityId'
+  DESC 'map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsHomeCommunityId $
+    xdsRespondingGateway 
+ ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.11
+  NAME 'xdsImagingSourceByUid'
+  DESC ' map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsSourceUid $
+    xdsImagingSource 
+ ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.12
+  NAME 'xdsRepositoryByUid'
+  DESC ' map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsRepositoryUid $
+    xdsRepository ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.13
+  NAME 'xdsSourceByUid'
+  DESC 'map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsSourceUid $
+    xdsSource 
+ ) )
+   

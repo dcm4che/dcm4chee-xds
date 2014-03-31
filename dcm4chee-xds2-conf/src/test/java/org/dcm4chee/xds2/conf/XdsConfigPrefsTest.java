@@ -43,6 +43,7 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.prefs.Preferences;
 
+import org.dcm4che3.conf.ldap.generic.LdapGenericConfigExtension;
 import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
 import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
 import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
@@ -71,7 +72,9 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
         cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
         cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
+        cfg.addDicomConfigurationExtension(new  PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));
 
+        
         cfg.addDicomConfigurationExtension(new PreferencesHL7Configuration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         cfg.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
