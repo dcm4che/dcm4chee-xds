@@ -1,0 +1,26 @@
+<div class="panel panel-default" ng-controller="IdentifiableListCtrl">
+
+	<div class="panel-heading">{{currentIdentifiableList.__title}}</div>
+
+	<div class="list-group">
+		<a href="" class="list-group-item"
+			ng-repeat="identifiable in singleItems"
+			ng-click="explore(identifiable)"
+			ng-class="(identifiable == chosenToExplore ? 'active' : ( isThisSearched(identifiable) ? 'list-group-item-success' : ''))"> 
+					<div xds-identifiable ng-model='identifiable'></div>
+		</a>
+
+		<div class="list-group-item" ng-repeat="item in pairedItems">
+			<div class="btn-group">
+				<button type="button" class="btn btn-default" ng-click="explore(item.ass)" ng-class="(item.ass == chosenToExplore ? 'active' : '')">
+					<span xds-identifiable ng-model='item.ass'></span>
+				</button>
+				<button type="button" class="btn btn-default" ng-click="explore(item.target)" ng-class="(item.target == chosenToExplore ? 'active' : '')">
+					<span xds-identifiable ng-model='item.target'></span>
+				</button>
+			</div>
+
+		</div>
+
+	</div>
+</div>

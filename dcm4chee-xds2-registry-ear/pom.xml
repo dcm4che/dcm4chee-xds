@@ -76,6 +76,14 @@
 			<version>${project.version}</version>
 			<type>ejb</type>
 		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-browser</artifactId>
+			<type>war</type>
+			<version>2.0.0</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-ctrl</artifactId>
@@ -94,6 +102,7 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-registry-ctrl</artifactId>
@@ -176,6 +185,10 @@
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-registry-war</artifactId>
 							<contextRoot>/xds-reg-rs</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-xds2-browser</artifactId>
 						</webModule>
 					</modules>
 					<version>6</version>

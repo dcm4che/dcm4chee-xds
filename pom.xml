@@ -72,6 +72,7 @@
     <module>dcm4chee-xds2-service</module>
     <module>dcm4chee-xds2-ctrl</module>
     <module>dcm4chee-xds2-ctrl-war</module>
+    <module>dcm4chee-xds2-browser</module>
     <module>dcm4chee-xds2-registry-ws</module>
     <module>dcm4chee-xds2-registry-ctrl</module>
     <module>dcm4chee-xds2-registry-war</module>

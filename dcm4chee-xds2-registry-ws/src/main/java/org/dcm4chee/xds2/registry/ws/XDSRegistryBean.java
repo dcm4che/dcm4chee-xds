@@ -48,6 +48,8 @@ import java.util.UUID;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJBContext;
+import javax.ejb.Local;
+import javax.ejb.LocalBean;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -112,6 +114,7 @@ import org.slf4j.LoggerFactory;
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Stateless
+@Local({XDSRegistryBeanLocal.class,DocumentRegistryPortType.class})
 @WebService(endpointInterface="org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType", 
         name="b",
         serviceName="XDSbRegistry",
