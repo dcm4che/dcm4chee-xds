@@ -1,4 +1,4 @@
-Getting Started with DCM4CHEE XDS 2.0.0
+Getting Started with DCM4CHEE XDS 2.0.2
 ==================================================
 
 Requirements
@@ -30,7 +30,7 @@ Requirements
 
 -   LDAP Browser - [Apache Directory Studio 1.5.3](http://directory.apache.org/studio/)
 
-    *Note*: Because DCM4CHEE XDS 2.0.0 does not yet contain a specific
+    *Note*: Because DCM4CHEE XDS 2.0.x does not yet contain a specific
     configuration front-end, the LDAP Browser is needed to modify the XDS
     configuration.
 
@@ -359,12 +359,12 @@ Setup JBoss AS 7
 
 2.  Install required libraries as JBoss AS 7 modules:
     
-    Install DCM4CHE 3.2.1 libraries as JBoss AS 7 module:
+    Install DCM4CHE 3.3.1 libraries as JBoss AS 7 module:
     ```
         cd  $JBOSS_HOME
-        unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.2.1.zip
+        unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.3.1.zip
     ```
-    Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
+    Install QueryDSL 3.2.3 libraries as JBoss AS 7 module:
     ```
         cd  $JBOSS_HOME
         unzip $DCM4CHEE_XDS2/jboss-module/querydsl-jboss-modules-3.2.3.zip
@@ -486,34 +486,41 @@ Setup JBoss AS 7
     -  Oracle: `jdbc:oracle:thin:@localhost:1521:<database-name>`
     -  Microsoft SQL Server: `jdbc:sqlserver://localhost:1433;databaseName=<database-name>`
 
-8. At default, DCM4CHEE XDS 2.x will look for the LDAP connection configuration file at
+8. At default, DCM4CHEE XDS 2.x will use Java Preferences as configuration backend.
 
-        $JBOSS_HOME/standalone/configuration/dcm4chee-xds2/ldap.properties
-
-    You may specify a different location by system property `org.dcm4chee.xds.ldapPropertiesURL`
+    You can enable LDAP configuration backend by setting system property `org.dcm4chee.xds.ldapPropertiesURL`
     using JBoss AS 7 CLI:
 
         [standalone@localhost:9999 /] /system-property=org.dcm4chee.xds.ldapPropertiesURL:add(value=<url>)
 
-    If DCM4CHEE XDS 2.x cannot find the LDAP connection configuration on the specified location, it
-    will try to fetch the Archive configuration from Java Preferences.
-
-9. At default, DCM4CHEE XDS 2.x will assume `dcm4chee-xds2-registry` as its Device Name, used to find its
+9. At default, DCM4CHEE XDS 2.x will assume `dcm4chee-xds` as its Device Name, used to find its
     configuration in the configuration backend (LDAP Server or Java Preferences). You may specify a different
     Device Name by system property `org.dcm4chee.xds.deviceName` using JBoss AS 7 CLI:
 
         [standalone@localhost:9999 /] /system-property=org.dcm4chee.xds.deviceName:add(value=<device-name>)
+        
+    If several XDS Services (Registry, Repository, XCA, XCA-I) are deployed on one JBoss instance, the configuration 
+    can either be in one device or splitted in several devices.
+    To use different devicenames for each XDS service, following system properties can be used to specify 
+    service dependent devicenames:
+    Registry   : org.dcm4chee.xds.devicename.registry
+    Repository : org.dcm4chee.xds.devicename.repository
+    XCA        : org.dcm4chee.xds.devicename.xca
+    XCA-I      : org.dcm4chee.xds.devicename.xca-i
 
-10. Deploy DCM4CHEE XDS 2.x using JBoss AS 7 CLI, e.g.:
+10. Deploy DCM4CHEE XDS 2.x services using JBoss AS 7 CLI, e.g.:
 
-        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-ear-2.0.0-<database-name>.ear
+        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-registry-ear-2.0.2-<database-name>.ear
+        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-repository-ear-2.0.2-<database-name>.ear
+        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-xca-ear-2.0.2-<database-name>.ear
+        [standalone@localhost:9999 /] deploy $DCM4CHEE_XDS2/deploy/dcm4chee-xds2-xcai-ear-2.0.2-<database-name>.ear
 
-    Verify that DCM4CHEE XDS was deployed and started successfully, e.g.:
+    Verify that DCM4CHEE XDS service was deployed and started successfully, e.g.:
 
 
-11. You may undeploy DCM4CHEE XDS at any time using JBoss AS 7 CLI, e.g.:
+11. You may undeploy DCM4CHEE XDS services at any time using JBoss AS 7 CLI, e.g.:
 
-        [standalone@localhost:9999 /] undeploy dcm4chee-xds2-ear-2.0.0-<database-name>.ear
+        [standalone@localhost:9999 /] undeploy dcm4chee-xds2-registry-ear-2.0.2-<database-name>.ear
 
 12. Initialize XDS Registry with ebXML Classifications and Associations defined by XDS:
 
@@ -534,6 +541,13 @@ Setup JBoss AS 7
     > %JBOSS_HOME%\bin\xdsinit.bat <filename1> [<filename2> [..]] [Windows]
     ```
 
+13. Each XDS service comes with a RESTful controller service to reload / show configuration
+    Registry   : http://<host>:<port>/xds-reg-rs/ctrl/config
+    Repository : http://<host>:<port>/xds-rep-rs/ctrl/config
+    XCA        : http://<host>:<port>/xca-rs/ctrl/config
+    XCA-I      : http://<host>:<port>/xcai-rs/ctrl/config
+    
+    
 Testing DCM4CHEE XDS 2.x
 ----------------------------
 
