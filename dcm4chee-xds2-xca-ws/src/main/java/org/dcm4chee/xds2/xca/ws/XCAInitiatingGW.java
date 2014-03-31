@@ -51,8 +51,10 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebService;
 import javax.xml.bind.JAXBElement;
@@ -64,6 +66,7 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.dcm4che3.net.Device;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -71,7 +74,6 @@ import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
-import org.dcm4chee.xds2.conf.XdsDevice;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -126,7 +128,16 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     private static Logger log = LoggerFactory.getLogger(XCAInitiatingGW.class);
 
     @Resource
-    WebServiceContext wsContext;
+    private WebServiceContext wsContext;
+    
+    @Inject
+    private Device device;
+    private XCAInitiatingGWCfg cfg;
+    
+    @PostConstruct
+    public void init() {
+    	cfg = device.getDeviceExtension(XCAInitiatingGWCfg.class);
+    }
 
     @Override
     public Response<AdhocQueryResponse> documentRegistryRegistryStoredQueryAsync(AdhocQueryRequest req) {
@@ -172,7 +183,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         AdhocQueryResponse rsp = null;
         String home = req.getAdhocQuery().getHome();
         try {
-            XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
             boolean isHome = cfg.getHomeCommunityID().equals(home);
             if (home == null || isHome) {
                 String url = cfg.getRegistryURL();
@@ -331,7 +341,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         RetrieveDocumentSetResponseType rsp = null;
         List<DocumentRequest> docReq = req.getDocumentRequest();
         try {
-            XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
             String home = cfg.getHomeCommunityID();
             HashMap<String, List<DocumentRequest>> xcaRequests = new HashMap<String, List<DocumentRequest>>();
             HashMap<String, List<DocumentRequest>> repoRequests = new HashMap<String, List<DocumentRequest>>();
@@ -432,7 +441,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         RetrieveDocumentSetResponseType rsp;
         URL repositoryURL = null;
         try {
-            String url = XdsDevice.getXCAInitiatingGW().getRepositoryURL(repositoryID);
+            String url = cfg.getRepositoryURL(repositoryID);
             if (url == null) {
                 log.warn("Unknown home XDS Repository:"+repositoryID);
                 return null;
@@ -467,7 +476,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         RetrieveDocumentSetResponseType rsp;
         URL gatewayURL = null;
         try {
-            String url = XdsDevice.getXCAInitiatingGW().getRespondingGWRetrieveURL(homeCommunityID);
+            String url = cfg.getRespondingGWRetrieveURL(homeCommunityID);
             if (url == null) {
                 log.warn("Unknown Responding Gateway for homeCommunityID:"+homeCommunityID);
                 return null;
@@ -481,7 +490,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             log.info("####################################################");
             log.info("org.jboss.security.ignoreHttpsHost:"+System.getProperty("org.jboss.security.ignoreHttpsHost"));
             try {
-                XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
                 
                 if (cfg.isAsyncHandler()) {
                     AsyncResponseHandler<RetrieveDocumentSetResponseType> handler = new AsyncResponseHandler<RetrieveDocumentSetResponseType>();
@@ -574,7 +582,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     public PixQueryClient getPixClient() {
         if (pixClient == null) {
             log.info("########### set PIXClient!");
-            XCAInitiatingGWCfg cfg = XdsDevice.getXCAInitiatingGW();
             try {
                 HL7Application pix = cfg.getPixConsumerApplication();
                 if (pix != null) {
@@ -590,7 +597,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     }
 
     private AdhocQueryResponse addHomeCommunityId(AdhocQueryResponse rsp) {
-        String home = XdsDevice.getXCAInitiatingGW().getHomeCommunityID();
+        String home = cfg.getHomeCommunityID();
         IdentifiableType obj;
         if (rsp.getRegistryObjectList() != null) {
             List<JAXBElement<? extends IdentifiableType>> objList = rsp.getRegistryObjectList().getIdentifiable();
@@ -612,7 +619,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     }
 
     private RetrieveDocumentSetResponseType addHomeCommunityID(RetrieveDocumentSetResponseType rsp) {
-        String home = XdsDevice.getXCARespondingGW().getHomeCommunityID();
+        String home = cfg.getHomeCommunityID();
         if (rsp.getDocumentResponse() != null) {
             for (DocumentResponse docRsp : rsp.getDocumentResponse()) {
                 if (docRsp.getHomeCommunityId() == null)
@@ -630,7 +637,8 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     }
     
     private class PatSlot extends HashMap<String, List<String>> {
-        private List<String> slotValues;
+		private static final long serialVersionUID = 1L;
+		private List<String> slotValues;
         
         private PatSlot(SlotType1 slot) {
             slotValues = slot.getValueList().getValue();

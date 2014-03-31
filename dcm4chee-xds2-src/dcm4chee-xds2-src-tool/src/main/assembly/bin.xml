@@ -36,7 +36,7 @@
 		<fileSet>
 			<directory>target</directory>
 			<includes>
-				<include>dcm4chee-xds2-src-tool-2.0.0.jar</include>
+				<include>dcm4chee-xds2-src-tool-2.0.2.jar</include>
 			</includes>
 			<outputDirectory>lib</outputDirectory>
 			<lineEnding>keep</lineEnding>

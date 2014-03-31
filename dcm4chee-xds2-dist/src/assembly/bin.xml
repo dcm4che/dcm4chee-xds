@@ -73,7 +73,10 @@
 		<dependencySet>
 			<outputDirectory>deployments</outputDirectory>
 			<includes>
-				<include>org.dcm4che:dcm4chee-xds2-ear:ear:${db}</include>
+				<include>org.dcm4che:dcm4chee-xds2-registry-ear:ear:${db}</include>
+				<include>org.dcm4che:dcm4chee-xds2-repository-ear:ear:${db}</include>
+				<include>org.dcm4che:dcm4chee-xds2-xca-ear:ear</include>
+				<include>org.dcm4che:dcm4chee-xds2-xcai-ear:ear</include>
 			</includes>
 		</dependencySet>
 		<dependencySet>

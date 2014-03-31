@@ -41,7 +41,7 @@
   <parent>
     <artifactId>dcm4chee-xds2</artifactId>
     <groupId>org.dcm4che</groupId>
-    <version>2.0.0</version>
+    <version>2.0.2</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dcm4chee-xds2-dist</artifactId>
@@ -74,20 +74,39 @@
   	<dependencies>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-ear</artifactId>
+			<artifactId>dcm4chee-xds2-registry-ear</artifactId>
             <classifier>${db}</classifier>
 		    <type>ear</type>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-repository-ear</artifactId>
+            <classifier>${db}</classifier>
+		    <type>ear</type>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-xca-ear</artifactId>
+		    <type>ear</type>
+			<version>2.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-xcai-ear</artifactId>
+		    <type>ear</type>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-tool-init</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-infoset</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.2</version>
 		</dependency>
     <dependency>
       <groupId>org.dcm4che</groupId>

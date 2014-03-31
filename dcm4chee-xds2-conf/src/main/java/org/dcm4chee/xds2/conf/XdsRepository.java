@@ -41,24 +41,51 @@ package org.dcm4chee.xds2.conf;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.dcm4che3.conf.api.generic.ConfigClass;
+import org.dcm4che3.conf.api.generic.ConfigField;
+import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.DeviceExtension;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
+
+@ConfigClass(commonName = "XDSRepository", objectClass = "xdsRepository", nodeName = "xdsRepository")
 public class XdsRepository extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
+	@ConfigField(name = "xdsApplicationName")
     private String applicationName;
+    
+	@ConfigField(name="xdsRepositoryUID")
     private String repositoryUID;
-    private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();
+    
+	@ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
-    private String[] mimeTypes = new String[]{};
+    
+	@ConfigField(name = "xdsAcceptedMimeTypes")
+    private String[] acceptedMimeTypes = new String[]{};
+    
+	@ConfigField(name = "xdsLogFullMessageHosts")
     private String[] logFullMessageHosts = new String[]{};
-    private boolean checkMimetype;
+	
+	@ConfigField(name="xdsCheckMimetype")
+	private boolean checkMimetype;
+    
+	@ConfigField(name="xdsAllowedCipherHostname")
     private String allowedCipherHostname;
+    
+	@ConfigField(name="xdsForceMTOM")
     private boolean forceMTOM;
+
+	/**
+     * Ghost property, needed only for annotation, actual getter&setter user the map below
+     */
+    @ConfigField(name = "xdsRegistryURL")
+    private String[] registryURLs;
+    
+    private HashMap<String, String> registryUrlMapping = new HashMap<String,String>();
 
     public String getApplicationName() {
         return applicationName;
@@ -112,11 +139,11 @@ public class XdsRepository extends DeviceExtension {
     }
 
     public String[] getAcceptedMimeTypes() {
-        return mimeTypes;
+        return acceptedMimeTypes;
     }
 
     public void setAcceptedMimeTypes(String[] mimeTypes) {
-        this.mimeTypes = mimeTypes;
+        this.acceptedMimeTypes = mimeTypes;
     }
 
     public boolean isCheckMimetype() {
@@ -144,17 +171,10 @@ public class XdsRepository extends DeviceExtension {
     public void setForceMTOM(boolean forceMTOM) {
         this.forceMTOM = forceMTOM;
     }
+    
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;
-        setApplicationName(src.getApplicationName());
-        setRepositoryUID(src.getRepositoryUID());
-        setRegistryURLs(src.getRegistryURLs());
-        setAcceptedMimeTypes(src.getAcceptedMimeTypes());
-        setSoapLogDir(src.getSoapLogDir());
-        setCheckMimetype(src.isCheckMimetype());
-        setLogFullMessageHosts(src.getLogFullMessageHosts());
-        setAllowedCipherHostname(src.getAllowedCipherHostname());
-        this.setForceMTOM(src.isForceMTOM());
+        ReflectiveConfig.reconfigure(src, this);
     }
 }

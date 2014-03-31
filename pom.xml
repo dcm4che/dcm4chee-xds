@@ -42,24 +42,25 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dcm4che</groupId>
   <artifactId>dcm4chee-xds2-parent</artifactId>
-  <version>2.0.1-SNAPSHOT</version>
+  <version>2.0.2</version>
   <packaging>pom</packaging>
   <name>XDS implementation for JBoss7/EJB3</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <dcm4che.version>3.3.0</dcm4che.version>
+    <dcm4che.version>3.3.1</dcm4che.version>
     <slf4j.version>1.6.1</slf4j.version>
     <hibernate.version>4.0.1.Final</hibernate.version>
-    <querydsl.version>3.3.1</querydsl.version>
-    <javaee6.with.tools.version>1.0.0.M1</javaee6.with.tools.version>
-    <db>oracle</db>
+    <querydsl.version>3.2.3</querydsl.version>
+    <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
+    <db>mysql</db>
     <ds>java:/xdsDS</ds>
     <show_sql>false</show_sql>
     <hbm2ddl.auto>update</hbm2ddl.auto>
-    <arquillian.version>1.0.0.Alpha5</arquillian.version>
-    <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version>
+    <!-- <arquillian.version>1.0.0.Alpha5</arquillian.version>
+    <shrinkwrap.version>1.0.0-cr-1</shrinkwrap.version> -->
+    <shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
     <jboss.version>6.0.0.Final</jboss.version>
-    <skipTests>false</skipTests>
+    <skipTests>true</skipTests>
   </properties>
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>
@@ -68,17 +69,20 @@
     <module>dcm4chee-xds2-common-ws</module>
     <module>dcm4chee-xds2-conf</module>
     <module>dcm4chee-xds2-registry-persistence</module>
+    <module>dcm4chee-xds2-service</module>
+    <module>dcm4chee-xds2-ctrl</module>
+    <module>dcm4chee-xds2-ctrl-war</module>
     <module>dcm4chee-xds2-registry-ws</module>
-    <module>dcm4chee-xds2-registry-service</module>
+    <module>dcm4chee-xds2-registry-ctrl</module>
+    <module>dcm4chee-xds2-registry-war</module>
     <module>dcm4chee-xds2-hl7</module>
     <module>dcm4chee-xds2-repository-ws</module>
     <module>dcm4chee-xds2-store-api</module>
     <module>dcm4chee-xds2-store-file</module>
     <module>dcm4chee-xds2-registry-ear</module>
     <module>dcm4chee-xds2-repository-ear</module>
-   <!-- <module>dcm4chee-xds2-persistence</module> 
     <module>dcm4chee-xds2-tool</module>
-    <module>dcm4chee-xds2-src</module> -->
+    <module>dcm4chee-xds2-src</module> 
     <module>dcm4chee-xds2-pix-client</module>
     <module>dcm4chee-xds2-pix-tool</module>
     <module>dcm4chee-xds2-xca-ws</module>
@@ -89,6 +93,18 @@
   </modules>
   <dependencyManagement>
     <dependencies>
+    
+        <!-- Override dependency resolver with latest version.
+	         This must go *BEFORE* the Arquillian BOM. -->
+	
+      <dependency>
+        <groupId>org.jboss.shrinkwrap.resolver</groupId>
+        <artifactId>shrinkwrap-resolver-bom</artifactId>
+        <version>${shrinkwrap.resolver.version}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency> 
+    
       <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
           of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
           of artifacts. We use this here so that we always get the correct versions 
@@ -118,8 +134,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.1</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
+          <source>1.7</source>
+          <target>1.7</target>
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
