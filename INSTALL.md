@@ -359,12 +359,12 @@ Setup JBoss AS 7
 
 2.  Install required libraries as JBoss AS 7 modules:
     
-    Install DCM4CHE 3.2.1 libraries as JBoss AS 7 module:
+    Install DCM4CHE 3.3.1 libraries as JBoss AS 7 module:
     ```
         cd  $JBOSS_HOME
-        unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.2.1.zip
+        unzip $DCM4CHEE_XDS2/jboss-module/dcm4che-jboss-modules-3.3.1.zip
     ```
-    Install QueryDSL 2.8.1 libraries as JBoss AS 7 module:
+    Install QueryDSL 3.2.3 libraries as JBoss AS 7 module:
     ```
         cd  $JBOSS_HOME
         unzip $DCM4CHEE_XDS2/jboss-module/querydsl-jboss-modules-3.2.3.zip
