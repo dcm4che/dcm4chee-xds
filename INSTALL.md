@@ -500,13 +500,15 @@ Setup JBoss AS 7
         [standalone@localhost:9999 /] /system-property=org.dcm4chee.xds.deviceName:add(value=<device-name>)
         
     If several XDS Services (Registry, Repository, XCA, XCA-I) are deployed on one JBoss instance, the configuration 
-    can either be in one device or splitted in several devices.
+    can be either all in one device or splitted in several devices.
+    
     To use different devicenames for each XDS service, following system properties can be used to specify 
     service dependent devicenames:
-    Registry   : org.dcm4chee.xds.devicename.registry
-    Repository : org.dcm4chee.xds.devicename.repository
-    XCA        : org.dcm4chee.xds.devicename.xca
-    XCA-I      : org.dcm4chee.xds.devicename.xca-i
+    
+        Registry   : org.dcm4chee.xds.devicename.registry
+        Repository : org.dcm4chee.xds.devicename.repository
+        XCA        : org.dcm4chee.xds.devicename.xca
+        XCA-I      : org.dcm4chee.xds.devicename.xca-i
 
 10. Deploy DCM4CHEE XDS 2.x services using JBoss AS 7 CLI, e.g.:
 
@@ -542,10 +544,11 @@ Setup JBoss AS 7
     ```
 
 13. Each XDS service comes with a RESTful controller service to reload / show configuration
-    Registry   : http://<host>:<port>/xds-reg-rs/ctrl/config
-    Repository : http://<host>:<port>/xds-rep-rs/ctrl/config
-    XCA        : http://<host>:<port>/xca-rs/ctrl/config
-    XCA-I      : http://<host>:<port>/xcai-rs/ctrl/config
+
+         Registry   : http://<host>:<port>/xds-reg-rs/ctrl/config
+         Repository : http://<host>:<port>/xds-rep-rs/ctrl/config
+         XCA        : http://<host>:<port>/xca-rs/ctrl/config
+         XCA-I      : http://<host>:<port>/xcai-rs/ctrl/config
     
     
 Testing DCM4CHEE XDS 2.x
