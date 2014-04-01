@@ -45,8 +45,11 @@ import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.ldap.generic.LdapConfigIO;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -54,6 +57,10 @@ import org.dcm4che3.net.DeviceExtension;
 
 @ConfigClass(commonName = "XDSRepository", objectClass = "xdsRepository", nodeName = "xdsRepository")
 public class XdsRepository extends DeviceExtension {
+
+    public static final Logger log = LoggerFactory.getLogger(XdsRepository.class);
+
+    private static final String DEFAULTID = "*";
 
     private static final long serialVersionUID = -8258532093950989486L;
 
@@ -94,12 +101,20 @@ public class XdsRepository extends DeviceExtension {
         try {
 
             XdsSource src = srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class);
-            XdsRegistry reg = src.getRegistry().getDeviceExtensionNotNull(XdsRegistry.class);
+            return src.getRegistry().getDeviceExtensionNotNull(XdsRegistry.class).getRegisterUrl();
 
-            return reg.getRegisterUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve the registry URL for source id " + sourceID, e);
+
+            try {
+                XdsSource src = srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class);
+                String url = src.getRegistry().getDeviceExtensionNotNull(XdsRegistry.class).getRegisterUrl();
+                log.warn("Using default registry for source UID {}!", sourceID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve the registry URL for source UID " + sourceID, e);
+            }
         }
+
     }
 
     // Getters&setters

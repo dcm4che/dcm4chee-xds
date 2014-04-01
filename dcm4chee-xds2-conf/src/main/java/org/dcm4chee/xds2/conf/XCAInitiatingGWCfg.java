@@ -50,6 +50,8 @@ import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -88,7 +90,11 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 
     }
 
+    public static final Logger log = LoggerFactory.getLogger(XCAInitiatingGWCfg.class);
+
     private static final long serialVersionUID = -8258532093950989486L;
+
+    private static final String DEFAULTID = "*";
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -130,7 +136,16 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
             return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getRespondingGWdevice()
                     .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getQueryUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve QueryURL of responding GW for homeCommunityId " + homeCommunityID, e);
+
+            try {
+                String url = respondingGWByHomeCommunityIdMap.get(DEFAULTID).getRespondingGWdevice()
+                        .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getQueryUrl();
+                log.warn("Using default XCA responding GW for home community id {}!", homeCommunityID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve QueryURL of responding GW for homeCommunityId " + homeCommunityID, e);
+            }
+
         }
     }
 
@@ -139,7 +154,14 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
             return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getRespondingGWdevice()
                     .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getRetrieveUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve retrieveURL of responding GW for homeCommunityId " + homeCommunityID, e);
+            try {
+                String url = respondingGWByHomeCommunityIdMap.get(DEFAULTID).getRespondingGWdevice()
+                        .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getRetrieveUrl();
+                log.warn("Using default XCA responding GW for home community id {}!", homeCommunityID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve retrieveURL of responding GW for homeCommunityId " + homeCommunityID, e);
+            }
         }
     }
 
@@ -147,7 +169,13 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         try {
             return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getAffinityDomain();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve AffinityDomain for homeCommunityId " + homeCommunityID, e);
+            try {
+                String aa = respondingGWByHomeCommunityIdMap.get(homeCommunityID).getAffinityDomain();
+                log.warn("Using default Assigning Authority for home community id {}!", homeCommunityID);
+                return aa;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve AffinityDomain for homeCommunityId " + homeCommunityID, e);
+            }
         }
     }
 

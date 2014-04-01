@@ -47,6 +47,8 @@ import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -54,7 +56,11 @@ import org.dcm4chee.xds2.common.XDSUtil;
 @ConfigClass(commonName = "XCAiRespondingGW", objectClass = "xcaiRespondingGW", nodeName = "xcaiRespondingGW")
 public class XCAiRespondingGWCfg extends DeviceExtension {
 
+    public static final Logger log = LoggerFactory.getLogger(XCAiRespondingGWCfg.class);
+
     private static final long serialVersionUID = -8258532093950989486L;
+
+    private static final String DEFAULTID = "*";
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -75,7 +81,14 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
         try {
             return srcDevicebySrcIdMap.get(homeCommunityID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve source URL for homeCommunityId " + homeCommunityID, e);
+
+            try {
+                String url = srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
+                log.warn("Using default imaging source for home community id {}!", homeCommunityID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve source URL for homeCommunityId " + homeCommunityID, e);
+            }
         }
     }
 

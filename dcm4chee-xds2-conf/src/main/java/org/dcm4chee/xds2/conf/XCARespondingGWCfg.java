@@ -45,13 +45,20 @@ import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 @ConfigClass(commonName = "XCARespondingGW", objectClass = "xcaRespondingGW", nodeName = "xcaRespondingGW")
 public class XCARespondingGWCfg extends DeviceExtension {
+
+    public static final Logger log = LoggerFactory.getLogger(XCARespondingGWCfg.class);
+
     private static final long serialVersionUID = -8258532093950989486L;
+
+    private static final String DEFAULTID = "*";
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -78,7 +85,15 @@ public class XCARespondingGWCfg extends DeviceExtension {
         try {
             return repositoryDeviceByUidMap.get(repositoryID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+
+            try {
+                String url = repositoryDeviceByUidMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
+                log.warn("Using default repository for repository UID {}!", repositoryID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+            }
+
         }
     }
 

@@ -39,7 +39,6 @@
 package org.dcm4chee.xds2.conf;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.dcm4che3.net.DeviceExtension;
@@ -47,8 +46,8 @@ import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.XDSUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -56,7 +55,11 @@ import org.dcm4chee.xds2.common.XDSUtil;
 @ConfigClass(commonName = "XCAiInitiatingGW", objectClass = "xcaiInitiatingGW", nodeName = "xcaiInitiatingGW")
 public class XCAiInitiatingGWCfg extends DeviceExtension {
 
+    public static final Logger log = LoggerFactory.getLogger(XCAiInitiatingGWCfg.class);
+
     private static final long serialVersionUID = -8258532093950989486L;
+
+    private static final Object DEFAULTID = "*";
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -84,7 +87,16 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
             return respondingGWDevicebyHomeCommunityId.get(homeCommunityID).getDeviceExtensionNotNull(XCAiRespondingGWCfg.class)
                     .getRetrieveUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve URL of responding GW for homeCommunityId " + homeCommunityID, e);
+
+            try {
+                String url = respondingGWDevicebyHomeCommunityId.get(DEFAULTID).getDeviceExtensionNotNull(XCAiRespondingGWCfg.class)
+                        .getRetrieveUrl();
+                log.warn("Using default XCAi responding GW for home community id {}!", homeCommunityID);
+                return url;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve URL of responding GW for homeCommunityId " + homeCommunityID, e);
+            }
+
         }
     }
 
