@@ -1,136 +1,278 @@
-version: 1
+dn: cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+cn: Devices
+objectClass: dicomDevicesRoot
+objectClass: top
 
-
-dn: dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: dicomDeviceName=dcm4chee-AuditRecordRepository,cn=Devices,cn=DICOM Configura
+ tion,dc=example,dc=com
+dicomDeviceName: dcm4chee-AuditRecordRepository
 dicomInstalled: TRUE
-dicomDeviceName: dcm4chee-xds2-registry
-objectClass: dcmDevice
 objectClass: dicomDevice
+objectClass: dcmDevice
+objectClass: top
 
-dn: cn=XDSRegistry,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=audit-udp,dicomDeviceName=dcm4chee-AuditRecordRepository,cn=Devices,cn=DI
+ COM Configuration,dc=example,dc=com
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+objectClass: top
+dcmProtocol: SYSLOG_UDP
+dicomPort: 514
+cn: audit-udp
+dicomHostname: arr.dcm4che.org
+
+dn: cn=Audit Record Repository,dicomDeviceName=dcm4chee-AuditRecordRepository,cn
+ =Devices,cn=DICOM Configuration,dc=example,dc=com
+cn: Audit Record Repository
+dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=dcm4chee-AuditReco
+ rdRepository,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+objectClass: top
+objectClass: dcmAuditRecordRepository
+
+dn: dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc
+ =com
+objectClass: dicomDevice
+objectClass: dcmDevice
+objectClass: top
+dicomDeviceName: dcm4chee-xds
+dicomInstalled: TRUE
+dicomInstitutionCode: (111.1111, 99DCM4CHEE, "Site A")
+dicomInstitutionName: Site A
+dicomIssuerOfAccessionNumber: XDS_A&1.2.40.0.13.1.1.999.111.1111&ISO
+dicomIssuerOfPatientID: XDS_A&1.2.40.0.13.1.1.999.111.1111&ISO
+
+dn: cn=hl7-conn,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,d
+ c=example,dc=com
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+objectClass: top
+dcmProtocol: HL7
+dicomPort: 2575
+cn: hl7-conn
+dicomHostname: localhost
+
+dn: cn=audit-udp,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,
+ dc=example,dc=com
+objectClass: dicomNetworkConnection
+objectClass: dcmNetworkConnection
+objectClass: top
+dcmProtocol: SYSLOG_UDP
+dicomPort: 514
+cn: audit-udp
+dicomHostname: localhost
+
+dn: cn=XDSRegistry,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configuratio
+ n,dc=example,dc=com
+xdsApplicationName: XDS_REGISTRY1
+xdsAffinityDomain: 1.2.3.4.5
 objectClass: xdsRegistry
-cn:XDSRegistry
-xdsApplicationName: XDS_REGISTRY
-xdsAffinityDomain: 1.2.3.4.5&ISO
-xdsAffinityDomainConfigDir: ${jboss.server.config.dir}/affinitydomain
+objectClass: top
+xdsAffinityDomainConfigDir: ${jboss.server.config.dir}/dcm4chee-xds2/affinitydom
+ ain
+cn: XDSRegistry
+xdsSoapMsgLogDir: /var/log/xdslog
+xdsAcceptedMimeTypes: application/xml
+xdsAcceptedMimeTypes: application/dicom
 xdsAcceptedMimeTypes: application/pdf
-xdsAcceptedMimeTypes: application/xml
-xdsAcceptedMimeTypes: application/dicom
+xdsAcceptedMimeTypes: text/plain
 xdsAcceptedMimeTypes: text/xml
-xdsCheckAffinityDomain: true
-xdsCheckMimetype: true
-xdsSoapMsgLogDir: /var/log/xdslog
+xdsRegisterURL: http://localhost:8080/xds/registry
+xdsCreateMissingCodes: TRUE
+xdsQueryURL: http://localhost:8080/xds/registry
+xdsCreateMissingPIDs: TRUE
+xdsCheckAffinityDomain: FALSE
+xdsCheckMimetype: FALSE
 
-dn: cn=XDSRepository,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=XDSRepository,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configurat
+ ion,dc=example,dc=com
+xdsApplicationName: XDS_REPOSITORY1
+xdsRepositoryUID: 1.2.3.4
 objectClass: xdsRepository
-cn:XDSRepository
-xdsApplicationName: XDS_REPOSITORY
-xdsRepositoryUID: 1.2.3.4.5.99
-xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
+objectClass: top
+xdsAllowedCipherHostname: *
+xdsForceMTOM: FALSE
+xdsRetrieveURL: http://localhost:8080/xds/repository
+cn: XDSRepository
+xdsSoapMsgLogDir: /var/log/xdslog
 xdsAcceptedMimeTypes: application/xml
 xdsAcceptedMimeTypes: application/dicom
+xdsAcceptedMimeTypes: application/pdf
+xdsAcceptedMimeTypes: text/plain
 xdsAcceptedMimeTypes: text/xml
-xdsCheckMimetype: false
-xdsSoapMsgLogDir: /var/log/xdslog
+xdsProvideURL: http://localhost:8080/xds/repository
+xdsCheckMimetype: FALSE
 
-dn: cn=XCARespondingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-objectClass: xcaRespondingGW
-cn:XCARespondingGW
-xdsApplicationName: XCA_RESPONDING_GW
-xdsHomeCommunityID: 1.2.3.4.9.99
-xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
-xdsRepositoryURL: http://localhost:8080/dcm4chee-xds/XDSbRepository/b
-xdsSoapMsgLogDir: /var/log/xdslog
+dn: cn=xdsSources,cn=XDSRepository,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DI
+ COM Configuration,dc=example,dc=com
+cn: xdsSources
+objectClass: dcmCollection
+objectClass: top
 
-dn: cn=XCAInitiatingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-objectClass: xcaInitiatingGW
-cn:XCAInitiatingGW
-xdsApplicationName: XCA_INITIATING_GW
-xdsHomeCommunityID: 1.2.3.4.9.99
-xdsRegistryURL: http://localhost:8080/dcm4chee-xds/XDSbRegistry/b
-xdsRepositoryURL: *|http://localhost:8080/dcm4chee-xds/XDSbRepository/b
-xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/RespondingGateway/xca
-xdsSoapMsgLogDir: /var/log/xdslog
+dn: xdsSourceUid=*,cn=xdsSources,cn=XDSRepository,dicomDeviceName=dcm4chee-xds,c
+ n=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsSource: dcm4chee-xds
+xdsSourceUid: *
+objectClass: top
+objectClass: xdsSourceByUid
 
-dn: cn=XCAiRespondingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-objectClass: xcaiRespondingGW
-cn:XCAiRespondingGW
-xdsApplicationName: XCA-I_RESPONDING_GW
-xdsHomeCommunityID: 1.2.3.4.9.99
-xdsiSourceURL: *|http://localhost:8080/service/ImagingDocumentSource/src
-xdsSoapMsgLogDir: /var/log/xdslog
-
-dn: cn=XCAiInitiatingGW,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=XCAiInitiatingGW,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configu
+ ration,dc=example,dc=com
+xdsApplicationName: XCAiInitiatingGW
+xdsHomeCommunityID: 1.3.5.7.9
 objectClass: xcaiInitiatingGW
-cn:XCAiInitiatingGW
-xdsApplicationName: XCA-I_INITIATING_GW
-xdsHomeCommunityID: 1.2.3.4.9.99
-xdsiSourceURL: *|http://localhost:8080/service/ImagingDocumentSource/src
-xdsRespondingGatewayURL: *|http://localhost:8080/dcm4chee-xds/XCAIRespondingGateway/xcai
-xdsSoapMsgLogDir: /var/log/xdslog
+objectClass: top
+cn: XCAiInitiatingGW
+xdsAsync: FALSE
+xdsAsyncHandler: TRUE
+xdsSoapMsgLogDir: log/xdslog
 
-dn: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomHostname: localhost
-dicomPort: 2576
-objectClass: dicomNetworkConnection
-objectClass: dcmNetworkConnection
-dcmProtocol: HL7
-cn: hl7
+dn: cn=xdsRespondingGateways,cn=XCAiInitiatingGW,dicomDeviceName=dcm4chee-xds,cn
+ =Devices,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsRespondingGateways
+objectClass: dcmCollection
+objectClass: top
 
-dn: cn=hl7-tls,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomHostname: localhost
-dicomPort: 12576
-objectClass: dicomNetworkConnection
-objectClass: dcmNetworkConnection
-dicomTLSCipherSuite: TLS_RSA_WITH_AES_128_CBC_SHA
-dicomTLSCipherSuite: SSL_RSA_WITH_3DES_EDE_CBC_SHA
-dcmTLSProtocol: TLSv1
-dcmTLSProtocol: SSLv3
-dcmProtocol: HL7
-cn: hl7-tls
+dn: xdsHomeCommunityId=*,cn=xdsRespondingGateways,cn=XCAiInitiatingGW,dicomDevic
+ eName=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsRespondingGateway: dcm4chee-xds
+xdsHomeCommunityID: *
+objectClass: xdsRespondingGatewayByHomeCommunityId
+objectClass: top
 
-dn: hl7ApplicationName=XDS^DCM4CHEE,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-objectClass: hl7Application
-dicomNetworkConnectionReference: cn=hl7,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomNetworkConnectionReference: cn=hl7-tls,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=xdsImagingSources,cn=XCAiInitiatingGW,dicomDeviceName=dcm4chee-xds,cn=Dev
+ ices,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsImagingSources
+objectClass: dcmCollection
+objectClass: top
+
+dn: xdsSourceUid=*,cn=xdsImagingSources,cn=XCAiInitiatingGW,dicomDeviceName=dcm4
+ chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsSourceUid: *
+xdsImagingSource: dcm4chee-xds
+objectClass: top
+objectClass: xdsImagingSourceByUid
+
+dn: cn=XCAInitiatingGW,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configur
+ ation,dc=example,dc=com
+xdsApplicationName: XCAInitiatingGW
+xdsHomeCommunityID: 1.3.5.7.9
+xdsRegistry: dcm4chee-xds
+objectClass: xcaInitiatingGW
+objectClass: top
+xdsPIXConsumerApplication: PIX_CONSUMER_APP
+xdsAsync: FALSE
+cn: XCAInitiatingGW
+xdsAsyncHandler: TRUE
+xdsSoapMsgLogDir: log/xdslog
+xdsPIXManagerApplication: PIX_MANAGER_APP
+
+dn: cn=xdsRespondingGateways,cn=XCAInitiatingGW,dicomDeviceName=dcm4chee-xds,cn=
+ Devices,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsRespondingGateways
+objectClass: dcmCollection
+objectClass: top
+
+dn: xdsHomeCommunityID=*,cn=xdsRespondingGateways,cn=XCAInitiatingGW,dicomDevice
+ Name=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsRespondingGateway: dcm4chee-xds
+xdsAffinityDomain: &1.2.3.4.9.99.2&ISO
+xdsHomeCommunityID: *
+objectClass: xdsGatewayRef
+objectClass: top
+
+dn: cn=xdsRepositories,cn=XCAInitiatingGW,dicomDeviceName=dcm4chee-xds,cn=Device
+ s,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsRepositories
+objectClass: dcmCollection
+objectClass: top
+
+dn: xdsRepositoryUid=*,cn=xdsRepositories,cn=XCAInitiatingGW,dicomDeviceName=dcm
+ 4chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsRepositoryUID: *
+xdsRepository: dcm4chee-xds
+objectClass: xdsRepositoryByUid
+objectClass: top
+
+dn: cn=XCAiRespondingGW,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configu
+ ration,dc=example,dc=com
+xdsSoapMsgLogDir: log/xdslog
+xdsApplicationName: XCAiRespondingGW
+xdsHomeCommunityID: 1.3.5.7.9
+objectClass: xcaiRespondingGW
+objectClass: top
+xdsRetrieveURL: http://localhost:8080/xcai/RespondingGW
+cn: XCAiRespondingGW
+
+dn: cn=xdsImagingSources,cn=XCAiRespondingGW,dicomDeviceName=dcm4chee-xds,cn=Dev
+ ices,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsImagingSources
+objectClass: dcmCollection
+objectClass: top
+
+dn: xdsSourceUid=*,cn=xdsImagingSources,cn=XCAiRespondingGW,dicomDeviceName=dcm4
+ chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsSourceUid: *
+xdsImagingSource: dcm4chee-xds
+objectClass: top
+objectClass: xdsImagingSourceByUid
+
+dn: cn=XCARespondingGW,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configur
+ ation,dc=example,dc=com
+xdsApplicationName: XCARespondingGW
+xdsRegistry: dcm4chee-xds
+xdsHomeCommunityID: 1.3.5.7.9
+objectClass: xcaRespondingGW
+objectClass: top
+xdsRetrieveURL: http://localhost:8080/xca/RespondingGW
+cn: XCARespondingGW
+xdsSoapMsgLogDir: log/xdslog
+xdsQueryURL: http://localhost:8080/xca/RespondingGW
+
+dn: cn=xdsRepositories,cn=XCARespondingGW,dicomDeviceName=dcm4chee-xds,cn=Device
+ s,cn=DICOM Configuration,dc=example,dc=com
+cn: xdsRepositories
+objectClass: dcmCollection
+objectClass: top
+
+dn: xdsRepositoryUid=*,cn=xdsRepositories,cn=XCARespondingGW,dicomDeviceName=dcm
+ 4chee-xds,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+xdsRepositoryUID: *
+xdsRepository: dcm4chee-xds
+objectClass: xdsRepositoryByUid
+objectClass: top
+
+dn: cn=XDSSource,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configuration,
+ dc=example,dc=com
+xdsRegistry: dcm4chee-xds
+objectClass: xdsSource
+objectClass: top
+xdsRepository: dcm4chee-xds
+xdsSourceUid: 0
+cn: XDSSource
+
+dn: hl7ApplicationName=XDS^DCM4CHEE,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=D
+ ICOM Configuration,dc=example,dc=com
 hl7ApplicationName: XDS^DCM4CHEE
+objectClass: hl7Application
+objectClass: top
 hl7AcceptedMessageType: ADT^A02
 hl7AcceptedMessageType: ADT^A03
 hl7AcceptedMessageType: ADT^A06
 hl7AcceptedMessageType: ADT^A07
 hl7AcceptedMessageType: ADT^A08
 hl7AcceptedMessageType: ADT^A40
+hl7AcceptedMessageType: ORM^O01
+dicomNetworkConnectionReference: cn=hl7-conn,dicomDeviceName=dcm4chee-xds,cn=Dev
+ ices,cn=DICOM Configuration,dc=example,dc=com
 
-dn: cn=audit-udp,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomHostname: localhost
-objectClass: dicomNetworkConnection
-objectClass: dcmNetworkConnection
-dcmProtocol: SYSLOG_UDP
-cn: audit-udp
-
-dn: cn=Audit Logger,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dcmAuditSourceTypeCode: 4
-dcmAuditRecordRepositoryDeviceReference: dicomDeviceName=syslog,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dn: cn=Audit Logger,dicomDeviceName=dcm4chee-xds,cn=Devices,cn=DICOM Configurati
+ on,dc=example,dc=com
+objectClass: top
 objectClass: dcmAuditLogger
-dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=dcm4chee-xds2-registry,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
+dcmAuditRecordRepositoryDeviceReference: dicomDeviceName=dcm4chee-AuditRecordRep
+ ository,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
 dcmAuditMessageSchemaURI: http://www.dcm4che.org/DICOM/audit-message.rnc
 cn: Audit Logger
+dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=dcm4chee-xds,cn=De
+ vices,cn=DICOM Configuration,dc=example,dc=com
 
-dn: dicomDeviceName=syslog,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomInstalled: TRUE
-dicomDeviceName: syslog
-objectClass: dicomDevice
-objectClass: dcmDevice
-
-dn: cn=audit-udp,dicomDeviceName=syslog,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-dicomHostname: localhost
-dicomPort: 4000
-objectClass: dicomNetworkConnection
-objectClass: dcmNetworkConnection
-dcmProtocol: SYSLOG_UDP
-cn: audit-udp
-
-dn: cn=Audit Record Repository,dicomDeviceName=syslog,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-objectClass: dcmAuditRecordRepository
-dicomNetworkConnectionReference: cn=audit-udp,dicomDeviceName=syslog,cn=Devices,cn=DICOM Configuration,dc=example,dc=com
-cn: Audit Record Repository
