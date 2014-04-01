@@ -1,6 +1,6 @@
 package org.dcm4chee.xds2.infoset.util;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
@@ -18,13 +18,11 @@ public class BasePortTypeFactory {
         SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding(); 
         binding.setMTOMEnabled(mtom);
         if (mustUnderstand || addLogHandler) {
-            ArrayList<Handler> l = new ArrayList<Handler>();
-            l.addAll(binding.getHandlerChain());
+            List<Handler> currentHandlers = binding.getHandlerChain();
             if (mustUnderstand)
-                l.add(new EnsureMustUnderstandHandler());
+                currentHandlers.add(new EnsureMustUnderstandHandler());
             if (addLogHandler)
-                l.add(new SentSOAPLogHandler());
-            binding.setHandlerChain(l);
+                currentHandlers.add(new SentSOAPLogHandler());
         }
         Map<String, Object> reqCtx = bindingProvider.getRequestContext();
         reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
