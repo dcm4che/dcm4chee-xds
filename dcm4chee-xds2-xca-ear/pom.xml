@@ -92,13 +92,6 @@
 
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-browser</artifactId>
-			<type>war</type>
-			<version>2.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-xca-ws</artifactId>
 			<type>ejb</type>
 			<version>${project.version}</version>
@@ -157,10 +150,6 @@
 							<artifactId>dcm4chee-xds2-ctrl-war</artifactId>
 							<classifier>xca</classifier>
 							<contextRoot>/xca-rs</contextRoot>
-						</webModule>
-						<webModule>
-							<groupId>org.dcm4che</groupId>
-							<artifactId>dcm4chee-xds2-browser</artifactId>
 						</webModule>
 					</modules>
 					<version>6</version>
