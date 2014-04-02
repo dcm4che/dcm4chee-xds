@@ -23,6 +23,7 @@ public class BasePortTypeFactory {
                 currentHandlers.add(new EnsureMustUnderstandHandler());
             if (addLogHandler)
                 currentHandlers.add(new SentSOAPLogHandler());
+            binding.setHandlerChain(currentHandlers);
         }
         Map<String, Object> reqCtx = bindingProvider.getRequestContext();
         reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);

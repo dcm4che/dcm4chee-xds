@@ -45,8 +45,11 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeader;
@@ -58,7 +61,15 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.soap.SOAPHandler;
 import javax.xml.ws.handler.soap.SOAPMessageContext;
 
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
+import org.dcm4chee.xds2.conf.XdsRegistry;
+import org.dcm4chee.xds2.conf.XdsRepository;
+import org.dcm4chee.xds2.service.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -71,6 +82,9 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private static ThreadLocal<SOAPHeader> soapHeader = new ThreadLocal<SOAPHeader>();
 
     private static Logger log = LoggerFactory.getLogger(LogHandler.class);
+    
+    @Inject
+    private XdsService service;
     
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
@@ -117,23 +131,28 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     private void logMessage(SOAPMessageContext ctx) {
+    	String pathInfo = (String) ctx.get(MessageContext.PATH_INFO);
         String action = getWsaHeader(ctx, "Action", "noAction");
         String msgID = getWsaHeader(ctx, "MessageID", null);
         String logDir = null;
-        /*try {
-            if ((action.endsWith(":RegisterDocumentSet-b") ||
-                 action.endsWith(":RegisterDocumentSet-bResponse")) && XdsDevice.getXdsRegistry() != null) {
-                logDir = XdsDevice.getXdsRegistry().getSoapLogDir();
-            } else if ((action.endsWith(":CrossGatewayQuery") ||
-                        action.endsWith(":CrossGatewayQueryResponse")) && XdsDevice.getXCARespondingGW() != null) {
-                logDir = XdsDevice.getXCARespondingGW().getSoapLogDir();
-            } else if (XdsDevice.getXdsRepository() != null) {
-                logDir = XdsDevice.getXdsRepository().getSoapLogDir();
+        try {
+        	Device d = service.getDevice();
+            if (pathInfo.endsWith("registry/")) {
+                logDir = d.getDeviceExtension(XdsRegistry.class).getSoapLogDir();
+            } else if (pathInfo.endsWith("repository/")) {
+                logDir = d.getDeviceExtension(XdsRepository.class).getSoapLogDir();
+            } else if (pathInfo.endsWith("xca/RespondingGW/")) {
+                logDir = d.getDeviceExtension(XCARespondingGWCfg.class).getSoapLogDir();
+            } else if (pathInfo.endsWith("xca/InitiatingGW/")) {
+                logDir = d.getDeviceExtension(XCAInitiatingGWCfg.class).getSoapLogDir();
+            } else if (pathInfo.endsWith("xcai/RespondingGW/")) {
+                logDir = d.getDeviceExtension(XCAiRespondingGWCfg.class).getSoapLogDir();
+            } else if (pathInfo.endsWith("xcai/InitiatingGW/")) {
+                logDir = d.getDeviceExtension(XCAiInitiatingGWCfg.class).getSoapLogDir();
             }
         } catch (Exception ignore) {
             log.warn("Failed to get logDir from XDS configuration!", ignore);
-        }*/
-        logDir = "/var/log/xdsLog";
+        }
         if (logDir != null) {
             FileOutputStream out = null;
             try {
