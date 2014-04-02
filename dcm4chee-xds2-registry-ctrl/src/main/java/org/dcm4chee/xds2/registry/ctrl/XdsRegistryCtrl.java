@@ -91,9 +91,10 @@ public class XdsRegistryCtrl extends XdsDeviceCtrl {
                 return Response.serverError().entity("Load codes of affinity domain "+affinityDomain+" failed!"+x).build();
             }
         } else {
-            return Response.serverError().entity(getConfigurationString("Code Repository not configured!")).build();
+            return Response.serverError().entity("Code Repository not configured!").build();
         }
     }
+
 
     @GET
     @Path("/showPatIDs/{affinity}")

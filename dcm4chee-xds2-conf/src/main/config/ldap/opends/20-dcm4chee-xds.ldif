@@ -177,6 +177,11 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.47 NAME 'xdsURL'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )  
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.48 NAME 'xdsControlledDevices'
+  DESC 'Names of devices that browser can control '
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.1
   NAME 'xdsRegistry'
   DESC 'XDS Application information'
@@ -325,5 +330,13 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.13
   MUST ( 
     xdsSourceUid $
     xdsSource 
+ ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.14
+  NAME 'xdsBrowser'
+  DESC 'map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    cn $
+    xdsControlledDevices 
  ) )
    

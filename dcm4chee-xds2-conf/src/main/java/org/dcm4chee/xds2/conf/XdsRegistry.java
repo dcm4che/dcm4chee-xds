@@ -94,6 +94,17 @@ public class XdsRegistry extends DeviceExtension {
 
     @ConfigField(name = "xdsQueryUrl")
     private String queryUrl;
+    
+    @ConfigField(name = "xdsBrowser", def = "null") 
+    private XdsBrowser xdsBrowser;
+    
+    public XdsBrowser getXdsBrowser() {
+        return xdsBrowser;
+    }
+
+    public void setXdsBrowser(XdsBrowser xdsBrowser) {
+        this.xdsBrowser = xdsBrowser;
+    }
 
     private XADCfgRepository xadCfgRepository;
 
