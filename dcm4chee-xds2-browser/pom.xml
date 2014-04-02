@@ -72,6 +72,26 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-conf</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-conf-api</artifactId>
+			<version>${dcm4che.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<!-- mime type tools -->
 		<dependency>
 			<groupId>org.apache.tika</groupId>

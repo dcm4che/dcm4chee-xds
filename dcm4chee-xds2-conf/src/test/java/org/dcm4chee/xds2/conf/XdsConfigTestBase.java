@@ -275,6 +275,16 @@ public class XdsConfigTestBase {
         createdDevices.add("registry");    
         XdsRegistry registry = createRegistry();
     
+        XdsBrowser browser = new XdsBrowser();
+        
+        Set<Device> cdevices = new HashSet<Device>();
+        cdevices.add(d);
+        
+        browser.setControlledDevices(cdevices);
+        
+        registry.setXdsBrowser(browser);
+
+        
         d.addDeviceExtension(registry);
         config.persist(d);
         afterPersist();
@@ -370,6 +380,12 @@ public class XdsConfigTestBase {
         registry.setRegisterUrl("http://localhost/registry");
         registry.setQueryUrl("http://localhost/registry");
 
+        XdsBrowser browser = new XdsBrowser();
+        Set<Device> cdevices = new HashSet<Device>();
+        cdevices.add(d);
+        browser.setControlledDevices(cdevices);
+        registry.setXdsBrowser(browser);
+
         HL7DeviceExtension hl7Ext = new HL7DeviceExtension();
         d.addDeviceExtension(hl7Ext);
         ArrayList<HL7Application> hl7Apps = new ArrayList<HL7Application>();
@@ -394,6 +410,11 @@ public class XdsConfigTestBase {
         xdsApp.setCheckAffinityDomain(false);
         xdsApp.setCheckMimetype(false);
         xdsApp.setPreMetadataCheck(true);
+        
+        // add reg2 device to browser
+        XdsRegistry registry1 = createRegistry();
+        Device regd = addDeviceWithExtensionAndPersist(registry1, "registry_device_rgw");
+        xdsApp.getXdsBrowser().getControlledDevices().add(regd);
 
         for (Connection c : hl7App.getConnections()) {
             c.setPort(c.getPort() + 10000);
@@ -410,6 +431,22 @@ public class XdsConfigTestBase {
         loadConfigAndAssertEquals("registry_modify", XdsRegistry.class, registry);
 
         checkHL7Apps("registry_modify", hl7Apps);
+        
+        // kill browser
+        xdsApp = d.getDeviceExtension(XdsRegistry.class);
+        xdsApp.setXdsBrowser(null);
+        config.merge(d);
+
+        // check
+        loadConfigAndAssertEquals("registry_modify", XdsRegistry.class, registry);
+
+        // add old browser
+        xdsApp.setXdsBrowser(browser);
+        config.merge(d);
+
+        // check
+        loadConfigAndAssertEquals("registry_modify", XdsRegistry.class, registry);
+
     }
 
     @Test
@@ -730,7 +767,17 @@ public class XdsConfigTestBase {
         registry.setRegisterUrl("http://localhost:8080/xds/registry");
         registry.setCheckAffinityDomain(false);
         registry.setCheckMimetype(false);
-
+        
+        XdsBrowser browser = new XdsBrowser();
+        
+        Set<Device> cdevices = new HashSet<Device>();
+        cdevices.add(d);
+        
+        browser.setControlledDevices(cdevices);
+        
+        registry.setXdsBrowser(browser);
+        
+        
         // generic source
 
         XdsSource source = new XdsSource();
@@ -751,6 +798,7 @@ public class XdsConfigTestBase {
         rep.setCheckMimetype(false);
         rep.setAllowedCipherHostname("*");
         rep.setLogFullMessageHosts(new String[] {});
+
 
         // used elsewhere as well
         Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();
