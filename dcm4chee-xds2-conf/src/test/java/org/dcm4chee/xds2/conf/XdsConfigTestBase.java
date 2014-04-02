@@ -116,8 +116,8 @@ public class XdsConfigTestBase {
 
     @After
     public void tearDown() throws Exception {
-        if (System.getProperty("keep") == null) ;
-        cleanUp();
+        if (System.getProperty("keep") == null)
+        	cleanUp();
         if (config != null)
             config.close();
     }
@@ -833,7 +833,7 @@ public class XdsConfigTestBase {
 
 
     }
-
+/*_*/
     public void afterPersist() throws Exception {
     }
 

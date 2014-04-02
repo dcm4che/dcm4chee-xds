@@ -51,8 +51,7 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
 
     //Used by IgnoreableJUnitTestRunner to check if all tests of this class should be ignored
     public static boolean ignoreTests() {
-        return false;
-        //return System.getProperty("ldap") == null;
+        return System.getProperty("ldap") == null;
     }
     
     @Before
