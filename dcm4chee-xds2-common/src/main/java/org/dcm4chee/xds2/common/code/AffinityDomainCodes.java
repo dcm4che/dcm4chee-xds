@@ -56,6 +56,8 @@ public class AffinityDomainCodes {
     private HashMap<String, String> classSchemesToCodeTypes = new HashMap<String, String>();
     private String affinityDomain = "UNDEFINED";
     
+    public static final Code MATCH_ALL_CODE = new Code("*", "dcm4che", "Match all");
+    
     public void addClassSchemeToCodeType(String scheme, String codeType) {
         classSchemesToCodeTypes.put(scheme, codeType);
     }
@@ -101,6 +103,6 @@ public class AffinityDomainCodes {
     }
     public boolean isClassSchemeCodeDefined(String scheme, Code code) {
         List<Code> l = codes.get(classSchemesToCodeTypes.get(scheme));
-        return l == null ? false : l.contains(code);
+        return l == null ? false : l.contains(code) ? true : l.contains(MATCH_ALL_CODE);
     }
 }

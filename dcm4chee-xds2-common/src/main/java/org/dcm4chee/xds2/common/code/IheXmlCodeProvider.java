@@ -151,6 +151,9 @@ public class IheXmlCodeProvider implements XADCfgProviderSPI, Serializable {
                             codes.addClassSchemeToCodeType(scheme, name);
                             typedCodes = new ArrayList<Code>();
                             codes.addCodes(name, typedCodes);
+                            if (Boolean.valueOf(attributes.getValue("allowAll"))) {
+                            	typedCodes.add(AffinityDomainCodes.MATCH_ALL_CODE);
+                            }
                         } else if (qName.equals("Code")) {
                             if (typedCodes != null)
                                 typedCodes.add( new Code(attributes.getValue("code"),
