@@ -1,7 +1,6 @@
 package org.dcm4chee.xds2.infoset.util;
 
 import java.net.URL;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
