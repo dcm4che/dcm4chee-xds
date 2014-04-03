@@ -13,7 +13,6 @@ public class DocumentRepositoryPortTypeFactory extends BasePortTypeFactory {
 
     protected static DocumentRepositoryService service = null;
     private final static URL WSDL_LOCATION = DocumentRepositoryService.class.getResource("/wsdl/XDS.b_DocumentRepository.wsdl");
-    private static final boolean MTOM_ACTIVE = true;
     
     static {
         service = new DocumentRepositoryService(WSDL_LOCATION, new QName(URN_IHE_ITI, "DocumentRepository_Service"));
@@ -26,7 +25,12 @@ public class DocumentRepositoryPortTypeFactory extends BasePortTypeFactory {
     }
 
     public static DocumentRepositoryPortType getDocumentRepositoryPortSoap12(String endpointAddress) {
+        
         DocumentRepositoryPortType port = getDocumentRepositoryPortSoap12();
+        
+        // the handler may only be added if MTOM is active so we tie it together
+        final boolean MTOM_ACTIVE = true;
+                
         if(MTOM_ACTIVE) {
             addHandler((BindingProvider)port, new XDSDocumentAttachmentHandler());
         }
