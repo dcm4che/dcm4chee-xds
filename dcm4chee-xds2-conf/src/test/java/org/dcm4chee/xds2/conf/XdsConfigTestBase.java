@@ -110,7 +110,7 @@ public class XdsConfigTestBase {
     protected static int testCount = 0;
     protected static String testDeviceName;
     protected static String arrDeviceName;
-    protected DicomConfiguration config;
+    public DicomConfiguration config;
 
     static Set<String> createdDevices = new HashSet<String>();
 
@@ -895,7 +895,7 @@ public class XdsConfigTestBase {
         return device;
     }
 
-    private Device createDevice(String name, Issuer issuer, Code institutionCode) throws Exception {
+    public Device createDevice(String name, Issuer issuer, Code institutionCode) throws Exception {
         testDeviceName = name;
         Device device = new Device(name);
         init(device, issuer, institutionCode);
