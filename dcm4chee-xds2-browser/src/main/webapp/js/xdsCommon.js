@@ -2,6 +2,23 @@
 
 var xdsCommon = angular.module('xdsCommon', []);
 
+
+xdsCommon.controller('ServiceManagerCtrl', [ '$scope', '$http',
+	function($scope, $http) {
+		$scope.configuration = {};
+		
+		$scope.reloadConfig = function() {
+			$http.get("data/config/").success(function(data) {
+				$scope.configuration = data;
+			});
+		};
+		
+		// load config
+		$scope.reloadConfig();
+
+	} ]);
+
+
 xdsCommon.factory('xdsConfig', [ 'xdsConstants', '$http', function(xdsConstants, $http) {
 
 	var config = {
