@@ -93,7 +93,6 @@ import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.inject.Named;
 
 /**
  * REST services for the browser's frontend. Mostly these are wrappers around
@@ -114,7 +113,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     /**
      * Registry device
      */
-    @Inject @Named("device")
+    @Inject
     private Device device;
     private XdsRegistry cfg;
     private XdsBrowser browserConfig;
