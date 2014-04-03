@@ -226,10 +226,10 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     private class ExtensionData {
 
-        String devicename;
-        String extensiontype;
-        String reconfigureUrl;
-        ConfigNode config;
+        public String devicename;
+        public String extensiontype;
+        public String reconfigureUrl;
+        public ConfigNode config;
 
     }
 
