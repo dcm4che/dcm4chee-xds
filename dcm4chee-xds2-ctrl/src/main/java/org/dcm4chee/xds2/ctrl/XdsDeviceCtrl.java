@@ -87,6 +87,7 @@ public class XdsDeviceCtrl {
     @Path("reload")
     public Response reload() throws Exception {
         service.reload();
+        log.info("Service reconfigured (device {})",service.getDevice().getDeviceName());
         return Response.status(Status.OK).build();
     }
 

@@ -1,11 +1,19 @@
-<h2>Configuration</h2>
-
-
- 
-	<div class="col-md-6" ng-repeat = "actor in configuration | orderBy:'extensiontype'" ng-init="confignode = actor.config">  
+<div class="col-md-12">
+	<h2>Configuration
 	
+		<button class='btn btn-primary pull-right' ng-click="reconfigureAll()"
+		ng-class="(reconfiguring ? 'disabled' : '')">Reconfigure all</button>
+	
+	</h2>
+</div>
+
+<div class="col-md-6"
+	ng-repeat="actor in configuration | orderBy:'extensiontype'"
+	ng-init="confignode = actor.config">
+
 	<div class="panel panel-default">
-		<div class="panel-heading">{{actor.extensiontype}} @ {{actor.devicename}}</div>
-		<div ng-include = "'templates/config-attributes.html'"></div>
+		<div class="panel-heading">{{actor.extensiontype}} @
+			{{actor.devicename}}</div>
+		<div ng-include="'templates/config-attributes.html'"></div>
 	</div>
 </div>

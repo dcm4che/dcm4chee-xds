@@ -13,6 +13,17 @@ xdsCommon.controller('ServiceManagerCtrl', [ '$scope', '$http',
 			});
 		};
 		
+		$scope.reconfigureAll = function() {
+			$scope.reconfiguring = true;
+			$http.get("data/reconfigure-all/").success(function(data) {
+				$scope.reloadConfig();
+				$scope.reconfiguring = false;
+			}).error(function(data) {
+				$scope.reloadConfig();
+				$scope.reconfiguring = false;
+			});
+		};
+		
 		// load config
 		$scope.reloadConfig();
 
@@ -36,6 +47,9 @@ xdsCommon.factory('xdsConfig', [ 'xdsConstants', '$http', function(xdsConstants,
 
 } ]);
 
+/**
+ * helper methods to deal with ebXml objects 
+ */
 xdsCommon.factory('xdsEb', [ 'xdsConstants', function(xdsConstants) {
 
 	return {
