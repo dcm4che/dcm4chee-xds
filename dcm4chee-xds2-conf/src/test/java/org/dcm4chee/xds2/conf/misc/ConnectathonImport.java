@@ -114,7 +114,7 @@ public class ConnectathonImport {
                     // ok, now the funny part
 
                     // get device name - secure/nonsecure
-                    String deviceName = props.get("Company") + " - " + props.get("System") + (props.get("is secured").equals("TRUE") ? "(secure)" : "(unsecure)");
+                    String deviceName = "partner - "+props.get("Company") + " - " + props.get("System") + (props.get("is secured").equals("TRUE") ? "(secure)" : "(unsecure)");
 
                     boolean merge = false;
                     Device device;
@@ -255,7 +255,7 @@ public class ConnectathonImport {
 
                         break;                           
                     default:
-
+                        continue;
                     }
 
                     if (merge)
