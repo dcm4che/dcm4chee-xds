@@ -113,8 +113,10 @@ public class ConnectathonImport {
 
                     // ok, now the funny part
 
+                    boolean isSecure = props.get("is secured").toLowerCase().equals("true");
+                    
                     // get device name - secure/nonsecure
-                    String deviceName = "partner - "+props.get("Company") + " - " + props.get("System") + (props.get("is secured").equals("TRUE") ? "(secure)" : "(unsecure)");
+                    String deviceName = "partner - "+props.get("Company") + " - " + props.get("System") + (isSecure ? "(secure)" : "(unsecure)");
 
                     boolean merge = false;
                     Device device;
@@ -129,7 +131,7 @@ public class ConnectathonImport {
                     // which url to use
                     String url;
 
-                    if (props.get("is secured").equals("TRUE")) {
+                    if (isSecure) {
                         url = props.get("url");
                     } else {
                         // proxy url
