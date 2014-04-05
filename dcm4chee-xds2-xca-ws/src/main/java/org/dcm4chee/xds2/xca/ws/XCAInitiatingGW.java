@@ -66,6 +66,8 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSConstants;
@@ -133,6 +135,9 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     @Inject
     private Device device;
     private XCAInitiatingGWCfg cfg;
+    
+    @Inject
+    private IHL7ApplicationCache hl7AppCache;
     
     @PostConstruct
     public void init() {
@@ -585,9 +590,9 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         if (pixClient == null) {
             log.info("########### set PIXClient!");
             try {
-                HL7Application pix = cfg.getPixConsumerApplication();
+                HL7Application pix = getHL7Application(cfg.getLocalPIXConsumerApplication());
                 if (pix != null) {
-                    HL7Application pixMgr = cfg.getPixManagerApplication();
+                    HL7Application pixMgr = getHL7Application(cfg.getRemotePIXManagerApplication());
                     if (pixMgr != null)
                         pixClient = new PixQueryClient(pix, pixMgr);
                 }
@@ -596,6 +601,10 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             }
         }
         return pixClient;
+    }
+    
+    private HL7Application getHL7Application(String hlAppName) throws ConfigurationException {
+    	return hl7AppCache.findHL7Application(hlAppName);
     }
 
     private AdhocQueryResponse addHomeCommunityId(AdhocQueryResponse rsp) {

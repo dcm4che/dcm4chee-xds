@@ -287,14 +287,6 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         this.localPIXConsumerApplication = appName;
     }
 
-    public HL7Application getPixConsumerApplication() {
-        return null;
-    }
-
-    public HL7Application getPixManagerApplication() {
-        return null;
-    }
-
     @Override
     public void reconfigure(DeviceExtension from) {
         XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
