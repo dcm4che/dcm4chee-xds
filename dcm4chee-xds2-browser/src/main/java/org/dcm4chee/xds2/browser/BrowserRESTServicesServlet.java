@@ -39,15 +39,12 @@ package org.dcm4chee.xds2.browser;
  * ***** END LICENSE BLOCK ***** */
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -69,7 +66,6 @@ import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
-import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig.ConfigNode;
 import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
@@ -91,6 +87,7 @@ import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,10 +223,9 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     private class ExtensionData {
 
-        String devicename;
-        String extensiontype;
-        String reconfigureUrl;
-        ConfigNode config;
+        public String devicename;
+        public String extensiontype;
+        public ConfigNode config;
 
     }
 
@@ -253,31 +249,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
             // fill in stuff
             edata.devicename = de.getDevice().getDeviceName();
             edata.extensiontype = de.getClass().getSimpleName();
-            
-            // figure out the URL for reloading the config
-            String urlStr;
-            try {
 
-                if (de.getClass() == XdsRegistry.class) {
-                    URL url = new URL(((XdsRegistry) de).getQueryUrl());
-                    edata.reconfigureUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-reg-rs/ctrl/reload");
-                } else if (de.getClass() == XdsRepository.class) {
-                    URL url = new URL(((XdsRepository) de).getProvideUrl());
-                    edata.reconfigureUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-rep-rs/ctrl/reload");
-                } else if (de.getClass() == XCAInitiatingGWCfg.class || de.getClass() == XCARespondingGWCfg.class) {
-                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    edata.reconfigureUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xca-rs/ctrl/reload");
-                } else if (de.getClass() == XCAiInitiatingGWCfg.class || de.getClass() == XCAiRespondingGWCfg.class) {
-                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    edata.reconfigureUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xcai-rs/ctrl/reload");
-                }
-                ;
-
-            } catch (MalformedURLException e) {
-                log.warn("Url in configuration is malformed for " + de.getClass().getSimpleName() + ", device "
-                        + de.getDevice().getDeviceName(), e);
-            }
-            
             // serialize the configuration
             
             ReflectiveConfig rconfig = new ReflectiveConfig(null, config);
@@ -298,4 +270,59 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     }
 
+    @GET
+    @Path("/reconfigure-all/")
+    @Produces(MediaType.APPLICATION_JSON)    
+    public void reconfigureAll(){
+        
+        
+        if (browserConfig == null) {
+            log.info("No configuration found for the browser, device {}", (device == null ? "null" :device.getDeviceName()));
+            return;
+        }
+        
+        List<ExtensionData> extData = new ArrayList<ExtensionData>();
+        for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
+
+            // figure out the URL for reloading the config
+            String reconfUrl = null;
+            try {
+
+                if (de.getClass() == XdsRegistry.class) {
+                    URL url = new URL(((XdsRegistry) de).getQueryUrl());
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-reg-rs/ctrl/reload");
+                } else if (de.getClass() == XdsRepository.class) {
+                    URL url = new URL(((XdsRepository) de).getProvideUrl());
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-rep-rs/ctrl/reload");
+                } else if (de.getClass() == XCAInitiatingGWCfg.class || de.getClass() == XCARespondingGWCfg.class) {
+                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xca-rs/ctrl/reload");
+                } else if (de.getClass() == XCAiInitiatingGWCfg.class || de.getClass() == XCAiRespondingGWCfg.class) {
+                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xcai-rs/ctrl/reload");
+                } else continue;
+
+                
+                URL obj = new URL(reconfUrl);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+         
+                con.setRequestMethod("GET");
+         
+                int responseCode = con.getResponseCode();
+                            
+                
+            } catch (MalformedURLException e) {
+                log.warn("Url in configuration is malformed for " + de.getClass().getSimpleName() + ", device "
+                        + de.getDevice().getDeviceName(), e);
+            } catch (Exception e) {
+                log.warn("Cannot reconfigure " + de.getClass().getSimpleName() + ", device "
+                        + de.getDevice().getDeviceName(), e);
+            }
+
+
+            
+        };
+
+    }
+    
 }

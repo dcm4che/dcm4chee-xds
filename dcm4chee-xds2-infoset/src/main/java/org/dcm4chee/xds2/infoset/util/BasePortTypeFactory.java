@@ -31,10 +31,12 @@ public class BasePortTypeFactory {
     public static void configurePort(BindingProvider bindingProvider, String endpointAddress, boolean mtom, boolean mustUnderstand, boolean addLogHandler) {
         SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding(); 
         binding.setMTOMEnabled(mtom);
-        if (mustUnderstand)
+        if (mustUnderstand) {
             addHandler(bindingProvider, new EnsureMustUnderstandHandler());
-        if (addLogHandler)
+        }
+        if (addLogHandler) {
             addHandler(bindingProvider, new SentSOAPLogHandler());
+        }
         Map<String, Object> reqCtx = bindingProvider.getRequestContext();
         reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
     }

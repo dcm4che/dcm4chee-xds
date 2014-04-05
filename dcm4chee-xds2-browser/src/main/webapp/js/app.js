@@ -25,9 +25,13 @@ var xdsBrowserApp = angular.module('xdsbrowserApp', [
 xdsBrowserApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
-      when('/step/:stepNum', {
-        templateUrl: 'templates/2col-view.html',
+    when('/step/:stepNum', {
+        templateUrl: 'templates/2col-view-browser.html',
         controller: 'RouteCtrl'
+      }).
+      when('/service-manager', {
+          templateUrl: 'templates/service-manager.html',
+          controller: 'ServiceManagerCtrl'
       }).
       otherwise({
         redirectTo: '/step/0'

@@ -12,13 +12,14 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 	<mime-mapping>
-	    <extension>ttf</extension>
-	    <mime-type>application/octet-stream</mime-type>
-	</mime-mapping>	
+		<extension>ttf</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
 
 	<servlet-mapping>
 		<servlet-name>javax.ws.rs.core.Application</servlet-name>
 		<url-pattern>/data/*</url-pattern>
+
 	</servlet-mapping>
 
 

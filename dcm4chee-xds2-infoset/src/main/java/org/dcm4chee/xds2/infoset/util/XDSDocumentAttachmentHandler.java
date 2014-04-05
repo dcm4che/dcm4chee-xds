@@ -65,7 +65,10 @@ import org.w3c.dom.NodeList;
  */
 public class XDSDocumentAttachmentHandler implements SOAPHandler<SOAPMessageContext> {
 
-    private static final Logger log = LoggerFactory.getLogger(SentSOAPLogHandler.class);
+    private static final String XOP_NAMESPACE                      = "http://www.w3.org/2004/08/xop/include";
+    private static final String MIME_TYPE_APPLICATION_OCTET_STREAM = "application/octet-stream";
+    private static final String DOCUMENT_TAG                       = "Document";
+    private static final Logger log                                = LoggerFactory.getLogger(SentSOAPLogHandler.class);
 
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
@@ -81,27 +84,30 @@ public class XDSDocumentAttachmentHandler implements SOAPHandler<SOAPMessageCont
             try {
                 envelope = message.getSOAPPart().getEnvelope();
                 SOAPBody body = envelope.getBody();
-
-                NodeList nodeList = body.getElementsByTagNameNS("urn:ihe:iti:xds-b:2007", "Document");
+                
+                NodeList nodeList = body.getElementsByTagNameNS(BasePortTypeFactory.URN_IHE_ITI, DOCUMENT_TAG);
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
 
                     Element element = (Element) nodeList.item(0);
+                    if(element == null) {
+                        continue;
+                    }
+                    // The first child may not be null as there is at least one attribute at the document
                     String elementContent = element.getFirstChild().getNodeValue();
                     InputStream is = new ByteArrayInputStream(elementContent.getBytes());
 
                     UUID ref = UUID.randomUUID();
 
                     AttachmentPart attachment = message.createAttachmentPart();
-                    attachment.setBase64Content(is, "application/octet-stream");
+                    attachment.setBase64Content(is, MIME_TYPE_APPLICATION_OCTET_STREAM);
                     attachment.setContentId(ref.toString());
                     message.addAttachmentPart(attachment);
 
                     SOAPBodyElement bodyElement = (SOAPBodyElement) element;
                     bodyElement.removeContents();
-                    bodyElement.addChildElement("Include", "xop", "http://www.w3.org/2004/08/xop/include").setAttribute("href",
-                                                                                                                        "cid:"
-                                                                                                                                + ref.toString());
+                    bodyElement.addChildElement("Include", "xop", XOP_NAMESPACE).setAttribute("href",
+                                                                                              "cid:" + ref.toString());
                 }
             } catch (SOAPException e) {
                 log.debug("error extracting attachments in AttachmentSOAPHandler", e);
