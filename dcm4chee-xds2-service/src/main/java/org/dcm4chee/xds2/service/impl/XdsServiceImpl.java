@@ -57,6 +57,7 @@ import javax.inject.Named;
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Device;
+import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
@@ -130,6 +131,8 @@ public class XdsServiceImpl implements XdsService {
         try {
             device = findDevice();
             
+            AuditLogger logger = device.getDeviceExtension(AuditLogger.class);
+            AuditLogger.setDefaultLogger(logger);
             HL7DeviceExtension hl7Extension = device.getDeviceExtension(HL7DeviceExtension.class);
             if (hl7Extension != null) {
             	for (HL7Service service : hl7Services) {
