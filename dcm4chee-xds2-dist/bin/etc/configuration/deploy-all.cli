@@ -1,0 +1,6 @@
+/system-property=org.dcm4chee.xds.ldapPropertiesURL:add(value=file:${jboss.server.config.dir}/dcm4chee-xds2/ldap.properties)
+/system-property=org.dcm4chee.xds.devicename:add(value=xds_device)
+/system-property=org.dcm4chee.xds.devicename.registry:add(value=xds_registry)
+/system-property=org.dcm4chee.xds.devicename.repository:add(value=xds_repository)
+/system-property=org.dcm4chee.xds.devicename.xca:add(value=XCA_device)
+/system-property=org.dcm4chee.xds.devicename.xcai:add(value=XCAI_device)
