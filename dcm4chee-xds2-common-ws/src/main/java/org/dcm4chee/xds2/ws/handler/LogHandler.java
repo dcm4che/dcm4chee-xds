@@ -149,7 +149,9 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                 logDir = d.getDeviceExtension(XCAiRespondingGWCfg.class).getSoapLogDir();
             } else if (pathInfo.endsWith("xcai/InitiatingGW/")) {
                 logDir = d.getDeviceExtension(XCAiInitiatingGWCfg.class).getSoapLogDir();
-            }
+            } else {
+            	logDir = "/var/log/xdslog";
+        	}
         } catch (Exception ignore) {
             log.warn("Failed to get logDir from XDS configuration!", ignore);
         }
