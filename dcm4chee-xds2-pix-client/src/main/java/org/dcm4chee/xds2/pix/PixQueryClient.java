@@ -334,8 +334,8 @@ public class PixQueryClient {
     private String[] prepareDomains(String... domains) {
         if (domains != null) {
             for (int i = 0 ; i < domains.length ; i++) {
-                if (!domains[i].startsWith("^^^")) 
-                    domains[i] = "^^^"+domains[i];
+                if (!domains[i].startsWith("^^^&")) 
+                    domains[i] = "^^^&"+domains[i];
                 if (!domains[i].endsWith("&ISO"))
                     domains[i] += "&ISO";
             }
