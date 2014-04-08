@@ -189,6 +189,8 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         String home = req.getAdhocQuery().getHome();
         try {
             boolean isHome = cfg.getHomeCommunityID().equals(home);
+
+            // if request is for our home community, or homeCommunityid is not specified
             if (home == null || isHome) {
                 String url = cfg.getRegistryURL();
                 CxfUtil.disableMTOMResponse(wsContext);
@@ -196,9 +198,15 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                     rsp = sendStoredQuery(url, req);
                 }
             }
+            
+            // if request is for another community or homeCommunityid is not specified
             if (!isHome) {
+
+            	// if homeCommunityId is specified but not found among configured responding gateways, throw exception 
                 if (home != null && !cfg.getHomeCommunityIDs().contains(home))
                     throw new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, "Unknown communityID "+home, null);
+                
+                
                 PatSlot patSlot = pixQuery(req, cfg.getAssigningAuthorities());
                 for (String communityID : home == null ? cfg.getHomeCommunityIDs() : Arrays.asList(home)) {
                     AdhocQueryResponse xcaRsp = sendXCAQuery(communityID, req, patSlot, cfg);
