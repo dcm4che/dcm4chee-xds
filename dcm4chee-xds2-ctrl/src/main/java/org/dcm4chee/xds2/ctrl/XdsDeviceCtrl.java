@@ -38,15 +38,23 @@
 
 package org.dcm4chee.xds2.ctrl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.dcm4che3.conf.api.generic.ConfigClass;
+import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.service.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,4 +99,22 @@ public class XdsDeviceCtrl {
         return Response.status(Status.OK).build();
     }
 
+    @GET
+    @Path("config")
+    @Produces(MediaType.APPLICATION_JSON)      
+    public List<GenericDeviceExtensionJSON> getConfig() throws Exception {
+    	
+    	List<GenericDeviceExtensionJSON> jsonexts = new ArrayList<GenericDeviceExtensionJSON>();
+    	Collection<DeviceExtension> exts = service.getDevice().listDeviceExtensions();
+    	
+    	for (DeviceExtension de : exts) {
+            if (de.getClass().getAnnotation(ConfigClass.class) != null)
+                jsonexts.add(GenericDeviceExtensionJSON.serializeDeviceExtension(de)); 		
+    	}
+    	
+    	return jsonexts;
+    }
+
+    
+    
 }

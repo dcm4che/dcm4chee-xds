@@ -91,6 +91,13 @@
 			<version>${dcm4che.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-ctrl</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>		
 
 		<dependency>
 			<groupId>javax.enterprise</groupId>
