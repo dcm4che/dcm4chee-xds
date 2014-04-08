@@ -170,7 +170,7 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
             return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getAffinityDomain();
         } catch (Exception e) {
             try {
-                String aa = respondingGWByHomeCommunityIdMap.get(homeCommunityID).getAffinityDomain();
+                String aa = respondingGWByHomeCommunityIdMap.get(DEFAULTID).getAffinityDomain();
                 log.warn("Using default Assigning Authority for home community id {}!", homeCommunityID);
                 return aa;
             } catch (Exception ee) {
@@ -203,8 +203,16 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         try {
             return repositoryDeviceByUidMap.get(repositoryID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+            try { 
+                String repo = repositoryDeviceByUidMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
+                log.warn("Using default Repository URL for repository UID {}!", repositoryID);
+                return repo;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
+            }
         }
+    
+    
     }
 
     public Map<String, GatewayReference> getRespondingGWByHomeCommunityIdMap() {
