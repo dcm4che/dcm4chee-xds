@@ -284,7 +284,7 @@ public class PixQueryClient {
             if (cx.length > 3) {
                 hd = HL7Segment.split(cx[3], scSep);
                 if (hd.length > 2) {
-                    pidOfDomain.put(hd[1], cx[0]+"^^^&"+hd[1]+"&ISO");
+                    pidOfDomain.put(hd[1], "'"+cx[0]+"^^^&"+hd[1]+"&ISO'");
                 }
             }
         }
