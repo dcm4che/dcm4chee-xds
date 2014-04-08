@@ -42,9 +42,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
@@ -87,9 +89,24 @@ import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
+
+
+
+
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * REST services for the browser's frontend. Mostly these are wrappers around
@@ -288,28 +305,69 @@ public class BrowserRESTServicesServlet extends HttpServlet {
             String reconfUrl = null;
             try {
 
+            	// temporary for connectathon
+            	URL url = new URL("http://localhost:8080"); 
+            	
                 if (de.getClass() == XdsRegistry.class) {
-                    URL url = new URL(((XdsRegistry) de).getQueryUrl());
+                    //URL url = new URL(((XdsRegistry) de).getQueryUrl());
                     reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-reg-rs/ctrl/reload");
                 } else if (de.getClass() == XdsRepository.class) {
-                    URL url = new URL(((XdsRepository) de).getProvideUrl());
+                    //URL url = new URL(((XdsRepository) de).getProvideUrl());
                     reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xds-rep-rs/ctrl/reload");
                 } else if (de.getClass() == XCAInitiatingGWCfg.class || de.getClass() == XCARespondingGWCfg.class) {
-                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    //URL url = new URL("http://localhost:8080"); // TODO!!!!!
                     reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xca-rs/ctrl/reload");
                 } else if (de.getClass() == XCAiInitiatingGWCfg.class || de.getClass() == XCAiRespondingGWCfg.class) {
-                    URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    //URL url = new URL("http://localhost:8080"); // TODO!!!!!
                     reconfUrl = String.format("%s://%s/%s", url.getProtocol(), url.getAuthority(), "xcai-rs/ctrl/reload");
                 } else continue;
 
                 
+
+                // bypass certificate validation - we don't transmit any data here   
+
+        		// Create a trust manager that does not validate certificate chains
+/*        		TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+        				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+        					return new X509Certificate[0];
+        				}
+        				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+        				}
+        				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+        				}
+        			}
+        		};
+
+        		// Install the all-trusting trust manager
+        		SSLContext sc = SSLContext.getInstance("TLS");
+        		sc.init(null, trustAllCerts, new java.security.SecureRandom());
+
+        		// Create all-trusting host name verifier
+        		HostnameVerifier allHostsValid = new HostnameVerifier() {
+
+					@Override
+        			public boolean verify(String hostname, SSLSession session) {
+        				return true;
+        			}
+
+        		};*/
+
+                
+                
                 URL obj = new URL(reconfUrl);
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                
+                /*if (obj.getProtocol().equals("https")) {
+	                ((HttpsURLConnection) con).setSSLSocketFactory(sc.getSocketFactory());
+	                ((HttpsURLConnection) con).setHostnameVerifier(allHostsValid);
+                }*/
          
                 con.setRequestMethod("GET");
          
+
+                log.info("Calling configuration reload @ {} ...", reconfUrl);
+                
                 int responseCode = con.getResponseCode();
-                            
                 
             } catch (MalformedURLException e) {
                 log.warn("Url in configuration is malformed for " + de.getClass().getSimpleName() + ", device "
@@ -325,4 +383,6 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     }
     
+
+
 }
