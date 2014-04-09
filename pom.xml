@@ -42,7 +42,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.dcm4che</groupId>
   <artifactId>dcm4chee-xds2-parent</artifactId>
-  <version>2.0.2</version>
+  <version>2.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>XDS implementation for JBoss7/EJB3</name>
   <properties>
@@ -61,7 +61,7 @@
     <skipTests>true</skipTests>
   </properties>
   <modules>
-    <module>dcm4chee-xds2-mvnprepare</module>
+    <!-- <module>dcm4chee-xds2-mvnprepare</module> -->
     <module>dcm4chee-xds2-infoset</module>
     <module>dcm4chee-xds2-common</module>
     <module>dcm4chee-xds2-common-ws</module>
@@ -88,7 +88,7 @@
     <module>dcm4chee-xds2-xca-ear</module>
     <module>dcm4chee-xds2-xcai-ws</module>
     <module>dcm4chee-xds2-xcai-ear</module>
-    <module>dcm4chee-xds2-dist</module>
+    <!-- <module>dcm4chee-xds2-dist</module> -->
   </modules>
   <dependencyManagement>
     <dependencies>
