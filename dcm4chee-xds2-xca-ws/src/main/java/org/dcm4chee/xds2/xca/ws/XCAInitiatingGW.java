@@ -189,9 +189,9 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         String home = req.getAdhocQuery().getHome();
         try {
             boolean isHome = cfg.getHomeCommunityID().equals(home);
+            CxfUtil.disableMTOMResponse(wsContext);
             if (home == null || isHome) {
                 String url = cfg.getRegistryURL();
-                CxfUtil.disableMTOMResponse(wsContext);
                 if (url != null) {
                     rsp = sendStoredQuery(url, req);
                 }
