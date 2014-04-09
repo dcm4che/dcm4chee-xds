@@ -89,7 +89,7 @@ public class XDSDocumentAttachmentHandler implements SOAPHandler<SOAPMessageCont
 
                 for (int i = 0; i < nodeList.getLength(); i++) {
 
-                    Element element = (Element) nodeList.item(0);
+                    Element element = (Element) nodeList.item(i);
                     if(element == null) {
                         continue;
                     }
