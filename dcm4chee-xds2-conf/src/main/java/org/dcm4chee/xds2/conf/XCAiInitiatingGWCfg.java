@@ -108,8 +108,15 @@ public class XCAiInitiatingGWCfg extends DeviceExtension {
         try {
             return srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
         } catch (Exception e) {
-            throw new RuntimeException("Cannot retrieve URL of XDSiSource for source id " + sourceID, e);
-        }
+            try {
+                String srcurl =  srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
+                log.warn("Using default URL of XDSiSource for source id {}!", homeCommunityID);
+                return srcurl;
+            } catch (Exception ee) {
+                throw new RuntimeException("Cannot retrieve URL of XDSiSource for source id " + sourceID, e);
+            }
+
+        }        
     }
 
     public Map<String, Device> getRespondingGWDevicebyHomeCommunityId() {

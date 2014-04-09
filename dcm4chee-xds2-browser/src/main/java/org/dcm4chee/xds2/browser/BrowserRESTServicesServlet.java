@@ -80,6 +80,7 @@ import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 import org.dcm4chee.xds2.conf.XdsBrowser;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
+import org.dcm4chee.xds2.ctrl.GenericDeviceExtensionJSON;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -91,6 +92,7 @@ import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 
@@ -238,46 +240,24 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     }
 
-    private class ExtensionData {
 
-        public String devicename;
-        public String extensiontype;
-        public ConfigNode config;
-
-    }
 
     
     @GET
     @Path("/config/")
     @Produces(MediaType.APPLICATION_JSON)    
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<ExtensionData> getConfig() {
+    public List<GenericDeviceExtensionJSON> getConfig() throws ConfigurationException {
 
         if (browserConfig == null) {
             log.info("No configuration found for the browser, device {}", (device == null ? "null" :device.getDeviceName()));
             return null;
         }
         
-        List<ExtensionData> extData = new ArrayList<ExtensionData>();
+        List<GenericDeviceExtensionJSON> extData = new ArrayList<GenericDeviceExtensionJSON>();
         for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
 
-            ExtensionData edata = new ExtensionData();
-
-            // fill in stuff
-            edata.devicename = de.getDevice().getDeviceName();
-            edata.extensiontype = de.getClass().getSimpleName();
-
-            // serialize the configuration
-            
-            ReflectiveConfig rconfig = new ReflectiveConfig(null, config);
-            ReflectiveAdapter ad = new ReflectiveAdapter(de.getClass());
-            
-            try {
-                edata.config = ad.serialize(de, rconfig, null);
-            } catch (ConfigurationException e) {
-                log.warn("Unable to serialize configuration for presentation in the browser for " + de.getClass().getSimpleName() + ", device "
-                        + de.getDevice().getDeviceName(),e);
-            }
+        	GenericDeviceExtensionJSON edata = GenericDeviceExtensionJSON.serializeDeviceExtension(de);
             
             extData.add(edata);
             
@@ -298,7 +278,6 @@ public class BrowserRESTServicesServlet extends HttpServlet {
             return;
         }
         
-        List<ExtensionData> extData = new ArrayList<ExtensionData>();
         for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
 
             // figure out the URL for reloading the config
