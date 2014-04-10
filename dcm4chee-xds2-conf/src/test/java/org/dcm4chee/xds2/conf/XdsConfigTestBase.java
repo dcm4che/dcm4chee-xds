@@ -485,12 +485,24 @@ public class XdsConfigTestBase {
         repo.setRepositoryUID(XDS_REPO2_UID);
         repo.getSrcDevicebySrcIdMap().put("9999", srcd2);
 
+        repo.getSrcDevicebySrcIdMap().get("1233231").getDeviceExtension(XdsSource.class).setRegistry(d);
+        config.merge(repo.getSrcDevicebySrcIdMap().get("1233231"));
+
+        Device old = config.findDevice("repository");
+
         config.merge(d);
 
         // assert merged
 
         loadConfigAndAssertEquals("repository", XdsRepository.class, repo);
 
+        
+        // assert reconfigure
+        
+        Device dr = config.findDevice("repository");
+        old.reconfigure(dr);
+        
+        loadConfigAndAssertEquals("repository", XdsRepository.class, old.getDeviceExtension(XdsRepository.class));
 
     }
 
