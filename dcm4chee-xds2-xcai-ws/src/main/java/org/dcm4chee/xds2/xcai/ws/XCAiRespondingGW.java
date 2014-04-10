@@ -158,7 +158,16 @@ public class XCAiRespondingGW implements XCAIRespondingGatewayPortType {
             log.info("####################################################");
             log.info("org.jboss.security.ignoreHttpsHost:"+System.getProperty("org.jboss.security.ignoreHttpsHost"));
             try {
-                rsp = port.imagingDocumentSourceRetrieveImagingDocumentSet(req);
+            	if (Boolean.valueOf(System.getProperty("org.dcm4chee.xcai.async"))) {
+            		Response<RetrieveDocumentSetResponseType> rspA = port.imagingDocumentSourceRetrieveImagingDocumentSetAsync(req);
+                    while (!rspA.isDone()) {
+                        Thread.sleep(100);
+                    }
+                    rsp = rspA.get();
+                    log.info("Async Response via callback:"+rsp);
+            	} else {
+            		rsp = port.imagingDocumentSourceRetrieveImagingDocumentSet(req);
+            	}
             } catch ( Exception x) {
                 throw new XDSException( XDSException.XDS_ERR_REPOSITORY_BUSY, "XDS-I Imaging Source not available: "+url, x);
             }
