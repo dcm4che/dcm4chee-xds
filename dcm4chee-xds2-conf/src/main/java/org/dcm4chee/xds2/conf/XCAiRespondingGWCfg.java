@@ -77,17 +77,17 @@ public class XCAiRespondingGWCfg extends DeviceExtension {
     @ConfigField(name = "xdsRetrieveUrl")
     private String retrieveUrl;
 
-    public String getXDSiSourceURL(String homeCommunityID) {
+    public String getXDSiSourceURL(String sourceID) {
         try {
-            return srcDevicebySrcIdMap.get(homeCommunityID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
+            return srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
         } catch (Exception e) {
 
             try {
                 String url = srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-                log.warn("Using default imaging source for home community id {}!", homeCommunityID);
+                log.warn("Using default imaging source for sourceID {}!", sourceID);
                 return url;
             } catch (Exception ee) {
-                throw new RuntimeException("Cannot retrieve source URL for homeCommunityId " + homeCommunityID, e);
+                throw new RuntimeException("Cannot retrieve source URL for sourceID" + sourceID, e);
             }
         }
     }
