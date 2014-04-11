@@ -160,6 +160,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             try {
                 File f;
                 if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
+                	log.info("START_MDC_SPLITTING");
                     logDir = MDC.get("initiatorLogDir");
                     f = new File(logDir, action + ".xml");
                 } else {
