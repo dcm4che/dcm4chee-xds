@@ -62,7 +62,7 @@ import org.dcm4chee.xds2.infoset.rim.ValueListType;
 
 public class Util {
 
-    private static final String OBJECT_TYPE_CLASSIFICATION = "urn:oasis:names:tc:ebxmlregrep:ObjectType:RegistryObject:Classification";
+    private static final String OBJECT_TYPE_CLASSIFICATION = "urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification";
     protected static ObjectFactory rimFactory = new ObjectFactory();
     
     private static SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
