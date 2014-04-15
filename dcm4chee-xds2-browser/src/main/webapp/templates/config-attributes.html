@@ -1,9 +1,9 @@
 		<table class="table table-condensed smallprops">
 			<tr
-				ng-repeat="(k,node) in confignode.attributes" ng-init="confignode = node">
+				ng-repeat="(k,node) in confignode" ng-init="confignode = node">
 				<td>{{k}}</td>
 				<td>
-					<div ng-show="confignode.attributes == null">{{confignode}}</div>
+					<div ng-show="typeof confignode !== 'object'">{{confignode}}</div>
 					<div ng-include = "'templates/config-attributes.html'"></div>
 				</td>
 			</tr>
