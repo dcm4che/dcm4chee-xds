@@ -73,7 +73,6 @@ import org.apache.tika.mime.MimeTypes;
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig.ConfigNode;
 import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;

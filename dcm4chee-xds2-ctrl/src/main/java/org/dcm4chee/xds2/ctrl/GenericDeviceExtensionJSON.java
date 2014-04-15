@@ -1,8 +1,9 @@
 package org.dcm4chee.xds2.ctrl;
 
+import java.util.Map;
+
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig.ConfigNode;
 import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
 import org.dcm4che3.net.DeviceExtension;
 
@@ -10,7 +11,7 @@ public class GenericDeviceExtensionJSON {
 
         public String devicename;
         public String extensiontype;
-        public ConfigNode config;
+        public Map<String,Object> config;
         
         
     	public static GenericDeviceExtensionJSON serializeDeviceExtension(DeviceExtension de) throws ConfigurationException {
