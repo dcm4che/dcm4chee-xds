@@ -40,11 +40,13 @@ package org.dcm4chee.xds2.registry.ws;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -113,6 +115,13 @@ public class XDSTestUtil {
     }
 
     public static WebArchive createDeploymentArchive(@SuppressWarnings("rawtypes") Class testClazz) {
+    	Properties p = new Properties();
+    	try {
+			p.load(XDSTestUtil.class.getResourceAsStream("/version.properties"));
+		} catch (Exception e) {
+			throw new RuntimeException("Failed to load version.properties!", e);
+		}
+    	String version = p.getProperty("version");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
         .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
                 XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class, XdsService.class, XdsTestServiceImpl.class)
@@ -152,11 +161,11 @@ public class XDSTestUtil {
         .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/testCodeClassifications.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/testCodeClassifications.xml") 
         .addAsWebResource(new ByteArrayAsset(new byte[0]), ArchivePaths.create("WEB-INF/beans.xml"))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-infoset:2.0.2").withoutTransitivity().as(File.class))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-common:2.0.2").withoutTransitivity().asSingle(File.class))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-conf:2.0.2").withoutTransitivity().asSingle(File.class))
-        //.addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-service:2.0.2").withoutTransitivity().asSingle(File.class))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-persistence:jar:" + System.getProperty("db") + ":2.0.2").withoutTransitivity().asSingle(File.class));
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-infoset:"+version).withoutTransitivity().as(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-common:"+version).withoutTransitivity().asSingle(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-conf:"+version).withoutTransitivity().asSingle(File.class))
+        //.addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-service:"+version).withoutTransitivity().asSingle(File.class))
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-registry-persistence:jar:" + System.getProperty("db") + ":"+version).withoutTransitivity().asSingle(File.class));
 
         war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;
@@ -304,7 +313,8 @@ public class XDSTestUtil {
             testSession.removeAllIdentifiables(ebXmlClassificationSchemeIds);
         }
         log.info("remove test patients");
-        testSession.removeTestPatients(TEST_PID_MERGED, TEST_PID_1, TEST_PID_2);
+        testSession.removeTestPatients(TEST_PID_MERGED);
+        testSession.removeTestPatients(TEST_PID_1, TEST_PID_2);
         log.info("remove test issuer");
         testSession.removeTestIssuerByNamespaceId("dcm4che_test");
         log.info("remove test XDSCodes");

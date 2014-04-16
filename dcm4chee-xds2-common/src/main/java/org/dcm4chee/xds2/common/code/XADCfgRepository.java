@@ -80,6 +80,9 @@ public class XADCfgRepository implements Serializable {
         }
     }
     
+    protected AffinityDomainCodes getCodesOfDomain(String affinityDomain) {
+    	return adCodesMap.get(affinityDomain);
+    }
     public AffinityDomainCodes getAffinityDomainCodes(String affinityDomain) {
         AffinityDomainCodes codes = adCodesMap.get(affinityDomain);
         return codes == null ? initCodes(affinityDomain) : codes;

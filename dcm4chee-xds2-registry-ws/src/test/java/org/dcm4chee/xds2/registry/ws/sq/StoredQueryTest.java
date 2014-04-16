@@ -625,4 +625,24 @@ public class StoredQueryTest {
     public void findDocumentsByAccession112233() {
         findDocRefIdsTests.findDocumentsByAccession112233();
     }
+    @Test
+    public void findDocumentsByAccession445566() {
+        findDocRefIdsTests.findDocumentsByAccession445566();
+    }
+    @Test
+    public void findDocumentsByRefUID1() {
+        findDocRefIdsTests.findDocumentsByRefUID1();
+    }
+    @Test
+    public void findDocumentsByRefUID2() {
+        findDocRefIdsTests.findDocumentsByRefUID2();
+    }
+    @Test
+    public void findDocumentsByRefUID1or3() {
+        findDocRefIdsTests.findDocumentsByRefUID1or3();
+    }
+    @Test
+    public void findDocumentsByRefUID1and3() {
+        findDocRefIdsTests.findDocumentsByRefUID1and3();
+    }
 }

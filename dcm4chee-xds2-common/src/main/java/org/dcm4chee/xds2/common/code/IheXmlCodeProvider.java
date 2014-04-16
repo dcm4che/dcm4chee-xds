@@ -125,8 +125,13 @@ public class IheXmlCodeProvider implements XADCfgProviderSPI, Serializable {
 
     private AffinityDomainCodes readCodes(XADCfgRepository codeRep, String affinityDomain) {
         AffinityDomainCodes codes = readCodeFile(codeRep, affinityDomain);
-        if (codes == null)
-            codes = readCodeFile(codeRep, DEFAULT_DOMAIN);
+        if (codes == null) {
+        	if (!DEFAULT_DOMAIN.equals(affinityDomain)) {
+        		codes = codeRep.getCodesOfDomain(DEFAULT_DOMAIN);
+        		if (codes == null)
+        			codes = readCodeFile(codeRep, DEFAULT_DOMAIN);
+        	}
+        }
         return codes == null ? new AffinityDomainCodes() : codes;
     }
     

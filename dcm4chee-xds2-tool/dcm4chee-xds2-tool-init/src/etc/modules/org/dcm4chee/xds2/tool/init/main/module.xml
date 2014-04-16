@@ -23,8 +23,8 @@
 	<main-class name="org.dcm4chee.xds2.tool.init.XDSInit" />
 
 	<resources>
-		<resource-root path="dcm4chee-xds2-tool-init-2.0.0.jar" />
-		<resource-root path="dcm4chee-xds2-infoset-2.0.0.jar" />
+		<resource-root path="dcm4chee-xds2-tool-init-2.0.2.jar" />
+		<resource-root path="dcm4chee-xds2-infoset-2.0.2.jar" />
 	</resources>
 
 	<dependencies>

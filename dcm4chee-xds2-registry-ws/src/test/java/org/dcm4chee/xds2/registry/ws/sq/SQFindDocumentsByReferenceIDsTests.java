@@ -100,4 +100,79 @@ public class SQFindDocumentsByReferenceIDsTests extends AbstractSQTests {
         chk.checkResponse(rsp);
     }
     
+    /**
+     * Query for document with Accessionnumber 445566
+     * returns LeafClass   
+     * must return: DocC and DocD
+     */
+    public void findDocumentsByAccession445566() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, REF_ID_ACCESSION_445566);
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setDocUUIDs(DOC_C_UUID, DOC_D_UUID);
+        chk.setDocNames(DOC_C, DOC_D);
+        chk.setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
+    /**
+     * Query for document with UniqueID 1
+     * returns LeafClass   
+     * must return: DocA
+     */
+    public void findDocumentsByRefUID1() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, REF_ID_UID_1);
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setDocUUIDs(DOC_A_UUID);
+        chk.setDocNames(DOC_A);
+        chk.setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
+    /**
+     * Query for document with UniqueID 2
+     * returns LeafClass   
+     * must return: DocC
+     */
+    public void findDocumentsByRefUID2() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, REF_ID_UID_2);
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setDocUUIDs(DOC_C_UUID);
+        chk.setDocNames(DOC_C);
+        chk.setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
+    /**
+     * Query for document with UniqueID 1 or 3
+     * returns LeafClass   
+     * must return: DocA and DocD
+     */
+    public void findDocumentsByRefUID1or3() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, 
+        		"('"+REF_ID_UID_1+"','"+REF_ID_UID_3+"')");
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setDocUUIDs(DOC_A_UUID, DOC_D_UUID);
+        chk.setDocNames(DOC_A, DOC_D);
+        chk.setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
+    /**
+     * Query for document with UniqueID 1 and 3
+     * returns LeafClass   
+     * must return: nothing
+     */
+    public void findDocumentsByRefUID1and3() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, "('"+REF_ID_UID_1+"')");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, "('"+REF_ID_UID_3+"')");
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setNrOfDocs(0).setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
 }

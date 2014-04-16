@@ -292,5 +292,14 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<testResources>
+		    <testResource>
+		    	<directory>src/test/resources/org/dcm4chee/xds2/registry/ws</directory>
+    		    <filtering>true</filtering>
+    		    <includes>
+          			<include>version.properties</include>
+        		</includes>
+		    </testResource>
+		</testResources>
 	</build>
 </project>
