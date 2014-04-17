@@ -645,4 +645,9 @@ public class StoredQueryTest {
     public void findDocumentsByRefUID1and3() {
         findDocRefIdsTests.findDocumentsByRefUID1and3();
     }
+    
+    @Test
+    public void findDocumentsByRefUID1or2andAccNr445566() {
+        findDocRefIdsTests.findDocumentsByRefUID1or2andAccNr445566();
+    }
 }

@@ -175,4 +175,21 @@ public class SQFindDocumentsByReferenceIDsTests extends AbstractSQTests {
         chk.setNrOfDocs(0).setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
         chk.checkResponse(rsp);
     }
+    /**
+     * Query for document with UniqueID 1 or 2 AND AccessionNumber 445566
+     * returns LeafClass   
+     * must return: DocC
+     */
+    public void findDocumentsByRefUID1or2andAccNr445566() {
+        AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocumentsByReferenceId, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, 
+        		"('"+REF_ID_UID_1+"','"+REF_ID_UID_2+"')");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_REFERENCED_ID_LIST, "('"+REF_ID_ACCESSION_445566+"')");
+        AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
+        QueryResultCheck chk = new QueryResultCheck();
+        chk.setDocUUIDs(DOC_C_UUID);
+        chk.setDocNames(DOC_C);
+        chk.setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0);
+        chk.checkResponse(rsp);
+    }
 }
