@@ -1,5 +1,6 @@
 package org.dcm4chee.xds2.conf;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,8 +18,10 @@ import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 
 @ConfigClass(commonName = "XDSBrowser", objectClass = "xdsBrowser")
-public class XdsBrowser {
+public class XdsBrowser implements Serializable{
 
+    private static final long serialVersionUID = -5562793784627575025L;
+    
     /**
      * Extensions of which devices the browser can
      * start/stop/reconfigure/monitor. Map extensionName-device

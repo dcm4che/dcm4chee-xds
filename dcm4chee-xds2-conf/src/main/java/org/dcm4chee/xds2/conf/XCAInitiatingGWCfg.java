@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.conf;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +61,10 @@ import org.slf4j.LoggerFactory;
 public class XCAInitiatingGWCfg extends DeviceExtension {
 
     @ConfigClass(objectClass = "xdsGatewayRef")
-    public static class GatewayReference {
+    public static class GatewayReference implements Serializable 
+    {
+
+        private static final long serialVersionUID = 9174301221517954931L;
 
         @ConfigField(name = "xdsAffinityDomain")
         private String affinityDomain;
