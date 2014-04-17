@@ -57,8 +57,9 @@ import org.junit.runner.RunWith;
 public class XdsConfigPrefsTest extends XdsConfigTestBase {
 
     //Used by IgnoreableJUnitTestRunner to check if all tests of this class should be ignored
+    // Prefs test are enabled regardless of ldap property
     public static boolean ignoreTests() {
-        return System.getProperty("ldap") != null;
+        return false;
     }
 
     @Before
