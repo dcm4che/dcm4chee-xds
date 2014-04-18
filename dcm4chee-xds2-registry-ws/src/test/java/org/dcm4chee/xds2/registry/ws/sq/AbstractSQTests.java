@@ -55,6 +55,7 @@ public abstract class AbstractSQTests {
     private static ObjectFactory factory = new ObjectFactory();
     private List<SlotType1> paramSlots;
     public static final String TEST_PAT_ID = "'test1234_1^^^&1.2.3.45.4.3.2.1&ISO'";
+    public static final String TEST_PAT_ID2 = "'test1234_2^^^&1.2.3.45.4.3.2.1&ISO'";
     
     protected static final String DOC_A = "DocA";//single_doc.xml
     protected static final String DOC_A_UUID = "urn:uuid:aabbccdd-bdda-424e-8c96-df4873ba1001";

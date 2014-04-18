@@ -37,10 +37,6 @@ package org.dcm4chee.xds2.registry.ws.sq;
  *
  * ***** END LICENSE BLOCK ***** */
 
-
-
-import java.util.List;
-
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
