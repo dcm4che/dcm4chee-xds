@@ -24,6 +24,11 @@ xdsCommon.controller('ServiceManagerCtrl', [ '$scope', '$http',
 			});
 		};
 		
+		// decides whether to go deeper recursively for the viewer for the provided node   
+		$scope.doShowExtended = function(node) {
+			return typeof node === 'object';
+		};
+		
 		// load config
 		$scope.reloadConfig();
 

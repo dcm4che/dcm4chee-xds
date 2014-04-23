@@ -1,10 +1,10 @@
 		<table class="table table-condensed smallprops">
 			<tr
-				ng-repeat="(k,node) in confignode" ng-init="confignode = node">
+				ng-repeat="(k,node) in confignode">
 				<td>{{k}}</td>
-				<td>
-					<div ng-show="typeof confignode !== 'object'">{{confignode}}</div>
-					<div ng-include = "'templates/config-attributes.html'"></div>
+				<td ng-init="confignode = node">
+					<div ng-show="!doShowExtended(confignode)">{{confignode}}</div>
+					<div ng-if="doShowExtended(confignode)" ng-include = "'templates/config-attributes.html'"></div>
 				</td>
 			</tr>
 		</table>

@@ -182,6 +182,7 @@
 						<webModule>
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-browser</artifactId>
+							<contextRoot>/xds-browser</contextRoot>
 						</webModule>
 					</modules>
 					<version>6</version>
