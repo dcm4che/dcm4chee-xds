@@ -96,6 +96,10 @@ public class XDSRegistryTestBean {
         return obj;
     }
 
+    public EntityManager getEm() {
+        return em;
+    }
+
     public XDSDocumentEntry getDocumentEntryByUUID(String uuid) {
         return (XDSDocumentEntry) getObjectByNamedQuery(XDSDocumentEntry.FIND_BY_UUID, uuid);
     }
@@ -210,6 +214,10 @@ public class XDSRegistryTestBean {
         Query q = em.createQuery("DELETE FROM XDSCode c WHERE c.codingSchemeDesignator LIKE ?1");
         q.setParameter(1, "dcm4che %");
         q.executeUpdate();
+    }
+    
+    public Long getTotalIdentifiablesCount() {
+        return (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
     }
 
 // Helper for compare RegistryObjects of jaxb and persistence objects    

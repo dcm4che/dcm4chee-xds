@@ -43,6 +43,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
 
 public interface XDSRegistryBeanLocal {
 
@@ -52,4 +53,6 @@ public interface XDSRegistryBeanLocal {
     boolean mergePatient(String subsumedPID, String survivingPID) throws XDSException;
     
     List<String> listPatientIDs(String affinityDomain);
+    
+    void deleteObjects(RemoveObjectsRequest removeReq);
 }

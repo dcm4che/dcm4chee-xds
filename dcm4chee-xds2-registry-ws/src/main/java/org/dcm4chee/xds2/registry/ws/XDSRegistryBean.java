@@ -90,6 +90,7 @@ import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
+import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
@@ -801,5 +802,54 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     public EntityManager getEntityManager() {
         return em;
     }
+
+    /**
+     * NOT PROPERLY SUPPORTED! FOR NOW, THIS IS ONLY USED LOCALLY BY THE BROWSER. <br/>
+     * 
+     * Deletes identifiables from the registry according to the IHE "metadata delete" specification. 
+       <br/><br/>   
+      
+      <a href='http://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_Suppl_XDS_Metadata_Update.pdf'> Spec</a>
+      3.62.4.1.2 Message Semantics 
+        The Document Administrator actor is responsible to discover the entryUUID attribute value of 
+        the objects that are to be deleted through the Registry Stored Query [ITI-18] transaction or 
+        known history of the metadata. The entryUUID attribute values are packaged as an ObjectRef 
+        list in the request message. <br/><br/>
+        
+        Since a DocumentEntry always has at least a HasMember association to its SubmissionSet and 
+        an object cannot be deleted while association objects still reference it, to delete the 
+        DocumentEntry, the minimal deletion request is for the DocumentEntry and Association objects. 
+        The ebRS 3.0 RemoveObjectsRequest message shall be used. The following restrictions shall be 
+        followed:<br/><br/>
+         
+        1. The AdhocQuery parameter shall not be specified. Deletions are specified only by the 
+        ObjectRefList. <br/>
+        2. The deletionScope parameter shall not be specified.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public void deleteObjects(RemoveObjectsRequest removeReq) {
+
+        // extract ids into a string list
+       List<ObjectRefType> list = removeReq.getObjectRefList().getObjectRef();
+       List<String> uuids = new ArrayList<String>();
+       
+       for (ObjectRefType objRef : list) {
+           uuids.add(objRef.getId());
+       }
+       
+       // Deletion. The JPA DELETE query does not handle cascading, so we  
+       // get objects manually and remove them one by one for now.
+
+       log.info("Deleting objects with uuids {}",uuids);
+       
+       List<RegistryObject> objs = em.createQuery("SELECT r FROM RegistryObject r WHERE r.id IN (:uuids)").setParameter("uuids", uuids).getResultList();
+       
+       for (RegistryObject obj : objs)
+           em.remove(obj);
+       
+    }
+    
+    
 }
 

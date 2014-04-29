@@ -45,25 +45,40 @@ import static org.junit.Assert.fail;
 import static org.junit.Assert.assertFalse;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
+import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
+import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
+import org.dcm4chee.xds2.infoset.rim.ObjectRefListType;
+import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
+import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
+import org.dcm4chee.xds2.infoset.rim.ResponseOptionType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.registry.AuditTestManager;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
+import org.dcm4chee.xds2.registry.ws.sq.AbstractSQTests;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -78,6 +93,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
+
 @RunWith(Arquillian.class)
 public class RegisterDocumentSetTest {
     private static final int NUMBER_OF_TEST_METHODS = 
@@ -96,6 +112,8 @@ public class RegisterDocumentSetTest {
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterAssocBeforeDoc.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterTwoDocuments.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterTwoDocuments.xml")
+            .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterTwoDocumentsForDeletion.xml")), 
+                "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterTwoDocumentsForDeletion.xml")
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/ResubmitInitialDoc.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/ResubmitInitialDoc.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/ResubmitWrongHash.xml")), 
@@ -192,6 +210,7 @@ public class RegisterDocumentSetTest {
         log.info("\n###### "+testName+" done in "+(System.currentTimeMillis()-t1)+"ms ######");
     }
 
+    
     private void doRegisterDocumentAndCheck(SubmitObjectsRequest req, String errorCode) {
         RegistryResponseType rsp = null;
         try {
@@ -279,5 +298,62 @@ public class RegisterDocumentSetTest {
               fail("RegistryPackage is neither SubmissionSet nor Folder!");  
             }
         }
+    }
+    
+    
+    @Test
+    public void checkDelete() throws JAXBException {
+        log.info("\n############################# TEST: Deleting entities ############################");
+        
+        Long total;
+        total = testSession.getTotalIdentifiablesCount();
+        log.info("Total identifiables before registering: {}",total);
+        
+        SubmitObjectsRequest sor = XDSTestUtil.getSubmitObjectsRequest("RegisterTwoDocumentsForDeletion.xml");
+        RegistryResponseType rsp = session.documentRegistryRegisterDocumentSetB(sor);
+        
+        List<String> uuids = new ArrayList<String>();
+        
+        for (JAXBElement<? extends IdentifiableType> elem : sor.getRegistryObjectList().getIdentifiable()) {
+            String uuid = elem.getValue().getId();
+            uuids.add(uuid);
+        }
+        
+        // check that identifiables stored and generate the delete request
+        
+        log.info("Total identifiables after registering: {}",testSession.getTotalIdentifiablesCount());
+
+        RemoveObjectsRequest ror = new RemoveObjectsRequest();
+        ObjectRefListType lt = new ObjectRefListType();
+
+        for (String uuid : uuids) {
+            RegistryObject ro = testSession.getRegistryObjectByUUID(uuid);
+            if (ro == null) throw new RuntimeException("The identifiable was supposed to be stored - uuid "+uuid);
+            log.info("Stored identifiable id {}, type {}", uuid, ro.getObjectType());
+            
+            ObjectRefType oref = new ObjectRefType();
+            oref.setId(uuid);
+            lt.getObjectRef().add(oref);
+        }
+        
+        ror.setObjectRefList(lt);
+        
+        
+        // do the deletion   
+        
+        session.deleteObjects(ror);
+        
+        // check
+        
+        for (String uuid : uuids) {
+            RegistryObject ro = testSession.getRegistryObjectByUUID(uuid);
+            assertEquals("Identifiable "+uuid+" should have been deleted", ro, null);
+        }
+        
+        assertEquals("Amount of identifiables must be equal before adding and after deleting objects", total, testSession.getTotalIdentifiablesCount());
+
+        
+        
+        
     }
 }
