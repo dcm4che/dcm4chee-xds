@@ -50,7 +50,7 @@
     <hibernate.version>4.0.1.Final</hibernate.version>
     <querydsl.version>3.2.3</querydsl.version>
     <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
-    <db>mysql</db>
+    <db>oracle</db>
     <ds>java:/xdsDS</ds>
     <show_sql>false</show_sql>
     <hbm2ddl.auto>update</hbm2ddl.auto>
