@@ -43,6 +43,7 @@ import java.util.List;
 import javax.ejb.Local;
 
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
 
 public interface XDSRegistryBeanLocal {
@@ -54,5 +55,5 @@ public interface XDSRegistryBeanLocal {
     
     List<String> listPatientIDs(String affinityDomain);
     
-    void deleteObjects(RemoveObjectsRequest removeReq);
+    RegistryResponseType deleteObjects(RemoveObjectsRequest removeReq);
 }

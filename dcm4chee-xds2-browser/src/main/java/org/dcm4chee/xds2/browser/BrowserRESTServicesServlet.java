@@ -90,6 +90,9 @@ import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
+import org.dcm4chee.xds2.infoset.rim.ObjectRefListType;
+import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
+import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
 import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
@@ -169,11 +172,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     @Path("/reg/query/")
     @Produces(MediaType.APPLICATION_JSON)
     public AdhocQueryResponse query(AdhocQueryRequest req) {
-
-        AdhocQueryResponse rsp = xdsRegistryBean
-                .documentRegistryRegistryStoredQuery(req);
-
-        return rsp;
+        return xdsRegistryBean.documentRegistryRegistryStoredQuery(req);
     }
 
     private Map<String, XdsRepository> getAllRepositories()
@@ -206,10 +205,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     public List<String> getAllowedRepoIds(AdhocQueryRequest req)
             throws ConfigurationException {
         return new ArrayList<String>(getAllRepositories().keySet());
-        // return Arrays.asList("1.2.3.4.5.999");
     }
-
-    // TODO: configure repositoryId-url from ldap ?
 
     /**
      * Retrieves a doc from a repository and returns it as a downloadable file
@@ -283,7 +279,6 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     @GET
     @Path("/config/")
     @Produces(MediaType.APPLICATION_JSON)
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<GenericDeviceExtensionJSON> getConfig()
             throws ConfigurationException {
 
@@ -403,8 +398,13 @@ public class BrowserRESTServicesServlet extends HttpServlet {
             }
 
         }
-        ;
 
+    }
+    
+    @POST
+    @Path("/reg/delete/")
+    public void deleteRegistryObjects(RemoveObjectsRequest removeReq) {
+        xdsRegistryLocalBean.deleteObjects(removeReq);
     }
 
 }

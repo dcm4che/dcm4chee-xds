@@ -143,6 +143,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
     
+    
     @Inject
     private Device device;
     private XdsRegistry cfg;
@@ -828,7 +829,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void deleteObjects(RemoveObjectsRequest removeReq) {
+    public RegistryResponseType deleteObjects(RemoveObjectsRequest removeReq) {
 
         // extract ids into a string list
        List<ObjectRefType> list = removeReq.getObjectRefList().getObjectRef();
@@ -843,10 +844,14 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
        log.info("Deleting objects with uuids {}",uuids);
        
+
        List<RegistryObject> objs = em.createQuery("SELECT r FROM RegistryObject r WHERE r.id IN (:uuids)").setParameter("uuids", uuids).getResultList();
        
        for (RegistryObject obj : objs)
            em.remove(obj);
+       
+       
+       return null;
        
     }
     
