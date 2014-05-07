@@ -37,6 +37,13 @@
 	<name>EJB Webservice classes for XDS.b Registry (ebRS v3.0)</name>
 	<dependencies>
 		<dependency>
+			<!-- for auto-initialization -->
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-tool-init</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-infoset</artifactId>
 			<version>${project.version}</version>
@@ -286,7 +293,7 @@
 					<ejbVersion>3.1</ejbVersion>
 			          <archive>
 			            <manifestEntries>
-							<Dependencies>com.mysema.querydsl,org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit,org.dcm4che.conf.ldap-audit,org.dcm4che.conf.prefs-audit</Dependencies>
+					<Dependencies>com.mysema.querydsl,org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit,org.dcm4che.conf.ldap-audit,org.dcm4che.conf.prefs-audit, org.apache.commons.cli</Dependencies>
 			            </manifestEntries>
 			          </archive>
 				</configuration>

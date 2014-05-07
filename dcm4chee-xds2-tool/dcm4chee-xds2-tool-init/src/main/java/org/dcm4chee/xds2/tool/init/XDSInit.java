@@ -27,6 +27,8 @@ import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 public class XDSInit {
     private static final String DEFAULT_WSDL_URL = "http://localhost:8080/dcm4chee-xds/XDSbRegistry/b?wsdl";
     
+    private static final String[] defaultFiles = {"initialize.xml", "ebXmlAssociationTypes.xml"}; 
+    
     public static void main(String[] args) throws Exception {
         CommandLine cl = parseComandLine(args);
         URL url = new URL(cl.getOptionValue("wsdl", DEFAULT_WSDL_URL));
@@ -37,31 +39,48 @@ public class XDSInit {
             if (cl.hasOption("additional")) {
                 filenames = Arrays.asList("additional.xml");
             } else {
-                filenames = Arrays.asList("initialize.xml", "ebXmlAssociationTypes.xml");
+                filenames = Arrays.asList(defaultFiles);
             }
         }
+        System.out.print("Looking up endpoint URL "+url+" ...");
         QName name = new QName("urn:ihe:iti:xds-b:2007", "XDSbRegistry");
         Service service = Service.create(url, name);
         DocumentRegistryPortType docRegistry = (DocumentRegistryPortType) 
         service.getPort(DocumentRegistryPortType.class, new AddressingFeature());
+        System.out.print("Adding definitions...");
+        try {
+            initializeRegistry(filenames, defaultInit, docRegistry);
+        } catch (Exception e) {
+            System.out.println(getExceptionMessage(e, " - FAILURE!\nError(s):"));
+            return;
+        }
+        System.out.println("SUCCESS!");
+    }
+
+
+    public static void initializeRegistry(List<String> filenames, boolean defaultInit, DocumentRegistryPortType docRegistry)  {
         for (String fn : filenames) {
-            System.out.print("Send '"+fn+"' to "+url);
-            try {
-                SubmitObjectsRequest req = getSubmitObjectsRequest(fn, defaultInit);
+                SubmitObjectsRequest req;
+                try {
+                    req = getSubmitObjectsRequest(fn, defaultInit);
+                } catch (FileNotFoundException | JAXBException e) {
+                    throw new RuntimeException(e);
+                }
                 RegistryResponseType rsp = docRegistry.documentRegistryRegisterDocumentSetB(req);
                 if (!"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success".equals(rsp.getStatus())){
-                    System.out.println(" - FAILURE!\nErrors:");
+                    String errorMsg = "";
                     int i = 1;
                     for (RegistryError err : rsp.getRegistryErrorList().getRegistryError()) {
-                        System.out.println((i++)+") "+err.getErrorCode()+" : "+err.getCodeContext());
+                        errorMsg += (i++)+") "+err.getErrorCode()+" : "+err.getCodeContext()+"\n";
                     }
-                } else {
-                    System.out.println(" - SUCCESS!");
-                }
-            } catch (Exception x) {
-                System.out.println(getExceptionMessage(x, " - Send failed! Reason:"));
-            }
+                    throw new RuntimeException(errorMsg);
+                } 
         }
+    }
+
+
+    public static void autoInitializeRegistry(DocumentRegistryPortType docRegistry) {
+        initializeRegistry(Arrays.asList(defaultFiles), true, docRegistry);
     }
 
 

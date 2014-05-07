@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
+import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,6 +63,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
@@ -106,6 +108,7 @@ import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
+import org.dcm4chee.xds2.tool.init.XDSInit;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -143,7 +146,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
     
-    
+   
     @Inject
     private Device device;
     private XdsRegistry cfg;
@@ -855,6 +858,18 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
        
     }
     
-    
+    @Override
+    public void checkAndAutoInitializeRegistry()  {
+        // if there are no identifiables in the database, perform the XDS initialization
+        Long identifiablesTotal = (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
+        if (identifiablesTotal == 0) {
+            log.info("Initializing XDS Registry with default metadata...");
+            XDSInit.autoInitializeRegistry(this);
+            log.info("XDS Registry successfully initialized");
+        } else {
+            log.info("XDS Registry already contains data - no initialization needed");
+        }
+        
+    }
 }
 

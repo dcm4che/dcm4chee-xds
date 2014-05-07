@@ -56,4 +56,6 @@ public interface XDSRegistryBeanLocal {
     List<String> listPatientIDs(String affinityDomain);
     
     RegistryResponseType deleteObjects(RemoveObjectsRequest removeReq);
+
+    void checkAndAutoInitializeRegistry();
 }
