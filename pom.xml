@@ -58,6 +58,26 @@
     <jboss.version>6.0.0.Final</jboss.version>
     <skipTests>true</skipTests>
   </properties>
+
+  <profiles>
+    <profile>
+      <!-- Works only with maven 3.0.2 and above-->
+      <id>jdbc-prefs</id>
+      <properties>
+        <jdbc-prefs.version>1.1.0-SNAPSHOT</jdbc-prefs.version>
+      </properties>
+    </profile>
+    <profile>
+      <!-- Produces agility-specific artifacts -->
+      <id>asb</id>
+      <properties>
+        <asb>-asb</asb>
+	<ds>java:jboss/datasources/OracleDS</ds>
+	<hbm2ddl.auto>validate</hbm2ddl.auto>
+      </properties>
+    </profile>
+  </profiles>
+
   <modules>
     <module>dcm4chee-xds2-mvnprepare</module>
     <module>dcm4chee-xds2-infoset</module>
