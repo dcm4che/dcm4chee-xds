@@ -5,19 +5,19 @@
 
 <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
 <link rel="stylesheet" href="lib/icons/icomoon.css">
+<link rel="stylesheet" href="lib/angular-motion.css">
 
 </head>
 
+<script type="text/javascript" src="lib/underscore.js"></script>
 <script type="text/javascript" src="lib/jquery.js"></script>
 <script type="text/javascript" src="lib/angular.js"></script>
+<script type="text/javascript" src="lib/angular-sanitize.js"></script>
+<script type="text/javascript" src="lib/angular-animate.js"></script>
 <script type="text/javascript" src="lib/angular-route.js"></script>
+
 <script type="text/javascript" src="lib/angular-strap.js"></script>
 <script type="text/javascript" src="lib/angular-strap.tpl.js"></script>
-<script type="text/javascript" src="lib/angular-animate.js"></script>
-<script type="text/javascript" src="lib/angular-sanitize.js"></script>
-
-
-<script type="text/javascript" src="lib/underscore.js"></script>
 
 <script type="text/javascript" src="js/app.js"></script>
 <script type="text/javascript" src="js/appCommon.js"></script>
@@ -53,7 +53,9 @@
 	font-size: 150%;
 }
 
-
+.wide-popover {
+	width:300px;
+}
 
 </style>
 </head>
@@ -71,13 +73,17 @@
             <li><a href="#/step/0">Registry browser</a></li>
             <li><a href="#/service-manager">Service management</a></li>
           </ul>
+          
+          <ul class="nav navbar-nav navbar-right">
+            <li><a app-notifications-popover>Notifications...</a></li>
+	      </ul>
 
         </div><!--/.nav-collapse -->
       </div>
     </div>
-						
-	<div class="container" ng-controller="LandingCtrl">
 
+	<div class="container" ng-controller="LandingCtrl">
+	
 		<div class="row">
 			<div ng-view></div>
 		</div>

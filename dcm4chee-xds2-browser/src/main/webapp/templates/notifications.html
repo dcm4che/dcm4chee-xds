@@ -1,0 +1,8 @@
+<div class="popover wide-popover">
+  <div class="arrow"></div>
+  <h3 class="popover-title">Notifications</h3>
+  <div class="popover-content">
+	<div ng-repeat="n in appNotifications.notifications" class='alert' ng-class="'alert-'+n.level">{{n.text}}</div>  
+  </div>
+</div>  
+	

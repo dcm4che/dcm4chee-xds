@@ -19,7 +19,7 @@ xdsQueries.factory('xdsPatientIds', [ 'appHttp', 'appNotifications', function(ap
 			pids.list = data;
 		}, function(data, status) {
 			appNotifications.showNotification({
-				level : "error",
+				level : "danger",
 				text : "Could not load patient ids",
 				details : [ data, status ]
 			});
@@ -106,7 +106,7 @@ xdsQueries.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', function(ap
 
 		appHttp.post("data/reg/query/", request, callback, function(data, status) {
 			appNotifications.showNotification({
-				level : "error",
+				level : "danger",
 				text : "Could not execute adhoc query",
 				details : [ data, status ]
 			});
@@ -155,7 +155,7 @@ xdsQueries.factory('xdsDeleteObjectsService', [ 'appHttp', 'appNotifications', f
 			});
 		}, function(data, status) {
 			appNotifications.showNotification({
-				level : "error",
+				level : "warning",
 				text : "Could not delete objects",
 				details : [ data, status ]
 			});

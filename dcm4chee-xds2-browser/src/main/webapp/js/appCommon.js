@@ -1,4 +1,4 @@
-var appCommon = angular.module('appCommon', []);
+var appCommon = angular.module('appCommon', ['mgcrea.ngStrap.popover']);
 
 appCommon.factory('appLoadingIndicator', [ 'xdsConstants', function(xdsConstants) {
 
@@ -89,8 +89,9 @@ appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xds
 					details:message.details,
 					time: new Date()
 				});
+			var notifs = this;
 			$timeout(function() {
-				this.notifications.shift();
+				notifs.notifications.shift();
 			}, messageShowTimeout);
 		},
 		notifications : [],
@@ -99,6 +100,26 @@ appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xds
 
 	return notifications;
 } ]);
+
+
+appCommon.directive('appNotificationsPopover',['appNotifications','$popover', function(appNotifications, $popover) {
+	return {
+		link:function($scope, element, atttributes) {
+			// bind popover to the element
+			$scope.appNotifications = appNotifications;
+			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'templates/notifications.html', animation: "am-flip-x"});
+
+			$scope.$watch("appNotifications.notifications.length",function() {
+				if (appNotifications.notifications.length > 0)
+					myPopover.$promise.then(myPopover.show); else 
+						myPopover.$promise.then(myPopover.hide);
+						
+			});
+		}
+	};
+}]);
+
+
 
 appCommon.factory('getIconClassForType', function() {
 
@@ -115,6 +136,6 @@ appCommon.factory('getIconClassForType', function() {
 		default:
 			return "icon-file4";
 		}
-	}
+	};
 	return getIconClassForType;
 });
