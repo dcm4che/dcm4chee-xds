@@ -9,8 +9,8 @@
 	<access>FIELD</access>
 
 	<entity class="Description">
-		<table name="description" />
-		<sequence-generator name="seq" sequence-name="description_pk_seq"
+		<table name="xds_description" />
+		<sequence-generator name="seq" sequence-name="xds_description_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -20,9 +20,9 @@
 		</attributes>
 	</entity>
 	<entity class="Identifiable">
-		<table name="identifiable" />
+		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
-		<sequence-generator name="seq" sequence-name="identifiable_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_identifiable_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -32,8 +32,8 @@
 		</attributes>
 	</entity>
 	<entity class="Name">
-		<table name="name" />
-		<sequence-generator name="seq" sequence-name="name_pk_seq"
+		<table name="xds_name" />
+		<sequence-generator name="seq" sequence-name="xds_name_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -43,8 +43,8 @@
 		</attributes>
 	</entity>
 	<entity class="Slot">
-		<table name="slot" />
-		<sequence-generator name="seq" sequence-name="slot_pk_seq"
+		<table name="xds_slot" />
+		<sequence-generator name="seq" sequence-name="xds_slot_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -57,8 +57,8 @@
 		</attributes>
 	</entity>
 	<entity class="XADIssuer">
-		<table name="xad_issuer" />
-		<sequence-generator name="seq" sequence-name="xadissuer_pk_seq"
+		<table name="xds_xad_issuer" />
+		<sequence-generator name="seq" sequence-name="xds_xadissuer_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -68,8 +68,8 @@
 		</attributes>
 	</entity>
 	<entity class="XADPatient">
-		<table name="xad_patient" />
-		<sequence-generator name="seq" sequence-name="xadpatient_pk_seq"
+		<table name="xds_xad_patient" />
+		<sequence-generator name="seq" sequence-name="xds_xadpatient_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -79,8 +79,8 @@
 		</attributes>
 	</entity>
 	<entity class="XDSCode">
-		<table name="xds_code" />
-		<sequence-generator name="seq" sequence-name="xdscode_pk_seq"
+		<table name="xds_xds_code" />
+		<sequence-generator name="seq" sequence-name="xds_xdscode_pk_seq"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">

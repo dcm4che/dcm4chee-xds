@@ -60,7 +60,7 @@ import org.hibernate.annotations.Index;
  * @since Nov 02, 2011
  */
 @Entity
-@Table(name = "name")
+@Table(name = "xds_name")
 public class Name implements InternationalString, Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
@@ -77,7 +77,7 @@ public class Name implements InternationalString, Serializable {
     private String charset;
     
     @Column(name = "value", length=1024, nullable = false)
-    @Index(name="name_value_idx")
+    @Index(name="xds_name_value_idx")
     private String value;
     
     @JoinColumn(name = "parent_fk")

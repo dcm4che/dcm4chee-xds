@@ -89,7 +89,7 @@ import org.hibernate.annotations.Index;
     })
 
 @Entity
-@Table(name = "xds_code")
+@Table(name = "xds_xds_code")
 public class XDSCode {
     private static final long serialVersionUID = 513457139488147710L;
 
@@ -104,16 +104,16 @@ public class XDSCode {
 
     @Basic(optional = false)
     @Column(name = "value")
-    @Index(name="code_value_idx")
+    @Index(name="xds_code_value_idx")
     private String codeValue;
 
     @Basic(optional = false)
     @Column(name = "designator")
-    @Index(name="code_designator_idx")
+    @Index(name="xds_code_designator_idx")
     private String codingSchemeDesignator;
 
     @Column(name = "classification")
-    @Index(name="code_classification_idx")
+    @Index(name="xds_code_classification_idx")
     private String codeClassification;
 
     @Basic(optional = false)

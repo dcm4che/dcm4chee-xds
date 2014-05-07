@@ -69,7 +69,7 @@ import org.hibernate.annotations.Index;
     })
 
 @Entity
-@Table(name = "xad_issuer", uniqueConstraints={@UniqueConstraint(columnNames={"universal_id", "universal_id_type"}) })
+@Table(name = "xds_xad_issuer", uniqueConstraints={@UniqueConstraint(columnNames={"universal_id", "universal_id_type"}) })
 public class XADIssuer implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
@@ -82,12 +82,12 @@ public class XADIssuer implements Serializable {
     private int pk;
     
     @Column(name = "namespace_id")
-    @Index(name="namespace_id_idx")
+    @Index(name="xds_namespace_id_idx")
     private String namespaceID;
 
     @Basic(optional = false)
     @Column(name = "universal_id")
-    @Index(name="universal_id_idx")
+    @Index(name="xds_universal_id_idx")
     private String universalID;
     
     @Basic(optional = false)

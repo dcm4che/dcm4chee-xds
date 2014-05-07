@@ -78,7 +78,7 @@ public abstract class Identifiable implements Serializable {
     private long pk;
     
     @Column(name = "id", unique = true)
-    @Index(name="id_idx")
+    @Index(name="xds_id_idx")
     private String id;
     
     @Basic(optional = true)

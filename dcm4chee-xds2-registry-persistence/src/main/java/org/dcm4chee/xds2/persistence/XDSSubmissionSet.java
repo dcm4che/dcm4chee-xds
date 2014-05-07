@@ -88,7 +88,7 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
     
     @Basic(optional = false)
     @Column(name = "unique_id")
-    @Index(name="uniqueId_idx")
+    @Index(name="xds_uniqueId_idx")
     private String uniqueId;
 
     @Basic(optional = false)
@@ -97,7 +97,7 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
     private XADPatient patient;
 
     @ManyToMany
-    @JoinTable(name = "rel_submissionset_code", 
+    @JoinTable(name = "xds_rel_submissionset_code", 
         joinColumns = @JoinColumn(name = "submissionset_fk", referencedColumnName = "pk"),
         inverseJoinColumns = @JoinColumn(name = "code_fk", referencedColumnName = "pk"))
     private Collection<XDSCode> xdsCodes;

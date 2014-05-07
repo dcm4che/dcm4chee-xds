@@ -79,7 +79,7 @@ public class Classification extends RegistryObject implements Serializable {
     
     @Basic(optional = true)
     @Column(name = "nodeRepresentation")
-    @Index(name="nodeRepresentation_idx")
+    @Index(name="xds_nodeRepresentation_idx")
     private String nodeRepresentation;
 
     public ClassificationScheme getClassificationScheme() {

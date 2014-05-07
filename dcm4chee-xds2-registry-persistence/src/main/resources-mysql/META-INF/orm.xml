@@ -9,7 +9,7 @@
 	<access>FIELD</access>
 
 	<entity class="Description">
-		<table name="description" />
+		<table name="xds_description" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />
@@ -18,11 +18,11 @@
 		</attributes>
 	</entity>
 	<entity class="Identifiable">
-		<table name="identifiable" />
+		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
 	</entity>
 	<entity class="Name">
-		<table name="name" />
+		<table name="xds_name" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />
@@ -31,7 +31,7 @@
 		</attributes>
 	</entity>
 	<entity class="Slot">
-		<table name="slot" />
+		<table name="xds_slot" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />
@@ -43,7 +43,7 @@
 		</attributes>
 	</entity>
 	<entity class="XADIssuer">
-		<table name="xad_issuer" />
+		<table name="xds_xad_issuer" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />
@@ -52,7 +52,7 @@
 		</attributes>
 	</entity>
 	<entity class="XADPatient">
-		<table name="xad_patient" />
+		<table name="xds_xad_patient" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />
@@ -61,7 +61,7 @@
 		</attributes>
 	</entity>
 	<entity class="XDSCode">
-		<table name="xds_code" />
+		<table name="xds_xds_code" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />

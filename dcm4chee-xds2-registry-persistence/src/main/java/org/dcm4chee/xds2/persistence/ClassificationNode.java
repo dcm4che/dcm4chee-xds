@@ -69,7 +69,7 @@ public class ClassificationNode extends RegistryObject implements Serializable {
     private Identifiable parent;
     @Basic(optional = true)
     @Column(name = "code")
-    @Index(name="code_idx")
+    @Index(name="xds_code_idx")
     private String code;
     @Basic(optional = true)
     @Column(name = "path", length=1024)

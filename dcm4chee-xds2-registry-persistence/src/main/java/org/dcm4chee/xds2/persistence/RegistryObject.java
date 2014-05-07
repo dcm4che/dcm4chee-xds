@@ -68,11 +68,11 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     private String lid;
     @Basic(optional = true)
     @Column(name = "objectType")
-    @Index(name="objectType_idx")
+    @Index(name="xds_objectType_idx")
     private String objectType;
     @Basic(optional = false)
     @Column(name = "status")
-    @Index(name="status_idx")
+    @Index(name="xds_status_idx")
     private String status;
 
     //Versioninfo (flattened: versionName, comment)

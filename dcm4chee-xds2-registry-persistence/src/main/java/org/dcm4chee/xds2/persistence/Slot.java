@@ -62,7 +62,7 @@ import org.hibernate.annotations.Index;
  * @since Nov 02, 2011
  */
 @Entity
-@Table(name = "slot")
+@Table(name = "xds_slot")
 public class Slot implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
@@ -73,15 +73,15 @@ public class Slot implements Serializable {
     
     @Basic(optional = false)
     @Column(name = "name", nullable = false)
-    @Index(name="slot_name_idx")
+    @Index(name="xds_slot_name_idx")
     private String name;
 
     @Column(name = "type", nullable = true)
-    @Index(name="slot_type_idx")
+    @Index(name="xds_slot_type_idx")
     private String type;
     
     @Column(name = "value", nullable = false)
-    @Index(name="slot_value_idx")
+    @Index(name="xds_slot_value_idx")
     private String value;
     
     @JoinColumn(name = "parent_fk")

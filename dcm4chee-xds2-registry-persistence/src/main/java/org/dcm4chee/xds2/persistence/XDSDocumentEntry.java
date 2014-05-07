@@ -97,7 +97,7 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     
     @Basic(optional = false)
     @Column(name = "unique_id")
-    @Index(name="uniqueId_idx")
+    @Index(name="xds_uniqueId_idx")
     private String uniqueId;
 
     @Basic(optional = false)
@@ -111,7 +111,7 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     private XADPatient sourcePatient;
 
     @ManyToMany
-    @JoinTable(name = "rel_document_code", 
+    @JoinTable(name = "xds_rel_document_code", 
         joinColumns = @JoinColumn(name = "document_fk", referencedColumnName = "pk"),
         inverseJoinColumns = @JoinColumn(name = "code_fk", referencedColumnName = "pk"))
     private Collection<XDSCode> xdsCodes;

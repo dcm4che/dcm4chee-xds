@@ -78,7 +78,7 @@ import javax.persistence.UniqueConstraint;
     })
 
 @Entity
-@Table(name = "xad_patient", uniqueConstraints=
+@Table(name = "xds_xad_patient", uniqueConstraints=
     {@UniqueConstraint(columnNames = {"pat_id", "pat_id_issuer_fk"})})
 public class XADPatient implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
@@ -102,7 +102,7 @@ public class XADPatient implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "pat_id")
-    //@Index(name="pat_id_idx")
+    //@Index(name="xds_pat_id_idx")
     private String patientID;
     
     @Basic(optional = false)
