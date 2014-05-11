@@ -69,7 +69,7 @@ appCommon.factory('appHttp', function(appNotifications, appLoadingIndicator, $ht
 
 appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xdsConstants, $timeout) {
 
-	var messageShowTimeout = 10000;
+	var messageShowTimeout = 5000;
 	
 	var notifications = {
 
