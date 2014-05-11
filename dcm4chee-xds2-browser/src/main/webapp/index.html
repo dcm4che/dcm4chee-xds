@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="xdsbrowserApp">
+<html lang="en" ng-app="xdsBrowserApp">
 <head>
 <meta charset="utf-8">
 
@@ -23,13 +23,17 @@
 <script type="text/javascript" src="js/appCommon.js"></script>
 <script type="text/javascript" src="js/browserLinkedView.js"></script>
 
-<script type="text/javascript" src="js/xdsConstants.js"></script>
-<script type="text/javascript" src="js/xdsQueries.js"></script>
-<script type="text/javascript" src="js/xdsCommon.js"></script>
+<script type="text/javascript" src="js/xds/xdsCommon.js"></script>
+<script type="text/javascript" src="js/xds/xdsConstants.js"></script>
+<script type="text/javascript" src="js/xds/xdsREST.js"></script>
 
-<script type="text/javascript" src="js/IdentifiableListCtrl.js"></script>
-<script type="text/javascript" src="js/IdentifiableDetailsCtrl.js"></script>
-<script type="text/javascript" src="js/AdhocQueryUICtrl.js"></script>
+<script type="text/javascript" src="js/xds/IdentifiableListCtrl.js"></script>
+<script type="text/javascript" src="js/xds/IdentifiableDetailsCtrl.js"></script>
+<script type="text/javascript" src="js/xds/AdhocQueryUICtrl.js"></script>
+<script type="text/javascript" src="js/xds/XdsBrowserCtrl.js"></script>
+
+<script type="text/javascript" src="js/dcm4che-config/ServiceManagerCtrl.js"></script>
+
 
 
 <title>xds repo browser</title>
@@ -54,15 +58,17 @@
 }
 
 .wide-popover {
-	width:300px;
+    max-width:400px;
+    width:400px;
 }
 
+.black-text {color: black;}
 </style>
 </head>
 <body>
 
 
-			    <!-- Static navbar -->
+    <!-- Static navbar -->
     <div class="navbar navbar-default navbar-static-top" role="navigation">
       <div class="container">
         <div class="navbar-header">
@@ -75,15 +81,14 @@
           </ul>
           
           <ul class="nav navbar-nav navbar-right">
-            <li><a app-notifications-popover>Notifications...</a></li>
+            <li><a app-notifications-popover>Notifications</a></li>
 	      </ul>
 
         </div><!--/.nav-collapse -->
       </div>
     </div>
 
-	<div class="container" ng-controller="LandingCtrl">
-	
+	<div class="container">
 		<div class="row">
 			<div ng-view></div>
 		</div>

@@ -3,7 +3,7 @@
 /* App Module */
 
 
-var xdsBrowserApp = angular.module('xdsbrowserApp', [
+var xdsBrowserApp = angular.module('xdsBrowserApp', [
   'ngRoute',
   'ngAnimate',
   'ngSanitize',
@@ -12,25 +12,23 @@ var xdsBrowserApp = angular.module('xdsbrowserApp', [
   'appCommon',
   'browserLinkedView',
   
-  'xdsCommon',
-  'xdsConstants',
-  'xdsQueries',
-  
-  'IdentifiableDetailsCtrl',
-  'IdentifiableListCtrl',
-  'AdhocQueryUICtrl'
-  
+  'xds.common',
+  'xds.controllers',
+  'xds.REST',
+
+  'dcm4che-config.controllers'
+
 ]);
 
 xdsBrowserApp.config(['$routeProvider',
   function($routeProvider) {
     $routeProvider.
     when('/step/:stepNum', {
-        templateUrl: 'templates/2col-view-browser.html',
-        controller: 'RouteCtrl'
+        templateUrl: 'templates/xds/xds-browser.html',
+        controller: 'XdsBrowserCtrl'
       }).
       when('/service-manager', {
-          templateUrl: 'templates/service-manager.html',
+          templateUrl: 'templates/dcm4che-config/service-manager.html',
           controller: 'ServiceManagerCtrl'
       }).
       otherwise({

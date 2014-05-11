@@ -1,4 +1,4 @@
-angular.module('IdentifiableListCtrl',[]).
+angular.module('xds.controllers').
 controller('IdentifiableListCtrl', [ '$scope', 'xdsEb',function($scope,xdsEb) {
 
 	// gotta watch if it changes

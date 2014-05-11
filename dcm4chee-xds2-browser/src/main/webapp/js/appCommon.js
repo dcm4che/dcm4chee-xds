@@ -1,6 +1,6 @@
 var appCommon = angular.module('appCommon', ['mgcrea.ngStrap.popover']);
 
-appCommon.factory('appLoadingIndicator', [ 'xdsConstants', function(xdsConstants) {
+appCommon.factory('appLoadingIndicator', function() {
 
 	console.log("AppLoading factory!");
 
@@ -29,9 +29,9 @@ appCommon.factory('appLoadingIndicator', [ 'xdsConstants', function(xdsConstants
 	};
 
 	return loading;
-} ]);
+});
 
-appCommon.factory('appHttp', [ 'appNotifications', 'appLoadingIndicator', '$http', function(appNotifications, appLoadingIndicator, $http) {
+appCommon.factory('appHttp', function(appNotifications, appLoadingIndicator, $http) {
 
 	var appHttp = {};
 
@@ -48,29 +48,24 @@ appCommon.factory('appHttp', [ 'appNotifications', 'appLoadingIndicator', '$http
 
 		callback(data, status);
 	};
-	
-	
-	appHttp.post = function(url, data, callbackSuccess, callbackError, notification) {
-		appLoadingIndicator.start();
-		$http.post(url, data).success(function(data, status) {
-			onSuccess(data, status, callbackSuccess, notification);
-		}).error(function(data, status) {
-			onError(data,status,callbackError, notification);
-		});
-	};
 
-	appHttp.get = function(url, data, callbackSuccess, callbackError, notification) {
-		appLoadingIndicator.start();
-		$http.get(url, data).success(function(data, status) {
-			onSuccess(data, status, callbackSuccess, notification);
-		}).error(function(data, status) {
-			onError(data,status,callbackError, notification);
-		});
-	};
-	
+    var makeMethod = function(method) {
+        return function(url, data, callbackSuccess, callbackError, notification) {
+            appLoadingIndicator.start();
+            $http({method: method, data: data, url: url}).success(function (data, status) {
+                onSuccess(data, status, callbackSuccess, notification);
+            }).error(function (data, status) {
+                onError(data, status, callbackError, notification);
+            });
+        };
+    }
+
+    appHttp.post = makeMethod("POST");
+    appHttp.get =  makeMethod("GET");
+
 	return appHttp;
 
-} ]);
+});
 
 appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xdsConstants, $timeout) {
 

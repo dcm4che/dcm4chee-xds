@@ -1,8 +1,7 @@
-angular.module('IdentifiableDetailsCtrl', []).
-
+angular.module('xds.controllers').
 controller('IdentifiableDetailsCtrl',
-		[ '$scope', '$http', 'xdsConstants', 'xdsAdhocQuery', 'xdsGetEntityType', 'xdsEb','xdsConfig', 
-        function($scope, $http, xdsConstants, xdsAdhocQuery, xdsGetEntityType,xdsEb, xdsConfig) {
+		[ '$scope', '$http', 'xdsConstants', 'xdsAdhocQuery', 'xdsGetEntityType', 'xdsEb','xdsConfig','browserLinkedViewXdsService', 'xdsDeleteObjectsQuery',
+        function($scope, $http, xdsConstants, xdsAdhocQuery, xdsGetEntityType,xdsEb, xdsConfig, browserLinkedViewXdsService, xdsDeleteObjectsQuery) {
 
 	// gotta watch if it changes
 	$scope.$watch('currentIdentifiable', function() {
@@ -30,9 +29,7 @@ controller('IdentifiableDetailsCtrl',
 			$scope.docRepoId = xdsEb.slotValueByName($scope.currentIdentifiable.value, "repositoryUniqueId");
 			
 			// check if the server is configured for this repo
-			if (_.contains(xdsConfig.xdsAccessibleRepos, $scope.docRepoId)) 
-				$scope.showDocumentDownload = true; else
-				$scope.showDocumentDownload = false;
+			$scope.showDocumentDownload = !!_.contains(xdsConfig.xdsAccessibleRepos(), $scope.docRepoId);
 				
 		}
 
@@ -93,9 +90,7 @@ controller('IdentifiableDetailsCtrl',
 						// remove the current identifiable from the list (lot of
 						// queries include it)
 						data.registryObjectList.identifiable = _.filter(data.registryObjectList.identifiable, function(val) {
-							if (val.value.id == $scope.currentIdentifiable.value.id)
-								return false;
-							return true;
+							return val.value.id != $scope.currentIdentifiable.value.id;
 						});
 
 						$scope.currentIdentifiable.__extraLists[label].__title = label;
@@ -103,6 +98,34 @@ controller('IdentifiableDetailsCtrl',
 					});
 				}
 			});
+
+
+        $scope.deleteSubmissionSet = function() {
+
+            // get the contents of submission set from extra list
+            var listOfIdentifiables = $scope.currentIdentifiable.__extraLists['Contents of this submission set'].identifiable;
+
+            // include the submission set itself
+            listOfIdentifiables.push($scope.currentIdentifiable);
+
+            // extract uuids
+            var uuids = _.chain(listOfIdentifiables).pluck('value').pluck('id').value();
+
+            // send REST
+            xdsDeleteObjectsQuery.invoke(uuids, function(succeeded){
+
+                if (succeeded) {
+
+                    // remove'em from ui
+                    browserLinkedViewXdsService.removeOccurencesOfIdentifiablesWithUuids(uuids);
+
+                    // cleanup the current view
+                    $scope.wipePane();
+                };
+
+            });
+
+        }
 
 	});
 } ]);

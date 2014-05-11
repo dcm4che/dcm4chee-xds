@@ -4,7 +4,7 @@
 				<td>{{k}}</td>
 				<td ng-init="confignode = node">
 					<div ng-show="!doShowExtended(confignode)">{{confignode}}</div>
-					<div ng-if="doShowExtended(confignode)" ng-include = "'templates/config-attributes.html'"></div>
+					<div ng-if="doShowExtended(confignode)" ng-include = "'templates/dcm4che-config/config-attributes.html'"></div>
 				</td>
 			</tr>
 		</table>

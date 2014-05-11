@@ -1,4 +1,4 @@
-angular.module('xdsConstants', []).factory('xdsConstants', function() {
+angular.module('xds.common').factory('xdsConstants', function() {
 	return {
 		"APND" : "urn:ihe:iti:2007:AssociationType:APND",
 		"HAS_MEMBER" : "urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember",

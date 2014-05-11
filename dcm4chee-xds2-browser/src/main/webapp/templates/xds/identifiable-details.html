@@ -3,11 +3,15 @@
 			<!-- heading with icon,id and name -->
 		<span xds-identifiable ng-model='currentIdentifiable' class='details-header'></span>
 		<!-- show download link for document entries -->
-		<div ng-show="type == 'XDSDocumentEntry' && showDocumentDownload" class="pull-right">
-			<a class="btn btn-success"
-				ng-href="data/repo/retrieve-download/{{docRepoId}}/{{docUniqueId}}"
-				role="button" target="_blank">Download</a>
-		</div>
+        <div ng-show="type == 'XDSDocumentEntry' && showDocumentDownload" class="pull-right">
+            <a class="btn btn-success"
+               ng-href="data/repo/retrieve-download/{{docRepoId}}/{{docUniqueId}}"
+               role="button" target="_blank">Download</a>
+        </div>
+        <div ng-show="type == 'XDSSubmissionSet'" class="pull-right">
+            <button type="button" class="btn btn-danger" data-animation="am-fade-and-slide-top" bs-modal="" data-template="templates/xds/confirmation.html">Delete
+            </button>
+        </div>
 	</div>
 
 	<div class="panel-body">
