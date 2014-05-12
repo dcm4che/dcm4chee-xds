@@ -45,6 +45,7 @@ import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
+import javax.inject.Named;
 
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
@@ -73,6 +74,7 @@ public class XdsConfigurationFactory {
     private static final String LDAP_PROPERTIES_PROPERTY = "org.dcm4chee.xds.ldapPropertiesURL";
 
     @Produces
+    @Named(value="xdsConfigurationFactory")
     @ApplicationScoped
     public static DicomConfiguration createDicomConfiguration() throws ConfigurationException {
         return System.getProperty(LDAP_PROPERTIES_PROPERTY) != null ? getLdapConfiguration() : getPrefsConfiguration();
@@ -114,7 +116,7 @@ public class XdsConfigurationFactory {
 
     @Produces
     @ApplicationScoped
-    public static IHL7ApplicationCache getHL7ApplicationCache(DicomConfiguration conf) {
+    public static IHL7ApplicationCache getHL7ApplicationCache( @Named(value="xdsConfigurationFactory") DicomConfiguration conf) {
         return new HL7ApplicationCache(conf.getDicomConfigurationExtension(HL7Configuration.class));
     }
 
