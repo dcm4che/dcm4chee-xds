@@ -96,6 +96,7 @@ public class XDSTestUtil {
     public static final String TEST_PID_1 = "test1234_1";
     public static final String TEST_PID_2 = "test1234_2";
     public static final String TEST_PID_MERGED = "test1234_merged";
+    public static final String CONCURRENT_PATID = "concurrentTestPatId";
 
     private static Set<String> ebXmlClassificationSchemeIds = null;
     private static Set<String> xdsClassificationSchemeIds = null;

@@ -45,13 +45,18 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
@@ -60,6 +65,7 @@ import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
+import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Classification;
 import org.dcm4chee.xds2.persistence.ExternalIdentifier;
@@ -69,6 +75,7 @@ import org.dcm4chee.xds2.persistence.QRegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.Slot;
+import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
@@ -81,6 +88,9 @@ import com.mysema.query.jpa.impl.JPAQuery;
 @Stateless
 public class XDSRegistryTestBean {
 
+    @EJB
+    private DocumentRegistryPortType registryBean;
+    
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
 
@@ -220,6 +230,29 @@ public class XDSRegistryTestBean {
         return (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
     }
 
+    
+    
+    public XADPatient getConcurrentPatient(Semaphore masterSemaphore, Semaphore childrenSemaphore, XDSRegistryBean bean) throws InterruptedException, XDSException {
+        
+        // do register
+        XADPatient pat = bean.getPatient(XDSTestUtil.CONCURRENT_PATID+XDSTestUtil.TEST_ISSUER, true);
+        
+        // tell the master we're done
+        masterSemaphore.release();
+        log.info("One permit for master released");
+        
+        // wait for others before committing
+        childrenSemaphore.acquire();
+        log.info("Got permit for committing");
+        
+        return pat;
+    }
+    
+    
+    public long getConcurrentPatientRecordsNum() {
+       return  (long) em.createQuery("SELECT count(p) FROM XADPatient p WHERE p.patientID = (:pids)").setParameter("pids", XDSTestUtil.CONCURRENT_PATID).getSingleResult();
+    }
+    
 // Helper for compare RegistryObjects of jaxb and persistence objects    
 
     private void checkClassification(ClassificationType obj, Classification cl) throws XDSRegistryTestBeanException {
@@ -364,4 +397,6 @@ public class XDSRegistryTestBean {
             fail(msgPrefix+" Missing:"+lsType.getValue());
         }
     }
+    
+    
 }
