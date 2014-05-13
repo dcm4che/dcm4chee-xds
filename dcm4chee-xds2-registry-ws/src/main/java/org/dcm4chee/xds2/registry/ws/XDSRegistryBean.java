@@ -38,7 +38,6 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
-import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,10 +47,14 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.EJBContext;
+import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
@@ -63,7 +66,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
 import javax.xml.ws.WebServiceContext;
@@ -146,7 +148,12 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
     
-   
+    /**
+     * Used to call methods in a nested transaction
+     */
+    @EJB
+    XDSRegistryBeanLocal self;
+    
     @Inject
     private Device device;
     private XdsRegistry cfg;
@@ -530,6 +537,16 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID with wrong UniversalId type (must be ISO)! pid:"+pid, null);
         }
         try {
+            return self.getPatientSeparateTransaction(qryPat, createMissing);
+        } catch (EJBTransactionRolledbackException e) {
+            // most probably a concurrent register operation attempted to create patient with same id, try one more time
+            return self.getPatientSeparateTransaction(qryPat, createMissing);
+        }
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public XADPatient getPatientSeparateTransaction(XADPatient qryPat, boolean createMissing) throws XDSException {
+        try {
             XADPatient pat = (XADPatient) em.createNamedQuery(XADPatient.FIND_PATIENT_BY_PID_AND_UNIVERSAL_ID)
                 .setParameter(1, qryPat.getPatientID())
                 .setParameter(2, qryPat.getIssuerOfPatientID().getUniversalID())
@@ -540,15 +557,17 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             return pat;
         } catch (NoResultException x) {
             if (createMissing) {
-                log.warn("Unknown XAD Patient! Create missing Patient with pid:"+pid);
+                log.warn("Unknown XAD Patient! Create missing Patient with pid:"+qryPat.getPatientID());
                 qryPat.setIssuerOfPatientID(getOrCreateIssuerOfPID(qryPat.getIssuerOfPatientID()));
                 em.persist(qryPat);
                 return qryPat;
             } else {
-                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID:"+pid, null);
+                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID:"+qryPat.getPatientID(), null);
             }
         }
     }
+
+    // TODO: use nested transaction to protect from concurrent adding here as well? Or is it very unlikely here?
     
     public boolean newPatientID(String pid) throws XDSException {
         checkAffinityDomain(pid);
@@ -871,5 +890,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
         
     }
+
 }
 

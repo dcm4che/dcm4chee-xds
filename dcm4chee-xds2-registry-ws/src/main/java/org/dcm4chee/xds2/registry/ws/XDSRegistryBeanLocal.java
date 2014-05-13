@@ -45,6 +45,7 @@ import javax.ejb.Local;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
+import org.dcm4chee.xds2.persistence.XADPatient;
 
 public interface XDSRegistryBeanLocal {
 
@@ -58,4 +59,6 @@ public interface XDSRegistryBeanLocal {
     RegistryResponseType deleteObjects(RemoveObjectsRequest removeReq);
 
     void checkAndAutoInitializeRegistry();
+
+    XADPatient getPatientSeparateTransaction(XADPatient qryPat, boolean createMissing) throws XDSException;
 }
