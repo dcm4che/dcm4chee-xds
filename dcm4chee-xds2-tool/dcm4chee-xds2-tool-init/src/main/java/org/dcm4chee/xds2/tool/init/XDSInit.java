@@ -1,14 +1,9 @@
 package org.dcm4chee.xds2.tool.init;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 import javax.xml.ws.soap.AddressingFeature;
@@ -19,15 +14,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.dcm4chee.xds2.infoset.rim.RegistryError;
-import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
-import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 
 public class XDSInit {
     private static final String DEFAULT_WSDL_URL = "http://localhost:8080/dcm4chee-xds/XDSbRegistry/b?wsdl";
-    
-    private static final String[] defaultFiles = {"initialize.xml", "ebXmlAssociationTypes.xml"}; 
     
     public static void main(String[] args) throws Exception {
         CommandLine cl = parseComandLine(args);
@@ -39,7 +29,7 @@ public class XDSInit {
             if (cl.hasOption("additional")) {
                 filenames = Arrays.asList("additional.xml");
             } else {
-                filenames = Arrays.asList(defaultFiles);
+                filenames = Arrays.asList(XDSInitCommon.defaultFiles);
             }
         }
         System.out.print("Looking up endpoint URL "+url+" ...");
@@ -49,38 +39,12 @@ public class XDSInit {
         service.getPort(DocumentRegistryPortType.class, new AddressingFeature());
         System.out.print("Adding definitions...");
         try {
-            initializeRegistry(filenames, defaultInit, docRegistry);
+            XDSInitCommon.initializeRegistry(filenames, defaultInit, docRegistry);
         } catch (Exception e) {
             System.out.println(getExceptionMessage(e, " - FAILURE!\nError(s):"));
             return;
         }
         System.out.println("SUCCESS!");
-    }
-
-
-    public static void initializeRegistry(List<String> filenames, boolean defaultInit, DocumentRegistryPortType docRegistry)  {
-        for (String fn : filenames) {
-                SubmitObjectsRequest req;
-                try {
-                    req = getSubmitObjectsRequest(fn, defaultInit);
-                } catch (FileNotFoundException | JAXBException e) {
-                    throw new RuntimeException(e);
-                }
-                RegistryResponseType rsp = docRegistry.documentRegistryRegisterDocumentSetB(req);
-                if (!"urn:oasis:names:tc:ebxml-regrep:ResponseStatusType:Success".equals(rsp.getStatus())){
-                    String errorMsg = "";
-                    int i = 1;
-                    for (RegistryError err : rsp.getRegistryErrorList().getRegistryError()) {
-                        errorMsg += (i++)+") "+err.getErrorCode()+" : "+err.getCodeContext()+"\n";
-                    }
-                    throw new RuntimeException(errorMsg);
-                } 
-        }
-    }
-
-
-    public static void autoInitializeRegistry(DocumentRegistryPortType docRegistry) {
-        initializeRegistry(Arrays.asList(defaultFiles), true, docRegistry);
     }
 
 
@@ -97,15 +61,6 @@ public class XDSInit {
     }
 
 
-    public static SubmitObjectsRequest getSubmitObjectsRequest(String metadataFilename, boolean defaultInit) throws JAXBException, FileNotFoundException {
-        JAXBContext jaxbContext = JAXBContext.newInstance(SubmitObjectsRequest.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        SubmitObjectsRequest req = (SubmitObjectsRequest) unmarshaller.unmarshal(
-                defaultInit ? XDSInit.class.getResourceAsStream(metadataFilename) :
-                    new FileInputStream(metadataFilename));
-        return req;
-    }
-    
     private static CommandLine parseComandLine(String[] args) throws ParseException {
         Options opts = new Options();
         opts.addOption("h", "help", false, "Initialize XDS Registry by sending ebXML SubmitObjectRequests");//rb.getString("help"));

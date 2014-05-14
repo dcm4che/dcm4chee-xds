@@ -108,7 +108,7 @@ import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
-import org.dcm4chee.xds2.tool.init.XDSInit;
+import org.dcm4chee.xds2.tool.init.XDSInitCommon;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -864,7 +864,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         Long identifiablesTotal = (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
         if (identifiablesTotal == 0) {
             log.info("Initializing XDS Registry with default metadata...");
-            XDSInit.autoInitializeRegistry(this);
+            XDSInitCommon.autoInitializeRegistry(this);
             log.info("XDS Registry successfully initialized");
         } else {
             log.info("XDS Registry already contains data - no initialization needed");
