@@ -45,7 +45,7 @@ import java.util.Properties;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
-import javax.inject.Named;
+import javax.inject.Inject;
 
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
@@ -60,10 +60,12 @@ import org.dcm4che3.conf.ldap.hl7.LdapHL7Configuration;
 import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
 import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
 import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
+import org.dcm4che3.conf.prefs.cdi.PrefsFactory;
 import org.dcm4che3.conf.prefs.generic.PreferencesGenericConfigExtension;
 import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che3.util.StreamUtils;
 import org.dcm4che3.util.StringUtils;
+import org.dcm4chee.xds2.common.cdi.Xds;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -73,14 +75,17 @@ public class XdsConfigurationFactory {
 
     private static final String LDAP_PROPERTIES_PROPERTY = "org.dcm4chee.xds.ldapPropertiesURL";
 
+    @Inject
+    PrefsFactory prefsFactory;
+    
     @Produces
-    @Named(value="xdsConfigurationFactory")
+    @Xds
     @ApplicationScoped
-    public static DicomConfiguration createDicomConfiguration() throws ConfigurationException {
+    public DicomConfiguration createDicomConfiguration() throws ConfigurationException {
         return System.getProperty(LDAP_PROPERTIES_PROPERTY) != null ? getLdapConfiguration() : getPrefsConfiguration();
     }
 
-    protected static DicomConfiguration getLdapConfiguration() throws ConfigurationException {
+    protected DicomConfiguration getLdapConfiguration() throws ConfigurationException {
         LdapDicomConfiguration conf = new LdapDicomConfiguration(ldapEnv());
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRepository>(XdsRepository.class));
@@ -95,8 +100,8 @@ public class XdsConfigurationFactory {
         return conf;
     }
 
-    protected static DicomConfiguration getPrefsConfiguration() throws ConfigurationException {
-        PreferencesDicomConfiguration conf = new PreferencesDicomConfiguration();
+    protected DicomConfiguration getPrefsConfiguration() throws ConfigurationException {
+        PreferencesDicomConfiguration conf = new PreferencesDicomConfiguration(prefsFactory.getPreferences());
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRepository>(XdsRepository.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
@@ -110,17 +115,17 @@ public class XdsConfigurationFactory {
         return conf;
     }
 
-    public static void disposeDicomConfiguration(@Disposes DicomConfiguration conf) {
+    public void disposeDicomConfiguration(@Disposes @Xds DicomConfiguration conf) {
         conf.close();
     }
 
     @Produces
     @ApplicationScoped
-    public static IHL7ApplicationCache getHL7ApplicationCache( @Named(value="xdsConfigurationFactory") DicomConfiguration conf) {
+    public IHL7ApplicationCache getHL7ApplicationCache(@Xds DicomConfiguration conf) {
         return new HL7ApplicationCache(conf.getDicomConfigurationExtension(HL7Configuration.class));
     }
 
-    private static Properties ldapEnv() throws ConfigurationException {
+    private Properties ldapEnv() throws ConfigurationException {
         String url = System.getProperty(LDAP_PROPERTIES_PROPERTY);
         url = StringUtils.replaceSystemProperties(url);
         Properties p = new Properties();

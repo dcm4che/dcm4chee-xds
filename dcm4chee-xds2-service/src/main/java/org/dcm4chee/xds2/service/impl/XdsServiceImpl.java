@@ -62,6 +62,7 @@ import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.service.XdsService;
 
 /**
@@ -90,6 +91,7 @@ public class XdsServiceImpl implements XdsService {
 
 
     @Inject
+    @Xds    
     private DicomConfiguration conf;
     
     @Inject

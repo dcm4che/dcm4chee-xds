@@ -159,13 +159,6 @@
 				<dependency>
 					<groupId>org.dcm4che.jdbc.prefs</groupId>
 					<artifactId>dcm4che-jdbc-prefs-ejb</artifactId>
-					<classifier></classifier>
-					<version>${jdbc-prefs.version}</version>
-					<type>jar</type>
-				</dependency>
-				<dependency>
-					<groupId>org.dcm4che.jdbc.prefs</groupId>
-					<artifactId>dcm4che-jdbc-prefs-ejb</artifactId>
 					<classifier>${db}${asb}</classifier>
 					<type>ejb</type>
 					<version>${jdbc-prefs.version}</version>
