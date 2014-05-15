@@ -76,6 +76,7 @@ import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
@@ -129,6 +130,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     private static Map<String, XdsRepository> repositories;
 
     @Inject
+    @Xds
     DicomConfiguration config;
 
     /**

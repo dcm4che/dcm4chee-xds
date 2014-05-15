@@ -41,9 +41,11 @@ package org.dcm4chee.xds2.conf;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
@@ -66,6 +68,8 @@ import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che3.util.StreamUtils;
 import org.dcm4che3.util.StringUtils;
 import org.dcm4chee.xds2.common.cdi.Xds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -75,8 +79,14 @@ public class XdsConfigurationFactory {
 
     private static final String LDAP_PROPERTIES_PROPERTY = "org.dcm4chee.xds.ldapPropertiesURL";
 
+    public static final Logger log = LoggerFactory.getLogger(XdsConfigurationFactory.class);
+
+    
+    /**
+     * Allows for custom Preferences implementations to be used, like jdbc-prefs
+     */
     @Inject
-    PrefsFactory prefsFactory;
+    Instance<PrefsFactory> prefsFactoryInstance;
     
     @Produces
     @Xds
@@ -101,7 +111,17 @@ public class XdsConfigurationFactory {
     }
 
     protected DicomConfiguration getPrefsConfiguration() throws ConfigurationException {
-        PreferencesDicomConfiguration conf = new PreferencesDicomConfiguration(prefsFactory.getPreferences());
+        
+        PreferencesDicomConfiguration conf; 
+        
+        // check if there is an implementation of PrefsFactory provided and construct DicomConfiguration accordingly
+        if (!prefsFactoryInstance.isUnsatisfied()) {
+            Preferences prefs = prefsFactoryInstance.get().getPreferences();
+            log.info("Using custom Preferences implementation {}", prefs.getClass().toString());
+            conf = new PreferencesDicomConfiguration(prefs); 
+        } else
+            conf = new PreferencesDicomConfiguration();
+        
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRepository>(XdsRepository.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));

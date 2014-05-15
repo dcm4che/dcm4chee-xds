@@ -48,7 +48,7 @@ public class DefaultConfigurator {
             registry.setAffinityDomain(affinityDomain);
             registry.setAffinityDomainConfigDir("${jboss.server.config.dir}/xds/affinitydomain");
             registry.setAcceptedMimeTypes(MIME_TYPES2);
-            registry.setSoapLogDir("${jboss.server.log.dir}/xds");
+            registry.setSoapLogDir("../standalone/log/xds");
             registry.setCreateMissingPIDs(true);
             registry.setCreateMissingCodes(true);
             registry.setCheckAffinityDomain(true);
@@ -84,7 +84,7 @@ public class DefaultConfigurator {
             rep.setRetrieveUrl("http://"+ip+":8080/xds/repository");
             rep.setProvideUrl("http://"+ip+":8080/xds/repository");
             rep.setAcceptedMimeTypes(MIME_TYPES2);
-            rep.setSoapLogDir("${jboss.server.log.dir}/xds");
+            rep.setSoapLogDir("../standalone/log/xds");
             rep.setCheckMimetype(false);
             rep.setAllowedCipherHostname("*");
             rep.setLogFullMessageHosts(new String[] {});
