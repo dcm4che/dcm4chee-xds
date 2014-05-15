@@ -46,8 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -55,7 +54,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.bind.JAXBException;
 
+import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
@@ -64,7 +65,9 @@ import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
+import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
+import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Classification;
@@ -75,21 +78,20 @@ import org.dcm4chee.xds2.persistence.QRegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.Slot;
-import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
-import org.dcm4chee.xds2.registry.ws.XDSValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Stateless
-public class XDSRegistryTestBean {
+public class XDSRegistryTestBean implements XDSRegistryTestBeanI {
 
     @EJB
     private DocumentRegistryPortType registryBean;
+
     
     @PersistenceContext(unitName = "dcm4chee-xds")
     private EntityManager em;
@@ -99,6 +101,10 @@ public class XDSRegistryTestBean {
     public XDSRegistryTestBean() {
     }
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getRegistryObjectByUUID(java.lang.String)
+     */
+    @Override
     public RegistryObject getRegistryObjectByUUID(String id) {
         JPAQuery query = new JPAQuery(em);
         QRegistryObject registryObject = QRegistryObject.registryObject;
@@ -106,18 +112,34 @@ public class XDSRegistryTestBean {
         return obj;
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getEm()
+     */
+    @Override
     public EntityManager getEm() {
         return em;
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getDocumentEntryByUUID(java.lang.String)
+     */
+    @Override
     public XDSDocumentEntry getDocumentEntryByUUID(String uuid) {
         return (XDSDocumentEntry) getObjectByNamedQuery(XDSDocumentEntry.FIND_BY_UUID, uuid);
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getSubmissionSetByUUID(java.lang.String)
+     */
+    @Override
     public XDSSubmissionSet getSubmissionSetByUUID(String uuid) {
         return (XDSSubmissionSet) getObjectByNamedQuery(XDSSubmissionSet.FIND_BY_UUID, uuid);
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getFolderByUUID(java.lang.String)
+     */
+    @Override
     public XDSFolder getFolderByUUID(String uuid) {
         return (XDSFolder) getObjectByNamedQuery(XDSFolder.FIND_BY_UUID, uuid);
     }
@@ -131,6 +153,10 @@ public class XDSRegistryTestBean {
         }
     }
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#checkExtrinsicObjectType(org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType)
+     */
+    @Override
     public void checkExtrinsicObjectType(ExtrinsicObjectType obj) throws XDSRegistryTestBeanException {
         try {
             String msgPrefix = "ExtrinsicObject "+obj.getId();
@@ -146,6 +172,10 @@ public class XDSRegistryTestBean {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#checkRegistryPackage(org.dcm4chee.xds2.infoset.rim.RegistryPackageType, boolean)
+     */
+    @Override
     public void checkRegistryPackage(RegistryPackageType obj, boolean isSubmissionSet) throws XDSRegistryTestBeanException {
         try {
             if (isSubmissionSet) {
@@ -160,6 +190,10 @@ public class XDSRegistryTestBean {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#checkClassification(org.dcm4chee.xds2.infoset.rim.ClassificationType)
+     */
+    @Override
     public void checkClassification(ClassificationType obj) throws XDSRegistryTestBeanException {
         try {
             Classification cl = (Classification) getRegistryObjectByUUID(obj.getId());
@@ -170,6 +204,10 @@ public class XDSRegistryTestBean {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#checkAssociation(org.dcm4chee.xds2.infoset.rim.AssociationType1)
+     */
+    @Override
     public void checkAssociation(AssociationType1 obj) throws XDSRegistryTestBeanException {
         try {
             String msgPrefix = "Association "+obj.getId();
@@ -189,16 +227,28 @@ public class XDSRegistryTestBean {
     
 // Clearing Database from test data
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#removeTestPatients(java.lang.String)
+     */
+    @Override
     public void removeTestPatients(String... patIds) {
         Query q = em.createQuery("DELETE FROM XADPatient pat WHERE pat.patientID IN (:patIds)");
         q.setParameter("patIds", Arrays.asList(patIds));
         q.executeUpdate();
     }
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#removeTestIssuerByNamespaceId(java.lang.String)
+     */
+    @Override
     public void removeTestIssuerByNamespaceId(String namespaceId) {
         Query q = em.createQuery("DELETE FROM XADIssuer i WHERE i.namespaceID = ?1");
         q.setParameter(1, namespaceId);
         q.executeUpdate();
     }
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#removeAllIdentifiables(java.lang.String)
+     */
+    @Override
     public void removeAllIdentifiables(String baseID) {
         @SuppressWarnings("unchecked")
         List<Identifiable> l = (List<Identifiable>) em.createQuery("SELECT i FROM Identifiable i WHERE i.id LIKE ?1")
@@ -206,6 +256,10 @@ public class XDSRegistryTestBean {
         for (int i = 0, len = l.size() ; i < len ; i++)
             em.remove(l.get(i));
     }
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#removeAllIdentifiables(java.util.Set)
+     */
+    @Override
     public void removeAllIdentifiables(Set<String> ids) {
         Query q = em.createQuery("UPDATE ClassificationNode n SET n.parent = null WHERE n.id IN (:ids)");
         q.setParameter("ids", ids);
@@ -220,35 +274,56 @@ public class XDSRegistryTestBean {
             
     }
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#removeXDSCodes()
+     */
+    @Override
     public void removeXDSCodes() {
         Query q = em.createQuery("DELETE FROM XDSCode c WHERE c.codingSchemeDesignator LIKE ?1");
         q.setParameter(1, "dcm4che %");
         q.executeUpdate();
     }
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getTotalIdentifiablesCount()
+     */
+    @Override
     public Long getTotalIdentifiablesCount() {
         return (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
     }
 
     
     
-    public XADPatient getConcurrentPatient(Semaphore masterSemaphore, Semaphore childrenSemaphore, XDSRegistryBean bean) throws InterruptedException, XDSException {
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getConcurrentPatient(java.util.concurrent.Semaphore, java.util.concurrent.Semaphore, org.dcm4chee.xds2.registry.ws.XDSRegistryBean)
+     */
+    @Override
+    public void concurrentRegister(Semaphore masterSemaphore, Semaphore childrenSemaphore, SubmitObjectsRequest sor) throws InterruptedException, XDSException {
         
+       try {
         // do register
-        XADPatient pat = bean.getPatient(XDSTestUtil.CONCURRENT_PATID+XDSTestUtil.TEST_ISSUER, true);
+        RegistryResponseType rsp = registryBean.documentRegistryRegisterDocumentSetB(sor);
+        
+        assertEquals("Status should be success", XDSConstants.XDS_B_STATUS_SUCCESS, rsp.getStatus());
         
         // tell the master we're done
         masterSemaphore.release();
         log.info("One permit for master released");
         
         // wait for others before committing
-        childrenSemaphore.acquire();
+        childrenSemaphore.tryAcquire(1, TimeUnit.SECONDS);
         log.info("Got permit for committing");
-        
-        return pat;
+
+       } catch (InterruptedException e) {
+           throw new RuntimeException("Was interrupted!");
+       } 
     }
     
     
+    /* (non-Javadoc)
+     * @see org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI#getConcurrentPatientRecordsNum()
+     */
+    @Override
     public long getConcurrentPatientRecordsNum() {
        return  (long) em.createQuery("SELECT count(p) FROM XADPatient p WHERE p.patientID = (:pids)").setParameter("pids", XDSTestUtil.CONCURRENT_PATID).getSingleResult();
     }

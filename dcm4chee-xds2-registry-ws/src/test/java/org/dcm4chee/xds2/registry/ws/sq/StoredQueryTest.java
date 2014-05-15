@@ -54,7 +54,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.registry.AuditTestManager;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryTestBean;
+import org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI;
 import org.dcm4chee.xds2.registry.ws.XDSTestUtil;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -109,7 +109,7 @@ public class StoredQueryTest {
     private XDSRegistryBean session;
 
     @EJB
-    private XDSRegistryTestBean testSession;
+    private XDSRegistryTestBeanI testSession;
 
     // Audit logger	testing 
     @Before

@@ -99,7 +99,7 @@ public class CheckErrorsTest {
     private XDSRegistryBean session;
     
     @EJB
-    private XDSRegistryTestBean testSession;
+    private XDSRegistryTestBeanI testSession;
 
     
     // Audit logger	testing 

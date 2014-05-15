@@ -124,7 +124,7 @@ public class XDSTestUtil {
 		}
     	String version = p.getProperty("version");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-        .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
+        .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryTestBeanI.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
                 XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class, XdsService.class, XdsTestServiceImpl.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/registry/ws/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/handlers.xml")
@@ -301,7 +301,7 @@ public class XDSTestUtil {
         log.info("\n###### PREPARE done in "+(System.currentTimeMillis()-t1)+"ms ######");
     }
 
-    public static void clearDB(XDSRegistryTestBean testSession, Logger log) {
+    public static void clearDB(XDSRegistryTestBeanI testSession, Logger log) {
         long t1 = System.currentTimeMillis();
         log.info("\n################################# CLEAR DB #################################");
         testSession.removeAllIdentifiables("urn:uuid:aabbccdd-bdda");
@@ -316,6 +316,8 @@ public class XDSTestUtil {
         log.info("remove test patients");
         testSession.removeTestPatients(TEST_PID_MERGED);
         testSession.removeTestPatients(TEST_PID_1, TEST_PID_2);
+        testSession.removeTestPatients(CONCURRENT_PATID);
+        
         log.info("remove test issuer");
         testSession.removeTestIssuerByNamespaceId("dcm4che_test");
         log.info("remove test XDSCodes");

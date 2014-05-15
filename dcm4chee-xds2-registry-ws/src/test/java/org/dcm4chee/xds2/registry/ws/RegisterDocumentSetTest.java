@@ -40,49 +40,43 @@ package org.dcm4chee.xds2.registry.ws;
 
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.TimeUnit;
 
 import javax.ejb.EJB;
-import javax.persistence.EntityManager;
+import javax.inject.Inject;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 
+import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
+import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.ObjectRefListType;
 import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
-import org.dcm4chee.xds2.infoset.rim.ResponseOptionType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
-import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.registry.AuditTestManager;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
-import org.dcm4chee.xds2.registry.ws.sq.AbstractSQTests;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -109,6 +103,10 @@ public class RegisterDocumentSetTest {
     @Deployment
     public static WebArchive createDeployment() {
         return XDSTestUtil.createDeploymentArchive(RegisterDocumentSetTest.class)
+            .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent1.xml")), 
+                "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent1.xml") 
+            .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent2.xml")), 
+                "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent2.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterOneDocument.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterOneDocument.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterAssocBeforeDoc.xml")), 
@@ -131,19 +129,14 @@ public class RegisterDocumentSetTest {
     private XDSRegistryBean session;
     
     @EJB
-    private XDSRegistryTestBean testSession;
+    private XDSRegistryTestBeanI testSession;
 
+    @EJB
+    private XDSRegistryTestBeanI testSession2;
     
-    
-    @EJB
-    private XDSRegistryTestBean testSessionConcurrent1;
-    @EJB
-    private XDSRegistryTestBean testSessionConcurrent2;
-    @EJB
-    private XDSRegistryBean sessionConcurrent1;
-    @EJB
-    private XDSRegistryBean sessionConcurrent2;
-    
+    @Inject
+    Device xdsDevice;
+   
     // Audit logger	testing 
     @Before
     public void prepareAuditLogger() {
@@ -368,63 +361,89 @@ public class RegisterDocumentSetTest {
     }
     
     @Test
-    public void checkConcurrentGetPatient() throws InterruptedException {
-        log.info("\n############################# TEST: Concurrent registering ############################");
+    public void checkConcurrentRegister() throws JAXBException, InterruptedException {
+        
+        // allow missing pids
+        xdsDevice.getDeviceExtension(XdsRegistry.class).setCreateMissingPIDs(true);
+        
+        try {
+            
+            log.info("\n############################# TEST: Concurrent registering ############################");
+    
+            int threads = 2;
+            
+            final Semaphore masterSemaphore = new Semaphore(0);
+            final Semaphore childrenSemaphore = new Semaphore(0);
+    
+            
+            final SubmitObjectsRequest sor1 = XDSTestUtil.getSubmitObjectsRequest("RegisterOneDocumentConcurrent1.xml");
+            final SubmitObjectsRequest sor2 = XDSTestUtil.getSubmitObjectsRequest("RegisterOneDocumentConcurrent2.xml");
+            
+            final Set<Exception> errors = Collections.synchronizedSet(new HashSet<Exception>());
+            
+            // launch concurrent modifications
+            Thread thread1 = new Thread() {
+              @Override
+                public void run() {
+                    try {
+                        testSession.concurrentRegister(masterSemaphore, childrenSemaphore, sor1);
+                    } catch (Exception e) {
+                        log.error("Error in a concurrent registrator thread 1",e);
+                        masterSemaphore.release();
+                        errors.add(e);
+                    } finally {
+                        log.info("Finished concurrent registrator thread 1");
+                        masterSemaphore.release();
+                    }
+                    super.run();
+                }  
+            };
+            
+            
+            Thread thread2 = new Thread() {
+                @Override
+                  public void run() {
+                      try {
+                          testSession2.concurrentRegister(masterSemaphore, childrenSemaphore, sor2);
+                      } catch (Exception e) {
+                          log.error("Error in a concurrent registrator thread 2",e);
+                          masterSemaphore.release();
+                          errors.add(e);
+                      } finally {
+                          log.info("Finished concurrent registrator thread 2");
+                          masterSemaphore.release();
+                      }
+                      super.run();
+                  }  
+              };
+              
+            thread1.start();
+            thread2.start();
 
-        // remove the patient record(s)
-        testSession.removeTestPatients(XDSTestUtil.CONCURRENT_PATID);
-        
-        int threads = 2;
-        
-        final Semaphore masterSemaphore = new Semaphore(0);
-        final Semaphore childrenSemaphore = new Semaphore(0);
+            int wait = 10;
+            
+            // wait until all of them are ready to commit
+            // by trying to acquire N master's semaphore permits, where each modifier will release one permit
+            if (!masterSemaphore.tryAcquire(threads, wait, TimeUnit.SECONDS)) throw new RuntimeException("Child threads got broken somewhere");
+    
+            // let the children finish the job, each of them will need 1 permit
+            childrenSemaphore.release(threads);
+            
+            // wait until the transactions are committed
+            if (!masterSemaphore.tryAcquire(threads, wait, TimeUnit.SECONDS)) throw new RuntimeException("Child threads got broken somewhere");
+    
+            // check how many patients were added
+            assertEquals("Only one patient record should end up in the database",
+                    1 , testSession.getConcurrentPatientRecordsNum());
+            
+            AuditTestManager.expectNumberOfMessages(2);
+            
+            if (!errors.isEmpty()) throw new RuntimeException("There were errors in threads"+errors.toString());
 
-        // launch concurrent modifications
-        (new Thread() {
-          @Override
-            public void run() {
-                try {
-                    XADPatient pat = testSessionConcurrent1.getConcurrentPatient(masterSemaphore, childrenSemaphore, sessionConcurrent1);
-                    log.info("Got patient pk {}", pat.getPk());
-                } catch (InterruptedException | XDSException | RuntimeException e) {
-                    log.error("Error in a concurrent registrator thread",e);
-                } finally {
-                    masterSemaphore.release();
-                }
-                super.run();
-            }  
-        }).start();
+        } finally {
+            xdsDevice.getDeviceExtension(XdsRegistry.class).setCreateMissingPIDs(false);
+        }
         
-        (new Thread() {
-            @Override
-              public void run() {
-                  try {
-                      XADPatient pat = testSessionConcurrent2.getConcurrentPatient(masterSemaphore, childrenSemaphore, sessionConcurrent2);
-                      log.info("Got patient pk {}", pat.getPk());
-                  } catch (InterruptedException | XDSException | RuntimeException e) {
-                      log.error("Error in a concurrent registrator thread",e);
-                  } finally {
-                      masterSemaphore.release();
-                  }
-                  super.run();
-              }  
-          }).start();
-        
-        // wait until all of them are ready to commit
-        // by trying to acquire N master's semaphore permits, where each modifier will release one permit
-        masterSemaphore.acquire(threads);
-
-        // let the children finish the job, each of them will need 1 permit
-        childrenSemaphore.release(threads);
-        
-        // wait until the transactions are committed
-        masterSemaphore.acquire(threads);
-
-        // check how many patients were added
-        assertEquals("Only one patient record should end up in the database",
-                1 , testSession.getConcurrentPatientRecordsNum());
-        
-        AuditTestManager.expectNumberOfMessages(0);
     }
     
 }

@@ -37,6 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.registry;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
@@ -53,11 +54,18 @@ import org.dcm4chee.xds2.service.XdsService;
 @Typed(XdsService.class)
 public class XdsTestServiceImpl implements XdsService {
 
+    
+    Device d; 
+    
     @Override
     @Produces
     public Device getDevice() {
-        Device d = new Device("TEST");
-        d.addDeviceExtension(new XdsRegistry());
+        if (d==null)
+        {
+          d = new Device("TEST");
+          XdsRegistry reg = new XdsRegistry();
+          d.addDeviceExtension(reg);
+        }
         System.out.println("##############\n###############\n###############\n############# Device:"+d);
         return d;
     }

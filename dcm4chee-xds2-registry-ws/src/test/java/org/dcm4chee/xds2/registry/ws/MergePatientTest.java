@@ -115,7 +115,7 @@ public class MergePatientTest extends AbstractSQTests {
     private XDSRegistryBean session;
     
     @EJB
-    private XDSRegistryTestBean testSession;
+    private XDSRegistryTestBeanI testSession;
 
     // Audit logger	testing 
     @Before
