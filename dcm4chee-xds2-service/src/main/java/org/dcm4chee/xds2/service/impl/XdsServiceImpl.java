@@ -45,16 +45,14 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.ejb.Stateless;
-import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
-import javax.enterprise.inject.spi.InjectionPoint;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.audit.AuditLogger;
@@ -62,6 +60,8 @@ import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.conf.DefaultConfigurator;
 import org.dcm4chee.xds2.service.XdsService;
 
 /**
@@ -75,6 +75,10 @@ public class XdsServiceImpl implements XdsService {
 
     private static final String DEVICE_NAME_PROPERTY =
             "org.dcm4chee.xds.deviceName";
+    
+    private static final String DO_DEFAULT_CONFIG_PROPERTY =
+    "org.dcm4chee.xds.initializeDefaultConfiguration";
+    
     private static final String DEF_DEVICE_NAME =
             "dcm4chee-xds";
     private static String[] JBOSS_PROPERITIES = {
@@ -90,6 +94,7 @@ public class XdsServiceImpl implements XdsService {
 
 
     @Inject
+    @Xds    
     private DicomConfiguration conf;
     
     @Inject
@@ -122,7 +127,17 @@ public class XdsServiceImpl implements XdsService {
     	String deviceName = System.getProperty(deviceNameProperty);
     	if (deviceName == null)
     		deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
-        return conf.findDevice(deviceName);
+        try {
+            return conf.findDevice(deviceName);
+        } catch (ConfigurationNotFoundException e) {
+
+            // Try to initialize the default config if configured by a system property
+            if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null) {
+                DefaultConfigurator.applyDefaultConfig(conf, deviceName);
+                return conf.findDevice(deviceName);
+            } else
+                throw e;
+        }
     }
 
 

@@ -10,7 +10,7 @@
 
 	<entity class="Description">
 		<table name="xds_description" />
-		<sequence-generator name="seq" sequence-name="xds_description_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_description_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -22,7 +22,7 @@
 	<entity class="Identifiable">
 		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
-		<sequence-generator name="seq" sequence-name="xds_identifiable_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_identifiable_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -33,7 +33,7 @@
 	</entity>
 	<entity class="Name">
 		<table name="xds_name" />
-		<sequence-generator name="seq" sequence-name="xds_name_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_name_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -44,7 +44,7 @@
 	</entity>
 	<entity class="Slot">
 		<table name="xds_slot" />
-		<sequence-generator name="seq" sequence-name="xds_slot_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_slot_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -58,7 +58,7 @@
 	</entity>
 	<entity class="XADIssuer">
 		<table name="xds_xad_issuer" />
-		<sequence-generator name="seq" sequence-name="xds_xadissuer_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_xad_issuer_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -69,7 +69,7 @@
 	</entity>
 	<entity class="XADPatient">
 		<table name="xds_xad_patient" />
-		<sequence-generator name="seq" sequence-name="xds_xadpatient_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_xad_patient_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
@@ -80,7 +80,7 @@
 	</entity>
 	<entity class="XDSCode">
 		<table name="xds_xds_code" />
-		<sequence-generator name="seq" sequence-name="xds_xdscode_pk_seq"
+		<sequence-generator name="seq" sequence-name="xds_xds_code_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">
