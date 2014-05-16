@@ -438,7 +438,15 @@ public class RegisterDocumentSetTest {
             
             AuditTestManager.expectNumberOfMessages(2);
             
-            if (!errors.isEmpty()) throw new RuntimeException("There were errors in threads"+errors.toString());
+            if (!errors.isEmpty()) {
+                
+                String s = "";
+                try {
+                    throw new RuntimeException("There were errors in threads:");
+                } finally {
+                    for (Exception e : errors) e.printStackTrace();
+                }
+            }
 
         } finally {
             xdsDevice.getDeviceExtension(XdsRegistry.class).setCreateMissingPIDs(false);

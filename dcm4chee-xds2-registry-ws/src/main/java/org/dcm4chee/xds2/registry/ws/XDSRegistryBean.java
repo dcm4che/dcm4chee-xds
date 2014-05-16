@@ -49,6 +49,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
+import javax.ejb.EJBException;
 import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
@@ -539,7 +540,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         XADPatient pat;
         try {
             pat = self.getPatientSeparateTransaction(qryPat, createMissing);
-        } catch (EJBTransactionRolledbackException e) {
+        } catch (EJBException e) {
             // most probably a concurrent register operation attempted to create patient with same id, try one more time
             pat = self.getPatientSeparateTransaction(qryPat, createMissing);
         }
