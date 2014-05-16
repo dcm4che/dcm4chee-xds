@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-package org.dcm4chee.xds2.registry.ctrl;
+package org.dcm4chee.xds2.registry.ws;
 
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
