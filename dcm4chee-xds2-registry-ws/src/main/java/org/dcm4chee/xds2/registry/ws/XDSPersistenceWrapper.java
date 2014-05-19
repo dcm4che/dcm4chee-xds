@@ -266,9 +266,10 @@ public class XDSPersistenceWrapper {
     public void toPersistenceObj(RegistryObjectType roType, RegistryObject ro) throws XDSException {
         toPersistenceIdentifiable(roType, ro);
         
-        ro.setClassifications(roType.getClassification());
+        ro.setName(roType.getName());
         ro.setDescription(roType.getDescription());
-        ro.setExternalIdentifiers(roType.getExternalIdentifier());
+        ro.getClassifications().addAll(roType.getClassification());
+        ro.getExternalIdentifiers().addAll(roType.getExternalIdentifier());
         
         ro.setLid(roType.getLid() == null ? ro.getId() : roType.getLid());//TODO if no LID, check if older RegistryObject exists and use this Lid!
         ro.setObjectType(roType.getObjectType());

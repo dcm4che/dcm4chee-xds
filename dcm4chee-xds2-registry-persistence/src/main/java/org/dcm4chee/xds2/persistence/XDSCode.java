@@ -130,7 +130,7 @@ public class XDSCode {
         this.codeClassification = codeClassification;
     }
     
-    /* TODO: Why it was not used? 
+    /* TODO: DB_RESTRUCT Why it was not used? 
       public XDSCode(Classification cl) {
         List<Slot> slots = cl.getSlots();
         if (slots == null || slots.size() != 1 || 

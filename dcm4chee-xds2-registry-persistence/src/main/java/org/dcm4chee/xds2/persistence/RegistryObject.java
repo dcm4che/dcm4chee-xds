@@ -38,11 +38,15 @@
 
 package org.dcm4chee.xds2.persistence;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -50,11 +54,22 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Lob;
 import javax.persistence.Transient;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
+import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
+import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
+import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.infoset.rim.VersionInfoType;
 import org.hibernate.annotations.Index;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The RegistryObject class extends the Identifiable class and serves as a common super class for most
@@ -67,19 +82,18 @@ import org.hibernate.annotations.Index;
 @Entity
 @DiscriminatorValue("RegistryObject")
 public abstract class RegistryObject extends Identifiable implements Serializable {
-    private static final long serialVersionUID = 513457139488147710L;
 
+    private static final long serialVersionUID = 513457139488147710L;
+    private static Logger log = LoggerFactory.getLogger(RegistryObject.class);
+    
+    
     /**
-     * Marks whether classification, extids, etc were fetched from the blob
+     * The blob singleton
      */
     @Transient
-    private boolean blobDeserialized;
-    
-    @Basic(fetch=FetchType.LAZY)
-    @Lob
-    private byte[] xml;
-    
-    
+    private RegistryObjectType fullObject;
+
+   
     
     @Basic(optional = false)
     @Column(name = "lid")
@@ -105,17 +119,34 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     @Column(name = "comment1")
     private String comment;
     
-    @Transient
-    private Collection<ClassificationType> classifications;
+    // TODO:DB_RESTRUCT override other setters to save into blob! 
+
+    /* These getters/setter pull the data from the blob singleton */
     
-    @Transient
-    private InternationalStringType description;
+    public Collection<ClassificationType> getClassifications() {
+        return getFullObject().getClassification();
+    }
 
-    @Transient
-    private InternationalStringType name;
-
-    @Transient
-    private Collection<ExternalIdentifierType> externalIdentifiers;
+    public InternationalStringType getDescription() {
+        return getFullObject().getDescription();
+    }
+    public void setDescription(InternationalStringType description) {
+        getFullObject().setDescription(description);
+    }
+    
+    public InternationalStringType getName() {
+        return getFullObject().getName();
+    }
+    
+    public void setName(InternationalStringType name) {
+        getFullObject().setName(name);
+    }
+    
+    public Collection<ExternalIdentifierType> getExternalIdentifiers() {
+        return getFullObject().getExternalIdentifier();
+    }
+    
+    
     
     /**
      * Each RegistryObject instance MUST have a lid (Logical Id) attribute . The lid is used to refer to a
@@ -135,6 +166,7 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     }
     public void setLid(String lid) {
         this.lid = lid;
+        getFullObject().setLid(lid);
     }
     
     /**
@@ -160,6 +192,7 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     }
     public void setObjectType(String objectType) {
         this.objectType = objectType;
+        getFullObject().setObjectType(objectType);
     }
     
     /**
@@ -185,6 +218,7 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     }
     public void setStatus(String status) {
         this.status = status;
+        getFullObject().setStatus(status);
     }
     
     /**
@@ -200,6 +234,14 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     }
     public void setVersionName(String versionName) {
         this.versionName = versionName;
+        getVersionInfo().setVersionName(versionName);
+    }
+    
+    
+    private synchronized VersionInfoType getVersionInfo() {
+        if (getFullObject().getVersionInfo() == null)
+            getFullObject().setVersionInfo((new ObjectFactory()).createVersionInfoType());
+        return getFullObject().getVersionInfo();
     }
     /**
      * VerionInfo (flattened: VersionName, Comment)
@@ -210,81 +252,60 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     }
     public void setComment(String comment) {
         this.comment = comment;
+        getVersionInfo().setComment(comment);
     }
     
-    /**
-     * Each RegistryObject instance MAY have a human readable name. The name does not need to be
-     * unique with respect to other RegistryObject instances. This attribute is I18N capable and therefore of
-     * type InternationalString
-     * 
-     * @return
-     */
-    public InternationalStringType getName() {
-        return name;
-    }
-    public void setName(InternationalStringType name) {
-        this.name = name;
-    }
-    
-    /**
-     * Each RegistryObject instance MAY have a Set of zero or more Classification instances that are
-     * composed within the RegistryObject. These Classification instances classify the RegistryObject.
-     * 
-     * @return
-     */
-    public Collection<ClassificationType> getClassifications() {
-        return classifications;
-    }
-    public void setClassifications(Collection<ClassificationType> list) {
-        this.classifications = list;
-    }
-    
-    /**
-     * Each RegistryObject instance MAY have textual description in a human readable and user-friendly
-     * form. This attribute is I18N capable and therefore of type InternationalString.
-     * 
-     * @param internationalStringType
-     */
-    public void setDescription(InternationalStringType internationalStringType) {
-        this.description = internationalStringType;
-    }
-    public InternationalStringType getDescription() {
-        return description;
-    }
-    
-    /**
-     * Each RegistryObject instance MAY have a Set of zero or more ExternalIdentifier instances that are
-     * composed within the RegistryObject. These ExternalIdentifier instances serve as alternate identifiers
-     * for the RegistryObject.
-     * 
-     * @param list
-     */
-    public void setExternalIdentifiers(Collection<ExternalIdentifierType> list) {
-        this.externalIdentifiers = list;
-    }
-    public Collection<ExternalIdentifierType> getExternalIdentifiers() {
+   
+    @Basic(fetch=FetchType.LAZY)
+    @Column(name = "xmlBlob")    
+    @Lob
+    @Access(AccessType.PROPERTY)
+    public byte[] getXml() throws JAXBException {
+        log.debug("getXml called");
+        if (fullObject == null) return null;
         
-        return externalIdentifiers;
-    }
-    
-    
-    private synchronized void deserializeBlob() {
-        if (blobDeserialized) {
-            
-            blobDeserialized = true;
-        }
-    }
-    
-    public byte[] getXml() {
-        if (xml == null) {
-            // serialize the obj
-            // xmk = serilalize(this)
-        }
-        
+        Marshaller m = JAXBContext.newInstance(RegistryObjectType.class).createMarshaller();
+        ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
+        m.marshal((new ObjectFactory()).createRegistryObject(fullObject), xmlStream);
+        byte[] xml = xmlStream.toByteArray();
         return xml;
+         
     }
-    public void setXml(byte[] xml) {
-        this.xml = xml;
+    @SuppressWarnings("unchecked")
+    public void setXml(byte[] xml) throws JAXBException {
+        log.debug("setXml called");
+        Unmarshaller um = JAXBContext.newInstance(SubmitObjectsRequest.class).createUnmarshaller();
+        ByteArrayInputStream is = new ByteArrayInputStream(xml);
+        fullObject = ((JAXBElement<RegistryObjectType>) um.unmarshal(is)).getValue();
+    }
+    
+    /**
+     * Will lazily fetch the blob from the DB, in not done already. If the returned object is changed, 
+     * the changes will be persisted in case the entity is persisted!
+     * @return
+     */
+    public RegistryObjectType getFullObject() {
+
+        // singleton way 
+        if (fullObject != null) return fullObject;
+
+        log.debug("no singleton RegistryObjectType, trying to fetch db");
+
+        // if not created yet, try to fetch from db
+        try {
+            getXml();
+        } catch (JAXBException e) {
+            log.warn("Error while marshalling a RegistryObjectType with id "+getId(),e);
+        }
+        
+        if (fullObject != null) return fullObject;
+
+        log.debug("no blob from db, creating new RegistryObjectType");
+        
+        // create new
+        fullObject = (new ObjectFactory()).createRegistryObjectType();
+        return fullObject;
+        
     }
     
     

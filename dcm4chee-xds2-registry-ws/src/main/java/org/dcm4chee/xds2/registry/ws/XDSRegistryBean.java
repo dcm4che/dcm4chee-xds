@@ -445,7 +445,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
     public XDSDocumentEntry getDocumentEntryByUUIDandFetch(String uuid) {
         XDSDocumentEntry doc = (XDSDocumentEntry) getObjectByNamedQuery(XDSDocumentEntry.FIND_BY_UUID, uuid);
-        log.info("found classifications:"+doc.getClassifications().size());
+        // TODO:DB_RESTRUCT log.info("found classifications:"+doc.getClassifications().size());
         return doc;
     }
 
