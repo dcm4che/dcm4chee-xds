@@ -63,7 +63,7 @@
 					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
 				</ValueList>
 			</Slot>
-			<rim:Slot name="urn:ihe:iti:xds:2013:referenceIdList ">
+			<rim:Slot name="urn:ihe:iti:xds:2013:referenceIdList">
 				<rim:ValueList>
 					<rim:Value>112233^^^&amp;1.2.3.4.5.6&amp;ISO^urn:ihe:iti:xds:2013:accession</rim:Value>
 					<rim:Value>1.2.3.12.78.23^^^^urn:ihe:iti:xds:2013:uniqueId</rim:Value>
