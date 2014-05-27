@@ -538,6 +538,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             throw new XDSException(XDSException.XDS_ERR_UNKNOWN_PATID, "PatientID with wrong UniversalId type (must be ISO)! pid:"+pid, null);
         }
         XADPatient pat;
+        // use a nested separate transaction to handle concurrent patient creation,
+        // retry one time (there will be an exception if the unique constraint was violated)
         try {
             pat = self.getPatientSeparateTransaction(qryPat, createMissing);
         } catch (EJBException e) {

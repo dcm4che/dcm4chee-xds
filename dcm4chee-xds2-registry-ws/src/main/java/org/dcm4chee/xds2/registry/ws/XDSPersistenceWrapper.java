@@ -98,7 +98,7 @@ public class XDSPersistenceWrapper {
 
     private HashMap<String, Identifiable> uuidMapping = new HashMap<String, Identifiable>();
     
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    //private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
     private static Logger log = LoggerFactory.getLogger(XDSPersistenceWrapper.class);
 
@@ -292,22 +292,7 @@ public class XDSPersistenceWrapper {
 
 
     private void copySlots(List<SlotType1> list, Identifiable ro) {
-        List<Slot> slots = new ArrayList<Slot>();
-        if (list != null) {
-            List<String> values;
-            for (SlotType1 slotType : list) {
-                if (!XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slotType.getName())) {
-                    values = slotType.getValueList().getValue();
-                    for (int i = 0, len = values.size() ; i < len ; i++) {
-                        slots.add(newSlot(ro, slotType.getName(), slotType.getSlotType(), values.get(i)));
-                    }
-                }
-            }
-            if (ro instanceof XDSFolder) {
-                slots.add( newSlot(ro, XDSConstants.SLOT_NAME_LAST_UPDATE_TIME, null, sdf.format(new Date())));
-            }
-        }
-        ro.setSlots(slots);
+        ro.setSlotTypes(list);
     }
 
     private Slot newSlot(Identifiable ro, String slotName, String slotType, String v) {

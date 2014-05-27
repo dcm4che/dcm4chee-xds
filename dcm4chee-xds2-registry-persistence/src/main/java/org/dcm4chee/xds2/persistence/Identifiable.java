@@ -39,6 +39,9 @@
 package org.dcm4chee.xds2.persistence;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Basic;
@@ -54,6 +57,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
+import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.hibernate.annotations.Index;
 
 
@@ -72,6 +77,9 @@ import org.hibernate.annotations.Index;
 public abstract class Identifiable implements Serializable {
     private static final long serialVersionUID = -354612904987140207L;
 
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+
+    
     @Id
     @GeneratedValue
     @Column(name = "pk")
@@ -126,7 +134,19 @@ public abstract class Identifiable implements Serializable {
         return slots;
     }
 
-    public void setSlots(List<Slot> slots) {
+    
+    private Slot newSlot(Identifiable ro, String slotName, String slotType, String v) {
+        Slot slot;
+        slot = new Slot();
+        slot.setName(slotName);
+        slot.setType(slotType);
+        slot.setValue(v);
+        slot.setParent(ro);
+        return slot;
+    }
+    
+    private void setSlots(List<Slot> slots) {
+        
         for (Slot slot : slots) {
             if (slot.getParent() == null) {
                 slot.setParent(this);
@@ -134,7 +154,29 @@ public abstract class Identifiable implements Serializable {
                 throw new IllegalArgumentException("Slot with different parent! slot:"+slot);
             }
         }
-        this.slots = slots;
+        this.slots = slots;        
+    }
+    
+    
+    public void setSlotTypes(List<SlotType1> slotTs) {
+        
+        List<Slot> slots = new ArrayList<Slot>();
+        if (slotTs != null) {
+            List<String> values;
+            for (SlotType1 slotType : slotTs) {
+                if (!XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slotType.getName())) {
+                    values = slotType.getValueList().getValue();
+                    for (int i = 0, len = values.size() ; i < len ; i++) {
+                        slots.add(newSlot(this, slotType.getName(), slotType.getSlotType(), values.get(i)));
+                    }
+                }
+            }
+            if (this instanceof XDSFolder) {
+                slots.add( newSlot(this, XDSConstants.SLOT_NAME_LAST_UPDATE_TIME, null, sdf.format(new Date())));
+            }
+        }
+        
+        setSlots(slots);
     }
 
     @Override

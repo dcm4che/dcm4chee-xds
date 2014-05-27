@@ -75,6 +75,7 @@ import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
+import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.infoset.rim.VersionInfoType;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Index;
@@ -301,6 +302,27 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
         return getFullObject().getExternalIdentifier();
     }
 
+    
+    @Override
+    public void setHome(String home) {
+        super.setHome(home);
+        getFullObject().setHome(home);
+    }
+    
+    @Override
+    public void setId(String id) {
+        super.setId(id);
+        getFullObject().setId(id);
+    }
+    
+    @Override
+    public void setSlotTypes(List<SlotType1> slotTs) {
+        super.setSlotTypes(slotTs);
+        getFullObject().getSlot().clear();
+        getFullObject().getSlot().addAll(slotTs);
+    }
+    
+    
     /**
      * Each RegistryObject instance MUST have a lid (Logical Id) attribute . The
      * lid is used to refer to a logical RegistryObject in a version independent
