@@ -323,7 +323,8 @@ public class RegisterDocumentSetTest {
         
         for (JAXBElement<? extends IdentifiableType> elem : sor.getRegistryObjectList().getIdentifiable()) {
             String uuid = elem.getValue().getId();
-            uuids.add(uuid);
+            if (elem.getValue().getClass() != ClassificationType.class)
+                uuids.add(uuid);
         }
         
         // check that identifiables stored and generate the delete request
