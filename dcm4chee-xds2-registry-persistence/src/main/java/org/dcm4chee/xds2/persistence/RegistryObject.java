@@ -42,8 +42,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -64,16 +62,16 @@ import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
+import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
-import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.rim.VersionInfoType;
 import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The RegistryObject class extends the Identifiable class and serves as a common super class for most
- * classes in the information model.
+ * The RegistryObject class extends the Identifiable class and serves as a
+ * common super class for most classes in the information model.
  * 
  * @author Franz Willer <franz.willer@gmail.com>
  * @version $Revision$ $Date$
@@ -82,47 +80,66 @@ import org.slf4j.LoggerFactory;
 @Entity
 @DiscriminatorValue("RegistryObject")
 public abstract class RegistryObject extends Identifiable implements Serializable {
-
     private static final long serialVersionUID = 513457139488147710L;
     private static Logger log = LoggerFactory.getLogger(RegistryObject.class);
-    
-    
+
+    // Un/marshallers are not thread-safe, but are expensive to create, so
+    // threadlocal it is
+
+    public static ThreadLocal<Marshaller> marshallerThreadLocal = new ThreadLocal<Marshaller>() {
+        @Override
+        protected Marshaller initialValue() {
+            try {
+                return JAXBContext.newInstance(RegistryObjectListType.class).createMarshaller();
+            } catch (JAXBException e) {
+                throw new RuntimeException("Unable to create Marshaller for RegistryObjectType", e);
+            }
+        }
+    };
+
+    public static ThreadLocal<Unmarshaller> unmarshallerThreadLocal = new ThreadLocal<Unmarshaller>() {
+        @Override
+        protected Unmarshaller initialValue() {
+            try {
+                return JAXBContext.newInstance(RegistryObjectListType.class).createUnmarshaller();
+            } catch (JAXBException e) {
+                throw new RuntimeException("Unable to create Unmarshaller for RegistryObjectType", e);
+            }
+        }
+    };
+
     /**
      * The blob singleton
      */
     @Transient
     private RegistryObjectType fullObject;
 
-   
-    
     @Basic(optional = false)
     @Column(name = "lid")
     private String lid;
-    
-    
+
     @Basic(optional = true)
     @Column(name = "objectType")
-    @Index(name="xds_objectType_idx")
+    @Index(name = "xds_objectType_idx")
     private String objectType;
-    
-    
+
     @Basic(optional = false)
     @Column(name = "status")
-    @Index(name="xds_status_idx")
+    @Index(name = "xds_status_idx")
     private String status;
 
-    //Versioninfo (flattened: versionName, comment)
+    // Versioninfo (flattened: versionName, comment)
     @Basic(optional = true)
-    @Column(name = "version_name", length=16)
+    @Column(name = "version_name", length = 16)
     private String versionName;
     @Basic(optional = true)
     @Column(name = "comment1")
     private String comment;
-    
-    // TODO:DB_RESTRUCT override other setters to save into blob! 
+
+    // TODO:DB_RESTRUCT override other setters to save into blob!
 
     /* These getters/setter pull the data from the blob singleton */
-    
+
     public Collection<ClassificationType> getClassifications() {
         return getFullObject().getClassification();
     }
@@ -130,184 +147,217 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     public InternationalStringType getDescription() {
         return getFullObject().getDescription();
     }
+
     public void setDescription(InternationalStringType description) {
         getFullObject().setDescription(description);
     }
-    
+
     public InternationalStringType getName() {
         return getFullObject().getName();
     }
-    
+
     public void setName(InternationalStringType name) {
         getFullObject().setName(name);
     }
-    
+
     public Collection<ExternalIdentifierType> getExternalIdentifiers() {
         return getFullObject().getExternalIdentifier();
     }
-    
-    
-    
+
     /**
-     * Each RegistryObject instance MUST have a lid (Logical Id) attribute . The lid is used to refer to a
-     * logical RegistryObject in a version independent manner. All versions of a RegistryObject MUST have
-     * the same value for the lid attribute. Note that this is in contrast with the id attribute that MUST be
-     * unique for each version of the same logical RegistryObject. The lid attribute MAY be specified by the
-     * submitter when creating the original version of a RegistryObject. If the submitter assigns the lid
-     * attribute, she must guarantee that it is a globally unique URN. A registry MUST honor a valid submittersupplied
-     * LID. If the submitter does not specify a LID then the registry MUST assign a LID and the value
-     * of the LID attribute MUST be identical to the value of the id attribute of the first (originally created)
-     * version of the logical RegistryObject.
+     * Each RegistryObject instance MUST have a lid (Logical Id) attribute . The
+     * lid is used to refer to a logical RegistryObject in a version independent
+     * manner. All versions of a RegistryObject MUST have the same value for the
+     * lid attribute. Note that this is in contrast with the id attribute that
+     * MUST be unique for each version of the same logical RegistryObject. The
+     * lid attribute MAY be specified by the submitter when creating the
+     * original version of a RegistryObject. If the submitter assigns the lid
+     * attribute, she must guarantee that it is a globally unique URN. A
+     * registry MUST honor a valid submittersupplied LID. If the submitter does
+     * not specify a LID then the registry MUST assign a LID and the value of
+     * the LID attribute MUST be identical to the value of the id attribute of
+     * the first (originally created) version of the logical RegistryObject.
      * 
      * @return
      */
     public String getLid() {
         return lid;
     }
+
     public void setLid(String lid) {
         this.lid = lid;
         getFullObject().setLid(lid);
     }
-    
+
     /**
-     * Each RegistryObject instance has an objectType attribute. The value of the objectType attribute MUST
-     * be a reference to a ClassificationNode in the canonical ObjectType ClassificationScheme. A Registry
-     * MUST support the object types as defined by the ObjectType ClassificationScheme. The canonical
-     * ObjectType ClassificationScheme may easily be extended by adding additional ClassificationNodes to
-     * the canonical ObjectType ClassificationScheme.
-     * The objectType for almost all objects in the information model matches the ClassificationNode that
-     * corresponds to the name of their class. For example the objectType for a Classification is a reference to
-     * the ClassificationNode with code 'Classification' in the canonical ObjectType ClassificationScheme.
-     * The only exception to this rule is that the objectType for an ExtrinsicObject or an ExternalLink instance
-     * MAY be defined by the submitter and indicates the type of content associated with that object.
-     * A registry MUST set the correct objectType on a RegistryObject when returning it as a response to a
-     * client request. A client MAY set the objectType on a RegistryObject when submitting the object. A
-     * client SHOULD set the objectType when the object is an ExternalLink or an ExtrinsicObject since
-     * content pointed to or described by these types may be of arbitrary objectType.
+     * Each RegistryObject instance has an objectType attribute. The value of
+     * the objectType attribute MUST be a reference to a ClassificationNode in
+     * the canonical ObjectType ClassificationScheme. A Registry MUST support
+     * the object types as defined by the ObjectType ClassificationScheme. The
+     * canonical ObjectType ClassificationScheme may easily be extended by
+     * adding additional ClassificationNodes to the canonical ObjectType
+     * ClassificationScheme. The objectType for almost all objects in the
+     * information model matches the ClassificationNode that corresponds to the
+     * name of their class. For example the objectType for a Classification is a
+     * reference to the ClassificationNode with code 'Classification' in the
+     * canonical ObjectType ClassificationScheme. The only exception to this
+     * rule is that the objectType for an ExtrinsicObject or an ExternalLink
+     * instance MAY be defined by the submitter and indicates the type of
+     * content associated with that object. A registry MUST set the correct
+     * objectType on a RegistryObject when returning it as a response to a
+     * client request. A client MAY set the objectType on a RegistryObject when
+     * submitting the object. A client SHOULD set the objectType when the object
+     * is an ExternalLink or an ExtrinsicObject since content pointed to or
+     * described by these types may be of arbitrary objectType.
      * 
      * @return
      */
     public String getObjectType() {
         return objectType;
     }
+
     public void setObjectType(String objectType) {
         this.objectType = objectType;
         getFullObject().setObjectType(objectType);
     }
-    
+
     /**
-     * Each RegistryObject instance has an objectType attribute. The value of the objectType attribute MUST
-     * be a reference to a ClassificationNode in the canonical ObjectType ClassificationScheme. A Registry
-     * MUST support the object types as defined by the ObjectType ClassificationScheme. The canonical
-     * ObjectType ClassificationScheme may easily be extended by adding additional ClassificationNodes to
-     * the canonical ObjectType ClassificationScheme.
-     * The objectType for almost all objects in the information model matches the ClassificationNode that
-     * corresponds to the name of their class. For example the objectType for a Classification is a reference to
-     * the ClassificationNode with code 'Classification' in the canonical ObjectType ClassificationScheme.
-     * The only exception to this rule is that the objectType for an ExtrinsicObject or an ExternalLink instance
-     * MAY be defined by the submitter and indicates the type of content associated with that object.
-     * A registry MUST set the correct objectType on a RegistryObject when returning it as a response to a
-     * client request. A client MAY set the objectType on a RegistryObject when submitting the object. A
-     * client SHOULD set the objectType when the object is an ExternalLink or an ExtrinsicObject since
-     * content pointed to or described by these types may be of arbitrary objectType.
+     * Each RegistryObject instance has an objectType attribute. The value of
+     * the objectType attribute MUST be a reference to a ClassificationNode in
+     * the canonical ObjectType ClassificationScheme. A Registry MUST support
+     * the object types as defined by the ObjectType ClassificationScheme. The
+     * canonical ObjectType ClassificationScheme may easily be extended by
+     * adding additional ClassificationNodes to the canonical ObjectType
+     * ClassificationScheme. The objectType for almost all objects in the
+     * information model matches the ClassificationNode that corresponds to the
+     * name of their class. For example the objectType for a Classification is a
+     * reference to the ClassificationNode with code 'Classification' in the
+     * canonical ObjectType ClassificationScheme. The only exception to this
+     * rule is that the objectType for an ExtrinsicObject or an ExternalLink
+     * instance MAY be defined by the submitter and indicates the type of
+     * content associated with that object. A registry MUST set the correct
+     * objectType on a RegistryObject when returning it as a response to a
+     * client request. A client MAY set the objectType on a RegistryObject when
+     * submitting the object. A client SHOULD set the objectType when the object
+     * is an ExternalLink or an ExtrinsicObject since content pointed to or
+     * described by these types may be of arbitrary objectType.
      * 
      * @return
      */
     public String getStatus() {
         return status;
     }
+
     public void setStatus(String status) {
         this.status = status;
         getFullObject().setStatus(status);
     }
-    
+
     /**
-     * VerionInfo (flattened: VersionName, Comment)
-     * Each RegistryObject instance MAY have a versionInfo attribute. The value of the versionInfo attribute
-     * MUST be of type VersionInfo. The versionInfo attribute provides information about the specific version
-     * of a RegistryObject. The versionInfo attribute is set by the registry.
+     * VerionInfo (flattened: VersionName, Comment) Each RegistryObject instance
+     * MAY have a versionInfo attribute. The value of the versionInfo attribute
+     * MUST be of type VersionInfo. The versionInfo attribute provides
+     * information about the specific version of a RegistryObject. The
+     * versionInfo attribute is set by the registry.
      * 
      * @return
      */
     public String getVersionName() {
         return versionName;
     }
+
     public void setVersionName(String versionName) {
         this.versionName = versionName;
         getVersionInfo().setVersionName(versionName);
     }
-    
-    
+
     private synchronized VersionInfoType getVersionInfo() {
         if (getFullObject().getVersionInfo() == null)
             getFullObject().setVersionInfo((new ObjectFactory()).createVersionInfoType());
         return getFullObject().getVersionInfo();
     }
+
     /**
      * VerionInfo (flattened: VersionName, Comment)
+     * 
      * @return
      */
     public String getComment() {
         return comment;
     }
+
     public void setComment(String comment) {
         this.comment = comment;
         getVersionInfo().setComment(comment);
     }
-    
-   
-    @Basic(fetch=FetchType.LAZY)
-    @Column(name = "xmlBlob")    
+
+    private byte[] blobXml;
+
     @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "xmlBlob")
     @Access(AccessType.PROPERTY)
     public byte[] getXml() throws JAXBException {
-        log.debug("getXml called");
-        if (fullObject == null) return null;
-        
-        Marshaller m = JAXBContext.newInstance(RegistryObjectType.class).createMarshaller();
+        log.debug("getXml called (id {})", getId());
+        if (fullObject == null)
+            return blobXml;
+
+        log.debug("Marshalling fullObject in getXml (id {})", getId());
+
+        // if fullObject was initialized, we have to serialize it to persist any
+        // changes that were made
         ByteArrayOutputStream xmlStream = new ByteArrayOutputStream();
-        m.marshal((new ObjectFactory()).createRegistryObject(fullObject), xmlStream);
+        marshallerThreadLocal.get().marshal((new ObjectFactory()).createRegistryObject(fullObject), xmlStream);
         byte[] xml = xmlStream.toByteArray();
         return xml;
-         
+
     }
+
     @SuppressWarnings("unchecked")
     public void setXml(byte[] xml) throws JAXBException {
-        log.debug("setXml called");
-        Unmarshaller um = JAXBContext.newInstance(SubmitObjectsRequest.class).createUnmarshaller();
-        ByteArrayInputStream is = new ByteArrayInputStream(xml);
-        fullObject = ((JAXBElement<RegistryObjectType>) um.unmarshal(is)).getValue();
+        log.debug("setXml called (id {})", getId());
+        blobXml = xml;
     }
-    
+
     /**
-     * Will lazily fetch the blob from the DB, in not done already. If the returned object is changed, 
-     * the changes will be persisted in case the entity is persisted!
+     * Will lazily fetch the blob from the DB, in not done already. If the
+     * returned object is changed, the changes will be persisted in case the
+     * entity is persisted!
+     * 
      * @return
      */
-    public RegistryObjectType getFullObject() {
+    @SuppressWarnings("unchecked")
+    public synchronized RegistryObjectType getFullObject() {
+        log.debug("requested singleton  (id {})", getId());
 
-        // singleton way 
-        if (fullObject != null) return fullObject;
+        // singleton way
+        if (fullObject != null)
+            return fullObject;
 
-        log.debug("no singleton RegistryObjectType, trying to fetch db");
+        log.debug("no singleton RegistryObjectType, trying to fetch db (id {})", getId());
 
         // if not created yet, try to fetch from db
         try {
-            getXml();
+            byte[] xml = getXml();
+            if (xml != null) {
+                log.debug("Unmarshalling RegistryObjectType ... (id {})", getId());
+                ByteArrayInputStream is = new ByteArrayInputStream(xml);
+                fullObject = ((JAXBElement<RegistryObjectType>) unmarshallerThreadLocal.get().unmarshal(is)).getValue();
+                return fullObject;
+            }
         } catch (JAXBException e) {
-            log.warn("Error while marshalling a RegistryObjectType with id "+getId(),e);
+            // Exception is used since if there is an issue with unmarshalling,
+            // but the blob exists, then an empty fullobject is created and it
+            // will replace the blob - so data is lost
+            throw new RuntimeException("Error while unmarshalling a RegistryObjectType with id " + getId(), e);
         }
-        
-        if (fullObject != null) return fullObject;
 
-        log.debug("no blob from db, creating new RegistryObjectType");
-        
+        log.debug("no blob from db, creating new RegistryObjectType (id {})", getId());
+
         // create new
         fullObject = (new ObjectFactory()).createRegistryObjectType();
         return fullObject;
-        
+
     }
-    
-    
-    
+
 }

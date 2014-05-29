@@ -547,7 +547,7 @@ public class XDSPersistenceWrapper {
         roType.setName(ro.getName());
         roType.setDescription(ro.getDescription());
         roType.getClassification().addAll(ro.getClassifications());
-        roType.getExternalIdentifier().addAll(roType.getExternalIdentifier());
+        roType.getExternalIdentifier().addAll(ro.getExternalIdentifiers());
         
         log.debug("\n#### copySlotType");
         copySlotType(ro.getSlots(), roType);
