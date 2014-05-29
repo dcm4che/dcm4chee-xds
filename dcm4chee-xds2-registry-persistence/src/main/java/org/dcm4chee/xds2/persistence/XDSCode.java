@@ -130,7 +130,8 @@ public class XDSCode {
         this.codeClassification = codeClassification;
     }
     
-    public XDSCode(Classification cl) {
+    /* TODO: Why it was not used? 
+      public XDSCode(Classification cl) {
         List<Slot> slots = cl.getSlots();
         if (slots == null || slots.size() != 1 || 
                 !SLOT_NAME_CODING_SCHEME.equals(slots.get(0).getName())) {
@@ -146,7 +147,7 @@ public class XDSCode {
         codingSchemeDesignator = slots.get(0).getValue();
         codeMeaning = cl.getName().iterator().next().getValue();
         codeClassification = cl.getClassificationScheme().getId();
-    }
+    }*/
     
     public String getCodeValue() {
         return codeValue;

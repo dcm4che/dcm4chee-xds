@@ -7,27 +7,9 @@
 
 	<access>FIELD</access>
 
-	<entity class="Description">
-		<table name="xds_description" />
-		<attributes>
-			<id name="pk">
-				<column name="pk" />
-				<generated-value strategy="IDENTITY" />
-			</id>
-		</attributes>
-	</entity>
 	<entity class="Identifiable">
 		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
-		<attributes>
-			<id name="pk">
-				<column name="pk" />
-				<generated-value strategy="IDENTITY" />
-			</id>
-		</attributes>
-	</entity>
-	<entity class="Name">
-		<table name="xds_name" />
 		<attributes>
 			<id name="pk">
 				<column name="pk" />

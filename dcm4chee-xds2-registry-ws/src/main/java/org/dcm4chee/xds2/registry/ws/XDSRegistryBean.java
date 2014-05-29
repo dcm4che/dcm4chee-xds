@@ -398,7 +398,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             if (obj instanceof AssociationType1) {
                 objects.add(wrapper.toAssociation((AssociationType1)obj));
             } else {
-                objects.add(wrapper.toClassification((ClassificationType)obj));
+                // TODO: DB_RESTRUCT inspect - do we need it? objects.add(wrapper.toClassification((ClassificationType)obj));
             }
         }
         wrapper.logUIDMapping();

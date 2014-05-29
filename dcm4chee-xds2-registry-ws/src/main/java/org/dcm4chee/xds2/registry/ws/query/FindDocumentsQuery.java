@@ -117,9 +117,9 @@ public class FindDocumentsQuery extends StoredQuery {
                 getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_STOP_TIME_TO),
                 QXDSDocumentEntry.xDSDocumentEntry.pk, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME);
         
-        addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_AUTHOR_PERSON), 
+        /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_AUTHOR_PERSON), 
                 XDSConstants.UUID_XDSDocumentEntry_author, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
-                QXDSDocumentEntry.xDSDocumentEntry.pk);
+                QXDSDocumentEntry.xDSDocumentEntry.pk);*/
 	}
 
     @Override

@@ -140,6 +140,12 @@
 	</profiles>
 	<dependencies>
 		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-infoset</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>	
+		<dependency>
 			<groupId>javax.xml</groupId>
 			<artifactId>jaxr-api</artifactId>
 			<version>1.0_04</version>

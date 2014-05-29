@@ -84,9 +84,9 @@ public class FindSubmissionSetQuery extends StoredQuery {
         addExternalIdentifierMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SOURCE_ID),
                 XDSConstants.UUID_XDSSubmissionSet_sourceId, QXDSSubmissionSet.xDSSubmissionSet.pk);
 
-        addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
+        /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
                 XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
-                QXDSSubmissionSet.xDSSubmissionSet.pk);
+                QXDSSubmissionSet.xDSSubmissionSet.pk); */
 
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_CONTENT_TYPE), 
                 XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, QXDSSubmissionSet.xDSSubmissionSet.xdsCodes);

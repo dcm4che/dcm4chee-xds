@@ -1,0 +1,4 @@
+special queries:
+
+1) by Author - slot Person in classification
+2)

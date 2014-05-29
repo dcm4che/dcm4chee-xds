@@ -40,13 +40,10 @@ package org.dcm4chee.xds2.registry.ws;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
@@ -61,8 +58,6 @@ import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
-import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectListType;
@@ -71,23 +66,17 @@ import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.dcm4chee.xds2.infoset.rim.VersionInfoType;
 import org.dcm4chee.xds2.persistence.Association;
-import org.dcm4chee.xds2.persistence.Classification;
 import org.dcm4chee.xds2.persistence.ClassificationNode;
 import org.dcm4chee.xds2.persistence.ClassificationScheme;
-import org.dcm4chee.xds2.persistence.Description;
-import org.dcm4chee.xds2.persistence.ExternalIdentifier;
 import org.dcm4chee.xds2.persistence.ExtrinsicObject;
 import org.dcm4chee.xds2.persistence.Identifiable;
-import org.dcm4chee.xds2.persistence.Name;
 import org.dcm4chee.xds2.persistence.ObjectRef;
 import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.Slot;
 import org.dcm4chee.xds2.persistence.XADPatient;
-import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
-import org.dcm4chee.xds2.persistence.XDSObject;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -199,7 +188,7 @@ public class XDSPersistenceWrapper {
         return assoc;
     }
     
-    public Classification toClassification(ClassificationType clType) throws XDSException {
+    /*public Classification toClassification(ClassificationType clType) throws XDSException {
         Classification cl = new Classification();
         toPersistenceObj(clType, cl);
         cl.setNodeRepresentation(clType.getNodeRepresentation());
@@ -243,7 +232,7 @@ public class XDSPersistenceWrapper {
         }
 
         return cl;
-    }
+    }*/
 
     public ClassificationScheme toClassificationScheme(ClassificationSchemeType schemeType, List<Identifiable> objects) throws XDSException {
         ClassificationScheme scheme = new ClassificationScheme();
@@ -276,16 +265,18 @@ public class XDSPersistenceWrapper {
 
     public void toPersistenceObj(RegistryObjectType roType, RegistryObject ro) throws XDSException {
         toPersistenceIdentifiable(roType, ro);
-        ro.setClassifications(new HashSet<Classification>());
-        ro.setDescription(new HashSet<Description>());
-        ro.setExternalIdentifiers(new HashSet<ExternalIdentifier>());
+        
+        ro.setClassifications(roType.getClassification());
+        ro.setDescription(roType.getDescription());
+        ro.setExternalIdentifiers(roType.getExternalIdentifier());
+        
         ro.setLid(roType.getLid() == null ? ro.getId() : roType.getLid());//TODO if no LID, check if older RegistryObject exists and use this Lid!
         ro.setObjectType(roType.getObjectType());
         ro.setStatus("urn:oasis:names:tc:ebxml-regrep:StatusType:Approved");
-        copyName(roType.getName(), ro);
+        /*copyName(roType.getName(), ro);
         copyDescriptions(roType.getDescription(), ro);
         copyClassifications(roType.getClassification(), ro);
-        copyExternalIdentifier(roType.getExternalIdentifier(), ro);
+        copyExternalIdentifier(roType.getExternalIdentifier(), ro);*/
         //TODO VersionInfo
         ro.setVersionName("1.0");
         ro.setComment("Initial Version");
@@ -324,8 +315,8 @@ public class XDSPersistenceWrapper {
                     objList.add(toJAXBRegistryPackage((RegistryPackage)obj));
                 } else if (obj instanceof Association) {
                     objList.add(toJAXBAssociation((Association)obj));
-                } else if (obj instanceof Classification) {
-                    objList.add(toJAXBClassification((Classification)obj));
+               /* } else if (obj instanceof Classification) {
+                    objList.add(toJAXBClassification((Classification)obj));*/
                 } else {
                     log.error("Unknown RegistryObject! id:"+obj.getId());
                 }
@@ -334,7 +325,7 @@ public class XDSPersistenceWrapper {
         return objListType;
     }
     
-    private void copyName(InternationalStringType isType, RegistryObject ro) {
+    /*private void copyName(InternationalStringType isType, RegistryObject ro) {
         Set<Name> names = new HashSet<Name>();
         if (isType != null) {
             Name name;
@@ -348,9 +339,9 @@ public class XDSPersistenceWrapper {
             }
         }
         ro.setName(names);
-    }
+    }-*/
 
-    private void copyDescriptions(InternationalStringType isType, RegistryObject ro) {
+    /*private void copyDescriptions(InternationalStringType isType, RegistryObject ro) {
         Set<Description> descriptions = new HashSet<Description>();
         if (isType != null) {
             Description desc;
@@ -365,9 +356,9 @@ public class XDSPersistenceWrapper {
             }
         }
         ro.setDescription(descriptions);
-    }
+    }*/
     
-    private void copyClassifications(List<ClassificationType> list, RegistryObject ro) throws XDSException {
+    /*private void copyClassifications(List<ClassificationType> list, RegistryObject ro) throws XDSException {
         if (list != null) {
             Set<Classification> clList = ro.getClassifications();
             Collection<XDSCode> xdsCodes = null;
@@ -389,7 +380,7 @@ public class XDSPersistenceWrapper {
                 }
             }
         }
-    }
+    }*/
 
     private void copyClassificationNodes(List<ClassificationNodeType> list, Identifiable parent, List<Identifiable> objects) throws XDSException {
         if (list != null) {
@@ -399,7 +390,7 @@ public class XDSPersistenceWrapper {
         }
     }
 
-    private void copyExternalIdentifier(List<ExternalIdentifierType> list, RegistryObject ro) throws XDSException {
+    /*private void copyExternalIdentifier(List<ExternalIdentifierType> list, RegistryObject ro) throws XDSException {
         if (list != null) {
             ExternalIdentifier ei;
             for (ExternalIdentifierType eiType : list) {
@@ -412,7 +403,7 @@ public class XDSPersistenceWrapper {
                 ro.getExternalIdentifiers().add(ei);
             }
         }
-    }
+    }*/
 
     private void copySlots(List<SlotType1> list, Identifiable ro) {
         List<Slot> slots = new ArrayList<Slot>();
@@ -520,10 +511,10 @@ public class XDSPersistenceWrapper {
         }
         return factory.createAssociation(assocType);
     }
-    private JAXBElement<? extends IdentifiableType> toJAXBClassification(
+ /*   private JAXBElement<? extends IdentifiableType> toJAXBClassification(
             Classification obj) {
         return factory.createClassification(toClassificationType(obj));
-    }
+    }*/
     
     private JAXBElement<? extends IdentifiableType> toJAXBObjectRef(Identifiable i) {
         ObjectRefType objRef = factory.createObjectRefType();
@@ -540,14 +531,23 @@ public class XDSPersistenceWrapper {
         roType.setHome(ro.getHome());
         roType.setObjectType(ro.getObjectType());
         roType.setStatus(ro.getStatus());
-        log.debug("\n#### copyNameType");
-        copyNameType(ro.getName(), roType);
+
+        
+        /*log.debug("\n#### copyNameType");
+        //copyNameType(ro.getName(), roType);
         log.debug("\n#### copyDescriptionType");
-        copyDescriptionType(ro.getDescription(), roType);
+        //copyDescriptionType(ro.getDescription(), roType);
         log.debug("\n#### copyClassificationType");
-        copyClassificationType(ro.getClassifications(), roType);
+        //copyClassificationType(ro.getClassifications(), roType);
         log.debug("\n#### copyExternalIdentifierType");
-        copyExternalIdentifierType(ro.getExternalIdentifiers(), roType);
+        //copyExternalIdentifierType(ro.getExternalIdentifiers(), roType);
+        */
+        
+        roType.setName(ro.getName());
+        roType.setDescription(ro.getDescription());
+        roType.getClassification().addAll(ro.getClassifications());
+        roType.getExternalIdentifier().addAll(roType.getExternalIdentifier());
+        
         log.debug("\n#### copySlotType");
         copySlotType(ro.getSlots(), roType);
         VersionInfoType version = factory.createVersionInfoType();
@@ -557,7 +557,7 @@ public class XDSPersistenceWrapper {
         log.debug("\n#### finnished toEbXmlObj");
     }
 
-    private void copyNameType(Set<Name> name, RegistryObjectType roType) {
+    /*private void copyNameType(Set<Name> name, RegistryObjectType roType) {
         InternationalStringType is = factory.createInternationalStringType();
         List<LocalizedStringType> values = is.getLocalizedString();
         LocalizedStringType value;
@@ -612,6 +612,7 @@ public class XDSPersistenceWrapper {
             clType.setClassifiedObject(cl.getClassifiedObject().getId());
         } else {
             log.error("Missing ClassifiedObject! Classification id:"+cl.getId());
+            //TODO: move constant to configuration?
             clType.setClassifiedObject("urn:willi:987-abc-789");
         }
         return clType;
@@ -640,7 +641,7 @@ public class XDSPersistenceWrapper {
                 eiTypes.add(eiType);
             }
         }
-    }
+    } */
 
     private void copySlotType(List<Slot> slots, RegistryObjectType roType) {
         if (slots != null) {

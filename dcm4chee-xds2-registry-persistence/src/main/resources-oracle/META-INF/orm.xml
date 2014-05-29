@@ -8,32 +8,11 @@
 
 	<access>FIELD</access>
 
-	<entity class="Description">
-		<table name="xds_description" />
-		<sequence-generator name="seq" sequence-name="xds_description_pks"
-			allocation-size="1" />
-		<attributes>
-			<id name="pk">
-				<column name="pk" />
-				<generated-value strategy="SEQUENCE" generator="seq" />
-			</id>
-		</attributes>
-	</entity>
+	
 	<entity class="Identifiable">
 		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
 		<sequence-generator name="seq" sequence-name="xds_identifiable_pks"
-			allocation-size="1" />
-		<attributes>
-			<id name="pk">
-				<column name="pk" />
-				<generated-value strategy="SEQUENCE" generator="seq" />
-			</id>
-		</attributes>
-	</entity>
-	<entity class="Name">
-		<table name="xds_name" />
-		<sequence-generator name="seq" sequence-name="xds_name_pks"
 			allocation-size="1" />
 		<attributes>
 			<id name="pk">

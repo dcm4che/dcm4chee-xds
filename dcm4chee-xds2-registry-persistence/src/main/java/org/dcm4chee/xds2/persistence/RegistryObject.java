@@ -39,15 +39,21 @@
 package org.dcm4chee.xds2.persistence;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.Lob;
+import javax.persistence.Transient;
 
+import org.dcm4chee.xds2.infoset.rim.ClassificationType;
+import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
+import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.hibernate.annotations.Index;
 
 /**
@@ -63,13 +69,29 @@ import org.hibernate.annotations.Index;
 public abstract class RegistryObject extends Identifiable implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
 
+    /**
+     * Marks whether classification, extids, etc were fetched from the blob
+     */
+    @Transient
+    private boolean blobDeserialized;
+    
+    @Basic(fetch=FetchType.LAZY)
+    @Lob
+    private byte[] xml;
+    
+    
+    
     @Basic(optional = false)
     @Column(name = "lid")
     private String lid;
+    
+    
     @Basic(optional = true)
     @Column(name = "objectType")
     @Index(name="xds_objectType_idx")
     private String objectType;
+    
+    
     @Basic(optional = false)
     @Column(name = "status")
     @Index(name="xds_status_idx")
@@ -83,21 +105,17 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     @Column(name = "comment1")
     private String comment;
     
-    @Basic(optional = true)
-    @OneToMany(mappedBy="classifiedObject", cascade=CascadeType.ALL)
-    private Set<Classification> classifications;
+    @Transient
+    private Collection<ClassificationType> classifications;
     
-    @Basic(optional = true)
-    @OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
-    private Set<Description> description;
+    @Transient
+    private InternationalStringType description;
 
-    @Basic(optional = true)
-    @OneToMany(mappedBy="parent", cascade=CascadeType.ALL)
-    private Set<Name> name;
+    @Transient
+    private InternationalStringType name;
 
-    @Basic(optional = true)
-    @OneToMany(mappedBy="registryObject", cascade=CascadeType.ALL)
-    private Set<ExternalIdentifier> externalIdentifiers;
+    @Transient
+    private Collection<ExternalIdentifierType> externalIdentifiers;
     
     /**
      * Each RegistryObject instance MUST have a lid (Logical Id) attribute . The lid is used to refer to a
@@ -201,10 +219,10 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
      * 
      * @return
      */
-    public Set<Name> getName() {
+    public InternationalStringType getName() {
         return name;
     }
-    public void setName(Set<Name> name) {
+    public void setName(InternationalStringType name) {
         this.name = name;
     }
     
@@ -214,23 +232,23 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
      * 
      * @return
      */
-    public Set<Classification> getClassifications() {
+    public Collection<ClassificationType> getClassifications() {
         return classifications;
     }
-    public void setClassifications(Set<Classification> classifications) {
-        this.classifications = classifications;
+    public void setClassifications(Collection<ClassificationType> list) {
+        this.classifications = list;
     }
     
     /**
      * Each RegistryObject instance MAY have textual description in a human readable and user-friendly
      * form. This attribute is I18N capable and therefore of type InternationalString.
      * 
-     * @param description
+     * @param internationalStringType
      */
-    public void setDescription(Set<Description> description) {
-        this.description = description;
+    public void setDescription(InternationalStringType internationalStringType) {
+        this.description = internationalStringType;
     }
-    public Set<Description> getDescription() {
+    public InternationalStringType getDescription() {
         return description;
     }
     
@@ -239,12 +257,36 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
      * composed within the RegistryObject. These ExternalIdentifier instances serve as alternate identifiers
      * for the RegistryObject.
      * 
-     * @param externalIdentifiers
+     * @param list
      */
-    public void setExternalIdentifiers(Set<ExternalIdentifier> externalIdentifiers) {
-        this.externalIdentifiers = externalIdentifiers;
+    public void setExternalIdentifiers(Collection<ExternalIdentifierType> list) {
+        this.externalIdentifiers = list;
     }
-    public Set<ExternalIdentifier> getExternalIdentifiers() {
+    public Collection<ExternalIdentifierType> getExternalIdentifiers() {
+        
         return externalIdentifiers;
     }
+    
+    
+    private synchronized void deserializeBlob() {
+        if (blobDeserialized) {
+            
+            blobDeserialized = true;
+        }
+    }
+    
+    public byte[] getXml() {
+        if (xml == null) {
+            // serialize the obj
+            // xmk = serilalize(this)
+        }
+        
+        return xml;
+    }
+    public void setXml(byte[] xml) {
+        this.xml = xml;
+    }
+    
+    
+    
 }

@@ -83,8 +83,8 @@ public class GetSubmissionSetsQuery extends StoredQuery {
         Predicate uuidPredicate = values.length == 1 ? target.id.eq(values[0]) : target.id.in(values);
         List<Association> assocs = query
         .from(QAssociation.association, QClassificationNode.classificationNode, target, source)
-        .where( QClassificationNode.classificationNode.pk.eq(QAssociation.association.assocType.pk),
-                QClassificationNode.classificationNode.id.eq(XDSConstants.HAS_MEMBER),
+        .where( /* TODO: DB_RESTRUCT QClassificationNode.classificationNode.pk.eq(QAssociation.association.assocType.pk),
+                QClassificationNode.classificationNode.id.eq(XDSConstants.HAS_MEMBER),*/
                 target.pk.eq(QAssociation.association.targetObject.pk),
                 uuidPredicate,
                 source.pk.eq(QAssociation.association.sourceObject.pk),
