@@ -38,9 +38,8 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,8 +74,10 @@ import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.RegistryPackage;
 import org.dcm4chee.xds2.persistence.Slot;
 import org.dcm4chee.xds2.persistence.XADPatient;
+import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
+import org.dcm4chee.xds2.persistence.XDSObject;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,6 +218,23 @@ public class XDSPersistenceWrapper {
         return objRef;
     }
 
+    private void indexCodes(List<ClassificationType> list, RegistryObject ro) throws XDSException {
+        if (list != null) {
+            if (ro instanceof XDSObject) {
+                Collection<XDSCode> xdsCodes = ((XDSObject) ro).getXDSCodes();
+                if (xdsCodes == null) {
+                    xdsCodes = new ArrayList<XDSCode>();
+                    ((XDSObject) ro).setXDSCodes(xdsCodes);
+                }
+                for (ClassificationType clType : list) {
+                    if (isXDSCode(clType)) {
+                        xdsCodes.add(session.getXDSCode(clType, cfg.isCreateMissingCodes()));
+                    }
+                }
+            }
+        }
+    }
+
     public void toPersistenceObj(RegistryObjectType roType, RegistryObject ro) throws XDSException {
         toPersistenceIdentifiable(roType, ro);
         
@@ -228,10 +246,7 @@ public class XDSPersistenceWrapper {
         ro.setLid(roType.getLid() == null ? ro.getId() : roType.getLid());//TODO if no LID, check if older RegistryObject exists and use this Lid!
         ro.setObjectType(roType.getObjectType());
         ro.setStatus("urn:oasis:names:tc:ebxml-regrep:StatusType:Approved");
-        /*copyName(roType.getName(), ro);
-        copyDescriptions(roType.getDescription(), ro);
-        copyClassifications(roType.getClassification(), ro);
-        copyExternalIdentifier(roType.getExternalIdentifier(), ro);*/
+        indexCodes(roType.getClassification(), ro);
         //TODO VersionInfo
         ro.setVersionName("1.0");
         ro.setComment("Initial Version");
@@ -270,8 +285,6 @@ public class XDSPersistenceWrapper {
                     objList.add(toJAXBRegistryPackage((RegistryPackage)obj));
                 } else if (obj instanceof Association) {
                     objList.add(toJAXBAssociation((Association)obj));
-               /* } else if (obj instanceof Classification) {
-                    objList.add(toJAXBClassification((Classification)obj));*/
                 } else {
                     log.error("Unknown RegistryObject! id:"+obj.getId());
                 }
@@ -295,16 +308,6 @@ public class XDSPersistenceWrapper {
         ro.setSlotTypes(list);
     }
 
-    private Slot newSlot(Identifiable ro, String slotName, String slotType, String v) {
-        Slot slot;
-        slot = new Slot();
-        slot.setName(slotName);
-        slot.setType(slotType);
-        slot.setValue(v);
-        slot.setParent(ro);
-        return slot;
-    }
-    
     public String getSlotValue(IdentifiableType idType, String slotName) {
         List<SlotType1> list = idType.getSlot();
         if (list != null) {

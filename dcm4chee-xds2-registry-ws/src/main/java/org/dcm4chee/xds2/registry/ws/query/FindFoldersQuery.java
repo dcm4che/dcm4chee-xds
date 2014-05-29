@@ -82,14 +82,15 @@ public class FindFoldersQuery extends StoredQuery {
                 getQueryParam(XDSConstants.QRY_FOLDER_LAST_UPDATE_TIME_TO),
                 QXDSFolder.xDSFolder.pk, XDSConstants.SLOT_NAME_LAST_UPDATE_TIME);
         
-        addExternalIdentifierMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SOURCE_ID),
+        /* TODO: DB_RESTRUCT 
+              addExternalIdentifierMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SOURCE_ID),
                 XDSConstants.UUID_XDSSubmissionSet_sourceId, QXDSSubmissionSet.xDSSubmissionSet.pk);
 
-        /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
+             addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
                 XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
                 QXDSSubmissionSet.xDSSubmissionSet.pk); */
         
-        // TODO: WHY XDSConstants.UUID_XDSSubmissionSet_autor???
+        // TODO: WHY SUBMISSION SET STUFF ???
 
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_CONTENT_TYPE), 
                 XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, QXDSSubmissionSet.xDSSubmissionSet.xdsCodes);

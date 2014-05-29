@@ -44,9 +44,12 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
+import org.dcm4chee.xds2.persistence.QRegistryObjectIndex;
 import org.dcm4chee.xds2.persistence.QXADIssuer;
 import org.dcm4chee.xds2.persistence.QXADPatient;
 import org.dcm4chee.xds2.persistence.QXDSDocumentEntry;
+import org.dcm4chee.xds2.persistence.RegistryObject;
+import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.registry.ws.XDSPersistenceWrapper;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
@@ -55,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.expr.BooleanExpression;
 
 /**
  * Stored Query Implementation for FindDocuments 
@@ -117,9 +121,8 @@ public class FindDocumentsQuery extends StoredQuery {
                 getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_STOP_TIME_TO),
                 QXDSDocumentEntry.xDSDocumentEntry.pk, XDSConstants.SLOT_NAME_SERVICE_STOP_TIME);
         
-        /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_AUTHOR_PERSON), 
-                XDSConstants.UUID_XDSDocumentEntry_author, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
-                QXDSDocumentEntry.xDSDocumentEntry.pk);*/
+        addIndexMatch(builder, QXDSDocumentEntry.xDSDocumentEntry.pk, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_AUTHOR_PERSON), XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR);
+        // TODO: CODE INSPECTION! DB_RESTRUCT
 	}
 
     @Override

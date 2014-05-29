@@ -53,6 +53,7 @@ import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
 import org.dcm4chee.xds2.persistence.QAssociation;
 import org.dcm4chee.xds2.persistence.QClassificationScheme;
+import org.dcm4chee.xds2.persistence.QRegistryObjectIndex;
 import org.dcm4chee.xds2.persistence.QSlot;
 import org.dcm4chee.xds2.persistence.QXADIssuer;
 import org.dcm4chee.xds2.persistence.QXADPatient;
@@ -62,6 +63,7 @@ import org.dcm4chee.xds2.persistence.RegistryObject;
 import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
+import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,7 +73,9 @@ import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.ExpressionUtils;
 import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.CollectionPath;
+import com.mysema.query.types.path.EntityPathBase;
 import com.mysema.query.types.path.NumberPath;
 import com.mysema.query.types.path.StringPath;
 
@@ -217,38 +221,6 @@ public abstract class StoredQuery {
     }
 
     /**
-     * Add code match in ebXML style (Classification with Slot and Name)
-     * @param builder           BooleanBuilder to add matches for given code parameter
-     * @param codeParam         Stored Query Parameter with code values
-     * @param codeType          The classification of the codes (Classification.classificationScheme)
-     * @param subselectJoinPk   Path to pk to bind subselect to parent select.
-     * @throws XDSException 
-     */
-    protected void addCodeMatch(BooleanBuilder builder, StoredQueryParam codeParam, String codeType, 
-            NumberPath<Long> subselectJoinPk) throws XDSException {
-        if (codeParam != null) {
-            List<String> codeValues;
-            String[] codeAndScheme;
-            for (int i = 0, len=codeParam.getNumberOfANDElements() ; i < len ; i++) {
-                codeValues = codeParam.getMultiValues(i);
-                BooleanBuilder codesBuilder = new BooleanBuilder();
-                for (int j = 0, jLen = codeValues.size() ; j < jLen ; j++) {
-                    codeAndScheme = toCodeValueAndScheme(codeValues.get(j));
-                    codesBuilder.or(ExpressionUtils.allOf(QClassificationScheme.classificationScheme.id.eq(codeType),
-                            /* TODO: DB_RESTRUCT QClassification.classification.nodeRepresentation.eq(codeAndScheme[0]),*/
-                            QSlot.slot.value.eq(codeAndScheme[1])));
-                }
-               
-                /* TODO: DB_RESTRUCT builder.and(new JPASubQuery().from(QClassification.classification)
-                .innerJoin(QClassification.classification.classificationScheme, QClassificationScheme.classificationScheme)
-                .innerJoin(QClassification.classification.slots, QSlot.slot)
-                .where(QClassification.classification.classifiedObject.pk.eq(subselectJoinPk), 
-                        codesBuilder).exists());*/
-            }
-        }
-    }
-    
-    /**
      * Add code matches in XDS form using XDSCode entity
      * 
      * @param builder     BooleanBuilder to add matches for given code parameter
@@ -293,6 +265,7 @@ public abstract class StoredQuery {
 
     protected void addSlotValueMatch(BooleanBuilder builder, StoredQueryParam param, String slotName, 
             NumberPath<Long> subselectJoinPk) {
+        // OPTIMIZABLE: select count distinct where slot=slot1 or slot=slot2 or ... == predicates.count ?.. 
         if (param != null) {
             List<Predicate> predicates = getValuePredicate(param, QSlot.slot.value);
             for (Predicate predicate : predicates) {
@@ -302,36 +275,31 @@ public abstract class StoredQuery {
             }
         }
     }
-
-    /*protected void addSlotValueInClassificationMatch(BooleanBuilder builder, StoredQueryParam param, 
-            String classificationId, String slotName, NumberPath<Long> subselectJoinPk) {
-        if (param != null) {
-            List<Predicate> predicates = getValuePredicate(param, QSlot.slot.value);
-            for (Predicate predicate : predicates) {
-                builder.and(new JPASubQuery().from(QClassification.classification)
-                    .innerJoin(QClassification.classification.classificationScheme, QClassificationScheme.classificationScheme)
-                    .innerJoin(QClassification.classification.slots, QSlot.slot)
-                    .where(QClassification.classification.classifiedObject.pk.eq(subselectJoinPk), 
-                            QSlot.slot.name.eq(slotName), predicate).exists());
-            }
-        }
-    }*/
-
-    protected void addExternalIdentifierMatch(BooleanBuilder builder, StoredQueryParam param, String externalIdentifierID, 
-            NumberPath<Long> subselectJoinPk) {
-        
-        /* TODO: DB_RESTRUCT
-        if (param != null) {
-            List<Predicate> predicates = getValuePredicate(param, QExternalIdentifier.externalIdentifier.value);
-            for (Predicate predicate : predicates) {
-                builder.and(new JPASubQuery().from(QExternalIdentifier.externalIdentifier)
-                        .where(QExternalIdentifier.externalIdentifier.registryObject.pk.eq(subselectJoinPk), 
-                                QExternalIdentifier.externalIdentifier.id.eq(externalIdentifierID),
-                                predicate).exists());
-            }
-        } */
-    }
     
+    /**
+     * Adds a match against RegistryObjectIndex, i.e. the indexed fields from the blob xml. </br>
+     * Uses OR for multi values and LIKE to match.
+     */
+    protected void addIndexMatch(BooleanBuilder builder, NumberPath<Long> registryObjectPk,StoredQueryParam param, XDSSearchIndexKey key) {
+
+        // No match needed if param not specified
+        if (param == null) return;
+
+        QRegistryObjectIndex index = QRegistryObjectIndex.registryObjectIndex;
+
+        // perform an OR for the list of values in QueryParam
+        BooleanExpression expr = null;
+        String[] values = param.getValues();
+        for (String val : values)
+            expr = expr == null ? index.value.like(val) : expr.or(index.value.like(val));
+
+        // add this expression as subquery
+        JPASubQuery subq = new JPASubQuery().from(index).where(index.subject.pk.eq(registryObjectPk).and(index.key.eq(key)).and(expr));
+        builder.and(subq.exists());
+        
+            
+    }
+
     protected String[] toCodeValueAndScheme(String codeString) throws XDSException {
         int pos = codeString.indexOf("^^");
         if (pos == -1 || (codeString.length() - pos) < 3 )

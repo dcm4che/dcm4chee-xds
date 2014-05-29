@@ -82,7 +82,7 @@ public class GetSubmissionSetsQuery extends StoredQuery {
         QRegistryObject source = new QRegistryObject("source");
         Predicate uuidPredicate = values.length == 1 ? target.id.eq(values[0]) : target.id.in(values);
         List<Association> assocs = query
-        .from(QAssociation.association, target, source)
+        .from(QAssociation.association, target, source, QClassificationNode.classificationNode)
         .where( QClassificationNode.classificationNode.pk.eq(QAssociation.association.assocType.pk),
                 QClassificationNode.classificationNode.id.eq(XDSConstants.HAS_MEMBER),
                 target.pk.eq(QAssociation.association.targetObject.pk),

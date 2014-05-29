@@ -51,6 +51,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.hibernate.annotations.Index;
 
 /**
@@ -86,6 +87,8 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
     public static final String FIND_BY_UUID = "XDSSubmissionSet.findByUUID";
     public static final String FIND_BY_UUIDS = "XDSSubmissionSet.findByUUIDs";
     
+    private static final XDSSearchIndexKey[] THIS_INDEXES = { XDSSearchIndexKey.SUBMISSION_SET_AUTHOR, XDSSearchIndexKey.SUBMISSION_SET_SOURCE_ID};
+    
     @Basic(optional = false)
     @Column(name = "unique_id")
     @Index(name="xds_uniqueId_idx")
@@ -102,6 +105,12 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
         inverseJoinColumns = @JoinColumn(name = "code_fk", referencedColumnName = "pk"))
     private Collection<XDSCode> xdsCodes;
 
+    
+    @Override
+    XDSSearchIndexKey[] getIndexes() {
+        return THIS_INDEXES;
+    }
+    
     public String getUniqueId() {
         return uniqueId;
     }

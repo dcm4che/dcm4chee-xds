@@ -44,10 +44,13 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
+import org.dcm4chee.xds2.persistence.QRegistryObjectIndex;
 import org.dcm4chee.xds2.persistence.QXADIssuer;
 import org.dcm4chee.xds2.persistence.QXADPatient;
+import org.dcm4chee.xds2.persistence.QXDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.QXDSSubmissionSet;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
+import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.dcm4chee.xds2.registry.ws.XDSPersistenceWrapper;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.slf4j.Logger;
@@ -55,6 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.expr.BooleanExpression;
 
 /**
  * Stored Query Implementation for FindSubmissionnSet 
@@ -81,12 +85,10 @@ public class FindSubmissionSetQuery extends StoredQuery {
                 getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_TO),
                 QXDSSubmissionSet.xDSSubmissionSet.pk, XDSConstants.SLOT_NAME_SUBMISSION_TIME);
         
-        addExternalIdentifierMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SOURCE_ID),
-                XDSConstants.UUID_XDSSubmissionSet_sourceId, QXDSSubmissionSet.xDSSubmissionSet.pk);
+        addIndexMatch(builder, QXDSSubmissionSet.xDSSubmissionSet.pk, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_SOURCE_ID),XDSSearchIndexKey.SUBMISSION_SET_SOURCE_ID);
+        addIndexMatch(builder, QXDSSubmissionSet.xDSSubmissionSet.pk, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), XDSSearchIndexKey.SUBMISSION_SET_AUTHOR);
 
-        /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
-                XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
-                QXDSSubmissionSet.xDSSubmissionSet.pk); */
+        // TODO: CODE INSPECTION! DB_RESTRUCT
 
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_CONTENT_TYPE), 
                 XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, QXDSSubmissionSet.xDSSubmissionSet.xdsCodes);

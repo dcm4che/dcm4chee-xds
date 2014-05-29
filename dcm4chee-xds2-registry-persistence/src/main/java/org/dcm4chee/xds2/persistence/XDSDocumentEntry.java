@@ -98,8 +98,7 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     
     private static Logger log = LoggerFactory.getLogger(XDSDocumentEntry.class);
 
-    private static final XDSSearchIndexKey[] THIS_INDEXES = { XDSSearchIndexKey.DOCUMENT_ENTRY_UNIQUE_ID,
-        XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR };
+    private static final XDSSearchIndexKey[] THIS_INDEXES = { XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR };
     
     @Override
     XDSSearchIndexKey[] getIndexes() {

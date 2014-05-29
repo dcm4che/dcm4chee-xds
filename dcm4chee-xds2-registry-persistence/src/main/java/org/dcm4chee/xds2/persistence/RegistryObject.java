@@ -95,7 +95,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RegistryObject extends Identifiable implements Serializable {
     private static final long serialVersionUID = 513457139488147710L;
     private static Logger log = LoggerFactory.getLogger(RegistryObject.class);
-    private static final Map<XDSSearchIndexKey,String> INDEX_XPATHS;
+    public static final Map<XDSSearchIndexKey,String> INDEX_XPATHS;
     private static final boolean FORCE_REINDEX = true;
     
     /**
@@ -106,17 +106,14 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
      */
     public static enum XDSSearchIndexKey {
         
-        DOCUMENT_ENTRY_UNIQUE_ID,
         DOCUMENT_ENTRY_AUTHOR,
+
         SUBMISSION_SET_AUTHOR,
+        SUBMISSION_SET_SOURCE_ID,
         
     }
     static {
         INDEX_XPATHS = new HashMap<RegistryObject.XDSSearchIndexKey, String>();
-
-        // Document Entry's Unique ID
-        INDEX_XPATHS.put(XDSSearchIndexKey.DOCUMENT_ENTRY_UNIQUE_ID,
-                String.format("externalIdentifier[identificationScheme='%s']/value", XDSConstants.UUID_XDSDocumentEntry_uniqueId));
 
         // Document Entry's Author
         INDEX_XPATHS.put(XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR,
@@ -125,6 +122,10 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
         // Submission Set's Author
         INDEX_XPATHS.put(XDSSearchIndexKey.SUBMISSION_SET_AUTHOR,
                 String.format("classification[classificationScheme='%s']/slot[name='%s']/valueList/value" ,XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON));
+
+        // Submission Set's Source ID
+        INDEX_XPATHS.put(XDSSearchIndexKey.SUBMISSION_SET_SOURCE_ID,
+                String.format("externalIdentifier[identificationScheme='%s']/value", XDSConstants.UUID_XDSSubmissionSet_sourceId));
     }
     
     /**
@@ -186,7 +187,7 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
     private String comment;
     
     @Transient
-    private Set<RegistryObjectIndex> indexedValues = new HashSet<RegistryObjectIndex>();
+    private Set<RegistryObjectIndex> currIndexedValues = new HashSet<RegistryObjectIndex>();
 
     /**
      * The deserialized blob singleton  
@@ -239,9 +240,9 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
         
         // if fullObject was not initialized - nothing has changed and we could just return old value 
         // (except if reindexing is forced)
-        if (fullObject == null && !FORCE_REINDEX) return indexedValues;
+        if (fullObject == null && !FORCE_REINDEX) return currIndexedValues;
         
-        if (getIndexes() == null) return indexedValues;
+        if (getIndexes() == null) return currIndexedValues;
         
         // validate/update searchIndex table
         // iterate over all enabled indexes
@@ -263,18 +264,18 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
         
         // Retain what we have there already, and add new ones.
         // Note thats retain makes use of a custom equals for RegistryObjectIndex that does not consider the pk.
-        indexedValues.retainAll(newIndexValues); 
-        indexedValues.addAll(newIndexValues);
+        currIndexedValues.retainAll(newIndexValues); 
+        currIndexedValues.addAll(newIndexValues);
         
-        return indexedValues;
+        return currIndexedValues;
     }
 
     public void setIndexedValues(Set<RegistryObjectIndex> indexedValues) {
         
-        this.indexedValues = indexedValues;
+        this.currIndexedValues = indexedValues;
     }
     
-    // TODO:DB_RESTRUCT override super and sub setters to save into blob!
+    // TODO:DB_RESTRUCT override sub setters to save into blob!
 
     /* These getters/setter pull the data from the blob singleton */
 

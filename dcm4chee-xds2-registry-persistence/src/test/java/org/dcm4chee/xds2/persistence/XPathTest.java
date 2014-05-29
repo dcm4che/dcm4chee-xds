@@ -1,6 +1,8 @@
 package org.dcm4chee.xds2.persistence;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -14,12 +16,16 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.commons.jxpath.JXPathContext;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
+import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
+import org.hibernate.mapping.Collection;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class XPathTest {
 
@@ -36,37 +42,38 @@ public class XPathTest {
             log.info("type is {}", e.getDeclaredType());
         }*/
         
-        JAXBElement<ExtrinsicObjectType> el = (JAXBElement<ExtrinsicObjectType>) req.getRegistryObjectList().getIdentifiable().get(0);
-        ExtrinsicObjectType obj = el.getValue();
-        log.info("Id {}, ", obj.getId());
+        JAXBElement<ExtrinsicObjectType> docEntryEl = (JAXBElement<ExtrinsicObjectType>) req.getRegistryObjectList().getIdentifiable().get(0);
+        JAXBElement<RegistryPackageType> submsetEl = (JAXBElement<RegistryPackageType>) req.getRegistryObjectList().getIdentifiable().get(1);
+        ExtrinsicObjectType docEntry = docEntryEl.getValue();
+        RegistryPackageType submset = submsetEl.getValue();
+        log.debug("Id {}, ", docEntry.getId());
         
-        JXPathContext context = JXPathContext.newContext(obj);
-        String XDSDocUniqIdXpath = String.format("externalIdentifier[identificationScheme='%s']/value", XDSConstants.UUID_XDSDocumentEntry_uniqueId);
+        ////// doc entry //////
+        JXPathContext docEntryContext = JXPathContext.newContext(docEntry);
         
-        String XDSDocEntryAuthorXpath = String.format("classification[classificationScheme='%s']/slot[name='%s']/valueList/value" ,XDSConstants.UUID_XDSDocumentEntry_author, XDSConstants.SLOT_NAME_AUTHOR_PERSON);
-        String XDSSubmSetAuthorXpath = String.format("classification[classificationScheme='%s']/slot[name='%s']/valueList/value" ,XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON);
-        
-        
-        
-        String uniqid = (String)context.getValue(XDSDocUniqIdXpath);
-        Iterator author = (Iterator) context.iterate(XDSDocEntryAuthorXpath); 
-        
+        Iterator author = (Iterator) docEntryContext.iterate(RegistryObject.INDEX_XPATHS.get(XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR)); 
+        Assert.assertArrayEquals(new String[] {"^Smitty^Gerald^^^","^Dopplemeyer^Sherry^^^"}, toArray(author));
 
-//        List<ClassificationType> cl = (List<ClassificationType>) context.getValue(authorXpath1); 
+        ////// submission set //////
+        JXPathContext submSetContext = JXPathContext.newContext(submset);
         
+        String srcid = (String) submSetContext.getValue(RegistryObject.INDEX_XPATHS.get(XDSSearchIndexKey.SUBMISSION_SET_SOURCE_ID));
+        Assert.assertEquals("1.3.6.1.4.1.21367.13.2250", srcid);
         
-        log.info("Uniq ID {}, ", uniqid);
+        Iterator ssauthor = (Iterator) submSetContext.iterate(RegistryObject.INDEX_XPATHS.get(XDSSearchIndexKey.SUBMISSION_SET_AUTHOR)); 
+        Assert.assertArrayEquals(new String[] {"^Dopplemeyer^Sherry^^^"}, toArray(ssauthor));
         
-        String auth;
-        try {
-        while (( auth = (String) author.next() ) != null) {
-            log.info("Author {}, ", auth);
+    }
+
+    
+    private String[] toArray(Iterator author) {
+        
+        ArrayList<String> l = new ArrayList<>();
+        while (author.hasNext()) {
+            l.add((String) author.next());
         }   
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
-  //      log.info("Author* {} ", cl);
-        
+        return l.toArray(new String[] {});
+
     }
     
     @Test
