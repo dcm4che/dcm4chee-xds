@@ -40,7 +40,10 @@ package org.dcm4chee.xds2.persistence;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -94,6 +97,14 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     public static final String FIND_BY_UUIDS_NAME = "uuids";
     
     private static Logger log = LoggerFactory.getLogger(XDSDocumentEntry.class);
+
+    private static final XDSSearchIndexKey[] THIS_INDEXES = { XDSSearchIndexKey.DOCUMENT_ENTRY_UNIQUE_ID,
+        XDSSearchIndexKey.DOCUMENT_ENTRY_AUTHOR };
+    
+    @Override
+    XDSSearchIndexKey[] getIndexes() {
+        return THIS_INDEXES;
+    }
     
     @Basic(optional = false)
     @Column(name = "unique_id")

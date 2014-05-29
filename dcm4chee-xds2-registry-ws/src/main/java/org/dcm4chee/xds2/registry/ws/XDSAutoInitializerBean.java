@@ -31,4 +31,6 @@ public class XDSAutoInitializerBean {
             log.error("Auto initialization of XDS registry failed");
         }
     }
+    
+    
 }

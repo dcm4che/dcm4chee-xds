@@ -894,6 +894,11 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
         
     }
+    
+    
+    public void reIndexSearchTable() {
+        
+    }
 
 }
 

@@ -166,7 +166,7 @@ public class XDSTestUtil {
         .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-common:"+version).withoutTransitivity().asSingle(File.class))
         .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-conf:"+version).withoutTransitivity().asSingle(File.class))
         //.addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-service:"+version).withoutTransitivity().asSingle(File.class))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-registry-persistence:jar:" + System.getProperty("db") + ":"+version).withoutTransitivity().asSingle(File.class));
+        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-registry-persistence:jar:" + System.getProperty("db") + ":"+version).withTransitivity().asFile());
 
         war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;

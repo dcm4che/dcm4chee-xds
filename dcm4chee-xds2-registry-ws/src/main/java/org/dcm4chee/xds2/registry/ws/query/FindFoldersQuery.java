@@ -88,6 +88,8 @@ public class FindFoldersQuery extends StoredQuery {
         /* TODO: DB_RESTRUCT addSlotValueInClassificationMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_AUTHOR_PERSON), 
                 XDSConstants.UUID_XDSSubmissionSet_autor, XDSConstants.SLOT_NAME_AUTHOR_PERSON, 
                 QXDSSubmissionSet.xDSSubmissionSet.pk); */
+        
+        // TODO: WHY XDSConstants.UUID_XDSSubmissionSet_autor???
 
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_CONTENT_TYPE), 
                 XDSConstants.UUID_XDSSubmissionSet_contentTypeCode, QXDSSubmissionSet.xDSSubmissionSet.xdsCodes);

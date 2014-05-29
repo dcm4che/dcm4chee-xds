@@ -188,52 +188,6 @@ public class XDSPersistenceWrapper {
         return assoc;
     }
     
-    /*public Classification toClassification(ClassificationType clType) throws XDSException {
-        Classification cl = new Classification();
-        toPersistenceObj(clType, cl);
-        cl.setNodeRepresentation(clType.getNodeRepresentation());
-        log.debug("######clType.getClassificationScheme:{}",clType.getClassificationScheme());
-        if (clType.getClassificationScheme() != null) {
-            RegistryObject obj = getRegistryObject(clType.getClassificationScheme());
-            if (obj == null) {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Classification Scheme ("+clType.getClassificationScheme()+
-                        ") missing! Classification id:"+clType.getId(), null);
-            } else if (obj instanceof ClassificationScheme) {
-                cl.setClassificationScheme((ClassificationScheme) obj);
-            } else {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Referenced ClassificationScheme ("+clType.getClassificationScheme()+
-                        ") is not a ClassificationScheme! (objType:"+obj.getObjectType()+", class:"+obj.getClass().getSimpleName()+
-                        ") Classification id:"+clType.getId(), null);
-            }
-        } else if (clType.getClassificationNode() != null) {
-            RegistryObject obj = getRegistryObject(clType.getClassificationNode());
-            if (obj == null) {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Classification Node ("+clType.getClassificationNode()+
-                        ") missing! Classification id:"+clType.getId(), null);
-            } else if (obj instanceof ClassificationNode) {
-                cl.setClassificationNode((ClassificationNode) obj);
-            } else {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Referenced ClassificationNode ("+clType.getClassificationScheme()+
-                        ") is not a ClassificationNode! (objType:"+obj.getObjectType()+", class:"+obj.getClass().getSimpleName()+
-                        ") Classification id:"+clType.getId(), null);
-            } 
-        }else {
-            log.error("#######Classification Node AND Scheme missing!!! classification id:"+clType.getId());
-            throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
-                    "Classification has neither Node nor Scheme specified! Classification id:"+cl.getId(), null);
-        }
-        log.debug("######clType.getClassifiedObject:{}", clType.getClassifiedObject());
-        if (clType.getClassifiedObject() != null) {
-            cl.setClassifiedObject(getRegistryObject(clType.getClassifiedObject()));
-        }
-
-        return cl;
-    }*/
-
     public ClassificationScheme toClassificationScheme(ClassificationSchemeType schemeType, List<Identifiable> objects) throws XDSException {
         ClassificationScheme scheme = new ClassificationScheme();
         toPersistenceObj(schemeType, scheme);
@@ -326,62 +280,7 @@ public class XDSPersistenceWrapper {
         return objListType;
     }
     
-    /*private void copyName(InternationalStringType isType, RegistryObject ro) {
-        Set<Name> names = new HashSet<Name>();
-        if (isType != null) {
-            Name name;
-            for (LocalizedStringType localString : isType.getLocalizedString()) {
-                name = new Name();
-                name.setLang(localString.getLang());
-                name.setValue(localString.getValue());
-                name.setCharset(localString.getCharset());
-                name.setParent(ro);
-                names.add(name);
-            }
-        }
-        ro.setName(names);
-    }-*/
-
-    /*private void copyDescriptions(InternationalStringType isType, RegistryObject ro) {
-        Set<Description> descriptions = new HashSet<Description>();
-        if (isType != null) {
-            Description desc;
-            for (LocalizedStringType localString : isType.getLocalizedString()) {
-                desc = new Description();
-                desc.setLang(localString.getLang());
-                log.info("######## description.setValue:"+localString.getValue()+" parent:"+ro);
-                desc.setValue(localString.getValue());
-                desc.setCharset(localString.getCharset());
-                desc.setParent(ro);
-                descriptions.add(desc);
-            }
-        }
-        ro.setDescription(descriptions);
-    }*/
     
-    /*private void copyClassifications(List<ClassificationType> list, RegistryObject ro) throws XDSException {
-        if (list != null) {
-            Set<Classification> clList = ro.getClassifications();
-            Collection<XDSCode> xdsCodes = null;
-            if (ro instanceof XDSObject) {
-               xdsCodes = ((XDSObject) ro).getXDSCodes();
-               if (xdsCodes == null) {
-                   xdsCodes = new ArrayList<XDSCode>();
-                   ((XDSObject) ro).setXDSCodes(xdsCodes);
-               }
-            }
-            for (ClassificationType clType : list) {
-                if (xdsCodes != null && isXDSCode(clType)) {
-                    xdsCodes.add(session.getXDSCode(clType, cfg.isCreateMissingCodes()));
-                    if (!cfg.isDontSaveCodeClassifications()) {
-                        clList.add(toClassification(clType));
-                    }
-                } else {
-                    clList.add(toClassification(clType));
-                }
-            }
-        }
-    }*/
 
     private void copyClassificationNodes(List<ClassificationNodeType> list, Identifiable parent, List<Identifiable> objects) throws XDSException {
         if (list != null) {
@@ -391,20 +290,6 @@ public class XDSPersistenceWrapper {
         }
     }
 
-    /*private void copyExternalIdentifier(List<ExternalIdentifierType> list, RegistryObject ro) throws XDSException {
-        if (list != null) {
-            ExternalIdentifier ei;
-            for (ExternalIdentifierType eiType : list) {
-                ei = new ExternalIdentifier();
-                toPersistenceObj(eiType, ei);
-                ei.setIdentificationScheme((ClassificationScheme)
-                        getRegistryObject(eiType.getIdentificationScheme()));
-                ei.setValue(eiType.getValue());
-                ei.setRegistryObject(eiType.getRegistryObject() != null ? getRegistryObject(eiType.getRegistryObject()) : ro);
-                ro.getExternalIdentifiers().add(ei);
-            }
-        }
-    }*/
 
     private void copySlots(List<SlotType1> list, Identifiable ro) {
         List<Slot> slots = new ArrayList<Slot>();
@@ -512,11 +397,7 @@ public class XDSPersistenceWrapper {
         }
         return factory.createAssociation(assocType);
     }
- /*   private JAXBElement<? extends IdentifiableType> toJAXBClassification(
-            Classification obj) {
-        return factory.createClassification(toClassificationType(obj));
-    }*/
-    
+
     private JAXBElement<? extends IdentifiableType> toJAXBObjectRef(Identifiable i) {
         ObjectRefType objRef = factory.createObjectRefType();
         objRef.setId(i.getId());
@@ -533,17 +414,7 @@ public class XDSPersistenceWrapper {
         roType.setObjectType(ro.getObjectType());
         roType.setStatus(ro.getStatus());
 
-        
-        /*log.debug("\n#### copyNameType");
-        //copyNameType(ro.getName(), roType);
-        log.debug("\n#### copyDescriptionType");
-        //copyDescriptionType(ro.getDescription(), roType);
-        log.debug("\n#### copyClassificationType");
-        //copyClassificationType(ro.getClassifications(), roType);
-        log.debug("\n#### copyExternalIdentifierType");
-        //copyExternalIdentifierType(ro.getExternalIdentifiers(), roType);
-        */
-        
+
         roType.setName(ro.getName());
         roType.setDescription(ro.getDescription());
         roType.getClassification().addAll(ro.getClassifications());
@@ -558,92 +429,7 @@ public class XDSPersistenceWrapper {
         log.debug("\n#### finnished toEbXmlObj");
     }
 
-    /*private void copyNameType(Set<Name> name, RegistryObjectType roType) {
-        InternationalStringType is = factory.createInternationalStringType();
-        List<LocalizedStringType> values = is.getLocalizedString();
-        LocalizedStringType value;
-        for (Name n : name) {
-            value = factory.createLocalizedStringType();
-            value.setCharset(n.getCharset());
-            value.setLang(n.getLang());
-            value.setValue(n.getValue());
-            values.add(value);
-        }
-        roType.setName(is);
-    }
-
-    private void copyDescriptionType(Set<Description> descriptions, RegistryObjectType roType) {
-        InternationalStringType is = factory.createInternationalStringType();
-        List<LocalizedStringType> values = is.getLocalizedString();
-        LocalizedStringType value;
-        for (Description n : descriptions) {
-            value = factory.createLocalizedStringType();
-            value.setCharset(n.getCharset());
-            value.setLang(n.getLang());
-            value.setValue(n.getValue());
-            values.add(value);
-        }
-        roType.setDescription(is);
-    }
     
-    private void copyClassificationType(Set<Classification> classifications, RegistryObjectType roType) {
-        if (classifications != null) {
-            List<ClassificationType> classificationTypes = roType.getClassification();
-            ClassificationType clType;
-            for (Classification cl: classifications) {
-                clType = toClassificationType(cl);
-                classificationTypes.add(clType);
-            }
-        }
-    }
-
-    private ClassificationType toClassificationType(Classification cl) {
-        ClassificationType clType = factory.createClassificationType();
-        toEbXmlObj(cl, clType);
-        clType.setNodeRepresentation(cl.getNodeRepresentation());
-        if (cl.getClassificationScheme() != null) {
-            clType.setClassificationScheme(cl.getClassificationScheme().getId());
-        } else if (cl.getClassificationNode() != null) {
-            clType.setClassificationNode(cl.getClassificationNode().getId());
-        } else {
-            log.error("Missing ClassificationNode and ClassificationScheme! Classification id:"+cl.getId());
-            clType.setClassificationScheme("urn:willi:987-abc-456");
-        }
-        if (cl.getClassifiedObject() != null) {
-            clType.setClassifiedObject(cl.getClassifiedObject().getId());
-        } else {
-            log.error("Missing ClassifiedObject! Classification id:"+cl.getId());
-            //TODO: move constant to configuration?
-            clType.setClassifiedObject("urn:willi:987-abc-789");
-        }
-        return clType;
-    }
-
-    private void copyExternalIdentifierType(Set<ExternalIdentifier> externalIdentifiers, RegistryObjectType roType) {
-        if (externalIdentifiers != null) {
-            List<ExternalIdentifierType> eiTypes = roType.getExternalIdentifier();
-            ExternalIdentifierType eiType;
-            for (ExternalIdentifier ei : externalIdentifiers) {
-                eiType = factory.createExternalIdentifierType();
-                toEbXmlObj(ei, eiType);
-                if (ei.getIdentificationScheme() != null) {
-                    eiType.setIdentificationScheme(ei.getIdentificationScheme().getId());
-                } else {
-                    log.error("IdentificationScheme is null! ExternalIdentifier id:"+ei.getId());
-                    eiType.setIdentificationScheme("urn:willi:12345-abcd-123");
-                }
-                eiType.setValue(ei.getValue());
-                if (ei.getRegistryObject() != null) {
-                    eiType.setRegistryObject(ei.getRegistryObject().getId());
-                } else {
-                    log.error("RegistryObject is null! ExternalIdentifier id:"+ei.getId());
-                    eiType.setRegistryObject("urn:willi:12345-abcd-456");
-                }
-                eiTypes.add(eiType);
-            }
-        }
-    } */
-
     private void copySlotType(List<Slot> slots, RegistryObjectType roType) {
         if (slots != null) {
             SlotType1 slotType;
