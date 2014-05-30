@@ -367,6 +367,12 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         IdentifiableType obj;
         List<Identifiable> objects = new ArrayList<Identifiable>();
         List<IdentifiableType> postponed = new ArrayList<IdentifiableType>();
+
+        // check and correct metadata
+        wrapper.checkAndCorrectSubmitObjectsRequest(req);
+        // TODO: DB_RESTRUCT - check if postponed is needed at all after check and correct method - all ids are already updated
+        
+        // convert objects to persistent entities
         for (int i=0,len=objs.size() ; i < len ; i++) {
             obj = objs.get(i).getValue();
             if (obj instanceof ExtrinsicObjectType) {
@@ -397,8 +403,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             obj = postponed.get(i);
             if (obj instanceof AssociationType1) {
                 objects.add(wrapper.toAssociation((AssociationType1)obj));
-            } else {
-                // TODO: DB_RESTRUCT inspect - do we need it? objects.add(wrapper.toClassification((ClassificationType)obj));
             }
         }
         wrapper.logUIDMapping();
@@ -897,10 +901,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         
     }
     
-    
-    public void reIndexSearchTable() {
-        
-    }
 
 }
 
