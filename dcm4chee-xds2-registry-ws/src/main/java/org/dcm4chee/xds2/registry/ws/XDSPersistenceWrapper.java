@@ -41,12 +41,15 @@ package org.dcm4chee.xds2.registry.ws;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
 
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XdsRegistry;
@@ -234,8 +237,10 @@ public class XDSPersistenceWrapper {
         ro.setStatus(roType.getStatus());
         indexCodes(roType.getClassification(), ro);
     
-        ro.setComment(roType.getVersionInfo().getComment());
-        ro.setVersionName(roType.getVersionInfo().getVersionName());
+        if (roType.getVersionInfo() != null) {
+            ro.setComment(roType.getVersionInfo().getComment());
+            ro.setVersionName(roType.getVersionInfo().getVersionName());
+        }
     }
 
     public void toPersistenceIdentifiable(IdentifiableType roType, Identifiable ro) {
@@ -374,27 +379,32 @@ public class XDSPersistenceWrapper {
     
         // TODO: DB_RESTRUCT - CODE INSPECTION - is it correct to replace ids with uuids for ALL identifiables, not only ROs?
     
-        // first run - replace non-uuid IDs with UUIDs for all identifiables
-        for (JAXBElement<? extends IdentifiableType> elem : req.getRegistryObjectList().getIdentifiable()) {
-    
-            IdentifiableType ro = elem.getValue();
-    
-            // save reference by old id
-            String oldUUID = ro.getId(); 
-            String newUUID = ro.getId();
+        
+        // First run - replace non-uuid IDs with UUIDs for all identifiables, included nested ones
+        
+        JXPathContext requestContext = JXPathContext.newContext(req);
+        // Use //id xpath to find all id fields of identifiables in the request
+        Iterator ids = (Iterator) requestContext.iteratePointers("//id"); 
+        
+        while (ids.hasNext()) {
             
-            if (oldUUID == null) throw new XDSException(XDSException.XDS_ERR_MISSING_DOCUMENT_METADATA, "Metadata correction failed. Id is missing for "+ro.toString(), null);
+            Pointer p = (Pointer) ids.next();
+            String oldId = (String) p.getValue(); 
+            String newIdUUID = oldId;
+
+            if (oldId == null) continue;
             
             // Replace non-UUID id with a generated UUID
-            if (!ro.getId().startsWith("urn:")) {
-                newUUID = "urn:uuid:" + UUID.randomUUID().toString();
-                ro.setId(newUUID);
+            if (!oldId.startsWith("urn:")) {
+                newIdUUID = "urn:uuid:" + UUID.randomUUID().toString();
+                p.setValue(newIdUUID);
+                log.debug("Replacing id {} with uuid {}", oldId, newIdUUID);
             }
             
-            newUUIDs.put(oldUUID,newUUID);
+            newUUIDs.put(oldId,newIdUUID);
         }
     
-        // second run - perform check and correction
+        // Second run - perform check and correction recursively
         for (JAXBElement<? extends IdentifiableType> elem : req.getRegistryObjectList().getIdentifiable()) {
     
             // filter RegistryObjects only
@@ -448,6 +458,14 @@ public class XDSPersistenceWrapper {
             // check classification
             checkClassification(classif);
             
+        }
+
+        // if this RegistryObject is an ext id - update registryObject in case its Id has changed @ 1st run
+        if (ro.getClass().equals(ExternalIdentifierType.class)) {
+            ExternalIdentifierType extId = (ExternalIdentifierType) ro;
+            String uuid = newUUIDs.get(extId.getRegistryObject());
+            // if uuid is null - do nothing, maybe the referenced object is stored in the registry
+            if (uuid != null) extId.setRegistryObject(uuid);
         }
         
         // if this RegistryObject is a classification - update classifiedObj in case its Id has changed @ 1st run

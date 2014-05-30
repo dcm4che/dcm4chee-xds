@@ -1,5 +1,6 @@
 package org.dcm4chee.xds2.persistence;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,11 +12,14 @@ import java.util.Set;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
+import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
@@ -35,6 +39,7 @@ public class XPathTest {
     public void checkXpaths() throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(SubmitObjectsRequest.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        Marshaller marshaller = jaxbContext.createMarshaller();
         SubmitObjectsRequest req = (SubmitObjectsRequest) unmarshaller.unmarshal(
                 XPathTest.class.getResourceAsStream("RegisterOneDocument.xml")); 
         
@@ -62,6 +67,25 @@ public class XPathTest {
         
         Iterator ssauthor = (Iterator) submSetContext.iterate(RegistryObject.INDEX_XPATHS.get(XDSSearchIndexKey.SUBMISSION_SET_AUTHOR)); 
         Assert.assertArrayEquals(new String[] {"^Dopplemeyer^Sherry^^^"}, toArray(ssauthor));
+     
+
+        JXPathContext rewqContext = JXPathContext.newContext(req);
+
+        Iterator ids = (Iterator) rewqContext.iteratePointers("//id"); 
+        
+        while (ids.hasNext()) {
+            
+            Pointer p = (Pointer) ids.next();
+            //author.//p.getValue();
+            p.setValue("1243");
+            
+            System.out.println(p.toString());
+            
+        }
+
+        //StringWriter s = new StringWriter();
+        //marshaller.marshal(req, s); 
+        //System.out.println(s.getBuffer().toString());        
         
     }
 
