@@ -222,7 +222,8 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         } else {
             ip = rq.getRemoteHost();
         }
-        if (Boolean.valueOf(System.getProperty("org.dcm4chee.disableDNSLookups", "false")))
+        //TODO: move into config
+        if (!Boolean.valueOf(System.getProperty("org.dcm4chee.enableDNSLookups", "false")))
             return ip;
         try {
             return InetAddress.getByName(ip).getHostName();
