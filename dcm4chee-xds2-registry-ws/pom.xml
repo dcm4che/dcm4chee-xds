@@ -215,6 +215,7 @@
 							</systemPropertyVariables>
 							<excludes>
 								<exclude>**/SubmitObjReqTest.java</exclude>
+								<exclude>**/PerformanceTest.java</exclude>
 							</excludes>
       						<skipTests>${skipTests}</skipTests>
 						</configuration>
