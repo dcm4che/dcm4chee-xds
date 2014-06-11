@@ -372,17 +372,15 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         wrapper.checkAndCorrectSubmitObjectsRequest(req);
         // TODO: DB_RESTRUCT - check if postponed is needed at all after check and correct method - all ids are already updated
         
-        // convert objects to persistent entities
+        // first run - convert objects to persistent entities 
         for (int i=0,len=objs.size() ; i < len ; i++) {
             obj = objs.get(i).getValue();
             if (obj instanceof ExtrinsicObjectType) {
                 objects.add(wrapper.toExtrinsicObject((ExtrinsicObjectType)obj));
             } else if (obj instanceof RegistryPackageType) {
                 objects.add(wrapper.toRegistryPackage((RegistryPackageType)obj));
-            } else if (obj instanceof ClassificationType) {
-                postponed.add(obj);
             } else if (obj instanceof AssociationType1) {
-                postponed.add(obj);
+                objects.add(wrapper.toAssociation((AssociationType1)obj));
             } else if (obj instanceof ClassificationSchemeType) {//for initialization
                 wrapper.toClassificationScheme((ClassificationSchemeType)obj, objects);
             } else if (obj instanceof ClassificationNodeType) {//for initialization
@@ -399,12 +397,14 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 
             }
         }
-        for (int i = 0, len = postponed.size() ; i < len ; i++) {
-            obj = postponed.get(i);
-            if (obj instanceof AssociationType1) {
-                objects.add(wrapper.toAssociation((AssociationType1)obj));
+
+        // second run - set references across objects
+        for (JAXBElement<? extends IdentifiableType> elem : objs) {
+            if (elem.getValue() instanceof AssociationType1) {
+                wrapper.setAssociationSrcAndTarget((AssociationType1) elem.getValue());
             }
         }
+        
         wrapper.logUIDMapping();
         storeRegistryObjects(objects);
         handleLifecycle(objects);

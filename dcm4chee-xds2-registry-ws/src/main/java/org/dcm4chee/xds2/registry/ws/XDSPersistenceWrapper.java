@@ -188,12 +188,23 @@ public class XDSPersistenceWrapper {
         log.debug("######assocType.getAssociationType():{}",assocType.getAssociationType());
         assoc.setAssocType((ClassificationNode)
                 getRegistryObject(assocType.getAssociationType()));
-        assoc.setSourceObject(getCheckedRegistryObject(assocType.getSourceObject(), "Associaton! targetObject not found!", assocType));
-        assoc.setTargetObject(getCheckedRegistryObject(assocType.getTargetObject(), "Associaton! sourceObject not found!", assocType));
-        XDSValidator.checkSamePatient(assoc);
         return assoc;
     }
     
+    /**
+     * Sets the association fields for a corresponding Association entity 
+     * @param assocType
+     * @throws XDSException
+     */
+    public void setAssociationSrcAndTarget(AssociationType1 assocType) throws XDSException {
+        
+        Association assoc = (Association) getRegistryObject(assocType.getId());
+        assoc.setSourceObject(getCheckedRegistryObject(assocType.getSourceObject(), "Associaton! targetObject not found!", assocType));
+        assoc.setTargetObject(getCheckedRegistryObject(assocType.getTargetObject(), "Associaton! sourceObject not found!", assocType));
+        XDSValidator.checkSamePatient(assoc);
+        
+    }
+
     public ClassificationScheme toClassificationScheme(ClassificationSchemeType schemeType, List<Identifiable> objects) throws XDSException {
         ClassificationScheme scheme = new ClassificationScheme();
         toPersistenceObj(schemeType, scheme);
