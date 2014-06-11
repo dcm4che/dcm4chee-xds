@@ -65,14 +65,19 @@ angular.module('xds.common').factory('xdsConstants', function() {
 		"STATUS_DEPRECATED" : "urn:oasis:names:tc:ebxml-regrep:StatusType:Deprecated",
 		"STATUS_SUBMITTED" : "urn:oasis:names:tc:ebxml-regrep:StatusType:Submitted",
 		B_Statuses : [ {
-			name : "STATUS_APPROVED",
-			urn : "urn:oasis:names:tc:ebxml-regrep:StatusType:Approved"
+			name : "Any status",
+			val : "('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved', " +
+					"'urn:oasis:names:tc:ebxml-regrep:StatusType:Deprecated', " +
+					"'urn:oasis:names:tc:ebxml-regrep:StatusType:Submitted')"
 		}, {
-			name : "STATUS_DEPRECATED",
-			urn : "urn:oasis:names:tc:ebxml-regrep:StatusType:Deprecated"
+			name : "Status APPROVED",
+			val : "('urn:oasis:names:tc:ebxml-regrep:StatusType:Approved')"
 		}, {
-			name : "STATUS_SUBMITTED",
-			urn : "urn:oasis:names:tc:ebxml-regrep:StatusType:Submitted"
+			name : "Status DEPRECATED",
+			val : "('urn:oasis:names:tc:ebxml-regrep:StatusType:Deprecated')"
+		}, {
+			name : "Status SUBMITTED",
+			val : "('urn:oasis:names:tc:ebxml-regrep:StatusType:Submitted')"
 		} ]
 
 		,

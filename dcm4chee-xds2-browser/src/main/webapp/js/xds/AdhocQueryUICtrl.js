@@ -151,7 +151,7 @@ angular.module('xds.controllers').controller('AdhocQueryUICtrl',
                 case "XDS_FindFolders":
                     queryParams = {
                         "$XDSFolderPatientId": $scope.searchStr,
-                        "$XDSFolderStatus": "('"+$scope.currentStatus+"')"
+                        "$XDSFolderStatus": $scope.currentStatus
                     };
 
                     break;
@@ -159,13 +159,13 @@ angular.module('xds.controllers').controller('AdhocQueryUICtrl',
                 case "XDS_FindSubmissionSets":
                     queryParams = {
                         "$XDSSubmissionSetPatientId": $scope.searchStr,
-                        "$XDSSubmissionSetStatus": "('"+$scope.currentStatus+"')"
+                        "$XDSSubmissionSetStatus": $scope.currentStatus
                     };
                     break;
                 case "XDS_FindDocuments":
                     queryParams = {
                         "$XDSDocumentEntryPatientId": $scope.searchStr,
-                        "$XDSDocumentEntryStatus": "('"+$scope.currentStatus+"')"
+                        "$XDSDocumentEntryStatus": $scope.currentStatus
                     };
                     break;
             }
