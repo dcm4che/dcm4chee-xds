@@ -492,6 +492,11 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         log.debug("##########Store list of objects:{}", objects);
         ArrayList<String> ids = new ArrayList<String>(objects.size());
         for (Identifiable i : objects) {ids.add(i.getId());}
+        
+        // if the submitted list of objects is empty - throw an XDSException
+        if (ids.isEmpty()) throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                "The list of submitted objects for registering is empty", null);
+        
         @SuppressWarnings("unchecked")
         List<String> uuids = (List<String>) em.createQuery("SELECT i.id FROM Identifiable i WHERE i.id IN :ids")
             .setParameter("ids", ids).getResultList();
