@@ -79,16 +79,17 @@ public class FindDocumentsQuery extends StoredQuery {
         AdhocQueryResponse rsp = initAdhocQueryResponse();
         BooleanBuilder builder = new BooleanBuilder();
         buildQuery(builder);
-        log.info("#### call query!");
+        log.debug("#### call query!");
         JPAQuery query = new JPAQuery(getSession().getEntityManager());
         List<XDSDocumentEntry> docs = query.from(QXDSDocumentEntry.xDSDocumentEntry)
         .innerJoin(QXDSDocumentEntry.xDSDocumentEntry.patient, QXADPatient.xADPatient)
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSDocumentEntry.xDSDocumentEntry);
-        log.info("#### Found Documents:"+docs);
+        log.info("Found {} documents", docs.size());
+        log.debug("### Found Documents: {}", docs);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(docs, isLeafClass()));
-        log.info("#### Return rsp:"+rsp);
+        log.debug("#### Return rsp:"+rsp);
         return rsp;
     }
 

@@ -99,7 +99,8 @@ public class FindSubmissionSetQuery extends StoredQuery {
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSSubmissionSet.xDSSubmissionSet);
-        log.info("#### Found SubmissionSet:"+submissionSets);
+        log.info("Found {} SubmissionSets", submissionSets.size());
+        log.debug("#### Found SubmissionSets: {}", submissionSets);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(submissionSets, isLeafClass()));
         return rsp;
     }

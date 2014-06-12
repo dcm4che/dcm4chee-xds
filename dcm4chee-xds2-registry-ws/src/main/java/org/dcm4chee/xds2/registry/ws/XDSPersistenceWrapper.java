@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -102,10 +103,8 @@ public class XDSPersistenceWrapper {
     XDSSubmissionSet submissionSet;
 
     private HashMap<String, Identifiable> uuidMapping = new HashMap<String, Identifiable>();
-    private HashMap<String, String> newUUIDs = new HashMap<String, String>();
+    protected LinkedHashMap<String, String> newUUIDs = new LinkedHashMap<String, String>();
     
-    //private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-
     private static Logger log = LoggerFactory.getLogger(XDSPersistenceWrapper.class);
 
     XdsRegistry cfg;
@@ -185,7 +184,7 @@ public class XDSPersistenceWrapper {
     public Association toAssociation(AssociationType1 assocType) throws XDSException {
         Association assoc = new Association();
         toPersistenceObj(assocType, assoc);
-        log.debug("######assocType.getAssociationType():{}",assocType.getAssociationType());
+        log.debug("###### assocType.getAssociationType():{}",assocType.getAssociationType());
         assoc.setAssocType((ClassificationNode)
                 getRegistryObject(assocType.getAssociationType()));
         return assoc;
@@ -272,9 +271,9 @@ public class XDSPersistenceWrapper {
         List<JAXBElement<? extends IdentifiableType>> objList = objListType.getIdentifiable();
         if (objects != null) {
             if (isLeafClass && !allowMultiPatientResponse) {
-                log.info("#### call checkSamePatient");
+                log.debug("#### call checkSamePatient");
                 XDSValidator.checkSamePatient(objects);
-                log.info("#### finished checkSamePatient");
+                log.debug("#### finished checkSamePatient");
             }
             Identifiable obj;
             for (int i=0,len=objects.size() ; i < len ; i++) {
@@ -356,7 +355,6 @@ public class XDSPersistenceWrapper {
         roType.getClassification().addAll(ro.getClassifications());
         roType.getExternalIdentifier().addAll(ro.getExternalIdentifiers());
         
-        log.debug("\n#### copySlotType");
         copySlotType(ro.getSlots(), roType);
         VersionInfoType version = factory.createVersionInfoType();
         version.setVersionName(ro.getVersionName());
@@ -575,7 +573,7 @@ public class XDSPersistenceWrapper {
             for (Slot slot : slots) {
                 slotType = slotTypeMap.get(slot.getName());
                 if (log.isDebugEnabled())
-                    log.debug("########add slot name:"+slot.getName()+" value:"+slot.getValue()+" parent.pk:"+slot.getParent().getPk()+" pk:"+slot.getPk());
+                    log.debug("######## Add slot name:"+slot.getName()+" value:"+slot.getValue()+" parent.pk:"+slot.getParent().getPk()+" pk:"+slot.getPk());
                 if (slotType == null) {
                     slotType = factory.createSlotType1();
                     slotType.setName(slot.getName());
@@ -617,7 +615,7 @@ public class XDSPersistenceWrapper {
             ro = session.getRegistryObjectByUUID(id);
         }
         if (ro != null && !(ro instanceof RegistryObject)) {
-            log.warn("####### Identifiable is not a RegistryObject! id:"+ro.getId());
+            log.warn("Identifiable is not a RegistryObject! id: {}", ro.getId());
         }
         return (RegistryObject) ro;
     }
@@ -646,13 +644,13 @@ public class XDSPersistenceWrapper {
     }
 
     protected void logUIDMapping() {
-        //if (log.isDebugEnabled()) {
-            log.info("UUID_MAPPING:-------------------------------------------------");
+        if (log.isDebugEnabled()) {
+            log.debug("UUID_MAPPING:-------------------------------------------------");
             for (Map.Entry<String, Identifiable>e :this.uuidMapping.entrySet()){
                 log.debug(e.getKey()+":"+e.getValue().getId());
             }
-            log.info("--------------------------------------------------------------");
-        //}
+            log.debug("--------------------------------------------------------------");
+        }
     }
 
     public XDSSubmissionSet getSubmissionSet() {

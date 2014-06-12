@@ -80,7 +80,8 @@ public class GetFoldersForDocumentQuery extends StoredQuery {
                     QAssociation.association.sourceObject.instanceOf(XDSFolder.class),
                     QAssociation.association.assocType.id.eq(XDSConstants.HAS_MEMBER))
             .list(QAssociation.association.sourceObject);
-            log.info("#### Found Folders:"+objects);
+            log.info("Found {} Folders", objects.size());
+            log.debug("#### Found Folders: {}", objects);
             rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(objects, isLeafClass()));
         }
         return rsp;

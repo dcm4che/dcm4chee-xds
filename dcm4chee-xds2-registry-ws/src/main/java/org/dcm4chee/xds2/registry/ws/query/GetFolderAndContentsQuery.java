@@ -78,8 +78,8 @@ public class GetFolderAndContentsQuery extends StoredQuery {
         } else if (getQueryParam(XDSConstants.QRY_FOLDER_ENTRY_UUID) != null) {
             folder = getSession().getFolderByUUID(getQueryParam(XDSConstants.QRY_FOLDER_ENTRY_UUID).getStringValue());
         }
-        log.info("#### Found Folder:"+folder);
         List<Identifiable> objects = getObjectsFor(folder);
+        log.info("Found Folder: {}, contains {} objects", folder, objects.size());
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(objects, this.isLeafClass()));
         return rsp;
     }

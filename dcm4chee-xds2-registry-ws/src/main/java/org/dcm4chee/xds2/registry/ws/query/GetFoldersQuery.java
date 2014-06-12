@@ -90,7 +90,8 @@ public class GetFoldersQuery extends StoredQuery {
         List<XDSFolder> folders = query.from(QXDSFolder.xDSFolder)
         .where(predicate)
         .list(QXDSFolder.xDSFolder);
-        log.info("#### Found Folders:"+folders);
+        log.info("Found {} Folders", folders.size());
+        log.debug("#### Found Folders: {}", folders);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(folders, isLeafClass()));
         return rsp;
     }

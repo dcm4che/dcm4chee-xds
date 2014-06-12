@@ -95,7 +95,8 @@ public class GetDocumentsAndAssociationsQuery extends StoredQuery {
         List<XDSDocumentEntry> docs = docsQuery.from(QXDSDocumentEntry.xDSDocumentEntry)
         .where(predicate)
         .list(QXDSDocumentEntry.xDSDocumentEntry);
-        log.info("#### Found Documents:"+docs);
+        log.info("Found {} Documents", docs.size());
+        log.debug("#### Found Documents: {}", docs);
         if (docs.size() > 0) {
             BooleanBuilder builder = new BooleanBuilder();
             builder.or(docs.size() == 1 ? QAssociation.association.sourceObject.eq(docs.get(0)) :
@@ -106,7 +107,8 @@ public class GetDocumentsAndAssociationsQuery extends StoredQuery {
             List<Association> associations = assocQuery.from(QAssociation.association)
             .where(builder)
             .list(QAssociation.association);
-            log.info("#### Found Associations:"+associations);
+            log.info("Found {} Associations", associations.size());
+            log.debug("#### Found Associations: {}", associations);
             List<Identifiable> objects = new ArrayList<Identifiable>();
             objects.addAll(docs);
             objects.addAll(associations);

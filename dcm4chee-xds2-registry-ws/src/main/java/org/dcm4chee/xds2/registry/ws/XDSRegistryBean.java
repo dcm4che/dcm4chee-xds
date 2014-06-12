@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import javax.annotation.PostConstruct;
@@ -50,7 +51,6 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
-import javax.ejb.EJBTransactionRolledbackException;
 import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
@@ -176,7 +176,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegisterDocumentSet-bResponse")
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
-        log.info("################ documentRegistryRegisterDocumentSetB called!");
+        log.info("XDS.b - documentRegistryRegisterDocumentSetB called");
         RegistryResponseType rsp = factory.createRegistryResponseType();
         XDSPersistenceWrapper wrapper = new XDSPersistenceWrapper(this);
         try {
@@ -187,7 +187,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             XDSException e;
             if (x instanceof XDSException) {
                 e = (XDSException) x;
-                log.error("XDSException:"+e);
+                log.warn("XDSException:"+e);
                 log.debug("XDSException stacktrace:", x);
             } else {
                 log.error("Unexpected error in XDS service (register document)!: "+x.getMessage());
@@ -198,7 +198,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             XDSUtil.addError(rsp, e);
             ejbContext.setRollbackOnly();
         }
-        log.info("################# documentRegistryRegisterDocumentSetB finished! #############");
         XDSSubmissionSet subm = wrapper.getSubmissionSet();
         String[] submUIDandPat;
         if (subm == null) {
@@ -209,6 +208,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         XDSAudit.logRegistryImport(submUIDandPat[0], submUIDandPat[1], 
                 new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+
+        log.info("XDS.b - documentRegistryRegisterDocumentSetB finished");
         return rsp;
     }
     
@@ -341,15 +342,15 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             output="urn:ihe:iti:2007:RegistryStoredQueryResponse")
     public AdhocQueryResponse documentRegistryRegistryStoredQuery(
             AdhocQueryRequest req) {
-        log.info("################ documentRegistryRegistryStoredQuery called!");
-        log.debug("ReturnType:"+req.getResponseOption().getReturnType());
+        log.info("XDS.b - documentRegistryRegistryStoredQuery called");
+        log.debug("ReturnType: {}", req.getResponseOption().getReturnType());
         AdhocQueryResponse rsp;
         StoredQuery qry = null;
         try {
             qry = StoredQuery.getStoredQuery(req, this);
             rsp = qry.query();
         } catch (Exception x) {
-            log.error("Unexpected error in XDS service (query)!: "+x.getMessage(),x);
+            log.error("Unexpected error in XDS service (query)!: {}"+x.getMessage(),x);
             rsp = factory.createAdhocQueryResponse();
             XDSException e = (x instanceof XDSException) ? (XDSException) x :
                 new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
@@ -359,6 +360,8 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         }
         XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+
+        log.info("XDS.b - documentRegistryRegistryStoredQuery finished");
         return rsp;
     }
 
@@ -370,7 +373,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
         // check and correct metadata
         wrapper.checkAndCorrectSubmitObjectsRequest(req);
-        // TODO: DB_RESTRUCT - check if postponed is needed at all after check and correct method - all ids are already updated
         
         // first run - convert objects to persistent entities 
         for (int i=0,len=objs.size() ; i < len ; i++) {
@@ -387,15 +389,24 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 wrapper.toClassificationNode((ClassificationNodeType)obj, null, objects);
             } else if (obj instanceof ObjectRefType) {//for initialization
                 Identifiable tmp = getIdentifiableByUUID(obj.getId());
-                log.info("#### found RegistryObject for ObjectRef:"+tmp);
+                log.debug("#### found RegistryObject for ObjectRef:"+tmp);
                 if (tmp == null) {
-                    log.info("#### add ObjectRef:"+obj.getId());
+                    log.debug("#### add ObjectRef: {}", obj.getId());
                     objects.add(wrapper.toObjectRef((ObjectRefType)obj));
                 }
-            } else {
-                log.warn("### unknown RegistryObject:"+obj);
+            } else { 
+                // obj is an unknown type: no-op and show a warning in the log
                 
+                // find old id
+                String oldId = null;
+                for (Entry<String,String> e : wrapper.newUUIDs.entrySet()) {
+                    if ( obj.getId().equals(e.getValue()))
+                        oldId = e.getKey();
+                }
+                
+                log.warn("Unknown RegistryObject provided for registering. id: {} ; old id: {}", obj.getId(), oldId );
             }
+
         }
 
         // second run - set references across objects
@@ -449,7 +460,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
     public XDSDocumentEntry getDocumentEntryByUUIDandFetch(String uuid) {
         XDSDocumentEntry doc = (XDSDocumentEntry) getObjectByNamedQuery(XDSDocumentEntry.FIND_BY_UUID, uuid);
-        // TODO:DB_RESTRUCT log.info("found classifications:"+doc.getClassifications().size());
         return doc;
     }
 
@@ -472,7 +482,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         try {
             return em.createNamedQuery(queryName).setParameter(1, param).getSingleResult();
         } catch (NoResultException x) {
-            log.warn("############ Object not found! "+queryName+":"+param);
+            log.warn("Cannot find an object using getObjectByNamedQuery: {}-{}", queryName, param);
             return null;
         }
     }
@@ -483,13 +493,13 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             q.setParameter(paramName, Arrays.asList(params));
             return q.getResultList();
         } catch (NoResultException x) {
-            log.warn("############ Object not found! "+queryName);
+            log.warn("Cannot find an object using getObjectsByNamedQuery: {}", queryName);
             return null;
         }
     }
 
     public void storeRegistryObjects(List<Identifiable> objects) throws XDSException {
-        log.debug("##########Store list of objects:{}", objects);
+        log.debug("########## Store list of objects:{}", objects);
         ArrayList<String> ids = new ArrayList<String>(objects.size());
         for (Identifiable i : objects) {ids.add(i.getId());}
         
@@ -502,7 +512,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             .setParameter("ids", ids).getResultList();
         if (uuids.size() > 0) {
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
-                    "Objects with following UUIDs already exists! :"+uuids, null);
+                    "Objects with following UUIDs already exist! :"+uuids, null);
         }
         Identifiable obj;
         for (int i = 0, len = objects.size() ; i < len ; i++) {
@@ -552,8 +562,12 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         try {
             pat = self.getPatientSeparateTransaction(qryPat, createMissing);
         } catch (EJBException e) {
+            log.warn("Failed to retrieve a patient. Re-trying due to a possible race condition. Patient id: {}", qryPat.getPatientID());
+
             // most probably a concurrent register operation attempted to create patient with same id, try one more time
             pat = self.getPatientSeparateTransaction(qryPat, createMissing);
+
+            log.info("Succeeded with a retry of retrieving a patient. Patient id: "+qryPat.getPatientID());
         }
         
         return em.merge(pat);
@@ -572,7 +586,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             return pat;
         } catch (NoResultException x) {
             if (createMissing) {
-                log.warn("Unknown XAD Patient! Create missing Patient with pid:"+qryPat.getPatientID());
+                log.warn("Unknown XAD Patient! Create missing Patient with pid: "+qryPat.getPatientID());
                 qryPat.setIssuerOfPatientID(getOrCreateIssuerOfPID(qryPat.getIssuerOfPatientID()));
                 em.persist(qryPat);
                 return qryPat;
@@ -617,7 +631,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             return (XADIssuer) em.createNamedQuery(XADIssuer.FIND_ISSUER_BY_UID)
             .setParameter(1, issuer.getUniversalID()).getSingleResult();
         } catch (NoResultException x) {
-            log.info("Create new Issuer of PatientID:"+issuer);
+            log.debug("Create new Issuer of PatientID:"+issuer);
             em.persist(issuer);
             return issuer;
         }            
@@ -721,14 +735,14 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 .setParameter(3, scheme)
                 .getSingleResult();
         } catch (NoResultException x) {
-            log.info("Store new XDS Code! code:"+code);
+            log.debug("Store new XDS Code! code:"+code);
             em.persist(code);
             return code;
         }
     }
     
     public void handleLifecycle(List<Identifiable> objs) throws XDSException {
-        log.debug("##########Handle lifecycle");
+        log.debug("########## Handle lifecycle");
         Identifiable obj;
         Association assoc;
         for (int i=0,len=objs.size() ; i < len ; i++) {
@@ -738,7 +752,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
                 if (assoc.getAssocType() == null) {
                     throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Missing AssociationType! Association:"+assoc.getId(), null);
                 }
-                log.info("### handle Association:"+assoc.getId()+" assocType:"+assoc.getAssocType().getId());
+                log.debug("### handle Association:"+assoc.getId()+" assocType:"+assoc.getAssocType().getId());
                 if (XDSConstants.RPLC.equals(assoc.getAssocType().getId())) {
                     handleReplace(assoc);
                 } else if (XDSConstants.XFRM_RPLC.equals(assoc.getAssocType().getId())) {
@@ -753,7 +767,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
 
             }
         }
-        log.info("########## handle lifecycle finished! ");
+        log.debug("########## handle lifecycle finished! ");
     }
 
     private void handleReplace(Association assoc) throws XDSException {
@@ -795,7 +809,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         for (int i = 0, len=assocs.size(); i < len ; i++) {
             ro1 = assocs.get(i).getSourceObject();
             ro1.setStatus(XDSConstants.STATUS_DEPRECATED);
-            log.info("Deprecate object "+ro1.getId()+" which is a '"+assocs.get(i).getAssocType().getId()+"' of "+ro.getId());
+            log.debug("Deprecate object "+ro1.getId()+" which is a '"+assocs.get(i).getAssocType().getId()+"' of "+ro.getId());
             em.merge(ro1);
             deprecateAPNDandXFRM(ro1, query);
         }
@@ -811,30 +825,29 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     }
 
     private void handleHasMember(Association assoc) {
-        log.info("########## HANDLE HasMember!");
-        log.info("########## HANDLE HasMember! source:"+assoc.getSourceObject());
+        log.debug("########## HANDLE HasMember! source:"+assoc.getSourceObject());
         if(assoc.getSourceObject() instanceof XDSFolder) {
-            log.info("########## HANDLE HasMember! updateLastUpdateTime");
+            log.debug("########## HANDLE HasMember! updateLastUpdateTime");
             updateLastUpdateTime(assoc.getSourceObject());
         }
-        log.info("########## HANDLE HasMember finished!");
+        log.debug("########## HANDLE HasMember finished!");
     }
 
     public void updateLastUpdateTime(RegistryObject ro) {
-        log.info("########## updateLastUpdateTime!");
+        log.debug("########## updateLastUpdateTime!");
         List<Slot> slots = ro.getSlots();
-        log.info("########## updateLastUpdateTime! slots:"+slots);
+        log.debug("########## updateLastUpdateTime! slots:"+slots);
         for (Slot slot : slots) {
-            log.info("########## updateLastUpdateTime! slot Name:"+slot.getName());
+            log.debug("########## updateLastUpdateTime! slot Name:"+slot.getName());
             if (XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slot.getName())) {
-                log.info("########## updateLastUpdateTime! slot setValue");
+                log.debug("########## updateLastUpdateTime! slot setValue");
                 slot.setValue(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
-                log.info("########## updateLastUpdateTime! persist:");
+                log.debug("########## updateLastUpdateTime! persist:");
                 em.merge(slot);
-                log.info("########## updateLastUpdateTime! persist done:"+slot.getName());
+                log.debug("########## updateLastUpdateTime! persist done:"+slot.getName());
             }
         }
-        log.info("########## updateLastUpdateTime! done");
+        log.debug("########## updateLastUpdateTime! done");
     }
     
     public EntityManager getEntityManager() {
@@ -879,7 +892,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
        // Deletion. The JPA DELETE query does not handle cascading, so we  
        // get objects manually and remove them one by one for now.
 
-       log.info("Deleting objects with uuids {}",uuids);
+       log.debug("Deleting objects with uuids {}",uuids);
        
 
        List<RegistryObject> objs = em.createQuery("SELECT r FROM RegistryObject r WHERE r.id IN (:uuids)").setParameter("uuids", uuids).getResultList();

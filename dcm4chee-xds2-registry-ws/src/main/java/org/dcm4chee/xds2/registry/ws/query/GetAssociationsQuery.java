@@ -81,7 +81,8 @@ public class GetAssociationsQuery extends StoredQuery {
         List<Association> associations = query.from(QAssociation.association)
         .where(builder)
         .list(QAssociation.association);
-        log.info("#### Found Associations:"+associations);
+        log.info("Found {} Associations", associations.size());
+        log.debug("#### Found Associations: {}", associations);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(associations, isLeafClass()));
         return rsp;
     }

@@ -90,14 +90,15 @@ public class GetSubmissionSetsQuery extends StoredQuery {
                 source.pk.eq(QAssociation.association.sourceObject.pk),
                 source.instanceOf(XDSSubmissionSet.class))
         .list(QAssociation.association);
-        log.info("#### Found Associations:"+assocs);
+        log.debug("#### Found Associations: {}", assocs);
         List<RegistryObject> objects = new ArrayList<RegistryObject>(assocs.size());
         for (Association assoc : assocs) {
             if (!objects.contains(assoc.getSourceObject()))
                 objects.add(assoc.getSourceObject());
             objects.add(assoc);
         }
-        log.info("#### Found SubmissionSets and Associations:"+objects);
+        log.info("Found {} SubmissionSets and Associations", objects.size());
+        log.debug("#### Found SubmissionSets and Associations: {}", objects);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(objects, isLeafClass()));
         return rsp;
     }
