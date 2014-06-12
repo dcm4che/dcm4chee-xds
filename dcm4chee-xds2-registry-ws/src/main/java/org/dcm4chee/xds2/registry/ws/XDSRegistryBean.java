@@ -187,13 +187,15 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             XDSException e;
             if (x instanceof XDSException) {
                 e = (XDSException) x;
-                log.warn("XDSException:"+e);
+                log.info("XDSException: {}", e.getMessage());
                 log.debug("XDSException stacktrace:", x);
             } else {
-                log.error("Unexpected error in XDS service (register document)!: "+x.getMessage());
-                log.error("Stacktrace: ",x);
+                // to prevent the disclosure of internal system details, we only return the user an error uuid
+                // that can be later found in the log by support team
+                String erruuid = "xdserror:"+UUID.randomUUID().toString();
+                log.error("Unexpected error in XDS service (register document), error id = "+erruuid, x);
                 e = new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Unexpected error in XDS service !: "+x.getMessage(),x);
+                        "Unexpected error in XDS service, error id = "+erruuid, null);
             }
             XDSUtil.addError(rsp, e);
             ejbContext.setRollbackOnly();
@@ -213,6 +215,46 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
         return rsp;
     }
     
+    @Override
+    @Action(input="urn:ihe:iti:2007:RegistryStoredQuery", 
+            output="urn:ihe:iti:2007:RegistryStoredQueryResponse")
+    public AdhocQueryResponse documentRegistryRegistryStoredQuery(
+            AdhocQueryRequest req) {
+        log.info("XDS.b - documentRegistryRegistryStoredQuery called");
+        log.debug("ReturnType: {}", req.getResponseOption().getReturnType());
+        AdhocQueryResponse rsp;
+        StoredQuery qry = null;
+        try {
+            qry = StoredQuery.getStoredQuery(req, this);
+            rsp = qry.query();
+        } catch (Exception x) {
+    
+            XDSException e;
+            if (x instanceof XDSException) {
+                e = (XDSException) x;
+                log.info("XDSException: "+e.getMessage());
+                log.debug("XDSException stacktrace:", x);
+            } else {
+                // to prevent the disclosure of internal system details, we only return the user an error uuid
+                // that can be later found in the log by support team
+                String erruuid = "xdserror:"+UUID.randomUUID().toString();
+                log.error("Unexpected error in XDS service (query), error id = "+erruuid, x);
+                e = new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "Unexpected error in XDS service, error id = "+erruuid, null);
+            }
+            
+            rsp = factory.createAdhocQueryResponse();
+            XDSUtil.addError(rsp, e);
+            rsp.setRegistryObjectList(factory.createRegistryObjectListType());
+            
+        }
+        XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
+                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+    
+        log.info("XDS.b - documentRegistryRegistryStoredQuery finished");
+        return rsp;
+    }
+
     protected XdsRegistry getXdsRegistryConfig() {
     	return cfg;
     }
@@ -335,34 +377,6 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
             return eiType.getValue() != null ? eiType.getValue() : "";
         }
         return null;
-    }
-
-    @Override
-    @Action(input="urn:ihe:iti:2007:RegistryStoredQuery", 
-            output="urn:ihe:iti:2007:RegistryStoredQueryResponse")
-    public AdhocQueryResponse documentRegistryRegistryStoredQuery(
-            AdhocQueryRequest req) {
-        log.info("XDS.b - documentRegistryRegistryStoredQuery called");
-        log.debug("ReturnType: {}", req.getResponseOption().getReturnType());
-        AdhocQueryResponse rsp;
-        StoredQuery qry = null;
-        try {
-            qry = StoredQuery.getStoredQuery(req, this);
-            rsp = qry.query();
-        } catch (Exception x) {
-            log.error("Unexpected error in XDS service (query)!: {}"+x.getMessage(),x);
-            rsp = factory.createAdhocQueryResponse();
-            XDSException e = (x instanceof XDSException) ? (XDSException) x :
-                new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                        "Unexpected error in XDS service !: "+x.getMessage(),x);
-            XDSUtil.addError(rsp, e);
-            rsp.setRegistryObjectList(factory.createRegistryObjectListType());
-        }
-        XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
-                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
-
-        log.info("XDS.b - documentRegistryRegistryStoredQuery finished");
-        return rsp;
     }
 
     private List<Identifiable> store(SubmitObjectsRequest req, XDSPersistenceWrapper wrapper) throws XDSException {
