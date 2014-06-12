@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBElement;
@@ -388,10 +389,46 @@ public class XDSPersistenceWrapper {
     
         // TODO: DB_RESTRUCT - CODE INSPECTION - is it correct to replace ids with uuids for ALL identifiables, not only ROs?
     
-        
-        // First run - replace non-uuid IDs with UUIDs for all identifiables, included nested ones
-        
         JXPathContext requestContext = JXPathContext.newContext(req);
+
+        ////// Pre-process - move detached classifications from registryObjectList into corresponding objects
+        
+        Iterator<JAXBElement<? extends IdentifiableType>> objectListIterator = req.getRegistryObjectList().getIdentifiable().iterator();
+        while ( objectListIterator.hasNext() ) {
+            
+            JAXBElement<? extends IdentifiableType> elem = objectListIterator.next();
+            
+            /// filter Classifications only
+            if (!ClassificationType.class.isAssignableFrom(elem.getValue().getClass()))
+                continue;
+            
+            /// find referenced object and add the classification to the referenced object 
+            ClassificationType cl = (ClassificationType) elem.getValue();
+            // this xpath return all nodes in the tree with the specified id 
+            Iterator referencedObjs = (Iterator) requestContext.iteratePointers(String.format("//*[id = '%s']", cl.getClassifiedObject())); 
+            try {
+                Object o = ((Pointer) referencedObjs.next()).getValue();
+                
+                if (!RegistryObjectType.class.isAssignableFrom(o.getClass())) 
+                    throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Classification "+cl.getId()+" classifies object "+cl.getClassifiedObject()+" which is not a Registry Object", null);
+                RegistryObjectType registryObj = (RegistryObjectType) o;
+                    
+                // add this classification to the classification list
+                registryObj.getClassification().add(cl);
+            
+            } catch (NoSuchElementException e) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Classified object "+cl.getClassifiedObject()+" not found in the request (Classification "+cl.getId()+" )", null);
+            }
+            // there must be a single node with referenced id
+            if (referencedObjs.hasNext()) throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Classification "+cl.getId()+" references an object "+cl.getClassifiedObject()+" that is not unique", null);
+                
+            /// remove the detached classification from the list
+            objectListIterator.remove();
+        }
+        
+        
+        ////// First run - replace non-uuid IDs with UUIDs for all identifiables, included nested ones
+        
         // Use //id xpath to find all id fields of identifiables in the request
         Iterator ids = (Iterator) requestContext.iteratePointers("//id"); 
         
@@ -413,7 +450,7 @@ public class XDSPersistenceWrapper {
             newUUIDs.put(oldId,newIdUUID);
         }
     
-        // Second run - perform check and correction recursively
+        ////// Second run - perform check and correction recursively
         for (JAXBElement<? extends IdentifiableType> elem : req.getRegistryObjectList().getIdentifiable()) {
     
             // filter RegistryObjects only

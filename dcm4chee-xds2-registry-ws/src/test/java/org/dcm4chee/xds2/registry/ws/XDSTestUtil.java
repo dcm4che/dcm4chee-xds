@@ -75,6 +75,7 @@ import org.dcm4chee.xds2.registry.ws.XDSPersistenceWrapper;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
 import org.dcm4chee.xds2.registry.ws.XDSValidator;
+import org.dcm4chee.xds2.registry.ws.tools.DeepEquals;
 import org.dcm4chee.xds2.service.XdsService;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.jboss.shrinkwrap.api.ArchivePaths;
@@ -125,7 +126,7 @@ public class XDSTestUtil {
     	String version = p.getProperty("version");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
         .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryTestBeanI.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
-                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class, XdsService.class, XdsTestServiceImpl.class)
+                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class, XdsService.class, XdsTestServiceImpl.class, DeepEquals.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/registry/ws/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/handlers.xml")
         .add(new FileAsset(new File("src/main/resources/META-INF/wsdl/XDS.b_DocumentRegistry.wsdl")),
