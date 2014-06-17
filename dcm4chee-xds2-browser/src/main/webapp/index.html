@@ -67,7 +67,7 @@
 
 
     <!-- Static navbar -->
-    <div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="navbar navbar-default navbar-static-top" role="navigation" ng-controller="NavbarController">
       <div class="container">
         <div class="navbar-header">
           <div class="navbar-brand">XDS administration</div>
@@ -77,11 +77,11 @@
             <li><a href="#/step/0">Registry browser</a></li>
             <li><a href="#/service-manager">Service management</a></li>
           </ul>
-          
-          <ul class="nav navbar-nav navbar-right">
-            <li><a app-notifications-popover>Notifications</a></li>
-	      </ul>
 
+          <div class="nav navbar-form navbar-right"><a ng-click="logout()" class="btn btn-default">Logout <span class="icon-forward"></span></a></div>
+          <ul class="nav navbar-nav navbar-right">
+              <li><a app-notifications-popover>Notifications</a></li>
+	      </ul>
         </div><!--/.nav-collapse -->
       </div>
     </div>
