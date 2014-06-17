@@ -550,6 +550,7 @@ Setup JBoss AS 7
          XCA        : http://<host>:<port>/xca-rs/ctrl/config
          XCA-I      : http://<host>:<port>/xcai-rs/ctrl/config
     
+14. XDS registry comes with an administration web-app that allows to browse the registry contents and perform some basic administration (delete document entries, modify metadata, etc.). The web-interface is accessible at http://<host>:<port>/xds-browser. To allow a user to use the web-app, assign him/her the `WebAdmin` role in `dcm4chee` realm.
     
 Testing DCM4CHEE XDS 2.x
 ----------------------------

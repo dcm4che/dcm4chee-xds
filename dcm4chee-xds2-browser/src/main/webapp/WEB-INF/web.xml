@@ -15,4 +15,36 @@
 		<servlet-name>javax.ws.rs.core.Application</servlet-name>
 		<url-pattern>/data/*</url-pattern>
 	</servlet-mapping>
+
+    <!-- Security. Only allow WebAdmin role to the browser-->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Stylesheets and libs</web-resource-name>
+            <url-pattern>/css/login.css</url-pattern>
+            <url-pattern>/lib/bootstrap/css/bootstrap.css</url-pattern>
+            <url-pattern>/lib/angular.js</url-pattern>
+            <url-pattern>/lib/angular.min.js</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Browser UI and Web serivices
+            </web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>WebAdmin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>dcm4chee</realm-name>
+        <form-login-config>
+            <form-login-page>/login.html</form-login-page>
+            <form-error-page>/login.html?loginFailed=true</form-error-page>
+        </form-login-config>
+    </login-config>
 </web-app>
