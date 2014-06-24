@@ -141,12 +141,10 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     @Inject
     private Device device;
     private XdsRegistry cfg;
-    private XdsBrowser browserConfig;
 
     @PostConstruct
     private void getRegistryExtension() {
         cfg = device.getDeviceExtension(XdsRegistry.class);
-        browserConfig = cfg.getXdsBrowser();
     }
 
     /**
@@ -280,105 +278,6 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
 
     }
 
-
-    @GET
-    @Path("/reconfigure-all/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public void reconfigureAll() {
-
-        if (browserConfig == null) {
-            log.info("No configuration found for the browser, device {}",
-                    (device == null ? "null" : device.getDeviceName()));
-            return;
-        }
-
-        for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
-
-            // figure out the URL for reloading the config
-            String reconfUrl = null;
-            try {
-
-                // temporary for connectathon
-                URL url = new URL("http://localhost:8080");
-
-                if (de.getClass() == XdsRegistry.class) {
-                    // URL url = new URL(((XdsRegistry) de).getQueryUrl());
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xds-reg-rs/ctrl/reload");
-                } else if (de.getClass() == XdsRepository.class) {
-                    // URL url = new URL(((XdsRepository) de).getProvideUrl());
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xds-rep-rs/ctrl/reload");
-                } else if (de.getClass() == XCAInitiatingGWCfg.class
-                        || de.getClass() == XCARespondingGWCfg.class) {
-                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xca-rs/ctrl/reload");
-                } else if (de.getClass() == XCAiInitiatingGWCfg.class
-                        || de.getClass() == XCAiRespondingGWCfg.class) {
-                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xcai-rs/ctrl/reload");
-                } else
-                    continue;
-
-                // bypass certificate validation - we don't transmit any data
-                // here
-
-                // Create a trust manager that does not validate certificate
-                // chains
-                /*
-                 * TrustManager[] trustAllCerts = new TrustManager[] {new
-                 * X509TrustManager() { public
-                 * java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                 * return new X509Certificate[0]; } public void
-                 * checkClientTrusted(X509Certificate[] certs, String authType)
-                 * { } public void checkServerTrusted(X509Certificate[] certs,
-                 * String authType) { } } };
-                 * 
-                 * // Install the all-trusting trust manager SSLContext sc =
-                 * SSLContext.getInstance("TLS"); sc.init(null, trustAllCerts,
-                 * new java.security.SecureRandom());
-                 * 
-                 * // Create all-trusting host name verifier HostnameVerifier
-                 * allHostsValid = new HostnameVerifier() {
-                 * 
-                 * @Override public boolean verify(String hostname, SSLSession
-                 * session) { return true; }
-                 * 
-                 * };
-                 */
-
-                URL obj = new URL(reconfUrl);
-                HttpURLConnection con = (HttpURLConnection) obj
-                        .openConnection();
-
-                /*
-                 * if (obj.getProtocol().equals("https")) {
-                 * ((HttpsURLConnection)
-                 * con).setSSLSocketFactory(sc.getSocketFactory());
-                 * ((HttpsURLConnection)
-                 * con).setHostnameVerifier(allHostsValid); }
-                 */
-
-                con.setRequestMethod("GET");
-
-                log.info("Calling configuration reload @ {} ...", reconfUrl);
-
-                int responseCode = con.getResponseCode();
-
-            } catch (MalformedURLException e) {
-                log.warn("Url in configuration is malformed for "
-                        + de.getClass().getSimpleName() + ", device "
-                        + de.getDevice().getDeviceName(), e);
-            } catch (Exception e) {
-                log.warn("Cannot reconfigure " + de.getClass().getSimpleName()
-                        + ", device " + de.getDevice().getDeviceName(), e);
-            }
-
-        }
-
-    }
     
     @POST
     @Path("/reg/delete/")

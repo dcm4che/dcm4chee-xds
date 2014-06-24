@@ -1,5 +1,8 @@
 package org.dcm4chee.conf.browser;
 
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +20,12 @@ import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
+import org.dcm4chee.xds2.conf.XdsRegistry;
+import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,5 +125,64 @@ public class ConfigRESTServicesServlet {
         return extList;
 
     }
+    
+    @GET
+    @Path("/reconfigure-extension/{deviceName}/{extension}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public void reconfigureExtension() {
+
+
+       DeviceExtension de = null; //TODO
+       
+
+            // figure out the URL for reloading the config
+            String reconfUrl = null;
+            try {
+
+                // temporary for connectathon
+                URL url = new URL("http://localhost:8080");
+
+                if (de.getClass() == XdsRegistry.class) {
+                    // URL url = new URL(((XdsRegistry) de).getQueryUrl());
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
+                            url.getAuthority(), "xds-reg-rs/ctrl/reload");
+                } else if (de.getClass() == XdsRepository.class) {
+                    // URL url = new URL(((XdsRepository) de).getProvideUrl());
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
+                            url.getAuthority(), "xds-rep-rs/ctrl/reload");
+                } else if (de.getClass() == XCAInitiatingGWCfg.class
+                        || de.getClass() == XCARespondingGWCfg.class) {
+                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
+                            url.getAuthority(), "xca-rs/ctrl/reload");
+                } else if (de.getClass() == XCAiInitiatingGWCfg.class
+                        || de.getClass() == XCAiRespondingGWCfg.class) {
+                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
+                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
+                            url.getAuthority(), "xcai-rs/ctrl/reload");
+                } else return;
+
+                URL obj = new URL(reconfUrl);
+                HttpURLConnection con = (HttpURLConnection) obj
+                        .openConnection();
+
+                con.setRequestMethod("GET");
+
+                log.info("Calling configuration reload @ {} ...", reconfUrl);
+
+                int responseCode = con.getResponseCode();
+
+            } catch (MalformedURLException e) {
+                log.warn("Url in configuration is malformed for "
+                        + de.getClass().getSimpleName() + ", device "
+                        + de.getDevice().getDeviceName(), e);
+            } catch (Exception e) {
+                log.warn("Cannot reconfigure " + de.getClass().getSimpleName()
+                        + ", device " + de.getDevice().getDeviceName(), e);
+            }
+
+
+    }
+    
 
 }

@@ -134,17 +134,6 @@ public class XdsRegistry extends DeviceExtension {
             label = "Query URL",
             description = "Query URL that should be used to query this registry (Does NOT actually configure the registry endpoint!)")
     private String queryUrl;
-    
-    @ConfigField(name = "xdsBrowser", def = "null") 
-    private XdsBrowser xdsBrowser;
-    
-    public XdsBrowser getXdsBrowser() {
-        return xdsBrowser;
-    }
-
-    public void setXdsBrowser(XdsBrowser xdsBrowser) {
-        this.xdsBrowser = xdsBrowser;
-    }
 
     private XADCfgRepository xadCfgRepository;
 
