@@ -1,17 +1,16 @@
-
 <!-- Composite (Object) -->
 <div class="row" ng-if="isNodeComposite()">
 
     <!-- debug  <tr><td></td><td>
         {{confignode}}
 </td></tr> -->
-    	<div ng-class="'col-md-'+getWidthForType(nodeMetadata.type)" ng-repeat="(k,node) in confignode" ng-controller="ConfigNodeController">
+    	<div ng-class="'col-md-'+getWidthForType(nodeMetadata.type)" ng-repeat="(k,nodeMetadataVal) in metadata.attributes" ng-controller="ConfigNodeController">
             <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">{{nodeMetadata.label ? nodeMetadata.label : k}} <small>{{nodeMetadata.description}}</small></h3>
             </div>
             <div class="panel-body">
-               <div confignode="node" metadata="nodeMetadata" parentnode="confignode" index="k"></div>
+               <div confignode="confignode[k]" metadata="nodeMetadata" parentnode="confignode" index="k" editor="editor"></div>
             </div>
         </div>
 		</div>
@@ -20,7 +19,7 @@
 
 <!-- Boolean -->
 <div ng-if="metadata.type == 'Boolean'">
-        <button class='btn' ng-class="(confignode ? 'btn-success' : 'btn-default')" ng-click="parentnode[index] = (confignode ? false : true)">{{ confignode ? 'Enabled' : 'Disabled' }}</button>
+        <button class='btn' ng-class="(confignode ? 'btn-success' : 'btn-default')" ng-click="parentnode[index] = (confignode ? false : true); editor.checkModified();">{{ confignode ? 'Enabled' : 'Disabled' }}</button>
 
 </div>
 
@@ -34,7 +33,7 @@
     <!-- edit -->
     <div ng-show="edited">
         <input class="form-control" ng-model="parentnode[index]">
-        <a class="btn btn-success" href="" ng-click="edited = false">Save</a>
+        <a class="btn btn-success" href="" ng-click="edited = false; editor.checkModified();">Save</a>
     </div>
 </div>
 
@@ -51,12 +50,45 @@
     <!-- Collection edit -->
     <div ng-show="edited == confignode">
         <div ng-repeat="(k, node) in confignode track by k">
-            <input ng-model="confignode[k]">
+            <input ng-model="confignode[k]"/>
             <a href="" ng-click="confignode.splice(k,1)">Delete</a>
         </div>
-        <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href="" ng-click="edited = null">Save</a>
+        <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href="" ng-click="edited = null; editor.checkModified();">Save</a>
     </div>
 </div>
 
+<!-- Map -->
+<div ng-if="(metadata.type == 'Map')" ng-controller="MapController">
+    <!-- Map view -->
+    <a href="" ng-click="addEntry()">Add</a>
+    <table class="table table-condensed smallprops">
+        <tr ng-repeat="(k,node) in confignode" >
+            <!-- view key -->
+            <td ng-show="!edited"><span class="label label-success details-header">{{k}}</span>
+                <a href="" class="btn btn-default pull-right" ng-click="edited = true"><span class="icon-pencil"></span></a>
+                <a href="" class="btn btn-danger close" ng-click="deleteEntry(k)">&times</a>
+            </td>
+            <!-- edit key -->
+            <td ng-show="edited" ng-init="newkey = k">
+                <input ng-model="newkey"/>
+                <a class="btn btn-success" href="" ng-click="edited = !saveKey(k,newkey)">Save</a>
+            </td>
+            <td ng-controller="ConfigNodeController">
+                <div confignode="node" metadata="nodeMetadata" parentnode="confignode" index="k" editor="editor"></div>
+            </td>
+        </tr>
+    </table>
+</div>
 
+<!-- Device -->
+<div ng-if="metadata.type == 'Device'" ng-controller="ConfigNodeController">
+    <span class="grey"> Device: </span>
+    <button type="button" class="btn btn-default"
+            ng-model="parentnode[index]" data-html="1"
+            ng-options="device.deviceName as device.deviceName for device in devices"
+            ng-change="editor.checkModified()"
+            bs-select>
+        Status <span class="caret"></span>
+    </button>
+</div>
 

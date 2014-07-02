@@ -83,7 +83,6 @@ import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
-import org.dcm4chee.xds2.conf.XdsBrowser;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;

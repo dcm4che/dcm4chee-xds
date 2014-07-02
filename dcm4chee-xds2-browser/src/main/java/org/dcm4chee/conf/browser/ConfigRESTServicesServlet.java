@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -17,6 +20,8 @@ import javax.ws.rs.core.MediaType;
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.generic.ConfigClass;
+import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;
@@ -52,12 +57,31 @@ public class ConfigRESTServicesServlet {
         
     }    
     
-    public class ExtensionJSON {
+    public static class ExtensionJSON {
+        
+        public ExtensionJSON() {
+        }
         
         public String deviceName;
+        /**
+         * user-friendly name
+         */
         public String extensionName;
-        public OnlineStatus isOnline;
+        /**
+         * Classname that will also be used for de-serialization
+         */
+        public String extensionType;
+        /**
+         * Is the device currently running 
+         */
+        //public OnlineStatus isOnline;
+        /**
+         * Can the user restart the device
+         */
         public boolean restartable;
+        /**
+         * Can the user reconfigure the device
+         */
         public boolean reconfigurable;
         public ConfigObjectJSON configuration;
         
@@ -67,9 +91,12 @@ public class ConfigRESTServicesServlet {
     @Xds
     DicomConfiguration config;
 
-    /*@Inject
-    Instance<DeviceExtension> deviceExtensionClasses;*/
-
+    ReflectiveConfig reflectiveConfig;
+    
+    @PostConstruct
+    private void init() {
+        reflectiveConfig = new ReflectiveConfig(null, config);
+    }
 
     
     @GET
@@ -101,10 +128,7 @@ public class ConfigRESTServicesServlet {
     @Path("/extensions/{deviceName}")
     @Produces(MediaType.APPLICATION_JSON)
     public List<ExtensionJSON> getExtensions(@PathParam(value = "deviceName") String deviceName) throws ConfigurationException {
-
-        
         Device d = config.findDevice(deviceName);
-
         
         List<ExtensionJSON> extList = new ArrayList<ExtensionJSON>();
         
@@ -117,14 +141,46 @@ public class ConfigRESTServicesServlet {
             extJson.reconfigurable = false;
             extJson.restartable = false;
             extJson.extensionName = de.getClass().getSimpleName();
+            extJson.extensionType = de.getClass().getName();                    
             extJson.configuration = ConfigObjectJSON.serializeDeviceExtension(de);
             
             extList.add(extJson);
         }
-
         return extList;
-
     }
+    
+    @SuppressWarnings("unchecked")
+    @POST
+    @Path("/save-extension")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void saveConfigForExtension(ExtensionJSON extJson) throws ConfigurationException  {
+
+        
+        Class<? extends DeviceExtension> extClass;
+        try {
+            extClass = (Class<? extends DeviceExtension>) Class.forName(extJson.extensionType);
+        } catch (ClassNotFoundException e) {
+            throw new ConfigurationException("Extension "+extJson.extensionType+" is not configured",e);
+        }
+
+        // check if the supplied classname is actually a configclass
+        if (extClass.getAnnotation(ConfigClass.class) == null) throw new ConfigurationException("Extension "+extJson.extensionType+" is not configured");
+        
+        // deserialize config
+        ReflectiveAdapter<? extends DeviceExtension> ad = new ReflectiveAdapter(extClass);
+        DeviceExtension de = ad.deserialize(extJson.configuration.rootConfigNode, reflectiveConfig, null);
+
+        // merge config
+        Device d = config.findDevice(extJson.deviceName);
+        d.removeDeviceExtension(de);
+        d.addDeviceExtension(de);
+        
+        config.merge(d);
+        
+    }
+    
+    
     
     @GET
     @Path("/reconfigure-extension/{deviceName}/{extension}")

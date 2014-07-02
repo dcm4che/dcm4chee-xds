@@ -99,12 +99,12 @@ appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xds
 
 appCommon.directive('appNotificationsPopover',['appNotifications','$popover', function(appNotifications, $popover) {
 	return {
-		link:function($scope, element, atttributes) {
+		link:function(scope, element, atttributes) {
 			// bind popover to the element
-			$scope.appNotifications = appNotifications;
+            scope.appNotifications = appNotifications;
 			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'templates/notifications.html', animation: "am-flip-x"});
 
-			$scope.$watch("appNotifications.notifications.length",function() {
+			scope.$watch("appNotifications.notifications.length",function() {
 				if (appNotifications.notifications.length > 0)
 					myPopover.$promise.then(myPopover.show); else 
 						myPopover.$promise.then(myPopover.hide);
@@ -114,6 +114,11 @@ appCommon.directive('appNotificationsPopover',['appNotifications','$popover', fu
 	};
 }]);
 
+appCommon.controller('appNotificationsPopoverController', function($scope, appNotifications) {
+
+    $scope.appNotifications = appNotifications;
+
+});
 
 
 appCommon.factory('getIconClassForType', function() {

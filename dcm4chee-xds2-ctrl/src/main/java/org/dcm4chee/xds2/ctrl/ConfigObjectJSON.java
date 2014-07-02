@@ -17,6 +17,9 @@ import org.dcm4che3.net.DeviceExtension;
  */
 public class ConfigObjectJSON {
 
+        public ConfigObjectJSON() {
+        }
+    
         /**
          * Object here is either a primitive, an array, a list, or Map<String, Object>
          */

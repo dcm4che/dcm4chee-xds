@@ -1,10 +1,9 @@
 <div class="col-md-12">
     <h2>Configuration
 
-        <button class='btn btn-primary pull-right' ng-click="reconfigureAll()"
-                ng-class="(reconfiguring ? 'disabled' : '')">Reconfigure all
-        </button>
-
+        <!--        <button class='btn btn-primary pull-right' ng-click="reconfigureAll()"
+                        ng-class="(reconfiguring ? 'disabled' : '')">Reconfigure all
+                </button> -->
     </h2>
 </div>
 
@@ -31,13 +30,24 @@
             <li ng-repeat="extension in selectedDevice.extensions | orderBy:'extensionName'" ng-class="(selectedExtension == extension ? 'active' : '')"><a href="" ng-click="selectExtension(extension)">{{extension.extensionName}}</a></li>
         </ul>
 
-        <div class="panel panel-primary" ng-show="selectedExtension">
+        <div class="panel panel-primary" ng-show="selectedExtension" ng-controller="ExtensionEditorController">
             <div class="panel-heading">
-                <h1 class="panel-title"> {{selectedExtension.extensionName}} </h1>
+                <span class="details-header"> {{selectedExtension.extensionName}} </span>
+                <span ng-include src="'/SaveCancel.html'"></span>
             </div>
-            <div class="panel-body" config-node-editor config="selectedExtension.configuration"></div>
+            <div class="panel-body" config-node-editor config="selectedExtension.configuration" editor="editor"></div>
+            <div class="panel-footer">
+                <span class="details-header"> &nbsp; </span>
+                <span ng-include src="'/SaveCancel.html'"></span>
+            </div>
         </div>
     </div>
+
+    <!-- Save and Cancel buttons template -->
+    <script type="text/ng-template" id="/SaveCancel.html">
+        <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)" class="btn btn-success pull-right">Save</a>
+        <a ng-show="selectedExtension.isModified" href="" ng-click="cancelChangesExtension(selectedExtension)" class="btn btn-danger pull-right">Cancel</a>
+    </script>
 
     <!--<div class="col-md-6"
         ng-repeat="actor in configuration | orderBy:'extensiontype'"
