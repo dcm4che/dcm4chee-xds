@@ -102,14 +102,14 @@ public class XdsDeviceCtrl {
     @GET
     @Path("config")
     @Produces(MediaType.APPLICATION_JSON)      
-    public List<GenericDeviceExtensionJSON> getConfig() throws Exception {
+    public List<ConfigObjectJSON> getConfig() throws Exception {
     	
-    	List<GenericDeviceExtensionJSON> jsonexts = new ArrayList<GenericDeviceExtensionJSON>();
+    	List<ConfigObjectJSON> jsonexts = new ArrayList<ConfigObjectJSON>();
     	Collection<DeviceExtension> exts = service.getDevice().listDeviceExtensions();
     	
     	for (DeviceExtension de : exts) {
             if (de.getClass().getAnnotation(ConfigClass.class) != null)
-                jsonexts.add(GenericDeviceExtensionJSON.serializeDeviceExtension(de)); 		
+                jsonexts.add(ConfigObjectJSON.serializeDeviceExtension(de)); 		
     	}
     	
     	return jsonexts;

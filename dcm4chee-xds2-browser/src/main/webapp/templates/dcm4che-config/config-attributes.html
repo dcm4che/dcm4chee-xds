@@ -1,10 +1,62 @@
-		<table class="table table-condensed smallprops">
-			<tr
-				ng-repeat="(k,node) in confignode">
-				<td>{{k}}</td>
-				<td ng-init="confignode = node">
-					<div ng-show="!doShowExtended(confignode)">{{confignode}}</div>
-					<div ng-if="doShowExtended(confignode)" ng-include = "'templates/dcm4che-config/config-attributes.html'"></div>
-				</td>
-			</tr>
-		</table>
+
+<!-- Composite (Object) -->
+<div class="row" ng-if="isNodeComposite()">
+
+    <!-- debug  <tr><td></td><td>
+        {{confignode}}
+</td></tr> -->
+    	<div ng-class="'col-md-'+getWidthForType(nodeMetadata.type)" ng-repeat="(k,node) in confignode" ng-controller="ConfigNodeController">
+            <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{nodeMetadata.label ? nodeMetadata.label : k}} <small>{{nodeMetadata.description}}</small></h3>
+            </div>
+            <div class="panel-body">
+               <div confignode="node" metadata="nodeMetadata" parentnode="confignode" index="k"></div>
+            </div>
+        </div>
+		</div>
+</div>
+
+
+<!-- Boolean -->
+<div ng-if="metadata.type == 'Boolean'">
+        <button class='btn' ng-class="(confignode ? 'btn-success' : 'btn-default')" ng-click="parentnode[index] = (confignode ? false : true)">{{ confignode ? 'Enabled' : 'Disabled' }}</button>
+
+</div>
+
+<!-- Primitives -->
+<div ng-if="(metadata.type == 'String' || metadata.type == 'Integer')">
+    <!-- view -->
+    <div ng-show="!edited">
+        {{confignode}}
+        <a href="" class="btn" ng-class="focused ?'btn-success':'btn-default'" ng-mouseenter="focused = true" ng-mouseleave="focused = false" ng-click="edited = true"><span class="icon-pencil"></span></a>
+    </div>
+    <!-- edit -->
+    <div ng-show="edited">
+        <input class="form-control" ng-model="parentnode[index]">
+        <a class="btn btn-success" href="" ng-click="edited = false">Save</a>
+    </div>
+</div>
+
+
+<!-- Collections -->
+<div ng-if="(metadata.type == 'Array' || metadata.type == 'Set')">
+    <!-- Collection view -->
+    <div ng-show="edited != confignode">
+        <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigNodeController">
+            <span class="label label-info">{{node}}</span>
+        </span>
+        <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'" ng-mouseenter="focused = confignode" ng-mouseleave="focused = null" ng-click="edited = confignode"><span class="icon-pencil"></span></a>
+    </div>
+    <!-- Collection edit -->
+    <div ng-show="edited == confignode">
+        <div ng-repeat="(k, node) in confignode track by k">
+            <input ng-model="confignode[k]">
+            <a href="" ng-click="confignode.splice(k,1)">Delete</a>
+        </div>
+        <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href="" ng-click="edited = null">Save</a>
+    </div>
+</div>
+
+
+

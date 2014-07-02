@@ -86,7 +86,7 @@ import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 import org.dcm4chee.xds2.conf.XdsBrowser;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
-import org.dcm4chee.xds2.ctrl.GenericDeviceExtensionJSON;
+import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -124,7 +124,7 @@ import javax.net.ssl.X509TrustManager;
 @SuppressWarnings("serial")
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-public class BrowserRESTServicesServlet extends HttpServlet {
+public class XdsBrowserRESTServicesServlet extends HttpServlet {
 
     /**
      * cached repositories from the config
@@ -159,7 +159,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     private static XDSRegistryBeanLocal xdsRegistryLocalBean;
 
     public static final Logger log = LoggerFactory
-            .getLogger(BrowserRESTServicesServlet.class);
+            .getLogger(XdsBrowserRESTServicesServlet.class);
 
     /*
      * RESTFUL Services
@@ -182,7 +182,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     private Map<String, XdsRepository> getAllRepositories()
             throws ConfigurationException {
 
-        synchronized (BrowserRESTServicesServlet.class) {
+        synchronized (XdsBrowserRESTServicesServlet.class) {
             if (repositories == null) {
 
                 repositories = Collections
@@ -258,7 +258,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
                 mimeType = allTypes.forName(mimeTypeStr);
                 ext = mimeType.getExtension();
             } catch (MimeTypeException e) {
-                log.debug("{}", e);
+                log.warn("Error while resolving mime type extension for document id "+docId+" from repository "+repoId+", specified mimetype string is "+mimeTypeStr, e);
             }
 
             // return the file for download
@@ -280,31 +280,6 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     }
 
-    @GET
-    @Path("/config/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<GenericDeviceExtensionJSON> getConfig()
-            throws ConfigurationException {
-
-        if (browserConfig == null) {
-            log.info("No configuration found for the browser, device {}",
-                    (device == null ? "null" : device.getDeviceName()));
-            return null;
-        }
-
-        List<GenericDeviceExtensionJSON> extData = new ArrayList<GenericDeviceExtensionJSON>();
-        for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
-
-            GenericDeviceExtensionJSON edata = GenericDeviceExtensionJSON
-                    .serializeDeviceExtension(de);
-
-            extData.add(edata);
-
-        }
-
-        return extData;
-
-    }
 
     @GET
     @Path("/reconfigure-all/")
