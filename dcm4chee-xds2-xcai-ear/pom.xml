@@ -132,6 +132,7 @@
 				<version>2.6</version>
 				<configuration>
 					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
+					<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
 					<modules>
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>
@@ -180,7 +181,6 @@
 						<version>2.6</version>
 						<configuration>
 							<defaultJavaBundleDir>lib</defaultJavaBundleDir>
-							<classifier>${db}${asb}-jdbcprefs</classifier>
 							<modules combine.children="append">
 								<ejbModule>
 									<groupId>org.dcm4che.jdbc.prefs</groupId>

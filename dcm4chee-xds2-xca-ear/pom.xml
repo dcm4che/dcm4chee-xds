@@ -133,6 +133,7 @@
 				<artifactId>maven-ear-plugin</artifactId>
 				<version>2.6</version>
 				<configuration>
+					<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
 					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
 					<modules>
 						<ejbModule>
@@ -182,7 +183,6 @@
 						<version>2.6</version>
 						<configuration>
 							<defaultJavaBundleDir>lib</defaultJavaBundleDir>
-							<classifier>${db}${asb}-jdbcprefs</classifier>
 							<modules combine.children="append">
 								<ejbModule>
 									<groupId>org.dcm4che.jdbc.prefs</groupId>
