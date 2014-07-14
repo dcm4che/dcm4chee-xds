@@ -254,7 +254,7 @@ public class XDSTestUtil {
     public static List<ClassificationType> removeCode(List<ClassificationType> clList, String codeType) {
         ArrayList<ClassificationType> l = new ArrayList<ClassificationType>(); 
         for (ClassificationType cl : clList) {
-            if (cl.getClassificationScheme().equals(codeType)) {
+            if (cl.getClassificationScheme() != null && cl.getClassificationScheme().equals(codeType)) {
                 l.add(cl);
             }
         }
