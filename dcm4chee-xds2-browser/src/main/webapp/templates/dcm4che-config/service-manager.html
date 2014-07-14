@@ -1,19 +1,63 @@
 <div class="col-md-12">
-	<h2>Configuration
-	
-		<button class='btn btn-primary pull-right' ng-click="reconfigureAll()"
-		ng-class="(reconfiguring ? 'disabled' : '')">Reconfigure all</button>
-	
-	</h2>
+    <h2>Configuration
+
+        <!--        <button class='btn btn-primary pull-right' ng-click="reconfigureAll()"
+                        ng-class="(reconfiguring ? 'disabled' : '')">Reconfigure all
+                </button> -->
+    </h2>
 </div>
 
-<div class="col-md-6"
-	ng-repeat="actor in configuration | orderBy:'extensiontype'"
-	ng-init="confignode = actor.config">
+<div class="row">
 
-	<div class="panel panel-default">
-		<div class="panel-heading">{{actor.extensiontype}} @
-			{{actor.devicename}}</div>
-		<div ng-include="'templates/dcm4che-config/config-attributes.html'"></div>
-	</div>
+    <div class="col-md-3">
+
+        <div class="list-group">
+            <a href="" class="list-group-item" ng-repeat="device in devices" ng-class="(selectedDevice == device ? 'active' : '')"  ng-click="selectDevice(device)" >
+                <h4 class="list-group-item-heading"><small><span class="icon-cogs"></span></small> {{device.deviceName}}</h4>
+                <small>
+                    <p class="list-group-item-text" ng-show="device.appEntities.length>0">AEs: <small>{{device.appEntities.join(', ')}}</small></p>
+                    <p class="list-group-item-text" ng-show="device.deviceExtensions.length>0">Extensions: <small>{{device.deviceExtensions.join(', ')}}</small></p>
+                </small>
+            </a>
+        </div>
+
+    </div>
+
+    <div class="col-md-9" ng-show="selectedDevice">
+        <h1><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h1>
+        <h2><span class="red icon-expand"></span> Extensions</h2>
+        <ul class="nav nav-pills">
+            <li ng-repeat="extension in selectedDevice.extensions | orderBy:'extensionName'" ng-class="(selectedExtension == extension ? 'active' : '')"><a href="" ng-click="selectExtension(extension)">{{extension.extensionName}}</a></li>
+        </ul>
+
+        <div class="panel panel-primary" ng-show="selectedExtension" ng-controller="ExtensionEditorController">
+            <div class="panel-heading">
+                <span class="details-header"> {{selectedExtension.extensionName}} </span>
+                <span ng-include src="'/SaveCancel.html'"></span>
+            </div>
+            <div class="panel-body" config-node-editor config="selectedExtension.configuration" editor="editor"></div>
+            <div class="panel-footer">
+                <span class="details-header"> &nbsp; </span>
+                <span ng-include src="'/SaveCancel.html'"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save and Cancel buttons template -->
+    <script type="text/ng-template" id="/SaveCancel.html">
+        <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)" class="btn btn-success pull-right">Save</a>
+        <a ng-show="selectedExtension.isModified" href="" ng-click="cancelChangesExtension(selectedExtension)" class="btn btn-danger pull-right">Cancel</a>
+    </script>
+
+    <!--<div class="col-md-6"
+        ng-repeat="actor in configuration | orderBy:'extensiontype'"
+        ng-init="confignode = actor.rootConfigNode">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">{{actor.extensiontype}} @
+                {{actor.devicename}}</div>
+            <div ng-include="'templates/dcm4che-config/config-attributes.html'"></div>
+        </div>
+    </div> -->
+
 </div>

@@ -99,12 +99,12 @@ appCommon.factory('appNotifications', [ 'xdsConstants', '$timeout', function(xds
 
 appCommon.directive('appNotificationsPopover',['appNotifications','$popover', function(appNotifications, $popover) {
 	return {
-		link:function($scope, element, atttributes) {
+		link:function(scope, element, atttributes) {
 			// bind popover to the element
-			$scope.appNotifications = appNotifications;
+            scope.appNotifications = appNotifications;
 			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'templates/notifications.html', animation: "am-flip-x"});
 
-			$scope.$watch("appNotifications.notifications.length",function() {
+			scope.$watch("appNotifications.notifications.length",function() {
 				if (appNotifications.notifications.length > 0)
 					myPopover.$promise.then(myPopover.show); else 
 						myPopover.$promise.then(myPopover.hide);
@@ -114,6 +114,11 @@ appCommon.directive('appNotificationsPopover',['appNotifications','$popover', fu
 	};
 }]);
 
+appCommon.controller('appNotificationsPopoverController', function($scope, appNotifications) {
+
+    $scope.appNotifications = appNotifications;
+
+});
 
 
 appCommon.factory('getIconClassForType', function() {
@@ -134,3 +139,47 @@ appCommon.factory('getIconClassForType', function() {
 	};
 	return getIconClassForType;
 });
+
+/* taken from http://stackoverflow.com/questions/14430655/recursion-in-angular-directives
+* to enable recursive object trees output*/
+appCommon.factory('RecursionHelper', ['$compile', function($compile){
+    return {
+        /**
+         * Manually compiles the element, fixing the recursion loop.
+         * @param element
+         * @param [link] A post-link function, or an object with function(s) registered via pre and post properties.
+         * @returns An object containing the linking functions.
+         */
+        compile: function(element, link){
+            // Normalize the link parameter
+            if(angular.isFunction(link)){
+                link = { post: link };
+            }
+
+            // Break the recursion loop by removing the contents
+            var contents = element.contents().remove();
+            var compiledContents;
+            return {
+                pre: (link && link.pre) ? link.pre : null,
+                /**
+                 * Compiles and re-adds the contents
+                 */
+                post: function(scope, element){
+                    // Compile the contents
+                    if(!compiledContents){
+                        compiledContents = $compile(contents);
+                    }
+                    // Re-add the compiled contents to the element
+                    compiledContents(scope, function(clone){
+                        element.append(clone);
+                    });
+
+                    // Call the post-linking function, if any
+                    if(link && link.post){
+                        link.post.apply(null, arguments);
+                    }
+                }
+            };
+        }
+    };
+}]);

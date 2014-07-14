@@ -56,55 +56,84 @@ public class XdsRegistry extends DeviceExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigField(name = "xdsApplicationName")
+    @ConfigField(name = "xdsApplicationName",
+                label = "Application Name",
+                description = "XDS Application name")
     private String applicationName;
 
-    @ConfigField(name = "xdsAffinityDomain")
+    @ConfigField(name = "xdsAffinityDomain",
+                label =  "Affinity Domain",
+                description = "Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)")
     private String[] affinityDomain = new String[] {};
 
-    @ConfigField(name = "xdsAffinityDomainConfigDir")
+    @ConfigField(name = "xdsAffinityDomainConfigDir",
+            label = "Affinity Domain Config Directory",
+            description = "Path to affinity domain configuration directory")
     private String affinityDomainConfigDir;
 
-    @ConfigField(name = "xdsAcceptedMimeTypes")
+    @ConfigField(name = "xdsAcceptedMimeTypes",
+            label = "Accept MIME Types",
+            description = "MIME types accepted by the webservice",
+            optional = true)
     private String[] acceptedMimeTypes = new String[] {};
 
-    @ConfigField(name = "xdsSoapMsgLogDir")
+    @ConfigField(name = "xdsSoapMsgLogDir",
+            optional = true)
     private String soapLogDir;
 
-    @ConfigField(name = "xdsCreateMissingPIDs", def = "false")
+    @ConfigField(name = "xdsCreateMissingPIDs", 
+            label= "Create Missing Patient IDs",
+            description = "Specifies to create Patient IDs that are not yet known. (not conform to XDS specification!)",
+            def = "false",
+            optional = true)
     private boolean createMissingPIDs;
 
-    @ConfigField(name = "xdsCreateMissingCodes", def = "false")
+    @ConfigField(name = "xdsCreateMissingCodes",
+            label = "Create Missing Codes",
+            description= "Specifies to create Codes that are not known in the Affinity Domain. (not conform to XDS specification!)",
+            def = "false",
+            optional = true)
     private boolean createMissingCodes;
 
-    @ConfigField(name = "xdsDontSaveCodeClassifications", def = "false")
+    @ConfigField(name = "xdsDontSaveCodeClassifications", 
+            label = "Dont Save Code Classifications",
+            description = "Specifies to save codes only as XDSCode entities and not as Classifications in ebRIM format",
+            def = "false",
+            optional = true)
     private boolean dontSaveCodeClassifications;
 
-    @ConfigField(name = "xdsCheckAffinityDomain", def = "true")
+    @ConfigField(name = "xdsCheckAffinityDomain", 
+            label = "Check Affinity Domain",
+            description = "Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)",
+            def = "true",
+            optional = true)
     private boolean checkAffinityDomain;
 
-    @ConfigField(name = "xdsCheckMimetype", def = "true")
+    // TODO: confirm correct meaning
+    @ConfigField(name = "xdsCheckMimetype", 
+            label = "Check MIME Type",
+            description = "Indicates whether MIME types of incoming SOAP messages should be checked against accepted mime types",
+            def = "true",
+            optional = true)
     private boolean checkMimetype;
 
-    @ConfigField(name = "xdsPreMetadataCheck", def = "false")
+    @ConfigField(name = "xdsPreMetadataCheck", 
+            label = "Pre-Metadata Check",
+            description = "Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests)",
+            def = "false",
+            optional = true)
     private boolean preMetadataCheck;
 
-    @ConfigField(name = "xdsRegisterUrl")
+    @ConfigField(name = "xdsRegisterUrl",
+            label = "Register URL",
+            description = "Register URL that should be used to register documents with this registry (Does NOT actually configure the registry's endpoint!)"
+            )
     private String registerUrl;
 
-    @ConfigField(name = "xdsQueryUrl")
+    @ConfigField(name = "xdsQueryUrl",
+            label = "Query URL",
+            description = "Query URL that should be used to query this registry (Does NOT actually configure the registry endpoint!)")
     private String queryUrl;
-    
-    @ConfigField(name = "xdsBrowser", def = "null") 
-    private XdsBrowser xdsBrowser;
-    
-    public XdsBrowser getXdsBrowser() {
-        return xdsBrowser;
-    }
-
-    public void setXdsBrowser(XdsBrowser xdsBrowser) {
-        this.xdsBrowser = xdsBrowser;
-    }
 
     private XADCfgRepository xadCfgRepository;
 

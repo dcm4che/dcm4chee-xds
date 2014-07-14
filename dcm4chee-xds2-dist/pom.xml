@@ -49,7 +49,7 @@
   <name>dcm4chee-xds2-dist</name>
   <description>Assemble dcm4chee XDS distribution packages</description>
   <build>
-    <finalName>dcm4chee-xds2-${project.version}-${db}</finalName>
+    <finalName>dcm4chee-xds2-${project.version}-${db}${asb}${jdbcprefs.classifier}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
@@ -75,27 +75,29 @@
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-registry-ear</artifactId>
-            <classifier>${db}</classifier>
+			<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
 		    <type>ear</type>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-repository-ear</artifactId>
-            <classifier>${db}</classifier>
+			<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
 		    <type>ear</type>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-xca-ear</artifactId>
-		    <type>ear</type>
+			<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
+			<type>ear</type>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-xcai-ear</artifactId>
-		    <type>ear</type>
+			<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
+			<type>ear</type>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

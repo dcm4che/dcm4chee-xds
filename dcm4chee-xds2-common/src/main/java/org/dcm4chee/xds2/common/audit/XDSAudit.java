@@ -405,7 +405,7 @@ public class XDSAudit {
             sendAuditMessage(timeStamp, msg);
         } catch (Exception e) {
             log.warn("Audit log of Export ("+eventTypeCode.getDisplayName()+") failed!");
-            log.info("AuditLog Exception:", e);
+            log.debug("AuditLog Exception:", e);
         }
     }
     
@@ -801,7 +801,8 @@ public class XDSAudit {
                         hostName, machineOrIP(hostName), null, RoleIDCode.Destination));
         if (patID != null)
             msg.getParticipantObjectIdentification().add(createPatient(patID));
-        log.info("Query:\n"+new String(adhocQuery));
+        if (log.isDebugEnabled())
+            log.debug("Query:\n {}", new String(adhocQuery));
         msg.getParticipantObjectIdentification().add(createQueryParticipantObjectIdentification(queryUID, homeCommunityID, adhocQuery));
         return msg;
     }
@@ -839,11 +840,11 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
-        log.info("Send audit message! EventId:"+msg.getEventIdentification().getEventID().getDisplayName());
+        log.debug("Send audit message! EventId: {}", msg.getEventIdentification().getEventID().getDisplayName());
         if (log.isDebugEnabled())
-            log.debug("Send audit message:"+AuditMessages.toXML(msg));
+            log.debug("Sent audit message:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
-        log.info("Audit message sent!");
+        log.debug("Audit message sent! EventId: {}", msg.getEventIdentification().getEventID().getDisplayName());
     }
 
     public static ParticipantObjectIdentification createPatient(String patID) {

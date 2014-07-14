@@ -23,7 +23,6 @@
 									ng-change = "searchChanged()"
 
 									type="text">
-                                {{xdsPatientIds}}
 								    <span class="input-group-btn">
         								<button id = "searchButton" class="btn btn-default" type="submit">
         								<span ng-hide='isLoading()'>Search</span>
@@ -45,7 +44,7 @@
 
 						<button type="button" class="btn btn-default"
 							ng-model="currentStatus" data-html="1"
-							ng-options="status.urn as status.name for status in xdsConstants.B_Statuses"
+							ng-options="status.val as status.name for status in xdsConstants.B_Statuses"
 							ng-change = "browseEntity(currentEntity)"
 							bs-select>
 							Status <span class="caret"></span>

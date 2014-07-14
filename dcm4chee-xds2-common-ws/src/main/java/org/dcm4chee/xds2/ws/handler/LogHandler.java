@@ -88,7 +88,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
-        log.debug("##########handleMessage LogHandler:"+ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
+        log.trace("##########handleMessage LogHandler:"+ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY));
         storeInboundSOAPHeader(ctx);
         logMessage(ctx);
         return true;
@@ -96,19 +96,19 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
 
     @Override
     public boolean handleFault(SOAPMessageContext ctx) {
-        log.warn("################ handleFault");
+        log.debug("################ handleFault");
         logMessage(ctx);
         return true;
     }
 
     @Override
     public void close(MessageContext context) {
-        log.debug("################ close");
+        log.trace("################ close");
     }
 
     @Override
     public Set<QName> getHeaders() {
-        log.debug("################ getHeaders");
+        log.trace("################ getHeaders");
         return headers;
     }
     
@@ -120,7 +120,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         if (!(Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
             try {
                 if (soapHeader.get() != null) {
-                    log.warn("Inbound SOAPHeader already set! SOAPHeader:"+soapHeader.get());
+                    log.debug("Inbound SOAPHeader already set! SOAPHeader:"+soapHeader.get());
                 }
                 soapHeader.set(ctx.getMessage().getSOAPHeader());
                 log.debug("Saved inbound SOAPHeader:"+soapHeader.get());
@@ -160,7 +160,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             try {
                 File f;
                 if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
-                	log.info("START_MDC_SPLITTING");
+                	log.debug("START_MDC_SPLITTING");
                     logDir = MDC.get("initiatorLogDir");
                     f = new File(logDir, action + ".xml");
                 } else {
@@ -172,9 +172,9 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                 Transformer t = TransformerFactory.newInstance().newTransformer();
                 t.setOutputProperty("indent", "yes");
                 t.transform(s, new StreamResult(out));
-                log.info("SOAP message saved to file "+f);
+                log.debug("SOAP message saved to file "+f);
             } catch (Exception x) {
-                log.error("Error logging SOAP message to file!", x);
+                log.warn("Error logging SOAP message to file!", x);
             } finally {
                 if (out != null)
                     try {
@@ -183,14 +183,14 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             }
         }
         if (((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY))) {
-            log.info("SOAP message "+getWsaHeader(ctx, "RelatesTo", null)+" finished!");
+            log.trace("SOAP message "+getWsaHeader(ctx, "RelatesTo", null)+" finished!");
             MDC.put("initiatorFinished", "true");
-            log.info("Close log file after request finished!");
+            log.trace("Close log file after request finished!");
             MDC.remove("initiatorLogDir");
             MDC.remove("initiatorMsgID");
             MDC.remove("initiatorFinished");
         } else {
-            log.info("Start processing SOAP message "+msgID);
+            log.debug("Start processing SOAP message "+msgID);
         }
     }
 
@@ -244,7 +244,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         MDC.put("initiatorLogDir", dir.getAbsolutePath());
         MDC.put("initiatorMsgID", msgID);
         MDC.put("remoteHost", host);
-        log.info("set MDC remoteHost:"+MDC.get("remoteHost"));
+        log.debug("set MDC remoteHost:"+MDC.get("remoteHost"));
         return new File(dir, action+".xml");
     }
 

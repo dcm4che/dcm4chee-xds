@@ -85,7 +85,8 @@ public class GetRelatedDocumentsQuery extends StoredQuery {
                     QAssociation.association.targetObject.instanceOf(XDSDocumentEntry.class),
                     QAssociation.association.assocType.id.in(getQueryParam(XDSConstants.QRY_ASSOCIATION_TYPES).getMultiValues(0)))
             .list(QAssociation.association);
-            log.info("#### Found Associations:"+assocs);
+            log.info("Found {} Associations", assocs.size());
+            log.debug("#### Found Associations: {}", assocs);
             if (assocs.size() > 0) {
                 objects.add(doc);
                 Identifiable obj;

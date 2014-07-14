@@ -62,6 +62,7 @@ import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
 import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
+import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
@@ -77,6 +78,7 @@ import org.dcm4chee.xds2.persistence.Slot;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
+import org.dcm4chee.xds2.registry.ws.tools.DeepEquals;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,13 +197,19 @@ public class XDSRegistryTestBean implements XDSRegistryTestBeanI {
      */
     @Override
     public void checkClassification(ClassificationType obj) throws XDSRegistryTestBeanException {
-        try {
             /* TODO: DB_RESTRUCT Classification cl = (Classification) getRegistryObjectByUUID(obj.getId());
             assertNotNull("Classification not found! :"+obj.getId(), cl);
             checkClassification(obj, cl); */
-        } catch (AssertionError error) {
-            throw new XDSRegistryTestBeanException(error);
-        }
+
+            // get classified registry obj
+            RegistryObject ro = getRegistryObjectByUUID(obj.getClassifiedObject());
+            
+            // check through all classification of registry obj, try to find the one we are looking for
+            for (ClassificationType c : ro.getClassifications()) {
+                if (DeepEquals.deepEquals(c, obj)) return;
+            }
+
+            throw new XDSRegistryTestBeanException(new AssertionError("Classification "+obj.getId()+" was not found for object "+ro.getId()));
     }
 
     /* (non-Javadoc)

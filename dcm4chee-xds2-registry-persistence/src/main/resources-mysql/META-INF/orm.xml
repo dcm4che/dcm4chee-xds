@@ -12,15 +12,6 @@
 		<table name="xds_identifiable" />
 		<inheritance strategy="SINGLE_TABLE" />
 	</entity>
-	<entity class="Name">
-		<table name="xds_name" />
-		<attributes>
-			<id name="pk">
-				<column name="pk" />
-				<generated-value strategy="IDENTITY" />
-			</id>
-		</attributes>
-	</entity>
 	<entity class="Slot">
 		<table name="xds_slot" />
 		<attributes>

@@ -88,6 +88,8 @@ public class GetAllQuery extends StoredQuery {
         objects.addAll(getFolders());
         objects.addAll(getAssociations(objects));
 
+        log.info("Found {} Objects", objects.size());
+       
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(objects, isLeafClass()));
         return rsp;
     }
@@ -108,7 +110,7 @@ public class GetAllQuery extends StoredQuery {
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSDocumentEntry.xDSDocumentEntry);
-        log.info("#### Found Documents:"+docs);
+        log.debug("#### Found Documents:"+docs);
         return docs;
     }
 
@@ -122,7 +124,7 @@ public class GetAllQuery extends StoredQuery {
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSSubmissionSet.xDSSubmissionSet);
-        log.info("#### Found SubmissionSets:"+submissionSets);
+        log.debug("#### Found SubmissionSets:"+submissionSets);
         return submissionSets;
     }
 
@@ -136,7 +138,7 @@ public class GetAllQuery extends StoredQuery {
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSFolder.xDSFolder);
-        log.info("#### Found Folders:"+folders);
+        log.debug("#### Found Folders:"+folders);
         return folders;
     }
 
@@ -149,7 +151,7 @@ public class GetAllQuery extends StoredQuery {
         List<Association> assocs = query.from(QAssociation.association)
         .where(builder)
         .list(QAssociation.association);
-        log.info("#### Found Association:"+assocs);
+        log.debug("#### Found Association:"+assocs);
         return assocs;
     }
 

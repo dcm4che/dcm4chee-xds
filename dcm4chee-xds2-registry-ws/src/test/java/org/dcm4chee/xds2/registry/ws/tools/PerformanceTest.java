@@ -39,7 +39,7 @@
  * @author Roman K
  */
 
-package org.dcm4chee.xds2.registry.ws;
+package org.dcm4chee.xds2.registry.ws.tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +55,10 @@ import javax.xml.bind.Unmarshaller;
 
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.registry.ws.CheckErrorsTest;
+import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
+import org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI;
+import org.dcm4chee.xds2.registry.ws.XDSTestUtil;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
@@ -99,7 +103,7 @@ public class PerformanceTest {
 
         @After
         public void clearDB() {
-             //   XDSTestUtil.clearDB(testSession, log);
+               //XDSTestUtil.clearDB(testSession, log);
         }
 
         private String fileContent = null;
@@ -132,7 +136,7 @@ public class PerformanceTest {
         @Test 
         public void check1000DocsPerPatient() throws JAXBException, IOException {
             String patId = "test1234_1^^^&amp;1.2.3.45.4.3.2.1&amp;ISO"; 
-            for (int i=1000;i<=1200;i++) {
+            for (int i=1000;i<=1100;i++) {
                 SubmitObjectsRequest req = getParsedSubmitObjectsRequest("aaaa-"+i, patId, "1.42.20120430135820."+i, "1.42.20120430135821."+i);
                 session.documentRegistryRegisterDocumentSetB(req);
                 log.info("Registered {}th submission",i);

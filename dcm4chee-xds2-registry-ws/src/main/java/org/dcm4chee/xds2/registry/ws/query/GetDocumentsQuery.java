@@ -90,7 +90,8 @@ public class GetDocumentsQuery extends StoredQuery {
         List<XDSDocumentEntry> docs = query.from(QXDSDocumentEntry.xDSDocumentEntry)
         .where(predicate)
         .list(QXDSDocumentEntry.xDSDocumentEntry);
-        log.info("#### Found Documents:"+docs);
+        log.info("Found {} Documents", docs.size());
+        log.debug("#### Found Documents: {}", docs);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(docs, isLeafClass()));
         return rsp;
     }

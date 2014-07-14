@@ -101,7 +101,8 @@ public class FindFoldersQuery extends StoredQuery {
         .innerJoin(QXADPatient.xADPatient.issuerOfPatientID, QXADIssuer.xADIssuer)
         .where(builder)
         .list(QXDSFolder.xDSFolder);
-        log.info("#### Found Folders:"+folders);
+        log.info("Found {} folders", folders.size());
+        log.debug("#### Found Folders: {}", folders);
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(folders, isLeafClass()));
         return rsp;
     }

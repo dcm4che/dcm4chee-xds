@@ -1,0 +1,2401 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns3:SubmitObjectsRequest xmlns:ns2="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
+	xmlns="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0" xmlns:ns4="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
+	xmlns:ns3="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0">
+	<RegistryObjectList>
+		<RegistryPackage lid="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611">
+			<Slot name="submissionTime">
+				<ValueList>
+					<Value>20041225235050</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Physical" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Annual physical" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:a7058bb9-b4e4-4307-ba5b-e3f0ab85e12d"
+				classifiedObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				lid="urn:uuid:dcd8839c-0151-4971-84c1-bb5c4be5815a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:dcd8839c-0151-4971-84c1-bb5c4be5815a">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classifiedObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				classificationNode="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+				lid="urn:uuid:a33361b4-b68a-4526-951d-aea71224460c"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:a33361b4-b68a-4526-951d-aea71224460c">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500"
+				classifiedObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				nodeRepresentation="History and Physical" lid="urn:uuid:21d25e6d-fe11-4559-b5d2-8c3593281cd0"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:21d25e6d-fe11-4559-b5d2-8c3593281cd0">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon contentTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
+				value="1.42.20140127164420.5" lid="urn:uuid:f1e282d6-fe26-4a2f-be4b-83fd95d37c8a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:f1e282d6-fe26-4a2f-be4b-83fd95d37c8a">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				identificationScheme="urn:uuid:554ac39e-e3fe-47fe-b233-965d2a147832"
+				value="1.3.6.1.4.1.21367.2.2" lid="urn:uuid:b8249448-31a2-4eb9-8d45-15a7d49301c0"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b8249448-31a2-4eb9-8d45-15a7d49301c0">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.sourceId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+				identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:78d38c31-4e58-4757-82da-6e3112a09d1f"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:78d38c31-4e58-4757-82da-6e3112a09d1f">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+			targetObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617" lid="urn:uuid:7502f3d2-7b62-4df9-a729-f666db437ecf"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:7502f3d2-7b62-4df9-a729-f666db437ecf">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+			targetObject="urn:uuid:9852d307-72e1-46ab-80ca-df9444237b65" lid="urn:uuid:35beb3b1-a686-44c9-8864-924e8efa6a15"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:35beb3b1-a686-44c9-8864-924e8efa6a15">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:931c7184-dd52-4e77-b756-815605b0e611"
+			targetObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6" lid="urn:uuid:c0670a19-7e0b-4c44-bd53-dc9e74b66e49"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:c0670a19-7e0b-4c44-bd53-dc9e74b66e49">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<RegistryPackage lid="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617">
+			<Slot name="lastUpdateTime">
+				<ValueList>
+					<Value>20140127164424</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="FOLDER" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="comments go here" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classifiedObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+				classificationNode="urn:uuid:d9d542f3-6cc4-48b6-8870-ea235fbc94c2"
+				lid="urn:uuid:45620440-baea-4389-a884-c0ac2bbef426"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:45620440-baea-4389-a884-c0ac2bbef426">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5"
+				classifiedObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+				nodeRepresentation="Referrals" lid="urn:uuid:86419c4e-86d6-4884-93c3-7ffbd656b45a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:86419c4e-86d6-4884-93c3-7ffbd656b45a">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon folderCodeList</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Referrals" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+				identificationScheme="urn:uuid:f64ffdf0-4b97-4e06-b79f-a52b38ec2f8a"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:19d0bc18-135d-41f5-a152-d13df9cfb883"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:19d0bc18-135d-41f5-a152-d13df9cfb883">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSFolder.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+				identificationScheme="urn:uuid:75df8f67-9973-4fbe-a900-df66cefecc5a"
+				value="1.42.20140127164420.6" lid="urn:uuid:0990026b-ef48-4c9a-a459-ab788b9c0921"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:0990026b-ef48-4c9a-a459-ab788b9c0921">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSFolder.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200412241600</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20041224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200412230800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocB" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="34108-1" lid="urn:uuid:500806fd-d1c0-41ca-a527-756ba88bf10e"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:500806fd-d1c0-41ca-a527-756ba88bf10e">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="Colonoscopy" lid="urn:uuid:e48ad952-7fb1-481f-af2f-00ae5ad40280"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e48ad952-7fb1-481f-af2f-00ae5ad40280">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon eventCodeList</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Colonoscopy" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="Communication" lid="urn:uuid:54eb4356-b9b4-4bfc-a665-c8cf2844be96"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:54eb4356-b9b4-4bfc-a665-c8cf2844be96">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Communication" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				lid="urn:uuid:77aea3ff-b747-4ff0-b2c9-cd253904f04b"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:77aea3ff-b747-4ff0-b2c9-cd253904f04b">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="Assisted Living" lid="urn:uuid:1aeacb33-2ae3-4616-a8bf-a5b40bf6733d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1aeacb33-2ae3-4616-a8bf-a5b40bf6733d">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Assisted Living" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="Cardiology" lid="urn:uuid:8a3184d6-6ce9-4b94-81e6-073e01657f50"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:8a3184d6-6ce9-4b94-81e6-073e01657f50">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Cardiology" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				lid="urn:uuid:691c0053-92e3-435b-8c2c-0c8c3b734880"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:691c0053-92e3-435b-8c2c-0c8c3b734880">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Attending</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Parma Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Smitty^Gerald^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.101" lid="urn:uuid:1b10c077-a3da-4f58-917b-5dc2b3c5a5a2"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1b10c077-a3da-4f58-917b-5dc2b3c5a5a2">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Staff" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				nodeRepresentation="CDAR2/IHE 1.0" lid="urn:uuid:31e5e642-fe06-47c2-a2cf-8903f745f4ed"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:31e5e642-fe06-47c2-a2cf-8903f745f4ed">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="CDAR2/IHE 1.0" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:aab85933-0bda-45f3-a11f-827a7876e0d1"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:aab85933-0bda-45f3-a11f-827a7876e0d1">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.4" lid="urn:uuid:ebca18fa-f7c7-478a-a577-1f46d1496420"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ebca18fa-f7c7-478a-a577-1f46d1496420">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:df7d8a7f-9e0f-4848-9dd2-c783b42ad617"
+			targetObject="urn:uuid:6c8cc12a-7e66-4573-9a7e-f58896352df6" lid="urn:uuid:9852d307-72e1-46ab-80ca-df9444237b65"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:9852d307-72e1-46ab-80ca-df9444237b65">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<RegistryPackage lid="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092">
+			<Slot name="submissionTime">
+				<ValueList>
+					<Value>20041225235050</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Physical" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Annual physical" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500"
+				classifiedObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				nodeRepresentation="History and Physical" lid="urn:uuid:51befee7-7c8f-49fe-8e3b-2c2199c2b842"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:51befee7-7c8f-49fe-8e3b-2c2199c2b842">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon contentTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a7058bb9-b4e4-4307-ba5b-e3f0ab85e12d"
+				classifiedObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				lid="urn:uuid:623dde0d-413f-4698-9fc6-7872a949025e"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:623dde0d-413f-4698-9fc6-7872a949025e">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classifiedObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				classificationNode="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+				lid="urn:uuid:ac684006-d4ca-46e6-aaf9-a564f4114265"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ac684006-d4ca-46e6-aaf9-a564f4114265">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
+				value="1.42.20140127164420.9" lid="urn:uuid:d1830d9d-bb63-44fd-886c-f850b798adf1"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:d1830d9d-bb63-44fd-886c-f850b798adf1">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				identificationScheme="urn:uuid:554ac39e-e3fe-47fe-b233-965d2a147832"
+				value="1.3.6.1.4.1.21367.2.2" lid="urn:uuid:47fe6d9b-0573-4c2a-9b0e-c4ecf5ad091d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:47fe6d9b-0573-4c2a-9b0e-c4ecf5ad091d">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.sourceId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+				identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:974b1998-4ceb-487a-a878-d4f882beed48"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:974b1998-4ceb-487a-a878-d4f882beed48">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			targetObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2" lid="urn:uuid:b499f04b-0361-4da5-b57a-a996413c9c3e"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b499f04b-0361-4da5-b57a-a996413c9c3e">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			targetObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0" lid="urn:uuid:b67cc782-a2a7-4d3a-a32c-db55089d8459"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b67cc782-a2a7-4d3a-a32c-db55089d8459">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			targetObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4" lid="urn:uuid:18a68355-a06a-40c4-b24a-8ee9c6a14b06"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:18a68355-a06a-40c4-b24a-8ee9c6a14b06">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			targetObject="urn:uuid:fac67a43-9f24-4aaa-ac0b-bf7f230f5f7e" lid="urn:uuid:332c188d-8688-4543-88e0-c5bc2adbeae9"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:332c188d-8688-4543-88e0-c5bc2adbeae9">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:ca4ca721-ff87-437f-81e6-9fa9aef90092"
+			targetObject="urn:uuid:60cfaff5-9cee-4fe4-83cb-81f4d80e92cd" lid="urn:uuid:85397f04-1991-4b64-827b-e8239009f605"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:85397f04-1991-4b64-827b-e8239009f605">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200512241100</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20051224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200512240800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocC" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.103" lid="urn:uuid:e223b7fa-4aa1-41be-80f2-8120c9ee02a3"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e223b7fa-4aa1-41be-80f2-8120c9ee02a3">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Attorney" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				lid="urn:uuid:b467bbb2-d986-4190-afd4-5360f7c79841"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b467bbb2-d986-4190-afd4-5360f7c79841">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				lid="urn:uuid:e83ee20c-266f-412b-8b80-bf1846539c7b"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e83ee20c-266f-412b-8b80-bf1846539c7b">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Attending</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Parma Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Smitty^Gerald^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="General Medicine" lid="urn:uuid:40b290db-23d3-44ea-ae28-c8d5b8f84c57"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:40b290db-23d3-44ea-ae28-c8d5b8f84c57">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="General Medicine" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="Hospital Setting" lid="urn:uuid:17cfaa53-e6aa-4f1e-87b5-7069ae187f24"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:17cfaa53-e6aa-4f1e-87b5-7069ae187f24">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Hospital Setting" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="CDAR2/IHE 1.0" lid="urn:uuid:9e519735-0826-48b9-97a3-4db0033fe37c"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:9e519735-0826-48b9-97a3-4db0033fe37c">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="CDAR2/IHE 1.0" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="Communication" lid="urn:uuid:18b41d27-adba-4c77-a7a2-f62631a4da53"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:18b41d27-adba-4c77-a7a2-f62631a4da53">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes 2</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Education" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				nodeRepresentation="34108-1" lid="urn:uuid:f92b80ae-203d-46cc-b4e7-b9b3f6ce58f8"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:f92b80ae-203d-46cc-b4e7-b9b3f6ce58f8">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.7" lid="urn:uuid:15e31b13-1c01-48a0-ae2b-457c29534efb"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:15e31b13-1c01-48a0-ae2b-457c29534efb">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:2a6e4ea3-a5b0-4fe4-ae3c-22557a82ba26"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:2a6e4ea3-a5b0-4fe4-ae3c-22557a82ba26">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200512241100</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20051224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200512240800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocD" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="Dialysis" lid="urn:uuid:380ce9be-5d70-48b5-b427-147d706b9a8a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:380ce9be-5d70-48b5-b427-147d706b9a8a">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="General Medicine" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="1.3.6.1.4.1.19376.1.5.3.1.1.2" lid="urn:uuid:b6670ac6-9f57-40f9-806a-c08468222587"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b6670ac6-9f57-40f9-806a-c08468222587">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDS-MS" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="34108-1" lid="urn:uuid:81eb3840-8468-4087-8375-9e96ae87afff"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:81eb3840-8468-4087-8375-9e96ae87afff">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="Consult" lid="urn:uuid:7e7b4aeb-b505-477c-95fc-4bbe6143ee2d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:7e7b4aeb-b505-477c-95fc-4bbe6143ee2d">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Consult" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				lid="urn:uuid:874e75ac-af70-4a0d-8774-0c279d588753"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:874e75ac-af70-4a0d-8774-0c279d588753">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Ford^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="Outpatient" lid="urn:uuid:d23fc141-f43c-4dfd-83a2-8e370a4bafd7"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:d23fc141-f43c-4dfd-83a2-8e370a4bafd7">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.104" lid="urn:uuid:d849d0f8-db04-4cc4-a6e5-4d1d74e8231a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:d849d0f8-db04-4cc4-a6e5-4d1d74e8231a">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Spouse" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:ede5f960-eb13-4b6f-b250-b22a7fa0ae6a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ede5f960-eb13-4b6f-b250-b22a7fa0ae6a">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.8" lid="urn:uuid:31324fe1-1582-4c43-8248-dda782bd86a8"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:31324fe1-1582-4c43-8248-dda782bd86a8">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+		<RegistryPackage lid="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4">
+			<Slot name="lastUpdateTime">
+				<ValueList>
+					<Value>20140127164427</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="FOLDER" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="comments go here" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classifiedObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+				classificationNode="urn:uuid:d9d542f3-6cc4-48b6-8870-ea235fbc94c2"
+				lid="urn:uuid:7948546f-b616-4656-802b-d800eaa81c27"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:7948546f-b616-4656-802b-d800eaa81c27">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:1ba97051-7806-41a8-a48b-8fce7af683c5"
+				classifiedObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+				nodeRepresentation="Referrals" lid="urn:uuid:fd233c7e-2349-4673-9758-2ba8ef321a57"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:fd233c7e-2349-4673-9758-2ba8ef321a57">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon folderCodeList</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Referrals" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+				identificationScheme="urn:uuid:f64ffdf0-4b97-4e06-b79f-a52b38ec2f8a"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:4f78fe97-fd28-4cd2-84bd-8b87e922e668"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:4f78fe97-fd28-4cd2-84bd-8b87e922e668">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSFolder.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+				identificationScheme="urn:uuid:75df8f67-9973-4fbe-a900-df66cefecc5a"
+				value="1.42.20140127164420.10" lid="urn:uuid:e7ea15b1-5bc2-4f67-9d2c-ac8196700467"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e7ea15b1-5bc2-4f67-9d2c-ac8196700467">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSFolder.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+			targetObject="urn:uuid:f984d16e-df85-4065-9c7f-882bf80ac5a2" lid="urn:uuid:fac67a43-9f24-4aaa-ac0b-bf7f230f5f7e"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:fac67a43-9f24-4aaa-ac0b-bf7f230f5f7e">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:4ca2e0bf-17ed-4f0b-b1e3-96672d116bc4"
+			targetObject="urn:uuid:c4d5b9b7-0964-4eb4-b57e-ae1c0a75dcc0" lid="urn:uuid:60cfaff5-9cee-4fe4-83cb-81f4d80e92cd"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:60cfaff5-9cee-4fe4-83cb-81f4d80e92cd">
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<RegistryPackage lid="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799">
+			<Slot name="submissionTime">
+				<ValueList>
+					<Value>20041225235050</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Physical" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Annual physical" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500"
+				classifiedObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				nodeRepresentation="History and Physical" lid="urn:uuid:a24a1bf9-daa2-4055-9167-b2d76ca64304"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:a24a1bf9-daa2-4055-9167-b2d76ca64304">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon contentTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a7058bb9-b4e4-4307-ba5b-e3f0ab85e12d"
+				classifiedObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				lid="urn:uuid:ba2660e9-5497-44f7-9727-77c73ee332f0"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ba2660e9-5497-44f7-9727-77c73ee332f0">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classifiedObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				classificationNode="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+				lid="urn:uuid:ead33296-a2b1-438e-961d-a2bd3fb0bd65"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ead33296-a2b1-438e-961d-a2bd3fb0bd65">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
+				value="1.42.20140127164420.12" lid="urn:uuid:1cb28351-6067-42ee-8b57-66dbb5b68f4b"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1cb28351-6067-42ee-8b57-66dbb5b68f4b">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				identificationScheme="urn:uuid:554ac39e-e3fe-47fe-b233-965d2a147832"
+				value="1.3.6.1.4.1.21367.2.2" lid="urn:uuid:1e2b01ad-d614-4cc6-8c21-e5cc00fa4e45"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1e2b01ad-d614-4cc6-8c21-e5cc00fa4e45">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.sourceId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+				identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:dbb37d48-b5eb-4b47-9bfc-add77e35dc3e"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:dbb37d48-b5eb-4b47-9bfc-add77e35dc3e">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:90a76cc2-dc56-4363-875d-ed9267ba7799"
+			targetObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7" lid="urn:uuid:6af6744b-9595-4839-a264-a15d16f2867a"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:6af6744b-9595-4839-a264-a15d16f2867a">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Deprecated" id="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200612230900</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20061224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200612230800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocE" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				lid="urn:uuid:28d91f85-e827-45ac-b9a4-ef60f57776fa"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:28d91f85-e827-45ac-b9a4-ef60f57776fa">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				lid="urn:uuid:450d212a-3cf6-4c51-acd9-2eca1f71149f"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:450d212a-3cf6-4c51-acd9-2eca1f71149f">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Attending</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Parma Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Smitty^Gerald^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="Outpatient" lid="urn:uuid:31525fb0-023e-4d9b-9385-e0ecb176159b"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:31525fb0-023e-4d9b-9385-e0ecb176159b">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="CDAR2/IHE 1.0" lid="urn:uuid:c2c498cf-9b99-4fb3-ab95-4322bcc55273"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:c2c498cf-9b99-4fb3-ab95-4322bcc55273">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="CDAR2/IHE 1.0" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="History and Physical" lid="urn:uuid:4b04b0a7-d850-440f-8ce2-de165d7f55a7"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:4b04b0a7-d850-440f-8ce2-de165d7f55a7">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.102" lid="urn:uuid:34868344-4f9c-4e97-aec3-591b802ce882"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:34868344-4f9c-4e97-aec3-591b802ce882">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Staff" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="Dialysis" lid="urn:uuid:c015b61c-c179-4904-8016-ac21e70feff0"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:c015b61c-c179-4904-8016-ac21e70feff0">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Dialysis" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				nodeRepresentation="34108-1" lid="urn:uuid:4ef1e87d-c9d3-44cb-a829-90b2026c21a5"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:4ef1e87d-c9d3-44cb-a829-90b2026c21a5">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:44d25fbc-391c-4c35-bbf2-555154b67cc9"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:44d25fbc-391c-4c35-bbf2-555154b67cc9">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:3c68bd2d-5ec4-4d67-b1cb-a644bff383f7"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.11" lid="urn:uuid:73a1ebc1-2848-44ad-8fd2-f72e8d7fbb17"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:73a1ebc1-2848-44ad-8fd2-f72e8d7fbb17">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+		<RegistryPackage lid="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a">
+			<Slot name="submissionTime">
+				<ValueList>
+					<Value>20041225235050</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Physical" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Annual physical" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500"
+				classifiedObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				nodeRepresentation="History and Physical" lid="urn:uuid:e44082f0-06e7-4fea-aa06-872303111dc2"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e44082f0-06e7-4fea-aa06-872303111dc2">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon contentTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classifiedObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				classificationNode="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+				lid="urn:uuid:83c70be2-30a4-4525-8899-d356627d0199"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:83c70be2-30a4-4525-8899-d356627d0199">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a7058bb9-b4e4-4307-ba5b-e3f0ab85e12d"
+				classifiedObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				lid="urn:uuid:917d55d1-9290-4a38-ae53-8842bcd607f6"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:917d55d1-9290-4a38-ae53-8842bcd607f6">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:97803855-beac-4ab2-884e-75fd73d76310"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:97803855-beac-4ab2-884e-75fd73d76310">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				identificationScheme="urn:uuid:554ac39e-e3fe-47fe-b233-965d2a147832"
+				value="1.3.6.1.4.1.21367.2.2" lid="urn:uuid:21cbdbd4-aec4-4707-a482-f2d020d0cce9"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:21cbdbd4-aec4-4707-a482-f2d020d0cce9">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.sourceId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
+				value="1.42.20140127164420.14" lid="urn:uuid:71ee4e8b-18ad-4805-ae48-015e47dfd1ae"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:71ee4e8b-18ad-4805-ae48-015e47dfd1ae">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:e4be7b6f-ea2f-45ef-b812-bed37720798a"
+			targetObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596" lid="urn:uuid:48ac67c8-9f3a-4872-bcac-a603a098d4e6"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:48ac67c8-9f3a-4872-bcac-a603a098d4e6">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200612230900</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20061224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200612230800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocF" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="CDAR2/IHE 1.0" lid="urn:uuid:d3dd7bcf-14bb-4c1e-80b2-cc38cb4477c8"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:d3dd7bcf-14bb-4c1e-80b2-cc38cb4477c8">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="CDAR2/IHE 1.0" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="T-62002" lid="urn:uuid:e81ac0be-5fcc-4c6a-92a5-a851f9bb6a40"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e81ac0be-5fcc-4c6a-92a5-a851f9bb6a40">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>SNM3</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Liver" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="History and Physical" lid="urn:uuid:1791d93c-1dd2-4c53-a88c-c62e39e51fcc"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1791d93c-1dd2-4c53-a88c-c62e39e51fcc">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				lid="urn:uuid:1a94a5a4-2a82-4156-9ec5-72e72cc715de"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:1a94a5a4-2a82-4156-9ec5-72e72cc715de">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Attending</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Parma Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Smitty^Gerald^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.102" lid="urn:uuid:a9977188-6af7-4f41-9718-a08b1f1a9521"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:a9977188-6af7-4f41-9718-a08b1f1a9521">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Staff" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="34108-1" lid="urn:uuid:57930063-f2c4-4d99-974a-8935142d1b2a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:57930063-f2c4-4d99-974a-8935142d1b2a">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="Outpatient" lid="urn:uuid:f531727c-fdeb-4099-a276-4a4c3e958704"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:f531727c-fdeb-4099-a276-4a4c3e958704">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				lid="urn:uuid:b4172142-f56c-47f2-9e73-5abb75348e46"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b4172142-f56c-47f2-9e73-5abb75348e46">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				nodeRepresentation="Dialysis" lid="urn:uuid:2efe0ce6-3367-47e1-b1df-93e85d7a6e69"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:2efe0ce6-3367-47e1-b1df-93e85d7a6e69">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes 2</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Dialysis" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.13" lid="urn:uuid:7b4f9c82-7fa9-42ab-b8a5-f01ffc3af72a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:7b4f9c82-7fa9-42ab-b8a5-f01ffc3af72a">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:200a902c-b66b-4410-8be3-cd46e40fb596"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:f6b6972d-3103-4b98-96dd-ced9a5449f17"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:f6b6972d-3103-4b98-96dd-ced9a5449f17">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+		<RegistryPackage lid="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:RegistryPackage"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e">
+			<Slot name="submissionTime">
+				<ValueList>
+					<Value>20041225235050</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Physical" />
+			</Name>
+			<Description>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="Annual physical" />
+			</Description>
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:aa543740-bdda-424e-8c96-df4873be8500"
+				classifiedObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				nodeRepresentation="History and Physical" lid="urn:uuid:221e54e1-1b5b-42ed-8f86-fa91adcdd958"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:221e54e1-1b5b-42ed-8f86-fa91adcdd958">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon contentTypeCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classifiedObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				classificationNode="urn:uuid:a54d6aa5-d40d-43f9-88c5-b4633d873bdd"
+				lid="urn:uuid:b1ff7798-5d6b-48a0-aaa6-f0ae241d38f7"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:b1ff7798-5d6b-48a0-aaa6-f0ae241d38f7">
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a7058bb9-b4e4-4307-ba5b-e3f0ab85e12d"
+				classifiedObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				lid="urn:uuid:2e65fb3b-8111-4dac-9c85-1fb58915d31c"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:2e65fb3b-8111-4dac-9c85-1fb58915d31c">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				identificationScheme="urn:uuid:6b5aea1a-874d-4603-a4bc-96a0a7b38446"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:315d0739-ca8e-4f32-83eb-f0fedf73617a"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:315d0739-ca8e-4f32-83eb-f0fedf73617a">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				identificationScheme="urn:uuid:96fdda7c-d067-4183-912e-bf5ee74998a8"
+				value="1.42.20140127164420.3" lid="urn:uuid:aaaee8ad-e2c5-4b24-ac46-bad48760b18d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:aaaee8ad-e2c5-4b24-ac46-bad48760b18d">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+				identificationScheme="urn:uuid:554ac39e-e3fe-47fe-b233-965d2a147832"
+				value="1.3.6.1.4.1.21367.2.2" lid="urn:uuid:a77f4214-492c-4192-91f9-b680a26160d0"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:a77f4214-492c-4192-91f9-b680a26160d0">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSSubmissionSet.sourceId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</RegistryPackage>
+		<Association
+			associationType="urn:oasis:names:tc:ebxml-regrep:AssociationType:HasMember"
+			sourceObject="urn:uuid:c9d42d19-01e8-4b9c-94d6-974ff11dcb7e"
+			targetObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08" lid="urn:uuid:67e61273-8006-4a38-b6ae-a4fb4db8de3c"
+			objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Association"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:67e61273-8006-4a38-b6ae-a4fb4db8de3c">
+			<Slot name="SubmissionSetStatus">
+				<ValueList>
+					<Value>Original</Value>
+				</ValueList>
+			</Slot>
+			<Name />
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+		</Association>
+		<ExtrinsicObject mimeType="text/xml" isOpaque="false"
+			lid="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08" objectType="urn:uuid:7edca82f-054d-47f2-a032-9b2a5b5186c1"
+			status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08">
+			<Slot name="languageCode">
+				<ValueList>
+					<Value>en-us</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStopTime">
+				<ValueList>
+					<Value>200612230900</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="hash">
+				<ValueList>
+					<Value>e543712c0e10501972de13a5bfcbe826c49feb75</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientInfo">
+				<ValueList>
+					<Value>PID-3|pid1^^^&amp;1.2.3&amp;ISO</Value>
+					<Value>PID-5|Doe^John^^^</Value>
+					<Value>PID-7|19560527</Value>
+					<Value>PID-8|M</Value>
+					<Value>PID-11|100 Main St^^Metropolis^Il^44130^USA</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="creationTime">
+				<ValueList>
+					<Value>20061224</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="sourcePatientId">
+				<ValueList>
+					<Value>89765a87b^^^&amp;3.4.5&amp;ISO</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="serviceStartTime">
+				<ValueList>
+					<Value>200612230800</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="URI">
+				<ValueList>
+					<Value>http://129.6.24.109:9080/XdsDocs/testdata/my_document.txt</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="size">
+				<ValueList>
+					<Value>36</Value>
+				</ValueList>
+			</Slot>
+			<Slot name="repositoryUniqueId">
+				<ValueList>
+					<Value>1.19.6.24.109.42.1</Value>
+				</ValueList>
+			</Slot>
+			<Name>
+				<LocalizedString xml:lang="en-US" charset="UTF-8"
+					value="DocA" />
+			</Name>
+			<Description />
+			<VersionInfo versionName="1.0" comment="Initial Version" />
+			<Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="T-D4909" lid="urn:uuid:bcab16a5-2b3d-4f94-b57e-52550a3fc2db"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:bcab16a5-2b3d-4f94-b57e-52550a3fc2db">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>SNM3</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Kidney" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				lid="urn:uuid:57d0a279-2508-46f6-ba0a-7a748b1fed75"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:57d0a279-2508-46f6-ba0a-7a748b1fed75">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Primary Surgon</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Berea Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Dopplemeyer^Sherry^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f33fb8ac-18af-42cc-ae0e-ed0b0bdb91e1"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="Outpatient" lid="urn:uuid:ba1021e9-8d82-4808-b0b7-cb1a74aa588d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:ba1021e9-8d82-4808-b0b7-cb1a74aa588d">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon healthcareFacilityTypeCodes 2</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:2c6b8cb7-8b2a-4051-b291-b1ae6a575ef4"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="T-62002" lid="urn:uuid:9c8c85bc-8595-4cd6-899f-c9f6083a0fd5"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:9c8c85bc-8595-4cd6-899f-c9f6083a0fd5">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>SNM3</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Liver" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:93606bcf-9494-43ec-9b4e-a7748d1a838d"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				lid="urn:uuid:21a7574b-9456-40a3-be98-ea08b7489a18"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:21a7574b-9456-40a3-be98-ea08b7489a18">
+				<Slot name="authorRole">
+					<ValueList>
+						<Value>Attending</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorInstitution">
+					<ValueList>
+						<Value>Cleveland Clinic</Value>
+						<Value>Parma Community</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorPerson">
+					<ValueList>
+						<Value>^Smitty^Gerald^^^</Value>
+					</ValueList>
+				</Slot>
+				<Slot name="authorSpecialty">
+					<ValueList>
+						<Value>Orthopedic</Value>
+					</ValueList>
+				</Slot>
+				<Name />
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:41a5887f-8865-4c09-adf7-e362475b143a"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="History and Physical" lid="urn:uuid:87bfe006-bc35-4668-b9e9-3641e791a518"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:87bfe006-bc35-4668-b9e9-3641e791a518">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon classCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="History and Physical" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:a09d5840-386c-46f2-b5ad-9c3699a4309d"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="CDAR2/IHE 1.0" lid="urn:uuid:de918b38-b144-42a3-b014-23e22cba36f2"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:de918b38-b144-42a3-b014-23e22cba36f2">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon formatCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="CDAR2/IHE 1.0" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:cccf5598-8b07-4b77-a05e-ae952c785ead"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="Dialysis" lid="urn:uuid:0648f720-4d6c-4bd4-8e38-670ea815f4fe"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:0648f720-4d6c-4bd4-8e38-670ea815f4fe">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon practiceSettingCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Dialysis" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f4f85eac-e6cb-4883-b524-f2705394840f"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="1.3.6.1.4.1.21367.2006.7.102" lid="urn:uuid:84c9b65d-3ea6-46f9-8c7c-9070f3368fd7"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:84c9b65d-3ea6-46f9-8c7c-9070f3368fd7">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>Connect-a-thon confidentialityCodes</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Clinical-Staff" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<Classification classificationScheme="urn:uuid:f0306f51-975f-434e-a61c-c59651d33983"
+				classifiedObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				nodeRepresentation="34108-1" lid="urn:uuid:81e3bb6a-c5b9-4ec0-a9c6-b0c8a4e764fb"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:Classification"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:81e3bb6a-c5b9-4ec0-a9c6-b0c8a4e764fb">
+				<Slot name="codingScheme">
+					<ValueList>
+						<Value>LOINC</Value>
+					</ValueList>
+				</Slot>
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="Outpatient Evaluation And Management" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</Classification>
+			<ExternalIdentifier registryObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
+				value="1.42.20140127164420.2" lid="urn:uuid:e5da4fc8-2870-479c-8abb-95982938c22d"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:e5da4fc8-2870-479c-8abb-95982938c22d">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.uniqueId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+			<ExternalIdentifier registryObject="urn:uuid:01d3f63e-31f4-45a4-8b4e-e46b07ce9b08"
+				identificationScheme="urn:uuid:58a6f841-87b3-4a3e-92fd-a8ffeff98427"
+				value="roman^^^&amp;1.2.3.44.55&amp;ISO" lid="urn:uuid:96d9e575-9dcd-43a4-ab83-61528d4c8107"
+				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
+				status="urn:oasis:names:tc:ebxml-regrep:StatusType:Approved" id="urn:uuid:96d9e575-9dcd-43a4-ab83-61528d4c8107">
+				<Name>
+					<LocalizedString xml:lang="en-US" charset="UTF-8"
+						value="XDSDocumentEntry.patientId" />
+				</Name>
+				<Description />
+				<VersionInfo versionName="1.0" comment="Initial Version" />
+			</ExternalIdentifier>
+		</ExtrinsicObject>
+	</RegistryObjectList>
+</ns3:SubmitObjectsRequest>

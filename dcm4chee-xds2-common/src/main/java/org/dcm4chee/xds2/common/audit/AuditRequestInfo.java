@@ -66,7 +66,9 @@ public class AuditRequestInfo {
     private HttpServletRequest servletRequest;
     String host;
     private boolean enableDNSLookups = Boolean.valueOf(
-            System.getProperty("org.dcm4chee.xds.audit.enableDNSLookups", "true"));
+            System.getProperty("org.dcm4chee.xds.audit.enableDNSLookups", "false"));
+    
+    // TODO: async audit log with a queue, so lookups can be lazily done?
     
     public static final Logger log = LoggerFactory.getLogger(AuditRequestInfo.class);
     
@@ -75,8 +77,10 @@ public class AuditRequestInfo {
         try {
             servletRequest = (HttpServletRequest)wsContext.getMessageContext().get(SOAPMessageContext.SERVLET_REQUEST);
         } catch (Exception x) {
-            log.warn("Failed to get ServletRequest from WebServiceContext!");
-            log.debug("Stacktrace:", x);
+            // TODO: this will be thrown every time the service is called as EJB and not as WebService, e.g. for each browser request,
+            // we need to think about whether to make audit logging for that case...
+            log.debug("Failed to get ServletRequest from WebServiceContext!");
+            log.trace("Failed to get ServletRequest from WebServiceContext! Stacktrace",x);
         }
     }
 

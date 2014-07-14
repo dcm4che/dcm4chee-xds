@@ -55,11 +55,13 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
@@ -81,10 +83,9 @@ import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
-import org.dcm4chee.xds2.conf.XdsBrowser;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
-import org.dcm4chee.xds2.ctrl.GenericDeviceExtensionJSON;
+import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
@@ -122,7 +123,7 @@ import javax.net.ssl.X509TrustManager;
 @SuppressWarnings("serial")
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
-public class BrowserRESTServicesServlet extends HttpServlet {
+public class XdsBrowserRESTServicesServlet extends HttpServlet {
 
     /**
      * cached repositories from the config
@@ -139,12 +140,10 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     @Inject
     private Device device;
     private XdsRegistry cfg;
-    private XdsBrowser browserConfig;
 
     @PostConstruct
     private void getRegistryExtension() {
         cfg = device.getDeviceExtension(XdsRegistry.class);
-        browserConfig = cfg.getXdsBrowser();
     }
 
     /**
@@ -157,7 +156,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     private static XDSRegistryBeanLocal xdsRegistryLocalBean;
 
     public static final Logger log = LoggerFactory
-            .getLogger(BrowserRESTServicesServlet.class);
+            .getLogger(XdsBrowserRESTServicesServlet.class);
 
     /*
      * RESTFUL Services
@@ -180,7 +179,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
     private Map<String, XdsRepository> getAllRepositories()
             throws ConfigurationException {
 
-        synchronized (BrowserRESTServicesServlet.class) {
+        synchronized (XdsBrowserRESTServicesServlet.class) {
             if (repositories == null) {
 
                 repositories = Collections
@@ -256,7 +255,7 @@ public class BrowserRESTServicesServlet extends HttpServlet {
                 mimeType = allTypes.forName(mimeTypeStr);
                 ext = mimeType.getExtension();
             } catch (MimeTypeException e) {
-                log.debug("{}", e);
+                log.warn("Error while resolving mime type extension for document id "+docId+" from repository "+repoId+", specified mimetype string is "+mimeTypeStr, e);
             }
 
             // return the file for download
@@ -278,135 +277,18 @@ public class BrowserRESTServicesServlet extends HttpServlet {
 
     }
 
-    @GET
-    @Path("/config/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<GenericDeviceExtensionJSON> getConfig()
-            throws ConfigurationException {
-
-        if (browserConfig == null) {
-            log.info("No configuration found for the browser, device {}",
-                    (device == null ? "null" : device.getDeviceName()));
-            return null;
-        }
-
-        List<GenericDeviceExtensionJSON> extData = new ArrayList<GenericDeviceExtensionJSON>();
-        for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
-
-            GenericDeviceExtensionJSON edata = GenericDeviceExtensionJSON
-                    .serializeDeviceExtension(de);
-
-            extData.add(edata);
-
-        }
-
-        return extData;
-
-    }
-
-    @GET
-    @Path("/reconfigure-all/")
-    @Produces(MediaType.APPLICATION_JSON)
-    public void reconfigureAll() {
-
-        if (browserConfig == null) {
-            log.info("No configuration found for the browser, device {}",
-                    (device == null ? "null" : device.getDeviceName()));
-            return;
-        }
-
-        for (DeviceExtension de : browserConfig.getControlledDeviceExtensions()) {
-
-            // figure out the URL for reloading the config
-            String reconfUrl = null;
-            try {
-
-                // temporary for connectathon
-                URL url = new URL("http://localhost:8080");
-
-                if (de.getClass() == XdsRegistry.class) {
-                    // URL url = new URL(((XdsRegistry) de).getQueryUrl());
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xds-reg-rs/ctrl/reload");
-                } else if (de.getClass() == XdsRepository.class) {
-                    // URL url = new URL(((XdsRepository) de).getProvideUrl());
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xds-rep-rs/ctrl/reload");
-                } else if (de.getClass() == XCAInitiatingGWCfg.class
-                        || de.getClass() == XCARespondingGWCfg.class) {
-                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xca-rs/ctrl/reload");
-                } else if (de.getClass() == XCAiInitiatingGWCfg.class
-                        || de.getClass() == XCAiRespondingGWCfg.class) {
-                    // URL url = new URL("http://localhost:8080"); // TODO!!!!!
-                    reconfUrl = String.format("%s://%s/%s", url.getProtocol(),
-                            url.getAuthority(), "xcai-rs/ctrl/reload");
-                } else
-                    continue;
-
-                // bypass certificate validation - we don't transmit any data
-                // here
-
-                // Create a trust manager that does not validate certificate
-                // chains
-                /*
-                 * TrustManager[] trustAllCerts = new TrustManager[] {new
-                 * X509TrustManager() { public
-                 * java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                 * return new X509Certificate[0]; } public void
-                 * checkClientTrusted(X509Certificate[] certs, String authType)
-                 * { } public void checkServerTrusted(X509Certificate[] certs,
-                 * String authType) { } } };
-                 * 
-                 * // Install the all-trusting trust manager SSLContext sc =
-                 * SSLContext.getInstance("TLS"); sc.init(null, trustAllCerts,
-                 * new java.security.SecureRandom());
-                 * 
-                 * // Create all-trusting host name verifier HostnameVerifier
-                 * allHostsValid = new HostnameVerifier() {
-                 * 
-                 * @Override public boolean verify(String hostname, SSLSession
-                 * session) { return true; }
-                 * 
-                 * };
-                 */
-
-                URL obj = new URL(reconfUrl);
-                HttpURLConnection con = (HttpURLConnection) obj
-                        .openConnection();
-
-                /*
-                 * if (obj.getProtocol().equals("https")) {
-                 * ((HttpsURLConnection)
-                 * con).setSSLSocketFactory(sc.getSocketFactory());
-                 * ((HttpsURLConnection)
-                 * con).setHostnameVerifier(allHostsValid); }
-                 */
-
-                con.setRequestMethod("GET");
-
-                log.info("Calling configuration reload @ {} ...", reconfUrl);
-
-                int responseCode = con.getResponseCode();
-
-            } catch (MalformedURLException e) {
-                log.warn("Url in configuration is malformed for "
-                        + de.getClass().getSimpleName() + ", device "
-                        + de.getDevice().getDeviceName(), e);
-            } catch (Exception e) {
-                log.warn("Cannot reconfigure " + de.getClass().getSimpleName()
-                        + ", device " + de.getDevice().getDeviceName(), e);
-            }
-
-        }
-
-    }
     
     @POST
     @Path("/reg/delete/")
     public void deleteRegistryObjects(RemoveObjectsRequest removeReq) {
         xdsRegistryLocalBean.deleteObjects(removeReq);
     }
+    
+    @POST
+    @Path("/logout")
+    public void logout(@Context HttpServletRequest req) {
+        req.getSession().invalidate();
+    }
+    
 
 }

@@ -59,15 +59,6 @@ public class DefaultConfigurator {
             registry.setCheckAffinityDomain(false);
             registry.setCheckMimetype(false);
 
-            XdsBrowser browser = new XdsBrowser();
-
-            Set<Device> cdevices = new HashSet<Device>();
-            cdevices.add(device);
-
-            browser.setControlledDevices(cdevices);
-
-            registry.setXdsBrowser(browser);
-
             // generic source
 
             XdsSource source = new XdsSource();

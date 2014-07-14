@@ -20,6 +20,7 @@ import org.apache.commons.jxpath.Pointer;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
+import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
@@ -71,18 +72,15 @@ public class XPathTest {
 
         JXPathContext rewqContext = JXPathContext.newContext(req);
 
-        Iterator ids = (Iterator) rewqContext.iteratePointers("//id"); 
-        
-        while (ids.hasNext()) {
-            
-            Pointer p = (Pointer) ids.next();
-            //author.//p.getValue();
-            p.setValue("1243");
-            
-            System.out.println(p.toString());
-            
-        }
+        // check insertion of classifications
 
+        /*Iterator refs = (Iterator) rewqContext.iteratePointers("//*[id = 'urn:uuid:aabbccdd-bdda-424e-8c96-df4873be8501']"); 
+
+        RegistryObjectType rot = (RegistryObjectType) refs.next();
+        rot.getClassification().add(e)
+        while (refs.hasNext())
+            System.out.println(refs.next());*/
+        
         //StringWriter s = new StringWriter();
         //marshaller.marshal(req, s); 
         //System.out.println(s.getBuffer().toString());        

@@ -16,7 +16,7 @@ controller('XdsBrowserCtrl', function($scope, $http, xdsConstants, xdsAdhocQuery
 
         // currently browsed entity (for search by patient id)
         $scope.currentEntity = "";// XDS_FindDocuments";
-        $scope.currentStatus = xdsConstants.STATUS_APPROVED;
+        $scope.currentStatus = xdsConstants.B_Statuses[0].val;
 
         // these are overridden by the linkedbrowser
         $scope.delegates = {

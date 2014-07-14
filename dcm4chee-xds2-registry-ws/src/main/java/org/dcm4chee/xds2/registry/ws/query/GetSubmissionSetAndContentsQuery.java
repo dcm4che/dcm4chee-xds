@@ -79,8 +79,8 @@ public class GetSubmissionSetAndContentsQuery extends StoredQuery {
         } else if (getQueryParam(XDSConstants.QRY_SUBMISSIONSET_ENTRY_UUID) != null) {
             ss = getSession().getSubmissionSetByUUID(getQueryParam(XDSConstants.QRY_SUBMISSIONSET_ENTRY_UUID).getStringValue());
         }
-        log.info("#### Found Submissionset:{}",ss);
         List<Identifiable> objects = getObjectsFor(ss);
+        log.info("Found SubmissionSet: {}, contains {} objects",ss, objects.size());
         rsp.setRegistryObjectList(new XDSPersistenceWrapper(getSession()).toRegistryObjectListType(objects, this.isLeafClass()));
         return rsp;
     }

@@ -53,7 +53,7 @@ public class AsyncResponseHandler<T> implements AsyncHandler<T> {
     @Override
     public void handleResponse(Response<T> res) {
         try {
-            log.info("####handleResponse:"+res);
+            log.debug("####handleResponse:"+res);
             rsp = res.get();
         } catch (Exception x) {
             log.error("Error in handleResponse!", x);

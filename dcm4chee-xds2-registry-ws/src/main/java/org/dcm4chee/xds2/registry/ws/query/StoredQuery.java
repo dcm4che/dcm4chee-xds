@@ -320,7 +320,7 @@ public abstract class StoredQuery {
             param = getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_UUID);
             doc = getSession().getDocumentEntryByUUID(param.getStringValue());
         }
-        log.info("#### Found Document:"+doc);
+        log.debug("#### Found Document:"+doc);
         return doc;
     }
 
@@ -350,7 +350,7 @@ public abstract class StoredQuery {
                 query.where(QAssociation.association.sourceObject.eq(ro), QAssociation.association.assocType.id.eq(XDSConstants.HAS_MEMBER));
             }
             List<Association> associations = query.list(QAssociation.association);
-            log.info("#### Found Associations:"+associations);
+            log.debug("#### Found Associations: {}", associations);
             objects.addAll(associations);
             RegistryObject obj;
             List<Association[]> childAssocs = new ArrayList<Association[]>();
