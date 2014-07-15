@@ -76,6 +76,21 @@
         </property>
       </activation>
     </profile>
+
+    <profile>
+      <id>xd</id>
+      <properties>
+	<hbm2ddl.auto>validate</hbm2ddl.auto>
+      </properties>
+      <activation>
+        <property>
+          <name>environment</name>
+          <value>xdbuild</value>
+        </property>
+      </activation>
+    </profile>
+
+
     <profile>
       <!-- Produces agility-specific artifacts -->
       <id>asb</id>

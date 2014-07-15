@@ -922,6 +922,7 @@ public class XDSRegistryBean implements DocumentRegistryPortType, XDSRegistryBea
     @Override
     public void checkAndAutoInitializeRegistry()  {
         // if there are no identifiables in the database, perform the XDS initialization
+        log.info("Checking content of the XDS registry...");
         Long identifiablesTotal = (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
         if (identifiablesTotal == 0) {
             log.info("Initializing XDS Registry with default metadata...");
