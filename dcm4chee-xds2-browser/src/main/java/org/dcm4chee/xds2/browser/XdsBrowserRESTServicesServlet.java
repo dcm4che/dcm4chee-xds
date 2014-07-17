@@ -150,7 +150,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
      * Registry EJBs
      */
     @EJB
-    private static DocumentRegistryPortType xdsRegistryBean;
+    private static XDSRegistryBeanLocal xdsRegistryBean;
 
     @EJB
     private static XDSRegistryBeanLocal xdsRegistryLocalBean;
