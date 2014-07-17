@@ -27,6 +27,9 @@
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
+    <security-role>
+      <role-name>WebAdmin</role-name>
+    </security-role>
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Browser UI and Web serivices
