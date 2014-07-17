@@ -80,7 +80,7 @@ public class SubmitObjReqTest {
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/SubmitObjectsRequest_AssociationTypeScheme.xml"); 
     }
     @EJB
-    private XDSRegistryBean session;
+    private XdsRegistryBeanForTesting session;
 
 
     // Audit logger testing 

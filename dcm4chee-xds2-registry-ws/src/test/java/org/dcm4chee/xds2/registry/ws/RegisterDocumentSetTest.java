@@ -102,7 +102,7 @@ public class RegisterDocumentSetTest {
     
     @Deployment
     public static WebArchive createDeployment() {
-        return XDSTestUtil.createDeploymentArchive(RegisterDocumentSetTest.class)
+           WebArchive wa = XDSTestUtil.createDeploymentArchive(RegisterDocumentSetTest.class)
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent1.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent1.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/RegisterOneDocumentConcurrent2.xml")), 
@@ -122,12 +122,15 @@ public class RegisterDocumentSetTest {
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/CreateFolder.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/CreateFolder.xml") 
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml")), 
-                "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml"); 
-                
+                "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml");
+
+            System.out.println(wa.toString(true));
+        return wa;
     }
+
     @EJB
-    private XDSRegistryBean session;
-    
+    private XdsRegistryBeanForTesting session;
+
     @EJB
     private XDSRegistryTestBeanI testSession;
 
@@ -137,7 +140,7 @@ public class RegisterDocumentSetTest {
     @Inject
     Device xdsDevice;
    
-    // Audit logger	testing 
+    // Audit logger	testing
     @Before
     public void prepareAuditLogger() {
     	AuditTestManager.prepareAuditLogger(); 
@@ -294,7 +297,7 @@ public class RegisterDocumentSetTest {
         } else {
             uniqueId = XDSTestUtil.getExternalIdentifierValue(obj.getExternalIdentifier(), XDSConstants.UUID_XDSFolder_uniqueId);
             if (uniqueId != null) {
-                RegistryPackage rp = session.getFolderByUniqueId(uniqueId);
+                RegistryPackage rp = ((XDSRegistryBean)session).getFolderByUniqueId(uniqueId);
                 assertNotNull("Folder not found by uniqueId! :"+uniqueId, rp);
                 try {
                     testSession.checkRegistryPackage(obj, false);

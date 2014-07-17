@@ -40,14 +40,18 @@ package org.dcm4chee.xds2.registry.ws;
 
 import java.util.List;
 
-import javax.ejb.Local;
-
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
+import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
 import org.dcm4chee.xds2.persistence.XADPatient;
-
-public interface XDSRegistryBeanLocal {
+/**
+ * This interface should be used to inject XDS registry EJB (it extends DocumentRegistryPortType)
+ * The implementation does not accound for audit logging (this is done on the webservice layer)
+ * @author Roman K
+ *
+ */
+public interface XDSRegistryBeanLocal extends DocumentRegistryPortType {
 
     boolean newPatientID(String pid) throws XDSException;
 
