@@ -37,20 +37,6 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.service.impl;
 
-import java.io.File;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
-import javax.inject.Inject;
-import javax.inject.Named;
-
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
@@ -63,6 +49,21 @@ import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.DefaultConfigurator;
 import org.dcm4chee.xds2.service.XdsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -72,6 +73,9 @@ import org.dcm4chee.xds2.service.XdsService;
 @Startup
 @Typed(XdsService.class)
 public class XdsServiceImpl implements XdsService {
+
+    private static final Logger log = LoggerFactory.getLogger(XdsServiceImpl.class);
+
 
     private static final String DEVICE_NAME_PROPERTY =
             "org.dcm4chee.xds.deviceName";
@@ -143,6 +147,7 @@ public class XdsServiceImpl implements XdsService {
 
     @PostConstruct
     public void init() {
+        log.info("Initializing XDS service");
         addJBossDirURLSystemProperties();
         try {
             device = findDevice();
@@ -152,15 +157,21 @@ public class XdsServiceImpl implements XdsService {
             XDSAudit.setAuditLogger(logger);
             HL7DeviceExtension hl7Extension = device.getDeviceExtension(HL7DeviceExtension.class);
             if (hl7Extension != null) {
+
+                int hl7ServicesCount = 0;
+
             	for (HL7Service service : hl7Services) {
             		hl7ServiceRegistry.addHL7Service(service);
             		hl7serviceAvail = true;
+                    hl7ServicesCount++;
             	}
             	if (hl7serviceAvail) {
-            		ExecutorService executorService = Executors.newCachedThreadPool();
+                    log.info("Starting HL7 XDS services", hl7ServicesCount);
+                    ExecutorService executorService = Executors.newCachedThreadPool();
             		device.setExecutor(executorService);
             		hl7Extension.setHL7MessageListener(hl7ServiceRegistry);
                     start();
+                    log.info("HL7 XDS services started (number of services: {})", hl7ServicesCount);
             	}
             }
         } catch (RuntimeException re) {
