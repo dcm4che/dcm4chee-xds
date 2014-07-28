@@ -1,6 +1,7 @@
 package org.dcm4chee.xds2.registry.ws;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
  */
 @Singleton
 @Startup
+@DependsOn("XdsServiceImpl")
 public class XDSAutoInitializerBean {
     
     private static Logger log = LoggerFactory.getLogger(XDSAutoInitializerBean.class);
