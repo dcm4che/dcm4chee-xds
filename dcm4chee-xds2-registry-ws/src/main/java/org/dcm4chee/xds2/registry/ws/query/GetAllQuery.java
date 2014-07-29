@@ -38,32 +38,21 @@
 
 package org.dcm4chee.xds2.registry.ws.query;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.impl.JPAQuery;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.persistence.Association;
-import org.dcm4chee.xds2.persistence.QAssociation;
-import org.dcm4chee.xds2.persistence.QXADIssuer;
-import org.dcm4chee.xds2.persistence.QXADPatient;
-import org.dcm4chee.xds2.persistence.QXDSDocumentEntry;
-import org.dcm4chee.xds2.persistence.QXDSFolder;
-import org.dcm4chee.xds2.persistence.QXDSSubmissionSet;
-import org.dcm4chee.xds2.persistence.RegistryObject;
-import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
-import org.dcm4chee.xds2.persistence.XDSFolder;
-import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
+import org.dcm4chee.xds2.persistence.*;
 import org.dcm4chee.xds2.registry.ws.XDSPersistenceWrapper;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mysema.query.BooleanBuilder;
-import com.mysema.query.jpa.impl.JPAQuery;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Stored Query Implementation for FindDocuments 
@@ -82,7 +71,7 @@ public class GetAllQuery extends StoredQuery {
     
     public AdhocQueryResponse query() throws XDSException {
         AdhocQueryResponse rsp = initAdhocQueryResponse();
-        ArrayList<RegistryObject> objects = new ArrayList<RegistryObject>();
+        ArrayList<RegistryObject> objects = new ArrayList<>();
         objects.addAll(getDocuments());
         objects.addAll(getSubmissionSets());
         objects.addAll(getFolders());
@@ -144,14 +133,18 @@ public class GetAllQuery extends StoredQuery {
 
     private Collection<? extends Association> getAssociations(
             ArrayList<RegistryObject> objects) {
+
+        // otherwise 'in' query fails
+        if (objects.isEmpty()) return new ArrayList<>();
+
         JPAQuery query = new JPAQuery(getSession().getEntityManager());
         BooleanBuilder builder = new BooleanBuilder();
         builder.or(QAssociation.association.sourceObject.in(objects))
-        .or(QAssociation.association.targetObject.in(objects));
+                .or(QAssociation.association.targetObject.in(objects));
         List<Association> assocs = query.from(QAssociation.association)
-        .where(builder)
-        .list(QAssociation.association);
-        log.debug("#### Found Association:"+assocs);
+                .where(builder)
+                .list(QAssociation.association);
+        log.debug("#### Found Association:" + assocs);
         return assocs;
     }
 
