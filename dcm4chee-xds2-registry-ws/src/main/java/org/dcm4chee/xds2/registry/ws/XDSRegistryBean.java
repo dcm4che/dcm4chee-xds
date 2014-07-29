@@ -178,7 +178,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     public AdhocQueryResponse documentRegistryRegistryStoredQuery(
             AdhocQueryRequest req) {
         log.info("XDS.b - documentRegistryRegistryStoredQuery called");
-        log.debug("ReturnType: {}", req.getResponseOption().getReturnType());
+        log.debug("ReturnType: {}", (req.getResponseOption() == null ? "(no response option)" : req.getResponseOption().getReturnType()));
         AdhocQueryResponse rsp;
         StoredQuery qry = null;
         try {
@@ -227,7 +227,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                 if (mimes != null && cfg.isCheckMimetype() && (obj instanceof ExtrinsicObjectType) ) {
                     checkMimetype((ExtrinsicObjectType)obj, mimes);
                 }
-                    
+
                 list = ((RegistryObjectType)obj).getExternalIdentifier();
                 if (list != null) {
                     for (ExternalIdentifierType eiType : list) {
@@ -238,7 +238,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                                 if (!cfg.isPreMetadataCheck() && !cfg.isCheckMimetype())
                                     break objLoop;
                             } else if (!patIDtmp.equals(patID)) {
-                                throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
+                                throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH,
                                         "PatientID of object"+obj.getId()+" does not match:"+patIDtmp+" vs. "+patID, null);
                             }
                         }
@@ -251,7 +251,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                     try {
                         xadPatient = new XADPatient(patID);
                     } catch (Exception ignore) {
-                        throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
+                        throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH,
                                 "PatientID referenced in Association "+obj.getId()+" does not match! SubmissionSet patID not valid!:"+patID, null);
                     }
                 }
@@ -831,8 +831,9 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
        // Deletion. The JPA DELETE query does not handle cascading, so we  
        // get objects manually and remove them one by one for now.
 
-       log.debug("Deleting objects with uuids {}",uuids);
-       
+       log.info("Deleting objects with uuids {}",uuids);
+
+        if (uuids.isEmpty()) return null;
 
        List<RegistryObject> objs = em.createQuery("SELECT r FROM RegistryObject r WHERE r.id IN (:uuids)").setParameter("uuids", uuids).getResultList();
        
