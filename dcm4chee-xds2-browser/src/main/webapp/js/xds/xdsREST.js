@@ -62,8 +62,8 @@ xdsREST.factory('xdsAdhocQuery', [ 'appHttp', 'appNotifications', function(appHt
 		var makeslot = function(value, arg) {
 			return {
 				"valueList" : {
-					"value" : [ value ],
-				},
+					"value" : [ value ]
+                },
 				"name" : arg,
 				"slotType" : null
 			};

@@ -88,7 +88,7 @@ import com.mysema.query.jpa.impl.JPAQuery;
 public class XDSRegistryTestBean implements XDSRegistryTestBeanI {
 
     @EJB
-    private DocumentRegistryPortType registryBean;
+    private XDSRegistryBeanLocal registryBean;
 
     
     @PersistenceContext(unitName = "dcm4chee-xds")

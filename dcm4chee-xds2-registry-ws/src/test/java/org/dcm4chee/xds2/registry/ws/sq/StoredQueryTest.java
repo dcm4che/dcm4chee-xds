@@ -56,6 +56,7 @@ import org.dcm4chee.xds2.registry.AuditTestManager;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryTestBeanI;
 import org.dcm4chee.xds2.registry.ws.XDSTestUtil;
+import org.dcm4chee.xds2.registry.ws.XdsRegistryBeanForTesting;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -106,7 +107,7 @@ public class StoredQueryTest {
         "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/sq/rplc.xml"); 
     }
     @EJB
-    private XDSRegistryBean session;
+    private XdsRegistryBeanForTesting session;
 
     @EJB
     private XDSRegistryTestBeanI testSession;

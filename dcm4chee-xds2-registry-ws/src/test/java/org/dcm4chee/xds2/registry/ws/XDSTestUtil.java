@@ -125,8 +125,22 @@ public class XDSTestUtil {
 		}
     	String version = p.getProperty("version");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-        .addClasses(testClazz, XDSRegistryBeanLocal.class, XDSRegistryTestBeanI.class, XDSRegistryBean.class, XDSRegistryTestBean.class, XDSRegistryTestBeanException.class,
-                XDSTestUtil.class, XDSPersistenceWrapper.class, XDSValidator.class, LogHandler.class, AuditTestManager.class, XdsService.class, XdsTestServiceImpl.class, DeepEquals.class)
+        .addClasses(testClazz,
+                XDSRegistryBeanLocal.class,
+                XDSRegistryTestBeanI.class,
+                XDSRegistryBean.class,
+                XDSRegistryBeanWS.class,
+                XDSRegistryTestBean.class,
+                XDSRegistryTestBeanException.class,
+                XDSTestUtil.class,
+                XDSPersistenceWrapper.class,
+                XDSValidator.class,
+                LogHandler.class,
+                AuditTestManager.class,
+                XdsService.class,
+                XdsTestServiceImpl.class,
+                DeepEquals.class,
+                XdsRegistryBeanForTesting.class)
         .add(new FileAsset(new File("src/main/resources/org/dcm4chee/xds2/registry/ws/handlers.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/handlers.xml")
         .add(new FileAsset(new File("src/main/resources/META-INF/wsdl/XDS.b_DocumentRegistry.wsdl")),
@@ -361,7 +375,7 @@ public class XDSTestUtil {
         }
     }
 
-    private static Set<String> prepareRegistryWithSubmissionRequest(XDSRegistryBean session, String metadataFilename, Logger log) {
+    private static Set<String> prepareRegistryWithSubmissionRequest(XDSRegistryBeanLocal session, String metadataFilename, Logger log) {
         try {
             SubmitObjectsRequest req = getSubmitObjectsRequest(metadataFilename);
             RegistryResponseType rsp = session.documentRegistryRegisterDocumentSetB(req);

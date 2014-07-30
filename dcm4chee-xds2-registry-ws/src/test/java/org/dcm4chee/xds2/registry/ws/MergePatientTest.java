@@ -38,35 +38,9 @@ package org.dcm4chee.xds2.registry.ws;
  * ***** END LICENSE BLOCK ***** */
 
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertFalse;
-
-import java.io.File;
-import java.util.List;
-
-import javax.ejb.EJB;
-import javax.xml.bind.JAXBElement;
-
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.AssociationType1;
-import org.dcm4chee.xds2.infoset.rim.ClassificationType;
-import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
-import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
-import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
-import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
-import org.dcm4chee.xds2.infoset.rim.SlotType1;
-import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
-import org.dcm4chee.xds2.persistence.RegistryPackage;
-import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
+import org.dcm4chee.xds2.infoset.rim.*;
 import org.dcm4chee.xds2.registry.AuditTestManager;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
 import org.dcm4chee.xds2.registry.ws.sq.AbstractSQTests;
 import org.dcm4chee.xds2.registry.ws.sq.QueryResultCheck;
@@ -80,6 +54,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import java.io.File;
+
+import static org.junit.Assert.fail;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -112,12 +91,12 @@ public class MergePatientTest extends AbstractSQTests {
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml"); 
     }
     @EJB
-    private XDSRegistryBean session;
+    private XdsRegistryBeanForTesting session;
     
     @EJB
     private XDSRegistryTestBeanI testSession;
 
-    // Audit logger	testing 
+    // Audit logger	testing
     @Before
     public void prepareAuditLogger() {
     	AuditTestManager.prepareAuditLogger(); 

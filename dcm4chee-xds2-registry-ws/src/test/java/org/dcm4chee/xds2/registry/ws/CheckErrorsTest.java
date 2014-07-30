@@ -38,42 +38,27 @@ package org.dcm4chee.xds2.registry.ws;
  * ***** END LICENSE BLOCK ***** */
 
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.File;
-import java.util.List;
-
-import javax.ejb.EJB;
-
 import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.infoset.rim.ClassificationType;
-import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
-import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
-import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
-import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
-import org.dcm4chee.xds2.infoset.rim.SlotType1;
-import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.infoset.rim.*;
 import org.dcm4chee.xds2.registry.AuditTestManager;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.asset.FileAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Verifier;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.ejb.EJB;
+import java.io.File;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
@@ -96,7 +81,7 @@ public class CheckErrorsTest {
                 
     }
     @EJB
-    private XDSRegistryBean session;
+    private XdsRegistryBeanForTesting session;
     
     @EJB
     private XDSRegistryTestBeanI testSession;

@@ -38,102 +38,69 @@ package org.dcm4chee.xds2.browser;
  *
  * ***** END LICENSE BLOCK ***** */
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.apache.tika.mime.MimeType;
+import org.apache.tika.mime.MimeTypeException;
+import org.apache.tika.mime.MimeTypes;
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.net.Device;
+import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.conf.XdsRegistry;
+import org.dcm4chee.xds2.conf.XdsRepository;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
+import org.dcm4chee.xds2.infoset.rim.*;
+import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
+import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
+import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.xml.namespace.QName;
-import javax.xml.ws.Service;
-import javax.xml.ws.soap.AddressingFeature;
-
-import org.apache.tika.mime.MimeType;
-import org.apache.tika.mime.MimeTypeException;
-import org.apache.tika.mime.MimeTypes;
-import org.dcm4che3.conf.api.ConfigurationException;
-import org.dcm4che3.conf.api.DicomConfiguration;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
-import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
-import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
-import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
-import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
-import org.dcm4chee.xds2.conf.XdsRegistry;
-import org.dcm4chee.xds2.conf.XdsRepository;
-import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.ObjectRefListType;
-import org.dcm4chee.xds2.infoset.rim.ObjectRefType;
-import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
-import org.dcm4chee.xds2.infoset.util.DocumentRepositoryPortTypeFactory;
-import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
-import org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * REST services for the browser's frontend. Mostly these are wrappers around
  * EJB/Webservice interfaces of XDS
- * 
+ *
  * @author Roman K
- * 
  */
 @SuppressWarnings("serial")
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class XdsBrowserRESTServicesServlet extends HttpServlet {
 
+    public static final Logger log = LoggerFactory
+            .getLogger(XdsBrowserRESTServicesServlet.class);
     /**
      * cached repositories from the config
      */
     private static Map<String, XdsRepository> repositories;
-
+    /**
+     * Registry EJBs
+     */
+    @EJB
+    private static XDSRegistryBeanLocal xdsRegistryBean;
+    @EJB
+    private static XDSRegistryBeanLocal xdsRegistryLocalBean;
     @Inject
     @Xds
     DicomConfiguration config;
-
     /**
      * Registry device
      */
@@ -145,18 +112,6 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     private void getRegistryExtension() {
         cfg = device.getDeviceExtension(XdsRegistry.class);
     }
-
-    /**
-     * Registry EJBs
-     */
-    @EJB
-    private static DocumentRegistryPortType xdsRegistryBean;
-
-    @EJB
-    private static XDSRegistryBeanLocal xdsRegistryLocalBean;
-
-    public static final Logger log = LoggerFactory
-            .getLogger(XdsBrowserRESTServicesServlet.class);
 
     /*
      * RESTFUL Services
@@ -211,7 +166,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     /**
      * Retrieves a doc from a repository and returns it as a downloadable file
      * with an extension set according to the doc's mime type
-     * 
+     *
      * @param repoId
      * @param docId
      * @return
@@ -220,7 +175,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     @GET
     @Path("/repo/retrieve-download/{repoId}/{docId}")
     public Response repoRetrieve(@PathParam(value = "repoId") String repoId,
-            @PathParam(value = "docId") String docId) throws IOException {
+                                 @PathParam(value = "docId") String docId) throws IOException {
         try {
             RetrieveDocumentSetRequestType req = new RetrieveDocumentSetRequestType();
 
@@ -255,7 +210,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
                 mimeType = allTypes.forName(mimeTypeStr);
                 ext = mimeType.getExtension();
             } catch (MimeTypeException e) {
-                log.warn("Error while resolving mime type extension for document id "+docId+" from repository "+repoId+", specified mimetype string is "+mimeTypeStr, e);
+                log.warn("Error while resolving mime type extension for document id " + docId + " from repository " + repoId + ", specified mimetype string is " + mimeTypeStr, e);
             }
 
             // return the file for download
@@ -277,18 +232,84 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
 
     }
 
-    
+
     @POST
     @Path("/reg/delete/")
     public void deleteRegistryObjects(RemoveObjectsRequest removeReq) {
         xdsRegistryLocalBean.deleteObjects(removeReq);
     }
-    
+
+    @GET
+    @Path("/reg/delete-all-for-patient/{patientId}")
+    public void deleteAllRegistryObjectsForPatient(@PathParam(value = "patientId") String patientId) throws JAXBException {
+
+        //// perform getAll query
+        AdhocQueryType getAllQuery = new AdhocQueryType();
+        getAllQuery.setId(XDSConstants.XDS_GetAll);
+
+        // pid
+        SlotType1 patIdSlot = new SlotType1();
+        patIdSlot.setName(XDSConstants.QRY_PATIENT_ID);
+        ValueListType v = new ValueListType();
+        v.getValue().add(patientId);
+        patIdSlot.setValueList(v);
+
+        // all statuses
+        ValueListType allStatuses = new ValueListType();
+        allStatuses.getValue().add(String.format("('%s','%s','%s')", XDSConstants.STATUS_APPROVED, XDSConstants.STATUS_DEPRECATED, XDSConstants.STATUS_SUBMITTED));
+
+        SlotType1 slotDocEntry = new SlotType1();
+        slotDocEntry.setName(XDSConstants.QRY_DOCUMENT_ENTRY_STATUS);
+        slotDocEntry.setValueList(allStatuses);
+        SlotType1 slotFolder = new SlotType1();
+        slotFolder.setName(XDSConstants.QRY_FOLDER_STATUS);
+        slotFolder.setValueList(allStatuses);
+        SlotType1 slotSubmSet = new SlotType1();
+        slotSubmSet.setName(XDSConstants.QRY_SUBMISSIONSET_STATUS);
+        slotSubmSet.setValueList(allStatuses);
+
+        getAllQuery.getSlot().add(patIdSlot);
+        getAllQuery.getSlot().add(slotSubmSet);
+        getAllQuery.getSlot().add(slotDocEntry);
+        getAllQuery.getSlot().add(slotFolder);
+
+        AdhocQueryRequest req = new AdhocQueryRequest();
+        ResponseOptionType value = new ResponseOptionType();
+        value.setReturnType("ObjectRef");
+        value.setReturnComposedObjects(true);
+        req.setResponseOption(value);
+        req.setAdhocQuery(getAllQuery);
+
+        AdhocQueryResponse resp = xdsRegistryBean.documentRegistryRegistryStoredQuery(req);
+
+        //// compose a delete request
+        List<String> ids = new ArrayList<>();
+
+        for (JAXBElement<? extends IdentifiableType> jaxbElement : resp.getRegistryObjectList().getIdentifiable())
+            ids.add(jaxbElement.getValue().getId());
+
+        RemoveObjectsRequest ror = new RemoveObjectsRequest();
+        ObjectRefListType objectRefList = new ObjectRefListType();
+        List<ObjectRefType> objectRef = objectRefList.getObjectRef();
+
+        for (String id : ids) {
+            ObjectRefType e = new ObjectRefType();
+            e.setId(id);
+            objectRef.add(e);
+        }
+
+        ror.setObjectRefList(objectRefList);
+
+        //// delete
+        xdsRegistryLocalBean.deleteObjects(ror);
+    }
+
+
     @POST
     @Path("/logout")
     public void logout(@Context HttpServletRequest req) {
         req.getSession().invalidate();
     }
-    
+
 
 }
