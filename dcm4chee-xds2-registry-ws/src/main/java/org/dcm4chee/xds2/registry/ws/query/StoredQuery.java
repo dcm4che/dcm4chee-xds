@@ -254,8 +254,8 @@ public abstract class StoredQuery {
             StoredQueryParam to, NumberPath<Long> subselectJoinPk,
             String slotName) {
         if (from != null || to != null) {
-            Predicate fromTo = from == null ? QSlot.slot.value.lt(to.getStringValue()) : to != null ? 
-                    ExpressionUtils.allOf(QSlot.slot.value.goe(from.getStringValue()), QSlot.slot.value.lt(to.getStringValue())) :
+            Predicate fromTo = from == null ? QSlot.slot.value.loe(to.getStringValue()) : to != null ? 
+                    ExpressionUtils.allOf(QSlot.slot.value.goe(from.getStringValue()), QSlot.slot.value.loe(to.getStringValue())) :
                     QSlot.slot.value.goe(from.getStringValue());
             builder.and(new JPASubQuery().from(QSlot.slot)
                     .where(QSlot.slot.parent.pk.eq(subselectJoinPk), 
