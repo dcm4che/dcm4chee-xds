@@ -97,6 +97,9 @@ public class XdsRepository extends DeviceExtension {
     @ConfigField(mapName = "xdsSources", mapKey = "xdsSourceUid", name = "xdsSource", mapElementObjectClass = "xdsSourceByUid")
     private Map<String, Device> srcDevicebySrcIdMap;
 
+    @ConfigField(mapName = "xdsFileSystemGroupIDs", mapKey = "xdsAffinityDomain", name = "xdsFileSystemGroupID", mapElementObjectClass = "xdsFilesystemGroupByAffinity")
+    private Map<String, String> fsGroupIDbyAffinity;
+
     public String getRegistryURL(String sourceID) {
         try {
 
@@ -117,10 +120,21 @@ public class XdsRepository extends DeviceExtension {
 
     }
 
+    public String getFilesystemGroupID(String affinity) {
+        String groupID = fsGroupIDbyAffinity.get(affinity);
+        if (groupID == null) {
+        	groupID = fsGroupIDbyAffinity.get(DEFAULTID);
+        }
+        return groupID;
+    }
+
     // Getters&setters
 
     public String getApplicationName() {
         return applicationName;
+    }
+	public final void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
     }
 
     public Map<String, Device> getSrcDevicebySrcIdMap() {
@@ -131,9 +145,13 @@ public class XdsRepository extends DeviceExtension {
         this.srcDevicebySrcIdMap = srcDevicebySrcIdMap;
     }
 
-    public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
+    public Map<String, String> getFsGroupIDbyAffinity() {
+		return fsGroupIDbyAffinity;
+	}
+
+	public void setFsGroupIDbyAffinity(Map<String, String> fsGroupIDbyAffinity) {
+		this.fsGroupIDbyAffinity = fsGroupIDbyAffinity;
+	}
 
     public String getProvideUrl() {
         return provideUrl;

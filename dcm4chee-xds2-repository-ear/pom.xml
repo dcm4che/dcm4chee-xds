@@ -88,9 +88,52 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-repository-entity</artifactId>
+			<version>${project.version}</version>
+			<classifier>${db}</classifier>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-repository-ejb</artifactId>
+			<type>ejb</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-conf</artifactId>
 			<type>jar</type>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-conf</artifactId>
+			<type>jar</type>
+			<version>${storage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-cdi</artifactId>
+			<type>jar</type>
+			<version>${storage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-entity</artifactId>
+			<type>jar</type>
+			<classifier>${db}</classifier>
+			<version>${storage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-ejb</artifactId>
+			<type>ejb</type>
+			<version>${storage.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -129,7 +172,7 @@
 				<version>2.6</version>
 				<configuration>
 					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
-					<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
+					<classifier>${db}</classifier>
 					<modules>
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>
@@ -138,6 +181,14 @@
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-service</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-storage-ejb</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>org.dcm4che</groupId>
+							<artifactId>dcm4chee-xds2-repository-ejb</artifactId>
 						</ejbModule>
 						<webModule>
 							<groupId>org.dcm4che</groupId>
@@ -154,13 +205,7 @@
 
 	<profiles>
 		<profile>
-		<id>jdbc-prefs</id>
-			<activation>
-			  	<property>
-			    	<name>environment</name>
-			    	<value>xdbuild</value>
-		  		</property>
-			</activation>
+			<id>jdbc-prefs</id>
 			<dependencies>
 				<dependency>
 					<groupId>org.dcm4che.jdbc.prefs</groupId>
@@ -178,10 +223,12 @@
 						<version>2.6</version>
 						<configuration>
 							<defaultJavaBundleDir>lib</defaultJavaBundleDir>
+							<classifier>${db}${asb}-jdbcprefs</classifier>
 							<modules combine.children="append">
 								<ejbModule>
 									<groupId>org.dcm4che.jdbc.prefs</groupId>
 									<artifactId>dcm4che-jdbc-prefs-ejb</artifactId>
+									<classifier>${db}${asb}</classifier>
 								</ejbModule>
 							</modules>
 							<version>6</version>
@@ -191,5 +238,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

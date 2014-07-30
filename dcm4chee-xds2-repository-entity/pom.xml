@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***** BEGIN LICENSE BLOCK ***** - Version: MPL 1.1/GPL 2.0/LGPL 2.1 
+	- - The contents of this file are subject to the Mozilla Public License Version 
+	- 1.1 (the "License"); you may not use this file except in compliance with 
+	- the License. You may obtain a copy of the License at - http://www.mozilla.org/MPL/ 
+	- - Software distributed under the License is distributed on an "AS IS" basis, 
+	- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+	- for the specific language governing rights and limitations under the - 
+	License. - - The Original Code is part of dcm4che, an implementation of DICOM(TM)in 
+	- Java(TM), hosted at https://github.com/gunterze/dcm4che. - - The Initial 
+	Developer of the Original Code is - Agfa Healthcare. - Portions created by 
+	the Initial Developer are Copyright (C) 2011 - the Initial Developer. All 
+	Rights Reserved. - - Contributor(s): - Roman K <roman.khazankin@gmail.com> 
+	- - Alternatively, the contents of this file may be used under the terms 
+	of - either the GNU General Public License Version 2 or later (the "GPL"), 
+	or - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"), 
+	- in which case the provisions of the GPL or the LGPL are applicable instead 
+	- of those above. If you wish to allow use of your version of this file only 
+	- under the terms of either the GPL or the LGPL, and not to allow others 
+	to - use your version of this file under the terms of the MPL, indicate your 
+	- decision by deleting the provisions above and replace them with the notice 
+	- and other provisions required by the GPL or the LGPL. If you do not delete 
+	- the provisions above, a recipient may use your version of this file under 
+	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
+	BLOCK ***** -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.dcm4che</groupId>
+		<artifactId>dcm4chee-xds2-parent</artifactId>
+		<version>2.0.4-SNAPSHOT</version>
+	</parent>
+	<artifactId>dcm4chee-xds2-repository-entity</artifactId>
+	<properties>
+		<storage.version>1.0.0-SNAPSHOT</storage.version>
+		<hibernate.version>4.2.7.Final</hibernate.version>
+		<show_sql>false</show_sql>
+		<hbm2ddl.auto>validate</hbm2ddl.auto>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-ejb</artifactId>
+			<type>ejb</type>
+			<version>${storage.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-entity</artifactId>
+			<version>${storage.version}</version>
+			<classifier>${db}</classifier>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-cdi</artifactId>
+			<version>${storage.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-storage-conf</artifactId>
+			<version>${storage.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-conf-api</artifactId>
+			<version>${dcm4che.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<version>1.0.0.Final</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.protocol</groupId>
+			<artifactId>arquillian-protocol-servlet</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap</groupId>
+			<artifactId>shrinkwrap-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap</groupId>
+			<artifactId>shrinkwrap-impl-base</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.shrinkwrap.resolver</groupId>
+			<artifactId>shrinkwrap-resolver-impl-maven-archive</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.as</groupId>
+			<artifactId>jboss-as-arquillian-container-remote</artifactId>
+			<version>7.1.1.Final</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources-${db}</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>org.codehaus.mojo</groupId>
+										<artifactId>exec-maven-plugin</artifactId>
+										<versionRange>[1.1.1,)</versionRange>
+										<goals>
+											<goal>java</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<classifier>${db}</classifier>
+					<archive>
+						<manifestEntries>
+							<Dependencies>com.mysema.querydsl</Dependencies>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>generate-create-schema-ddl</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<includePluginDependencies>true</includePluginDependencies>
+							<mainClass>com.blogspot.doingenterprise.SchemaExport</mainClass>
+							<arguments>
+								<argument>--create</argument>
+								<argument>--delimiter=;</argument>
+								<argument>--output=${project.build.directory}/create-table-${db}.ddl</argument>
+								<argument>dcm4chee-storage</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.blogspot.doingenterprise</groupId>
+						<artifactId>schema-export</artifactId>
+						<version>2012_05_01</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.11</version>
+				<configuration>
+					<systemPropertyVariables>
+						<propertyName>db</propertyName>
+					</systemPropertyVariables>
+					<skipTests>${skipTests}</skipTests>
+				</configuration>
+			</plugin>
+		</plugins>
+		<testResources>
+		    <testResource>
+		    	<directory>src/test/resources/org/dcm4chee/xds2/repository/entity</directory>
+    		    <filtering>true</filtering>
+    		    <includes>
+          			<include>version.properties</include>
+        		</includes>
+		    </testResource>
+		</testResources>
+	</build>
+</project>

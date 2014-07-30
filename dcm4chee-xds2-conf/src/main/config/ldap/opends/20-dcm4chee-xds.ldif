@@ -181,6 +181,17 @@ attributeTypes: ( 1.2.40.0.13.1.15.20.3.48 NAME 'xdsControlledDevices'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.49 NAME 'xdsFileSystemGroupID'
+  DESC 'Filesystem Group ID'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15
+  SINGLE-VALUE )
+attributeTypes: ( 1.2.40.0.13.1.15.20.3.50 NAME 'xdsFileSystemGroupIDs'
+  DESC 'Filesystem Groups'
+  EQUALITY caseIgnoreMatch
+  SUBSTR caseIgnoreSubstringsMatch
+  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.1
   NAME 'xdsRegistry'
   DESC 'XDS Application information'
@@ -337,5 +348,13 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.14
   MUST ( 
     cn $
     xdsControlledDevices 
+ ) )
+objectClasses: ( 1.2.40.0.13.1.15.20.4.15
+  NAME 'xdsFilesystemGroupByAffinity'
+  DESC 'FilesystemGroup map entry'
+  SUP top STRUCTURAL
+  MUST ( 
+    xdsAffinityDomain $
+    xdsFileSystemGroupID 
  ) )
    

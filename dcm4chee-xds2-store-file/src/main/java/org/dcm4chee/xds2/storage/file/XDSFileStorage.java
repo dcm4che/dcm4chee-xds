@@ -38,208 +38,147 @@
 
 package org.dcm4chee.xds2.storage.file;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.security.DigestInputStream;
-import java.security.DigestOutputStream;
-import java.security.MessageDigest;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
+import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.net.Device;
+import org.dcm4chee.storage.conf.Storage;
+import org.dcm4chee.storage.file.FilesystemStorage;
+import org.dcm4chee.storage.file.StorageResult;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.repository.persistence.XdsDocument;
+import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
 import org.dcm4chee.xds2.storage.XDSDocument;
 import org.dcm4chee.xds2.storage.XDSStorage;
+import org.dcm4chee.xds2.storage.ejb.XdsStorageBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class XDSFileStorage implements XDSStorage {
-    private static final String DOCUMENT_CONTENT_FILENAME = "content";
-    private static final String MIME_TYPE_FILENAME = "mimetype";
-    //private static final String METADATA_FILE_NAME = "metadata.xml";
-    private static final String HASH_FILENAME = "hash";
-    private static final String UNKNOWN_MIME = "application/octet-stream";
+	private static final String DEF_DEVICE_NAME ="dcm4chee-storage";
+	private static final String DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
+	private static final String DEFAULT_ONLINE_GROUP = "XDS_ONLINE";
+	private static final String UNKNOWN_MIME = "application/octet-stream";
 
     private static final int[] directoryTree = new int[]{347, 331, 317};
 
-    private File baseDir;
-    private boolean saveHash = true;
+    private Device device;
     
     private static Logger log = LoggerFactory.getLogger(XDSFileStorage.class);
 
     public XDSFileStorage() {
-        setBaseDir("/xds/repository/store");
     }
     
+    @Inject
+    private FilesystemStorage storage;
+    
+    @Inject
+    @Storage    
+    private DicomConfiguration conf;
+
+    @EJB
+    private XdsStorageBeanLocal ejb;
+    
+    @Produces
+    @Storage
+    public Device getDevice() {
+    	if (device==null) {
+
+    		try {
+				device = this.findDevice();
+			} catch (ConfigurationException x) {
+				log.error("Provide Storage Device failed!", x);
+				return null;
+			}
+    	}
+    	System.out.println("##############\n###############\n###############\nDevice:"+device);
+    	return device;
+    }
+
+    
     @Override
-    public XDSDocument storeDocument(String docUID, byte[] content, String mime)
+    public XDSDocument storeDocument(String groupID, String docUID, byte[] content, String mime)
             throws XDSException, IOException {
-        File docPath = getDocumentPath(docUID);
-        if (docPath.exists()) {
-            //TODO throw exception if hash is different!
-            return null;
-        }
-        docPath.mkdirs();
-        File docFile = new File(docPath, DOCUMENT_CONTENT_FILENAME);
-        byte[] hash = writeFile(docFile, content, true);
-        if (saveHash) {
-            writeFileIgnoreError(new File(docPath, HASH_FILENAME), hash);
-        }
-        if (mime != null) {
-            writeFileIgnoreError(new File(docPath, MIME_TYPE_FILENAME), mime.getBytes());
-        }
-        return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(docFile)), docFile.length(), hash);
+		try {
+			XdsDocument doc = ejb.findDocument(docUID);
+			ByteArrayInputStream is = new ByteArrayInputStream(content);
+			if (doc == null) {
+				StorageResult r = storage.store(new ByteArrayInputStream(content), 
+						groupID == null ? DEFAULT_ONLINE_GROUP : groupID, docUID);
+				if (r.errorMsg != null) {
+					throw new XDSException(XDSException.XDS_ERR_REPOSITORY_OUT_OF_RESOURCES, r.errorMsg, null);
+				}
+				if (mime == null)
+					mime = UNKNOWN_MIME;
+				XdsFileRef f = ejb.createFile(r.filePath.toString(), mime, r.size, r.hash, r.filesystem, docUID);
+		        return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(toFile(f))), f.getFileSize(), f.getDigest());
+			} else {
+				log.info("Document {} is already stored on this repository!");
+				if (!storage.checkDigest(is, doc.getDigest())) {
+	                throw new XDSException(XDSException.XDS_ERR_NON_IDENTICAL_HASH, 
+	                    "DocumentEntry uniqueId:"+docUID+" already exists but has different hash value!", null);
+				}
+		        return new XDSDocument(docUID, mime, null, doc.getSize(), doc.getDigest()).commit();
+			}
+		} catch (NoSuchAlgorithmException | ConfigurationException x) {
+			throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, "Unexpected error in XDS service !: "+x.getMessage(), x);
+		}
     }
 
     @Override
     public XDSDocument retrieveDocument(String docUID) throws XDSException, IOException {
-        File docPath = getDocumentPath(docUID);
-        if (!docPath.exists()) {
-            return null;
-        }
-        File docFile = new File(docPath, DOCUMENT_CONTENT_FILENAME);
-        byte[] mime = this.readFileIgnoreError(new File(docPath, MIME_TYPE_FILENAME));
-        byte[] hash = this.readFileIgnoreError(new File(docPath, HASH_FILENAME));
-        String mimeType = mime == null ? UNKNOWN_MIME : new String(mime);
-        return new XDSDocument(docUID, mimeType, new DataHandler(new FileDataSource(docFile)), docFile.length(), hash);
+		List<XdsFileRef> XdsFileRefs = ejb.findFileRefs(docUID);
+		if (XdsFileRefs.size() == 0) {
+			return null;
+		}
+		XdsFileRef f = XdsFileRefs.get(0);
+		File docFile = toFile(f);
+        return new XDSDocument(docUID, f.getMimetype(), new DataHandler(new FileDataSource(docFile)), 
+        		f.getFileSize(), f.getDigest());
     }
-    
+
     @Override
-    public void commit(String[] docUIDs, boolean success) {
-        for (int i = 0 ; i < docUIDs.length ; i++) {
-            File docPath = getDocumentPath(docUIDs[i]);
-            if (!success) {
-                deleteFilesAndEmptyParents(docPath);
-            }
-        }
-    }
-    
-    private void deleteFilesAndEmptyParents(File path) {
-        try {
-        	for (File f : path.listFiles()) {
-        		if (!f.delete()) {
-        			log.warn("Could not delete file:"+f);
+    public void commit(XDSDocument[] docs, boolean success) {
+        if (!success) {
+        	ArrayList<String> docUIDs = new ArrayList<String>();
+        	for (XDSDocument doc : docs) {
+        		if (!doc.isCommitted()) {
+        			docUIDs.add(doc.getUID());
         		}
         	}
-        	while (path.list().length == 0) {
-        		if (!path.delete()) {
-        			log.warn("Could not delete empty directory");
-        		}
-        		path = path.getParentFile();
-        	}
-        } catch (Exception x) {
-            log.debug("Failed to delete path "+path, x);
-        }
-    }
-    
-
-   public void setBaseDir(String dirName) {
-        File dir = new File(dirName);
-        if ( dir.isAbsolute() ) {
-            baseDir = dir;
-        } else {
-            String serverHomeDir = System.getProperty("jboss.server.base.dir","/xds_store");
-            baseDir = new File(serverHomeDir, dir.getPath());
-        }
-        if ( !baseDir.exists() ) {
-            log.info("M-CREATE XDS Store base directory "+baseDir.getAbsolutePath());
-            baseDir.mkdirs();
-        }
-    }
-    
-    public File getBaseDir() {
-        return baseDir;
-    }
-
-    public boolean isSaveHash() {
-        return saveHash;
-    }
-
-    public void setSaveHash(boolean saveHash) {
-        this.saveHash = saveHash;
-    }
-
-    private byte[] writeFile(File f, byte[] content, boolean calcHash) throws IOException, XDSException {
-        MessageDigest md = null;
-        OutputStream out = null;
-        if ( !f.exists() ) {
-            log.debug("#### Write File:"+f);
-            try {
-                f.getParentFile().mkdirs();
-                FileOutputStream fos = new FileOutputStream(f);
-                if (calcHash) {
-                    md = newMessageDigest();
-                    out = new DigestOutputStream(fos, md);
-                } else {
-                    out = fos;
-                }
-                out.write(content);
-                log.debug("#### Document content written to file "+f);
-            } finally {
-                if ( out != null )
-                    try {
-                        out.close();
-                    } catch (IOException ignore) {
-                        log.error("Ignored error during close!",ignore);
-                    }
+	    	List<XdsFileRef> fileRefs = ejb.deleteDocument(docUIDs);
+	        for (XdsFileRef f : fileRefs) {
+                storage.deleteFileAndParentDirectories(toPath(f));
             }
         }
-        return md == null ? null : md.digest();
-    }
-
-    private void writeFileIgnoreError(File f, byte[] b) {
-        try {
-            writeFile(f, b, false);
-        } catch (Exception ignore) {
-            log.warn("Failed to write file! Ignored! file:"+f);
-            log.debug("StackTrace:", ignore);
-        }
     }
     
-    private byte[] readFile(File f, MessageDigest md) throws IOException {
-        InputStream is = null;
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            if (md == null) {
-                is = fis;
-            } else {
-                is = new DigestInputStream(fis, md);
-            }
-            byte[] content = new byte[(int)f.length()];
-            is.read(content);
-            return content;
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Exception ignore) {}
-            }
-        }
-
-    }
+	private Path toPath(XdsFileRef f) {
+		Path fsPath = f.getFileSystem().getPath();
+		String filePath = f.getFilePath();
+		Path docPath = fsPath.resolve(filePath);
+		return docPath;
+	}
+	
+	private File toFile(XdsFileRef f) {
+		return toPath(f).toFile();
+	}
     
-    private byte[] readFileIgnoreError(File f) {
-        try {
-            return readFile(f, null);
-        } catch (Exception ignore) {
-            log.warn("Failed to read file! Ignored! file:"+f);
-            log.debug("StackTrace:", ignore);
-            return null;
-        }
-    }
-    
-    private File getDocumentPath(String docUid) {
-        log.debug("getDocumentPath for "+docUid+" (baseDir:"+baseDir+")");
-        return new File( baseDir, getFilepathForUID(docUid) );
-    }
-
     public static String getFilepathForUID(String uid) {
         if (directoryTree == null) 
             return uid;
@@ -261,13 +200,9 @@ public class XDSFileStorage implements XDSStorage {
         return sb.toString();
     }
 
-    private MessageDigest newMessageDigest() throws XDSException {
-        try {
-            return MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException x) {
-            log.warn("Failed to calc SHA1 hash! SHA1 Algorithm Unknown");
-            throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, 
-                    "Unexpected error in XDS service !: Failed to calc SHA1 hash! SHA1 Algorithm unknown.", x);
-        }
+    private Device findDevice() throws ConfigurationException {
+    	String deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
+        return conf.findDevice(deviceName);
     }
+    
 }

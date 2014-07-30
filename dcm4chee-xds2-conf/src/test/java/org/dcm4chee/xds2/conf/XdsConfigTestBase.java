@@ -245,6 +245,11 @@ public class XdsConfigTestBase {
         deviceBySrcUid.put(srcext.getUid(), srcd);
         rep.setSrcDevicebySrcIdMap(deviceBySrcUid);
 
+        Map<String, String> fsGroupIDbyAffinity = new HashMap<String, String>();
+        fsGroupIDbyAffinity.put("*", "XDS_ONLINE_TEST_GROUP");
+        fsGroupIDbyAffinity.put("1.2.3.4", "XDS_ONLINE_1234_GROUP");
+        rep.setFsGroupIDbyAffinity(fsGroupIDbyAffinity);
+
         XdsRepository repo = rep;
         return repo;
     }
@@ -432,6 +437,9 @@ public class XdsConfigTestBase {
         // check methods
 
         Assert.assertEquals("getRegistryURL ", "http://localhost/registryregister", loadedRepo.getRegistryURL("1233231"));
+        Assert.assertEquals("'getFilesystemGroupID for 1.2.3.4'", "XDS_ONLINE_1234_GROUP", loadedRepo.getFilesystemGroupID("1.2.3.4"));
+        Assert.assertEquals("'getFilesystemGroupID for x'", "XDS_ONLINE_TEST_GROUP", loadedRepo.getFilesystemGroupID("x"));
+        Assert.assertEquals("'getFilesystemGroupID for null'", "XDS_ONLINE_TEST_GROUP", loadedRepo.getFilesystemGroupID(null));
 
         // modify/merge
 
@@ -770,6 +778,10 @@ public class XdsConfigTestBase {
         Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();
         deviceBySrcUid.put(DEFAULTID, d);
         rep.setSrcDevicebySrcIdMap(deviceBySrcUid);
+        Map<String, String> fsGroupIDbyAffinity = new HashMap<String, String>();
+        fsGroupIDbyAffinity.put("*", "XDS_ONLINE");
+        rep.setFsGroupIDbyAffinity(fsGroupIDbyAffinity);
+
 
         // XCAResponding GW
 
@@ -885,6 +897,7 @@ public class XdsConfigTestBase {
         device.addConnection(udp);
         arrDeviceName = "dcm4chee-AuditRecordRepository";
         Device arrDevice = new Device(arrDeviceName);
+        createdDevices.add(arrDeviceName);
         AuditRecordRepository arr = new AuditRecordRepository();
         arrDevice.addDeviceExtension(arr);
         Connection arrUDP = new Connection("audit-udp", "arr.dcm4che.org");

@@ -44,7 +44,7 @@ import org.dcm4chee.xds2.common.exception.XDSException;
 
 
 public interface XDSStorage {
-    XDSDocument storeDocument(String docUID, byte[] content, String mime) throws XDSException, IOException;
+    XDSDocument storeDocument(String groupID, String docUID, byte[] content, String mime) throws XDSException, IOException;
     XDSDocument retrieveDocument(String docUID) throws XDSException, IOException;
-    void commit(String[] docUIDs, boolean success);
+    void commit(XDSDocument[] docUIDs, boolean success);
 }
