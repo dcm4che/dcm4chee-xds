@@ -124,7 +124,6 @@ public class RegisterDocumentSetTest {
             .add(new FileAsset(new File("src/test/resources/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml")), 
                 "WEB-INF/classes/org/dcm4chee/xds2/registry/ws/CreateFolderWithDocument.xml");
 
-            System.out.println(wa.toString(true));
         return wa;
     }
 

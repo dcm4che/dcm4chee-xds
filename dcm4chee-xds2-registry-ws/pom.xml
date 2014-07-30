@@ -211,6 +211,12 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+            <properties>
+                <testServer.host>localhost</testServer.host>
+                <testServer.port>9999</testServer.port>
+                <testServer.username></testServer.username>
+                <testServer.password></testServer.password>
+            </properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -237,6 +243,11 @@
 					<version>7.1.1.Final</version>
 					<scope>test</scope>
 				</dependency>
+                <dependency>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>arquillian-protocol-servlet</artifactId>
+                    <scope>test</scope>
+                </dependency>
 			</dependencies>
 		</profile>
 		<profile>
@@ -327,6 +338,11 @@
           			<include>version.properties</include>
         		</includes>
 		    </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+                <includes><include>arquillian.xml</include></includes>
+            </testResource>
 		</testResources>
 	</build>
 </project>
