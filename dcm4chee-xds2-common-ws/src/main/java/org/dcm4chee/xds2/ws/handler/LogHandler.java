@@ -137,6 +137,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
         String logDir = null;
         try {
         	Device d = service.getDevice();
+            if (!pathInfo.endsWith("/")) pathInfo+="/";
             if (pathInfo.endsWith("registry/")) {
                 logDir = d.getDeviceExtension(XdsRegistry.class).getSoapLogDir();
             } else if (pathInfo.endsWith("repository/")) {
