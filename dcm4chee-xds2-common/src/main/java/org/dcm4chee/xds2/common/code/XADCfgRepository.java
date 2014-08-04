@@ -59,7 +59,7 @@ public class XADCfgRepository implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private XADCfgProviderSPI codeProvider;;
+	private XADCfgProviderSPI codeProvider;
     private HashMap<String, AffinityDomainCodes> adCodesMap = new HashMap<String,AffinityDomainCodes>();
     private HashMap<String, List<String>> adMimetypes = new HashMap<String,List<String>>();
     private HashMap<String, Map<String,String>> adMimetypeFileExt = new HashMap<String,Map<String,String>>();
