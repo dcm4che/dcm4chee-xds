@@ -75,7 +75,7 @@ public class XDSFileStorage implements XDSStorage {
     private static Logger log = LoggerFactory.getLogger(XDSFileStorage.class);
 
     public XDSFileStorage() {
-        setBaseDir("/xds/repository/store");
+        setBaseDir("xds-repository-storage");
     }
     
     @Override
@@ -145,7 +145,7 @@ public class XDSFileStorage implements XDSStorage {
         if ( dir.isAbsolute() ) {
             baseDir = dir;
         } else {
-            String serverHomeDir = System.getProperty("jboss.server.base.dir","/xds_store");
+            String serverHomeDir = System.getProperty("jboss.server.data.dir","/xds_store");
             baseDir = new File(serverHomeDir, dir.getPath());
         }
         if ( !baseDir.exists() ) {
