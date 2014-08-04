@@ -62,15 +62,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-ctrl</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-ctrl-war</artifactId>
-			<classifier>repository</classifier>
+			<artifactId>dcm4chee-xds2-repository-war</artifactId>
 			<version>${project.version}</version>
 			<type>war</type>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
@@ -118,7 +113,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-cdi</artifactId>
+			<artifactId>dcm4chee-storage-service</artifactId>
 			<type>jar</type>
 			<version>${storage.version}</version>
 		</dependency>
@@ -192,8 +187,7 @@
 						</ejbModule>
 						<webModule>
 							<groupId>org.dcm4che</groupId>
-							<artifactId>dcm4chee-xds2-ctrl-war</artifactId>
-							<classifier>repository</classifier>
+							<artifactId>dcm4chee-xds2-repository-war</artifactId>
 							<contextRoot>/xds-rep-rs</contextRoot>
 						</webModule>
 					</modules>

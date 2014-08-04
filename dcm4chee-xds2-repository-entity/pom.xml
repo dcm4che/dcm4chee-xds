@@ -55,7 +55,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-cdi</artifactId>
+			<artifactId>dcm4chee-storage-service</artifactId>
 			<version>${storage.version}</version>
 			<scope>provided</scope>
 		</dependency>

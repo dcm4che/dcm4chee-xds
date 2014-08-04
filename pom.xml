@@ -47,6 +47,7 @@
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
 		<asb></asb>
+		<jdbcprefs.classifier></jdbcprefs.classifier>
 	</properties>
 
 	<profiles>
@@ -55,6 +56,7 @@
 			<id>jdbc-prefs</id>
 			<properties>
 				<jdbc-prefs.version>1.1.0-SNAPSHOT</jdbc-prefs.version>
+				<jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>
 			</properties>
 		</profile>
 
@@ -101,6 +103,8 @@
 		<module>dcm4chee-xds2-repository-ws</module>
 		<module>dcm4chee-xds2-repository-entity</module>
 		<module>dcm4chee-xds2-repository-ejb</module>
+		<module>dcm4chee-xds2-repository-ctrl</module>
+		<module>dcm4chee-xds2-repository-war</module>
 		<module>dcm4chee-xds2-store-api</module>
 		<module>dcm4chee-xds2-store-file</module>
 		<module>dcm4chee-xds2-registry-ear</module>
@@ -221,16 +225,6 @@
 				<enabled>true</enabled>
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
-		</repository>
-		<repository>
-			<id>mysema-public-repository</id>
-			<name>MySema Public Maven Repository</name>
-			<url>http://source.mysema.com/maven2/releases/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
 		</repository>
 	</repositories>
 	<pluginRepositories>

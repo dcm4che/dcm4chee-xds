@@ -57,8 +57,8 @@ import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Device;
 import org.dcm4chee.storage.conf.Storage;
-import org.dcm4chee.storage.file.FilesystemStorage;
-import org.dcm4chee.storage.file.StorageResult;
+import org.dcm4chee.storage.service.StorageResult;
+import org.dcm4chee.storage.service.StorageService;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
@@ -85,7 +85,7 @@ public class XDSFileStorage implements XDSStorage {
     }
     
     @Inject
-    private FilesystemStorage storage;
+    private StorageService storage;
     
     @Inject
     @Storage    

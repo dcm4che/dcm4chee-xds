@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-storage-conf</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<version>${storage.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
@@ -73,8 +73,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-cdi</artifactId>
-			<version>1.0.0-SNAPSHOT</version>
+			<artifactId>dcm4chee-storage-service</artifactId>
+			<version>${storage.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
