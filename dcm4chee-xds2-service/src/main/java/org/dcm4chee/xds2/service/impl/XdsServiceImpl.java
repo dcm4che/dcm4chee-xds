@@ -132,6 +132,7 @@ public class XdsServiceImpl implements XdsService {
     	if (deviceName == null)
     		deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
         try {
+            conf.sync();
             return conf.findDevice(deviceName);
         } catch (ConfigurationNotFoundException e) {
 

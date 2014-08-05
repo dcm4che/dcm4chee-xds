@@ -56,19 +56,19 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
+        <dependency>
+            <groupId>org.dcm4che</groupId>
+            <artifactId>dcm4chee-xds2-common-ws</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-common-ws</artifactId>
-			<version>${project.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-conf</artifactId>
 			<version>${project.version}</version>
@@ -78,7 +78,7 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-service</artifactId>
 			<version>${project.version}</version>
-			<scope>test</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.enterprise</groupId>
