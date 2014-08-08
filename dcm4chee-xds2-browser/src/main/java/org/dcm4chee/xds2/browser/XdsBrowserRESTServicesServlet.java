@@ -95,9 +95,8 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
      * Registry EJBs
      */
     @EJB
-    private static XDSRegistryBeanLocal xdsRegistryBean;
-    @EJB
     private static XDSRegistryBeanLocal xdsRegistryLocalBean;
+
     @Inject
     @Xds
     DicomConfiguration config;
@@ -128,7 +127,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     @Path("/reg/query/")
     @Produces(MediaType.APPLICATION_JSON)
     public AdhocQueryResponse query(AdhocQueryRequest req) {
-        return xdsRegistryBean.documentRegistryRegistryStoredQuery(req);
+        return xdsRegistryLocalBean.documentRegistryRegistryStoredQuery(req);
     }
 
     private Map<String, XdsRepository> getAllRepositories()
@@ -239,6 +238,11 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
         xdsRegistryLocalBean.deleteObjects(removeReq);
     }
 
+    /**
+     * Deletes all the xds identifiables related to a specified patientId (uses GetAllQuery to compose the list)
+     * @param patientId
+     * @throws JAXBException
+     */
     @GET
     @Path("/reg/delete-all-for-patient/{patientId}")
     public void deleteAllRegistryObjectsForPatient(@PathParam(value = "patientId") String patientId) throws JAXBException {
@@ -280,7 +284,7 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
         req.setResponseOption(value);
         req.setAdhocQuery(getAllQuery);
 
-        AdhocQueryResponse resp = xdsRegistryBean.documentRegistryRegistryStoredQuery(req);
+        AdhocQueryResponse resp = xdsRegistryLocalBean.documentRegistryRegistryStoredQuery(req);
 
         //// compose a delete request
         List<String> ids = new ArrayList<>();
