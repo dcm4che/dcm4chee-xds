@@ -72,7 +72,7 @@ import org.hibernate.annotations.Index;
  *
  */
 @Entity
-@Table(name="xds_searchTable")
+@Table(name="xds_search_table")
 public class RegistryObjectIndex implements Serializable {
 
 
