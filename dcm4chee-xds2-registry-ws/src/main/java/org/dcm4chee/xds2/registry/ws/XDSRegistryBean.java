@@ -51,21 +51,23 @@ import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.EJBContext;
 import javax.ejb.EJBException;
-import javax.ejb.Local;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.inject.Default;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.xml.bind.JAXBElement;
+import javax.xml.ws.WebServiceContext;
+
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
+import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.common.exception.XDSException;
@@ -99,13 +101,16 @@ import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
+import org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration;
 import org.dcm4chee.xds2.tool.init.XDSInitCommon;
+import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 
 @Stateless
+@DeactivateableByConfiguration(extension = XdsRegistry.class)
 public class XDSRegistryBean implements XDSRegistryBeanLocal {
 
     private static final String UNKNOWN = "UNKNOWN";
@@ -113,9 +118,13 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     private ObjectFactory factory = new ObjectFactory();
     
     AffinityDomainCodes adCodes;
-    
+
+    @Resource
+    private WebServiceContext wsContext;
+
     @Resource 
     private SessionContext context;
+
     @Resource
     private EJBContext ejbContext;
     
@@ -171,6 +180,14 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
         }
 
         log.info("XDS.b - documentRegistryRegisterDocumentSetB finished");
+
+        // send audit log message
+        String[] submUIDandPat;
+        submUIDandPat = this.getSubmissionUIDandPatID(req);
+        XDSAudit.logRegistryImport(submUIDandPat[0], submUIDandPat[1],
+                new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext),
+                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+
         return rsp;
     }
     
@@ -207,11 +224,46 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
         }
     
         log.info("XDS.b - documentRegistryRegistryStoredQuery finished");
+
+        // send audit log message
+        XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext),
+                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
+
         return rsp;
     }
 
     public XdsRegistry getXdsRegistryConfig() {
     	return cfg;
+    }
+
+    // TODO: use jxpath...?
+    private String[] getSubmissionUIDandPatID(SubmitObjectsRequest req) {
+        String[] result = new String[]{UNKNOWN, UNKNOWN};
+        List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
+        IdentifiableType obj;
+        whole: for (int i=0,len=objs.size() ; i < len ; i++) {
+            obj = objs.get(i).getValue();
+            if (obj instanceof RegistryPackageType) {
+                List<ExternalIdentifierType> list = ((RegistryPackageType)obj).getExternalIdentifier();
+                if (list != null) {
+                    for (ExternalIdentifierType eiType : list) {
+                        if (XDSConstants.UUID_XDSSubmissionSet_patientId.equals(eiType.getIdentificationScheme())) {
+                            if (eiType.getValue() != null)
+                                result[1] = eiType.getValue();
+                        } else if (XDSConstants.UUID_XDSSubmissionSet_uniqueId.equals(eiType.getIdentificationScheme())) {
+                            if (eiType.getValue() != null)
+                                result[0] = eiType.getValue();
+                        } else {
+                            continue;
+                        }
+                        if (result[0] != UNKNOWN && result[1] != UNKNOWN)
+                            break whole;
+                    }
+                }
+
+            }
+        }
+        return result;
     }
 
     private void preMetadataCheck(SubmitObjectsRequest req) throws XDSException {

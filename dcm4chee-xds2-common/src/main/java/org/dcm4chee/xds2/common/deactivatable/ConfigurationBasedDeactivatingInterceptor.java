@@ -35,11 +35,10 @@
  *   the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package org.dcm4chee.xds2.service.deactivatable;
+package org.dcm4chee.xds2.common.deactivatable;
 
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.conf.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +50,11 @@ import javax.interceptor.InvocationContext;
 
 
 /**
- * @see org.dcm4chee.xds2.service.deactivatable.DeactivateableByConfiguration
+ * @see org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration
  * @author Roman K
  */
-@DeactivateableByConfiguration(extension = DeviceExtension.class)
 @Interceptor
+@DeactivateableByConfiguration(extension = DeviceExtension.class)
 public class ConfigurationBasedDeactivatingInterceptor {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBasedDeactivatingInterceptor.class);
@@ -66,11 +65,9 @@ public class ConfigurationBasedDeactivatingInterceptor {
     @AroundInvoke
     public Object processEjbCall(InvocationContext ctx) throws Exception {
 
-        log.info("Intercepted call, details {}", ctx.getContextData());
+        log.debug("Intercepted call, parameters {}", ctx.getParameters());
 
-        DeactivateableByConfiguration anno = ctx.getMethod().getDeclaringClass().getAnnotation(DeactivateableByConfiguration.class);
-
-        Class<? extends DeviceExtension> extension = anno.extension();
+        Class<? extends DeviceExtension> extension = ctx.getMethod().getDeclaringClass().getAnnotation(DeactivateableByConfiguration.class).extension();
 
         try {
 
@@ -78,14 +75,11 @@ public class ConfigurationBasedDeactivatingInterceptor {
                 throw new Exception();
 
         } catch (NullPointerException e) {
-            log.warn("The specified extension {} was not found for device {}. Service is deactivated.", extension.getSimpleName(), device.getDeviceName());
-            throw new XDSServiceDeactivatedException();
+            throw new XDSServiceDeactivatedException(String.format("The specified extension %s was not found for device %s. Service is deactivated.", extension.getSimpleName(), device.getDeviceName()));
         } catch (ClassCastException e) {
-            log.error("The specified extension {} must implement Deactivateable interface to support deactivation", extension.getSimpleName());
-            throw new XDSServiceDeactivatedException();
+            throw new XDSServiceDeactivatedException(String.format("The specified extension %s must implement Deactivateable interface to support deactivation", extension.getSimpleName()));
         } catch (Exception e) {
-            log.warn("Attempted to use the service for deactivated extension {} for device {}", extension.getSimpleName(), device.getDeviceName());
-            throw new XDSServiceDeactivatedException();
+            throw new XDSServiceDeactivatedException(String.format("Attempted to use the service for deactivated extension %s for device %s", extension.getSimpleName(), device.getDeviceName()));
         }
 
         return ctx.proceed();

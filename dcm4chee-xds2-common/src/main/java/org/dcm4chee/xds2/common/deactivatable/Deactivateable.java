@@ -35,30 +35,11 @@
  *   the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package org.dcm4chee.xds2.service.deactivatable;
-
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.conf.Deactivateable;
-
-import javax.enterprise.util.Nonbinding;
-import javax.interceptor.InterceptorBinding;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package org.dcm4chee.xds2.common.deactivatable;
 
 /**
- * <p> Intercepts all the calls and allows to proceed only if the service specified by a device extension parameter has a configuration property isDeactivated()==false </p>
- * Throws a {@code XDSServiceDeactivatedException} if there is no such an extension defined for the device, or if the extension is deactivated.
- * <p>{@code extension} parameter must specify a class that extends {@code DeviceExtension} and implements {@code Deactivateable}</p>
- * @see org.dcm4chee.xds2.conf.Deactivateable
  * @author Roman K
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
-@InterceptorBinding
-public @interface DeactivateableByConfiguration {
-
-    @Nonbinding
-    Class<? extends DeviceExtension> extension();
+public interface Deactivateable {
+    boolean isDeactivated();
 }

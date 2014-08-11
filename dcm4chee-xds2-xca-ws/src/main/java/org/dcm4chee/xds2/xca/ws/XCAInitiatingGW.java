@@ -74,6 +74,7 @@ import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType;
@@ -120,6 +121,7 @@ import org.slf4j.LoggerFactory;
 
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
+@DeactivateableByConfiguration(extension = XCAInitiatingGWCfg.class)
 public class XCAInitiatingGW implements InitiatingGatewayPortType {
     
     private ObjectFactory factory = new ObjectFactory();

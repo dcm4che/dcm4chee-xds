@@ -90,9 +90,6 @@ public class XDSRegistryBeanWS implements DocumentRegistryPortType {
 
     private static final String UNKNOWN = "UNKNOWN";
 
-    @Resource
-    private WebServiceContext wsContext;
-    
     @EJB
     XDSRegistryBeanLocal xdsEjb;
 
@@ -112,13 +109,6 @@ public class XDSRegistryBeanWS implements DocumentRegistryPortType {
         // call ejb
         RegistryResponseType rsp = xdsEjb.documentRegistryRegisterDocumentSetB(req);
 
-        // send audit log message
-        String[] submUIDandPat;
-        submUIDandPat = this.getSubmissionUIDandPatID(req);
-        XDSAudit.logRegistryImport(submUIDandPat[0], submUIDandPat[1], 
-                new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
-                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
-
         return rsp;
     }
     
@@ -130,44 +120,9 @@ public class XDSRegistryBeanWS implements DocumentRegistryPortType {
         // call ejb
         AdhocQueryResponse rsp = xdsEjb.documentRegistryRegistryStoredQuery(req);
         
-        // send audit log message
-        XDSAudit.logRegistryQuery(req, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext), 
-                XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
-
-        // TODO: enable tests for audit log after resolving the common way to handle it
-
         return rsp;
     }
 
-    // TODO: use jxpath...?
-    private String[] getSubmissionUIDandPatID(SubmitObjectsRequest req) {
-        String[] result = new String[]{UNKNOWN, UNKNOWN};
-        List<JAXBElement<? extends IdentifiableType>> objs = req.getRegistryObjectList().getIdentifiable();
-        IdentifiableType obj;
-        whole: for (int i=0,len=objs.size() ; i < len ; i++) {
-            obj = objs.get(i).getValue();
-            if (obj instanceof RegistryPackageType) {
-                List<ExternalIdentifierType> list = ((RegistryPackageType)obj).getExternalIdentifier();
-                if (list != null) {
-                    for (ExternalIdentifierType eiType : list) {
-                        if (XDSConstants.UUID_XDSSubmissionSet_patientId.equals(eiType.getIdentificationScheme())) {
-                            if (eiType.getValue() != null)
-                                result[1] = eiType.getValue();
-                        } else if (XDSConstants.UUID_XDSSubmissionSet_uniqueId.equals(eiType.getIdentificationScheme())) {
-                            if (eiType.getValue() != null)
-                                result[0] = eiType.getValue();
-                        } else {
-                            continue;
-                        }
-                        if (result[0] != UNKNOWN && result[1] != UNKNOWN)
-                            break whole;
-                    }
-                }
-            
-            }
-        }
-        return result;
-    }
 
 }
 

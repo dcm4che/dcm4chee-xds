@@ -43,6 +43,7 @@ import org.dcm4che3.util.StringUtils;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
 /**
@@ -50,11 +51,16 @@ import org.dcm4chee.xds2.common.code.XADCfgRepository;
  */
 
 @ConfigClass(commonName = "XDSRegistry", objectClass = "xdsRegistry", nodeName = "xdsRegistry")
-public class XdsRegistry extends DeviceExtension {
+public class XdsRegistry extends DeviceExtension implements Deactivateable {
 
     private static final String DEFAULT_AFFINITYDOMAIN_CFG_DIR = "${jboss.server.config.dir}/affinitydomain";
 
     private static final long serialVersionUID = -8258532093950989486L;
+
+    @ConfigField(name = "xdsIsDeactivated",
+            label = "Deactivated",
+            description = "Controls whether the registry service is deactivated")
+    private boolean deactivated = false;
 
     @ConfigField(name = "xdsApplicationName",
                 label = "Application Name",
@@ -262,5 +268,14 @@ public class XdsRegistry extends DeviceExtension {
     public void reconfigure(DeviceExtension from) {
         XdsRegistry src = (XdsRegistry) from;
         ReflectiveConfig.reconfigure(src, this);
+    }
+
+    @Override
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
     }
 }

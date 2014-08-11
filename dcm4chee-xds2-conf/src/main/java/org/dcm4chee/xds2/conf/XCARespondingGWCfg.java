@@ -45,6 +45,7 @@ import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,13 +53,18 @@ import org.slf4j.LoggerFactory;
  * @author Franz Willer <franz.willer@gmail.com>
  */
 @ConfigClass(commonName = "XCARespondingGW", objectClass = "xcaRespondingGW", nodeName = "xcaRespondingGW")
-public class XCARespondingGWCfg extends DeviceExtension {
+public class XCARespondingGWCfg extends DeviceExtension implements Deactivateable {
 
     public static final Logger log = LoggerFactory.getLogger(XCARespondingGWCfg.class);
 
     private static final long serialVersionUID = -8258532093950989486L;
 
     private static final String DEFAULTID = "*";
+
+    @ConfigField(name = "xdsIsDeactivated",
+            label = "Deactivated",
+            description = "Controls whether the service is deactivated")
+    private boolean deactivated = false;
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -167,4 +173,12 @@ public class XCARespondingGWCfg extends DeviceExtension {
         ReflectiveConfig.reconfigure(src, this);
     }
 
+    @Override
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
+    }
 }

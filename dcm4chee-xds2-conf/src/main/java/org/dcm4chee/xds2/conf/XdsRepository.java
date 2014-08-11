@@ -48,6 +48,7 @@ import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.conf.ldap.generic.LdapConfigIO;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,13 +57,18 @@ import org.slf4j.LoggerFactory;
  */
 
 @ConfigClass(commonName = "XDSRepository", objectClass = "xdsRepository", nodeName = "xdsRepository")
-public class XdsRepository extends DeviceExtension {
+public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     public static final Logger log = LoggerFactory.getLogger(XdsRepository.class);
 
     private static final String DEFAULTID = "*";
 
     private static final long serialVersionUID = -8258532093950989486L;
+
+    @ConfigField(name = "xdsIsDeactivated",
+            label = "Deactivated",
+            description = "Controls whether the repository service is deactivated")
+    private boolean deactivated = false;
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -211,5 +217,14 @@ public class XdsRepository extends DeviceExtension {
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;
         ReflectiveConfig.reconfigure(src, this);
+    }
+
+    @Override
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
     }
 }

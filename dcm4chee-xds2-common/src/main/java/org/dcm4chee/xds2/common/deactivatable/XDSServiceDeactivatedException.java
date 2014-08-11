@@ -1,4 +1,4 @@
-package org.dcm4chee.xds2.service.deactivatable;
+package org.dcm4chee.xds2.common.deactivatable;
 
 /**
  * Indicates that a service is deployed, but deactivated in the configuration

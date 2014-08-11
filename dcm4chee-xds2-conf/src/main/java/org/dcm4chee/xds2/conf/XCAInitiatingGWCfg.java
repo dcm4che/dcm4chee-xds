@@ -51,6 +51,7 @@ import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4chee.xds2.common.XDSUtil;
+import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,10 +59,10 @@ import org.slf4j.LoggerFactory;
  * @author Franz Willer <franz.willer@gmail.com>
  */
 @ConfigClass(commonName = "XCAInitiatingGW", objectClass = "xcaInitiatingGW", nodeName = "xcaInitiatingGW")
-public class XCAInitiatingGWCfg extends DeviceExtension {
+public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateable {
 
     @ConfigClass(objectClass = "xdsGatewayRef")
-    public static class GatewayReference implements Serializable 
+    public static class GatewayReference implements Serializable
     {
 
         private static final long serialVersionUID = 9174301221517954931L;
@@ -99,6 +100,11 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
     private static final String DEFAULTID = "*";
+
+    @ConfigField(name = "xdsIsDeactivated",
+            label = "Deactivated",
+            description = "Controls whether the service is deactivated")
+    private boolean deactivated = false;
 
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
@@ -207,7 +213,7 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
         try {
             return repositoryDeviceByUidMap.get(repositoryID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
         } catch (Exception e) {
-            try { 
+            try {
                 String repo = repositoryDeviceByUidMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsRepository.class).getRetrieveUrl();
                 log.warn("Using default Repository URL for repository UID {}!", repositoryID);
                 return repo;
@@ -215,8 +221,8 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
                 throw new RuntimeException("Cannot retrieve repository URL for repository UID " + repositoryID, e);
             }
         }
-    
-    
+
+
     }
 
     public Map<String, GatewayReference> getRespondingGWByHomeCommunityIdMap() {
@@ -297,6 +303,15 @@ public class XCAInitiatingGWCfg extends DeviceExtension {
 
     public void setLocalPIXConsumerApplication(String appName) {
         this.localPIXConsumerApplication = appName;
+    }
+
+    @Override
+    public boolean isDeactivated() {
+        return deactivated;
+    }
+
+    public void setDeactivated(boolean deactivated) {
+        this.deactivated = deactivated;
     }
 
     @Override

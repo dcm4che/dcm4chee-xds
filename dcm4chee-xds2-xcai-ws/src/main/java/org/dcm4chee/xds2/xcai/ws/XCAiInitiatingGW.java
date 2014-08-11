@@ -60,7 +60,9 @@ import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration;
 import org.dcm4chee.xds2.common.exception.XDSException;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
@@ -86,6 +88,7 @@ import org.slf4j.LoggerFactory;
 
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
+@DeactivateableByConfiguration(extension = XCAiInitiatingGWCfg.class)
 public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
     
     private org.dcm4chee.xds2.infoset.ihe.ObjectFactory iheFactory = new org.dcm4chee.xds2.infoset.ihe.ObjectFactory();
