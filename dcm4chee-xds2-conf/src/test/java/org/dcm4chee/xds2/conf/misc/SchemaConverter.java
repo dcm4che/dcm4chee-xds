@@ -59,7 +59,7 @@ public class SchemaConverter {
         String s = currentRelativePath.toAbsolutePath().toString();
         System.out.println("Current relative path is: " + s);
         
-        String data = readFile("E:\\xd_ws\\dcm4chee-xds\\dcm4chee-xds2-conf\\src\\main\\config\\ldap\\schema\\dcm4chee-xds.schema", StandardCharsets.UTF_8);
+        String data = readFile("src/main/config/ldap/schema/dcm4chee-xds.schema", StandardCharsets.UTF_8);
 
         // remove comments
         data = data.replaceAll("\\#.*\\r\\n", "");
@@ -80,7 +80,7 @@ public class SchemaConverter {
         data = data.replaceAll("attributetype", "attributeTypes:");
         data = data.replaceAll("objectclass", "objectClasses:");
         
-        PrintWriter out = new PrintWriter("E:\\xd_ws\\dcm4chee-xds\\dcm4chee-xds2-conf\\src\\main\\config\\ldap\\opends\\20-dcm4chee-xds.ldif");
+        PrintWriter out = new PrintWriter("src/main/config/ldap/opends/20-dcm4chee-xds.ldif");
 
         out.write(data);
         out.close();
