@@ -38,6 +38,8 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
+import org.dcm4chee.xds2.common.cdi.Xds;
+
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
@@ -45,7 +47,13 @@ public class DeviceNamePropertyProvider {
 
     @Produces @Named("deviceNameProperty")
     public String getDeviceNameProperty() {
-        return "org.dcm4chee.xds.devicename.registry";
+        return "org.dcm4chee.xds.devicename."+getXdsServiceType();
+    }
+
+    @Produces @Xds
+    @Named("xdsServiceType")
+    public String getXdsServiceType() {
+        return "registry";
     }
 
 }

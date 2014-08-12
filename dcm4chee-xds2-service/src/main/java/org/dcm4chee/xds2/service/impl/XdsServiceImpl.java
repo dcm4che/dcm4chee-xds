@@ -41,6 +41,7 @@ import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Device;
+import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.net.hl7.service.HL7Service;
@@ -106,7 +107,12 @@ public class XdsServiceImpl implements XdsService {
   
     @Inject @Named("deviceNameProperty")
     private String deviceNameProperty;
-    
+
+    @Inject
+    @Xds
+    @Named("xdsServiceType")
+    private String xdsServiceType;
+
     private Device device;
 
     private boolean running;
@@ -115,11 +121,7 @@ public class XdsServiceImpl implements XdsService {
 
     private final HL7ServiceRegistry hl7ServiceRegistry = new HL7ServiceRegistry();
 
-    // force eager initialisation (only works in WAR in EAR with contains WAR)
-    //void startup(@Observes @Initialized(ApplicationScoped.class) Object o) {
-    //}
-
-    private static void addJBossDirURLSystemProperties() {
+    private void addJBossDirURLSystemProperties() {
         for (String key : JBOSS_PROPERITIES) {
             String url = new File(System.getProperty(key + ".dir"))
                 .toURI().toString();
@@ -166,15 +168,17 @@ public class XdsServiceImpl implements XdsService {
             		hl7serviceAvail = true;
                     hl7ServicesCount++;
             	}
+
+                log.info("Registering HL7 services for {} @ {} ({} in total) ...", xdsServiceType, device.getDeviceName(), hl7ServicesCount);
+
             	if (hl7serviceAvail) {
-                    log.info("Starting HL7 XDS services", hl7ServicesCount);
                     ExecutorService executorService = Executors.newCachedThreadPool();
             		device.setExecutor(executorService);
             		hl7Extension.setHL7MessageListener(hl7ServiceRegistry);
-                    start();
-                    log.info("HL7 XDS services started (number of services: {})", hl7ServicesCount);
             	}
             }
+
+            start();
         } catch (RuntimeException re) {
             throw re;
         } catch (Exception e) {
@@ -189,22 +193,29 @@ public class XdsServiceImpl implements XdsService {
 
     @Override
     public void start() throws Exception {
+        log.info("Starting XDS extension {} @ {}", xdsServiceType, device.getDeviceName());
         running = true;
         if (hl7serviceAvail) {
+            log.info("Starting HL7 XDS services...");
             device.bindConnections();
+            log.info("HL7 XDS services started");
     	}
     }
 
     @Override
     public void stop() {
+        log.info("Stopping XDS extension {} @ {}", xdsServiceType, device.getDeviceName());
         running = false;
         if (hl7serviceAvail) {
+            log.info("Stopping HL7 XDS services...");
             device.unbindConnections();
+            log.info("HL7 XDS services stopped");
     	}
     }
 
     @Override
     public void reload() throws Exception {
+        log.info("Reloading XDS extension {} @ {}", xdsServiceType, device.getDeviceName());
         device.reconfigure(findDevice());
     	if (hl7serviceAvail) {
     		device.rebindConnections();
