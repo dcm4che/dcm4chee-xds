@@ -374,9 +374,16 @@ public class SQFindDocumentsTests extends AbstractSQTests {
     public void findDocumentsCreationTimeRightEdge() {
         AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocuments, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
         addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_CREATION_TIME_FROM,"20041124");
-        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_CREATION_TIME_TO,"20041224");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_CREATION_TIME_TO,"20041223");
         AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         new QueryResultCheck().setNrOfDocs(0).setNrOfFolders(0).setNrOfSubmissions(0)
+        .setNrOfAssocs(0).checkResponse(rsp);
+        
+        req = getQueryRequest(XDSConstants.XDS_FindDocuments, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_CREATION_TIME_FROM,"20041124");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_CREATION_TIME_TO,"20041224");
+        rsp = session.documentRegistryRegistryStoredQuery(req);
+        new QueryResultCheck().setNrOfDocs(1).setNrOfFolders(0).setNrOfSubmissions(0)
         .setNrOfAssocs(0).checkResponse(rsp);
     }
     /**
