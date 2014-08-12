@@ -47,6 +47,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -116,7 +117,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     
     @Resource
     private WebServiceContext wsContext;
-    
+    @Resource
+    private EJBContext ejbContext;
+
     @Inject
     private void setXDSStorage(XDSStorage stg) {
     	storage = stg;
@@ -163,6 +166,8 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             XDSAudit.logRepositoryPnRExport(submUIDAndpatid[0], submUIDAndpatid[1], info, registryURL, success);
         }
         commit(storedDocs, success);
+        if (!success)
+            ejbContext.setRollbackOnly();
         XDSAudit.logRepositoryImport(submUIDAndpatid[0], submUIDAndpatid[1], info, 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
         log.info("################ documentRepositoryProvideAndRegisterDocumentSetB finished!");
@@ -301,8 +306,10 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                     throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'hash' already exists but has different value! old:"+oldValue+" new:"+storedDocs[i].getDigest(), null);
                 }
             } catch (XDSException x) {
+                this.commit(storedDocs, false);
                 throw x;
             } catch (Exception x) {
+                this.commit(storedDocs, false);
                 throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, 
                         "Storage of document "+docUID+" failed! : "+x.getMessage(),x);
             }

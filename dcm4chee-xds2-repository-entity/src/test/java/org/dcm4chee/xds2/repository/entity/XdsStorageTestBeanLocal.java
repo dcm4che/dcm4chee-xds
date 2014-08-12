@@ -1,14 +1,17 @@
 package org.dcm4chee.xds2.repository.entity;
 
-import org.dcm4chee.storage.entity.Availability;
-import org.dcm4chee.storage.entity.FileSystem;
-import org.dcm4chee.storage.entity.FileSystemStatus;
+import java.util.List;
+
+import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
 
 public interface XdsStorageTestBeanLocal {
 
-	FileSystem createFileSystem(String grpName, String fileURL, Availability availability, FileSystemStatus status);
-	void linkFileSystems(FileSystem... filesystems);
-	XdsFileRef createFile(String filePath, String mimetype, long size, String digest, FileSystem fs);
-	void deleteFsGroup(String grpName);
+    XdsFileRef createFile(String groupID, String filesystemID, String docUID, String filePath, String mimetype, long size, String digest);
+
+    XdsDocument createDocument(String docUID, String mimetype, long size, String digest);
+    XdsDocument findDocument(String docUID);
+    List<XdsFileRef> findFileRefs(String docUID);
+    
+    void deleteGroup(String groupID);
 }

@@ -54,7 +54,7 @@ import org.slf4j.Logger;
  * @author Franz Willer <franz.willer@gmail.com>
  */
 public class XDSTestUtil {
-    
+
     public static final String TEST_ISSUER ="^^^dcm4che_test&1.2.3.45.4.3.2.1&ISO";
     public static final String TEST_PID_1 = "test1234_1";
     public static final String TEST_PID_2 = "test1234_2";
@@ -73,25 +73,26 @@ public class XDSTestUtil {
     }
 
     public static WebArchive createDeploymentArchive(@SuppressWarnings("rawtypes") Class testClazz) {
-    	Properties p = new Properties();
-    	try {
-			p.load(XDSTestUtil.class.getResourceAsStream("/version.properties"));
-		} catch (Exception e) {
-			throw new RuntimeException("Failed to load version.properties!", e);
-		}
-    	String version = p.getProperty("version");
+        Properties p = new Properties();
+        try {
+            p.load(XDSTestUtil.class.getResourceAsStream("/version.properties"));
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load version.properties!", e);
+        }
+        String version = p.getProperty("version");
+        String storageVersion = p.getProperty("storage-version");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "test.war")
-        .addClasses(testClazz,  XdsStorageTestBeanLocal.class, XdsStorageTestBean.class, 
-                XDSTestUtil.class)
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-repository-entity:jar:" 
-                + System.getProperty("db") + ":"+version).withoutTransitivity().as(File.class))
-        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-file-store:jar:" 
-                + System.getProperty("db") + ":"+version).withoutTransitivity().as(File.class));
+                .addClasses(testClazz,  XdsStorageTestBeanLocal.class, XdsStorageTestBean.class, 
+                        XDSTestUtil.class)
+                        .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-xds2-repository-entity:jar:" 
+                                + System.getProperty("db") + ":"+version).withoutTransitivity().as(File.class))
+                                .addAsLibraries(Maven.resolver().offline().resolve("org.dcm4che:dcm4chee-storage-entity:jar:" 
+                                        + System.getProperty("db") + ":"+storageVersion).withoutTransitivity().as(File.class));
 
         war.addAsManifestResource(new FileAsset(new File("src/test/resources/META-INF/MANIFEST.MF")), "MANIFEST.MF");
         return war;
     }
-    
+
 
     public static void clearDB(XdsStorageTestBeanLocal testSession, Logger log) {
         long t1 = System.currentTimeMillis();

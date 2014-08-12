@@ -47,38 +47,38 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
 import org.dcm4chee.storage.entity.BaseFileRef;
-import org.dcm4chee.storage.entity.FileSystem;
 
 /**
  * @author Damien Evans <damien.daddy@gmail.com>
  * @author Justin Falk <jfalkmu@gmail.com>
  * @author Gunter Zeilinger <gunterze@gmail.com>
+ * @author Franz Willer <franz.willer@gmail.com>
  */
 @NamedQueries({
     @NamedQuery(
-        name="XdsFileRef.findByDocumentUID",
-        query="SELECT f FROM XdsFileRef f WHERE f.document.uid = ?1 ORDER BY f.fileSystem.availability, f.pk"),
-    })
+            name="XdsFileRef.findByDocumentUID",
+            query="SELECT f FROM XdsFileRef f WHERE f.document.uid = ?1"),
+})
 
 @Entity
 @DiscriminatorValue("XdsFileRef")
 public class XdsFileRef extends BaseFileRef {
-	private static final long serialVersionUID = 6783820880409973745L;
-	
-	public static final String FIND_BY_DOCUMENT_UID ="XdsFileRef.findByDocumentUID";
+    private static final long serialVersionUID = 6783820880409973745L;
 
-	@ManyToOne(cascade = CascadeType.ALL)
+    public static final String FIND_BY_DOCUMENT_UID ="XdsFileRef.findByDocumentUID";
+
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "object_fk")
     private XdsDocument document;
 
     public XdsFileRef() {};
 
-    public XdsFileRef(FileSystem fileSystem, String filePath, String mimetype,
+    public XdsFileRef(String groupID, String filesystemID, String filePath, String mimetype,
             long fileSize, String digest, XdsDocument doc) {
-    	super(fileSystem, filePath, mimetype, fileSize, digest);
-    	document = doc;
+        super(groupID, filesystemID, filePath, mimetype, fileSize, digest);
+        document = doc;
     }
     public XdsDocument getDocument() {
-    	return document;
+        return document;
     }
 }

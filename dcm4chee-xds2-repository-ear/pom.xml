@@ -125,12 +125,6 @@
 			<version>${storage.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-ejb</artifactId>
-			<type>ejb</type>
-			<version>${storage.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.6.1</version>
@@ -176,10 +170,6 @@
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-service</artifactId>
-						</ejbModule>
-						<ejbModule>
-							<groupId>org.dcm4che</groupId>
-							<artifactId>dcm4chee-storage-ejb</artifactId>
 						</ejbModule>
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>

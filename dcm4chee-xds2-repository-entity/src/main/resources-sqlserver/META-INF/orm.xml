@@ -3,21 +3,6 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm http://java.sun.com/xml/ns/persistence/orm_2_0.xsd"
   version="2.0">
-  <persistence-unit-metadata>
-    <persistence-unit-defaults>
-      <entity-listeners>
-        <entity-listener class="org.dcm4chee.xds2.repository.persistence.EntityLogger">
-          <pre-persist method-name="onPrePersist" />
-          <post-persist method-name="onPostPersist" />
-          <pre-remove method-name="onPreRemove" />
-          <post-remove method-name="onPostRemove" />
-          <pre-update method-name="onPreUpdate" />
-          <post-update method-name="onPostUpdate" />
-          <post-load method-name="onPostLoad" />
-        </entity-listener>
-      </entity-listeners>
-    </persistence-unit-defaults>
-  </persistence-unit-metadata>
   
   <package>org.dcm4chee.xds2.repository.persistence</package>
   

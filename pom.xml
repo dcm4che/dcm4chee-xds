@@ -36,7 +36,7 @@
 		<dcm4che.version>3.3.4-SNAPSHOT</dcm4che.version>
 		<storage.version>1.0.0-SNAPSHOT</storage.version>
 		<slf4j.version>1.6.1</slf4j.version>
-		<hibernate.version>4.0.1.Final</hibernate.version>
+		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
 		<javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
 		<db>oracle</db>
@@ -102,6 +102,7 @@
 		<module>dcm4chee-xds2-hl7</module>
 		<module>dcm4chee-xds2-repository-ws</module>
 		<module>dcm4chee-xds2-repository-entity</module>
+		<module>dcm4chee-xds2-repository-hbm2ddl</module>
 		<module>dcm4chee-xds2-repository-ejb</module>
 		<module>dcm4chee-xds2-repository-ctrl</module>
 		<module>dcm4chee-xds2-repository-war</module>

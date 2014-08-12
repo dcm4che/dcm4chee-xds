@@ -38,11 +38,15 @@ package org.dcm4chee.xds2.repository.entity;
  * ***** END LICENSE BLOCK ***** */
 
 
+import java.util.List;
+
 import javax.ejb.EJB;
 
-import org.dcm4chee.storage.entity.Availability;
-import org.dcm4chee.storage.entity.FileSystem;
-import org.dcm4chee.storage.entity.FileSystemStatus;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -57,46 +61,63 @@ import org.slf4j.LoggerFactory;
  */
 @RunWith(Arquillian.class)
 public class SimpleXdsFileTest {
-    private static final String FILE_TEST_ONLINE_FS1 = "file://test/junit/fs1";
-    private static final String FILE_TEST_ONLINE_FS2 = "file://test/junit/fs2";
-    private static final String FILE_TEST_NEARLINE_FS1 = "file://test/nearline/n_fs1";
-    private static final String FILE_TEST_NEARLINE_FS2 = "file://test/nearline/n_fs2";
-	private static final String FS_GROUP_ID_ONLINE = "TEST_ONLINE";
-	private static final String FS_GROUP_ID_NEARLINE = "TEST_NEARLINE";
-	private final static Logger log = LoggerFactory.getLogger(SimpleXdsFileTest.class);
+    private static final String TEXT_PLAIN = "text/plain";
+    private static final String ONLINE_GROUP ="GRP_TEST_ONLINE";
+    private static final String NEARLINE_GROUP ="GRP_TEST_NEARLINE";
+    private static final String ONLINE_FILESYSTEM_1 = "online_fs_1";
+    private static final String ONLINE_FILESYSTEM_2 = "online_fs_2";
+    private static final String NEARLINE_FILESYSTEM_1 = "nearline_fs_1";
+    private static final String NEARLINE_FILESYSTEM_2 = "nearline_fs_2";
+    private static final String DOC_UID_1 = "1.2.3.4.5.0.0.1";
+    private static final String DOC_UID_2 = "1.2.3.4.5.0.0.2";
+    private static final String DOC_UID_3 = "1.2.3.4.5.0.0.3";
+    private static final String DOC_UID_4 = "1.2.3.4.5.0.0.4";
+    private static final String DIGEST_DUMMY = "DUMMY_digest";
+
+    private final static Logger log = LoggerFactory.getLogger(SimpleXdsFileTest.class);
 
     @Deployment
     public static WebArchive createDeployment() {
         return XDSTestUtil.createDeploymentArchive(SimpleXdsFileTest.class);
     }
-    
+
     @EJB (mappedName="java:global/test/XdsStorageTestBean")
     private XdsStorageTestBeanLocal testSession;
 
-    
+
     @Test
     public void checkCreateFile()  {
         log.info("\n############################# TEST: check create XdsFile ############################");
-        FileSystem fs = testSession.createFileSystem(FS_GROUP_ID_ONLINE, FILE_TEST_ONLINE_FS1, Availability.ONLINE,  FileSystemStatus.RW);
-        XdsFileRef f = testSession.createFile("checkCreateFile/doc1.txt", "text/plain", 1024, "dummy", fs);
-        testSession.deleteFsGroup(FS_GROUP_ID_ONLINE);
+        try {
+            XdsFileRef f1 = testSession.createFile(ONLINE_GROUP, ONLINE_FILESYSTEM_1, DOC_UID_1, "checkCreateFile/online_doc1.txt", TEXT_PLAIN, 1024l, DIGEST_DUMMY);
+        } finally {
+            testSession.deleteGroup(ONLINE_GROUP);
+        }
     }
 
     @Test
     public void checkCreateFiles()  {
-        log.info("\n############################# TEST: check create multiple XdsFiles in different filesystems / groups ############################");
-        FileSystem fs1 = testSession.createFileSystem(FS_GROUP_ID_ONLINE, FILE_TEST_ONLINE_FS1, Availability.ONLINE,  FileSystemStatus.RW);
-        FileSystem fs2 = testSession.createFileSystem(FS_GROUP_ID_ONLINE, FILE_TEST_ONLINE_FS1, Availability.ONLINE,  FileSystemStatus.Rw);
-        testSession.linkFileSystems(fs1, fs2);
-        XdsFileRef f1 = testSession.createFile("checkCreateFile/online_doc1.txt", "text/plain", 1024, "dummy1", fs1);
-        XdsFileRef f2 = testSession.createFile("checkCreateFile/online_doc2.txt", "text/plain", 1024, "dummy2", fs2);
-        FileSystem fs3 = testSession.createFileSystem(FS_GROUP_ID_NEARLINE, FILE_TEST_ONLINE_FS1, Availability.NEARLINE,  FileSystemStatus.RO);
-        FileSystem fs4 = testSession.createFileSystem(FS_GROUP_ID_NEARLINE, FILE_TEST_ONLINE_FS2, Availability.NEARLINE,  FileSystemStatus.RO);
-        XdsFileRef f3 = testSession.createFile("checkCreateFile/nearline_doc1.txt", "text/plain", 1024, "dummy1", fs3);
-        XdsFileRef f4 = testSession.createFile("checkCreateFile/nearline_doc2.txt", "text/plain", 1024, "dummy2", fs3);
-        XdsFileRef f5 = testSession.createFile("checkCreateFile/nearline_doc3.txt", "text/plain", 1024, "dummy2", fs4);
-        testSession.deleteFsGroup(FS_GROUP_ID_ONLINE);
-        testSession.deleteFsGroup(FS_GROUP_ID_NEARLINE);
-   }
- 
+        try {
+            log.info("\n############################# TEST: check create multiple XdsFiles in different filesystems / groups ############################");
+            XdsFileRef f1 = testSession.createFile(ONLINE_GROUP, ONLINE_FILESYSTEM_1, DOC_UID_1, "checkCreateFile/online_doc1.txt", TEXT_PLAIN, 1024l, DIGEST_DUMMY);
+            XdsFileRef f2 = testSession.createFile(ONLINE_GROUP, ONLINE_FILESYSTEM_2, DOC_UID_2, "checkCreateFile/online_doc2.txt", TEXT_PLAIN, 1024l, DIGEST_DUMMY);
+            XdsFileRef f3 = testSession.createFile(NEARLINE_GROUP, NEARLINE_FILESYSTEM_1, DOC_UID_3, "checkCreateFile/nearline_doc1.txt", TEXT_PLAIN, 1024, DIGEST_DUMMY);
+            XdsFileRef f4 = testSession.createFile(NEARLINE_GROUP, NEARLINE_FILESYSTEM_1, DOC_UID_4, "checkCreateFile/nearline_doc2.txt", TEXT_PLAIN, 1024, DIGEST_DUMMY);
+            XdsFileRef f5 = testSession.createFile(NEARLINE_GROUP, NEARLINE_FILESYSTEM_2, DOC_UID_4, "checkCreateFile/nearline_doc3.txt", TEXT_PLAIN, 1024, DIGEST_DUMMY);
+            XdsDocument doc = testSession.findDocument(DOC_UID_1);
+            assertNotNull("Document_1 not found", doc);
+            List<XdsFileRef> fileRefs = testSession.findFileRefs(DOC_UID_1);
+            assertEquals("findFileRefs(document_1) should return one file", 1, fileRefs.size());
+            assertEquals("findFileRefs for Document_1", f1, fileRefs.get(0));
+            
+            fileRefs = testSession.findFileRefs(DOC_UID_4);
+            assertEquals("findFileRefs (document_4) should return two file", 2, fileRefs.size());
+            assertTrue("findFileRefs (document_4) should contain file "+f4, fileRefs.contains(f4));
+            assertTrue("findFileRefs (document_4) should contain file "+f5, fileRefs.contains(f5));
+        } finally {
+            testSession.deleteGroup(ONLINE_GROUP);
+            testSession.deleteGroup(NEARLINE_GROUP);
+        }
+    }
+
 }

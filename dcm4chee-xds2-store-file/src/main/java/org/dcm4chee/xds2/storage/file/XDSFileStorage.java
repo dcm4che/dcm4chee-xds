@@ -41,8 +41,9 @@ package org.dcm4chee.xds2.storage.file;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.Format;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ import org.dcm4che3.net.Device;
 import org.dcm4chee.storage.conf.Storage;
 import org.dcm4chee.storage.service.StorageResult;
 import org.dcm4chee.storage.service.StorageService;
+import org.dcm4chee.storage.service.TimeAndUidPathFormat;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
@@ -70,115 +72,111 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class XDSFileStorage implements XDSStorage {
-	private static final String DEF_DEVICE_NAME ="dcm4chee-storage";
-	private static final String DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
-	private static final String DEFAULT_ONLINE_GROUP = "XDS_ONLINE";
-	private static final String UNKNOWN_MIME = "application/octet-stream";
+    private static final String DEF_DEVICE_NAME ="dcm4chee-storage";
+    private static final String DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
+    private static final String DEFAULT_ONLINE_GROUP = "XDS_ONLINE";
+    private static final String UNKNOWN_MIME = "application/octet-stream";
 
     private static final int[] directoryTree = new int[]{347, 331, 317};
 
     private Device device;
-    
+
     private static Logger log = LoggerFactory.getLogger(XDSFileStorage.class);
 
     public XDSFileStorage() {
     }
-    
+
     @Inject
     private StorageService storage;
-    
+
     @Inject
     @Storage    
     private DicomConfiguration conf;
 
     @EJB
     private XdsStorageBeanLocal ejb;
-    
+
     @Produces
     @Storage
     public Device getDevice() {
-    	if (device==null) {
-
-    		try {
-				device = this.findDevice();
-			} catch (ConfigurationException x) {
-				log.error("Provide Storage Device failed!", x);
-				return null;
-			}
-    	}
-    	System.out.println("##############\n###############\n###############\nDevice:"+device);
-    	return device;
+        if (device==null) {
+            try {
+                device = this.findDevice();
+            } catch (ConfigurationException x) {
+                log.error("Provide Storage Device failed!", x);
+                return null;
+            }
+        }
+        System.out.println("##############\n###############\n###############\nDevice:"+device);
+        return device;
     }
 
-    
+    @Produces
+    @Storage
+    public Format getPathFormat() {
+        return new TimeAndUidPathFormat(true);
+    }
     @Override
     public XDSDocument storeDocument(String groupID, String docUID, byte[] content, String mime)
             throws XDSException, IOException {
-		try {
-			XdsDocument doc = ejb.findDocument(docUID);
-			ByteArrayInputStream is = new ByteArrayInputStream(content);
-			if (doc == null) {
-				StorageResult r = storage.store(new ByteArrayInputStream(content), 
-						groupID == null ? DEFAULT_ONLINE_GROUP : groupID, docUID);
-				if (r.errorMsg != null) {
-					throw new XDSException(XDSException.XDS_ERR_REPOSITORY_OUT_OF_RESOURCES, r.errorMsg, null);
-				}
-				if (mime == null)
-					mime = UNKNOWN_MIME;
-				XdsFileRef f = ejb.createFile(r.filePath.toString(), mime, r.size, r.hash, r.filesystem, docUID);
-		        return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(toFile(f))), f.getFileSize(), f.getDigest());
-			} else {
-				log.info("Document {} is already stored on this repository!");
-				if (!storage.checkDigest(is, doc.getDigest())) {
-	                throw new XDSException(XDSException.XDS_ERR_NON_IDENTICAL_HASH, 
-	                    "DocumentEntry uniqueId:"+docUID+" already exists but has different hash value!", null);
-				}
-		        return new XDSDocument(docUID, mime, null, doc.getSize(), doc.getDigest()).commit();
-			}
-		} catch (NoSuchAlgorithmException | ConfigurationException x) {
-			throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, "Unexpected error in XDS service !: "+x.getMessage(), x);
-		}
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA1");
+            XdsDocument doc = ejb.findDocument(docUID);
+            ByteArrayInputStream is = new ByteArrayInputStream(content);
+            if (doc == null) {
+                StorageResult r = storage.store(new ByteArrayInputStream(content), 
+                        groupID == null ? DEFAULT_ONLINE_GROUP : groupID, docUID, md);
+                if (r.errorMsg != null) {
+                    throw new XDSException(XDSException.XDS_ERR_REPOSITORY_OUT_OF_RESOURCES, r.errorMsg, null);
+                }
+                if (mime == null)
+                    mime = UNKNOWN_MIME;
+                XdsFileRef f = ejb.createFile(groupID, r.filesystem.getId(), docUID, r.filePath.toString(), mime, r.size, r.hash);
+                return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(storage.toPath(f).toFile())), 
+                        f.getFileSize(), f.getDigest());
+            } else {
+                log.info("Document {} is already stored on this repository!", doc);
+                if (!storage.checkDigest(is, doc.getDigest(), md)) {
+                    throw new XDSException(XDSException.XDS_ERR_NON_IDENTICAL_HASH, 
+                            "DocumentEntry uniqueId:"+docUID+" already exists but has different hash value! registerDocument skipped!", null);
+                }
+                return new XDSDocument(docUID, mime, null, doc.getSize(), doc.getDigest()).commit();
+            }
+        } catch (NoSuchAlgorithmException | ConfigurationException x) {
+            throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, "Unexpected error in XDS service !: "+x.getMessage(), x);
+        }
     }
 
     @Override
     public XDSDocument retrieveDocument(String docUID) throws XDSException, IOException {
-		List<XdsFileRef> XdsFileRefs = ejb.findFileRefs(docUID);
-		if (XdsFileRefs.size() == 0) {
-			return null;
-		}
-		XdsFileRef f = XdsFileRefs.get(0);
-		File docFile = toFile(f);
-        return new XDSDocument(docUID, f.getMimetype(), new DataHandler(new FileDataSource(docFile)), 
-        		f.getFileSize(), f.getDigest());
+        List<XdsFileRef> XdsFileRefs = ejb.findFileRefs(docUID);
+        if (XdsFileRefs.size() == 0) {
+            return null;
+        }
+        XdsFileRef f = XdsFileRefs.get(0);
+        return new XDSDocument(docUID, f.getMimetype(), new DataHandler(new FileDataSource(storage.toPath(f).toFile())), 
+                f.getFileSize(), f.getDigest());
     }
 
     @Override
     public void commit(XDSDocument[] docs, boolean success) {
         if (!success) {
-        	ArrayList<String> docUIDs = new ArrayList<String>();
-        	for (XDSDocument doc : docs) {
-        		if (!doc.isCommitted()) {
-        			docUIDs.add(doc.getUID());
-        		}
-        	}
-	    	List<XdsFileRef> fileRefs = ejb.deleteDocument(docUIDs);
-	        for (XdsFileRef f : fileRefs) {
-                storage.deleteFileAndParentDirectories(toPath(f));
+            ArrayList<String> docUIDs = new ArrayList<String>();
+            for (XDSDocument doc : docs) {
+                if (doc != null && !doc.isCommitted()) {
+                    docUIDs.add(doc.getUID());
+                }
+            }
+            if (docUIDs.size() > 0) {
+                List<XdsFileRef> fileRefs = ejb.deleteDocument(docUIDs);
+                for (XdsFileRef f : fileRefs) {
+                    storage.deleteFileAndParentDirectories(storage.toPath(f));
+                }
             }
         }
     }
-    
-	private Path toPath(XdsFileRef f) {
-		Path fsPath = f.getFileSystem().getPath();
-		String filePath = f.getFilePath();
-		Path docPath = fsPath.resolve(filePath);
-		return docPath;
-	}
-	
-	private File toFile(XdsFileRef f) {
-		return toPath(f).toFile();
-	}
-    
+
+
     public static String getFilepathForUID(String uid) {
         if (directoryTree == null) 
             return uid;
@@ -201,8 +199,8 @@ public class XDSFileStorage implements XDSStorage {
     }
 
     private Device findDevice() throws ConfigurationException {
-    	String deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
+        String deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
         return conf.findDevice(deviceName);
     }
-    
+
 }

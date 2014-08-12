@@ -7,4 +7,7 @@
   <package>org.dcm4chee.xds2.repository.persistence</package>
   
   <access>FIELD</access>
+  <entity class="XdsFileRef"/>
+  <entity class="XdsDocument"/>
+  
 </entity-mappings>

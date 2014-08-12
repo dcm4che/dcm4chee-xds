@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.storage.ejb;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +50,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
-import org.dcm4chee.storage.entity.FileSystem;
 import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
 import org.slf4j.Logger;
@@ -59,73 +59,86 @@ import org.slf4j.LoggerFactory;
 @Local (XdsStorageBeanLocal.class)
 public class XdsStorageBean implements XdsStorageBeanLocal {
 
-    @PersistenceContext(unitName = "dcm4chee-xds2-storage")
+    @PersistenceContext(unitName = "dcm4chee-xds-storage")
     private EntityManager em;
 
     private static Logger log = LoggerFactory.getLogger(XdsStorageBean.class);
-    
+
     public XdsStorageBean() {
     }
 
-	@Override
-	public XdsFileRef createFile(String filePath, String mimetype, long size,
-			String digest, FileSystem fs, String docUID) {
-		log.info("create File!");
-		XdsDocument doc = findDocument(docUID);
-		if (doc == null) {
-			doc = createDocument(docUID, mimetype, size, digest);
-		}
-		XdsFileRef f = new XdsFileRef(fs, filePath, mimetype, size, digest, doc);
-		em.persist(f);
-		return f;
-	}
+    @Override
+    public XdsFileRef createFile(String groupID, String filesystemID, String docUID, String filePath, String mimetype, long size,
+            String digest) {
+        log.info("create File!");
+        XdsDocument doc = findDocument(docUID);
+        if (doc == null) {
+            doc = createDocument(docUID, mimetype, size, digest);
+        }
+        XdsFileRef f = new XdsFileRef(groupID, filesystemID, filePath.replace(File.separatorChar, '/'), mimetype, size, digest, doc);
+        em.persist(f);
+        return f;
+    }
 
-	@Override
-	public XdsDocument createDocument(String docUID, String mimetype, long size, String digest) {
-		XdsDocument doc = new XdsDocument(docUID, mimetype, size, digest);
-		em.persist(doc);
-		return doc;
-	}
+    @Override
+    public XdsDocument createDocument(String docUID, String mimetype, long size, String digest) {
+        XdsDocument doc = new XdsDocument(docUID, mimetype, size, digest);
+        em.persist(doc);
+        return doc;
+    }
 
-	@Override
-	public XdsDocument findDocument(String docUID) {
-		Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UID);
-		qry.setParameter(1, docUID);
-		try {
-			return (XdsDocument) qry.getSingleResult();
-		} catch (NoResultException x) {
-			return null;
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<XdsFileRef> findFileRefs(String docUID) {
-		Query qry = em.createNamedQuery(XdsFileRef.FIND_BY_DOCUMENT_UID);
-		qry.setParameter(1, docUID);
-		return (List<XdsFileRef>) qry.getResultList();
-	}
-	
-	@Override
-	public List<XdsFileRef> deleteDocument(String... docUID) {
-		return deleteDocument(Arrays.asList(docUID));
-	}
-	
-	@Override
-	public List<XdsFileRef> deleteDocument(List<String> docUIDs) {
-		Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UIDS);
-		qry.setParameter("docUIDs", docUIDs);
-		@SuppressWarnings("unchecked")
-		List<XdsDocument> docs = (List<XdsDocument>) qry.getResultList();
-		List<XdsFileRef> fileRefs = new ArrayList<XdsFileRef>();
-		List<XdsFileRef> tmp;
-		for (XdsDocument doc : docs) {
-			tmp = doc.getFileRefs();
-			if (tmp != null)
-				fileRefs.addAll(tmp);
-			em.remove(doc);
-		}
-		return fileRefs;
-	}
-    
+    @Override
+    public XdsDocument findDocument(String docUID) {
+        Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UID);
+        qry.setParameter(1, docUID);
+        try {
+            return (XdsDocument) qry.getSingleResult();
+        } catch (NoResultException x) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<XdsFileRef> findFileRefs(String docUID) {
+        Query qry = em.createNamedQuery(XdsFileRef.FIND_BY_DOCUMENT_UID);
+        qry.setParameter(1, docUID);
+        return (List<XdsFileRef>) qry.getResultList();
+    }
+
+    @Override
+    public List<XdsFileRef> deleteDocument(String... docUID) {
+        return deleteDocument(Arrays.asList(docUID));
+    }
+
+    @Override
+    public List<XdsFileRef> deleteDocument(List<String> docUIDs) {
+        List<XdsFileRef> fileRefs = new ArrayList<XdsFileRef>();
+        if (docUIDs.isEmpty())
+            return fileRefs;
+        log.info("################ docUIDs to delete:{}",docUIDs);
+        Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UIDS);
+        qry.setParameter("docUIDs", docUIDs);
+        @SuppressWarnings("unchecked")
+        List<XdsDocument> docs = (List<XdsDocument>) qry.getResultList();
+        log.info("################ found docs to delete:{}",docs);
+        List<XdsFileRef> tmp;
+        for (XdsDocument doc : docs) {
+            tmp = doc.getFileRefs();
+            log.info("################ fileRefs of doc {}: {}:", doc, tmp);
+            if (tmp == null) {
+                tmp = findFileRefs(doc.getUid());
+                log.info("################ findFileRefs for docUID {}: {}:", doc.getUid(), tmp);
+                           }
+            if (tmp != null)
+                fileRefs.addAll(tmp);
+            
+            log.info("################ BEFORE remove doc:{}",doc);
+            em.remove(doc);
+            log.info("################ AFTER remove doc:{}",doc);
+        }
+        log.info("################ return fileRefs:{}",fileRefs);
+        return fileRefs;
+    }
+
 }

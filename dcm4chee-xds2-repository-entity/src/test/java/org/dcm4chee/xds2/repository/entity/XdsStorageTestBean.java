@@ -38,14 +38,16 @@
 
 package org.dcm4chee.xds2.repository.entity;
 
+import java.util.List;
+
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.dcm4chee.storage.entity.Availability;
-import org.dcm4chee.storage.entity.FileSystem;
-import org.dcm4chee.storage.entity.FileSystemStatus;
+import org.dcm4chee.xds2.repository.persistence.XdsDocument;
 import org.dcm4chee.xds2.repository.persistence.XdsFileRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,60 +56,55 @@ import org.slf4j.LoggerFactory;
 @Local (XdsStorageTestBeanLocal.class)
 public class XdsStorageTestBean implements XdsStorageTestBeanLocal {
 
-    @PersistenceContext(unitName = "dcm4chee-xds2-storage")
+    @PersistenceContext(unitName = "dcm4chee-xds-storage")
     private EntityManager em;
 
     private static Logger log = LoggerFactory.getLogger(XdsStorageTestBean.class);
-    
+
     public XdsStorageTestBean() {
     }
 
-	@Override
-	public FileSystem createFileSystem(String grpName, String fileURL,
-			Availability availability, FileSystemStatus status) {
-		log.info("create Filesystem!");
-        FileSystem fs = new FileSystem();
-        fs.setGroupID(grpName);
-        fs.setURI(fileURL);
-        fs.setAvailability(availability);
-        fs.setStatus(status);
-        em.persist(fs);
-        return fs;
-	}
+    @Override
+    public XdsFileRef createFile(String groupID, String filesystemID, String docUID, String filePath, String mimetype, long size,
+            String digest) {
+        XdsDocument doc = findDocument(docUID);
+        if (doc == null) {
+            doc = createDocument(docUID, mimetype, size, digest);
+        }
+        XdsFileRef f = new XdsFileRef(groupID, filesystemID, filePath, mimetype, size, digest, doc);
+        em.persist(f);
+        return f;
+    }
 
-	@Override
-	public XdsFileRef createFile(String filePath, String mimetype, long size,
-			String digest, FileSystem fs) {
-		log.info("create File!");
-		XdsFileRef f = new XdsFileRef(fs, filePath, mimetype, size, digest, null);
-		em.persist(f);
-		return f;
-	}
+    @Override
+    public XdsDocument createDocument(String docUID, String mimetype, long size, String digest) {
+        XdsDocument doc = new XdsDocument(docUID, mimetype, size, digest);
+        em.persist(doc);
+        return doc;
+    }
 
-	@Override
-	public void deleteFsGroup(String grpName) {
-		FileSystem fs = (FileSystem) em.createQuery("SELECT OBJECT(f) from FileSystem f WHERE f.groupID = :grp").setParameter("grp", grpName).getSingleResult();
-		em.createQuery("DELETE from XdsFileRef f WHERE f.fileSystem = :fs").setParameter("fs", fs).executeUpdate();
-		em.remove(fs);
-		//em.createQuery("UPDATE XdsFileRef f SET f.fileSystem = null WHERE f.fileSystem = :fs").setParameter("fs", fs).executeUpdate();
-		//em.createQuery("DELETE from FileSystem f WHERE f.groupID = :grp").setParameter("grp", grpName).executeUpdate();
-	}
+    @Override
+    public XdsDocument findDocument(String docUID) {
+        Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UID);
+        qry.setParameter(1, docUID);
+        try {
+            return (XdsDocument) qry.getSingleResult();
+        } catch (NoResultException x) {
+            return null;
+        }
+    }
 
-	@Override
-	public void linkFileSystems(FileSystem... chain) {
-		if (chain.length == 1) {
-			chain[0].setNextFileSystem(null);
-			em.merge(chain[0]);
-		} else {
-			FileSystem fs;
-			for (int i = 0, len = chain.length - 1 ; i < len ; ) {
-				fs = chain[i];
-				fs.setNextFileSystem(chain[++i]);
-				em.merge(fs);
-			}
-		}
-	}
-    
-    
-    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<XdsFileRef> findFileRefs(String docUID) {
+            Query qry = em.createNamedQuery(XdsFileRef.FIND_BY_DOCUMENT_UID);
+            qry.setParameter(1, docUID);
+            return (List<XdsFileRef>) qry.getResultList();
+    }
+
+    @Override
+    public void deleteGroup(String groupID) {
+        em.createQuery("DELETE from XdsFileRef f WHERE f.groupID = :id").setParameter("id", groupID).executeUpdate();
+    }
+
 }

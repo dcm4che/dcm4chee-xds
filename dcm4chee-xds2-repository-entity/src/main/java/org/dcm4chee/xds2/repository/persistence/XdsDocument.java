@@ -65,10 +65,10 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(
         name="XdsDocument.findByUID",
-        query="SELECT d FROM XdsDocument d WHERE d.uid = ?1"),
+        query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid = ?1"),
     @NamedQuery(
             name="XdsDocument.findByUIDs",
-            query="SELECT d FROM XdsDocument d WHERE d.uid IN (:docUIDs)")
+            query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid IN (:docUIDs)")
     })
 
 @Entity
