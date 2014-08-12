@@ -56,6 +56,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 
+import org.dcm4chee.xds2.common.XDSConstants;
 import org.hibernate.annotations.Index;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -159,7 +160,11 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     }
 
     public String getHash() {
-        return getSlotValue("hash");
+        return getSlotValue(XDSConstants.SLOT_NAME_HASH);
+    }
+    
+    public String getSize() {
+        return getSlotValue(XDSConstants.SLOT_NAME_SIZE);
     }
     
     private String getSlotValue(String name) {

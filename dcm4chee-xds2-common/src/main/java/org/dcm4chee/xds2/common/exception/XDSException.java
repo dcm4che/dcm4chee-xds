@@ -59,6 +59,7 @@ public class XDSException extends Exception {
     public static final String XDS_ERR_REPOSITORY_DUPLICATE_UNIQUE_ID_IN_MSG = "XDSRepositoryDuplicateUniqueIdInMessage";
     public static final String XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY = "XDSDuplicateUniqueIdInRegistry";
     public static final String XDS_ERR_NON_IDENTICAL_HASH = "XDSNonIdenticalHash";
+    public static final String XDS_ERR_NON_IDENTICAL_SIZE = "XDSNonIdenticalSize";
     public static final String XDS_ERR_REGISTRY_BUSY = "XDSRegistryBusy";
     public static final String XDS_ERR_REPOSITORY_BUSY = "XDSRepositoryBusy";
     public static final String XDS_ERR_REGISTRY_OUT_OF_RESOURCES = "XDSRegistryOutOfResources";
