@@ -8,6 +8,15 @@
   
   <access>FIELD</access>
 
+  <mapped-superclass class="org.dcm4chee.storage.entity.BaseFileRef">
+    <attributes>
+      <id name="pk">
+        <column name="pk" />
+        <generated-value strategy="SEQUENCE" generator="seq" />
+      </id>
+    </attributes>
+  </mapped-superclass>
+
   <entity class="XdsFileRef">
     <table name="file_ref" />
     <sequence-generator name="seq" sequence-name="files_pk_seq" allocation-size="1" />

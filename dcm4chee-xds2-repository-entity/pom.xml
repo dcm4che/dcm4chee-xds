@@ -136,13 +136,6 @@
 		</resources>
 		<pluginManagement>
 			<plugins>
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<classifier>${db}</classifier>
-				</configuration>
-			</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
@@ -172,6 +165,44 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<classifier>${db}</classifier>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.1.1</version>
+				<executions>
+					<execution>
+						<id>generate-create-schema-ddl</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>java</goal>
+						</goals>
+						<configuration>
+							<includePluginDependencies>true</includePluginDependencies>
+							<mainClass>com.blogspot.doingenterprise.SchemaExport</mainClass>
+							<arguments>
+								<argument>--create</argument>
+								<argument>--delimiter=;</argument>
+								<argument>--output=${project.build.directory}/create-table-${db}.ddl</argument>
+								<argument>dcm4chee-xds-storage</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+				<dependencies>
+					<dependency>
+						<groupId>com.blogspot.doingenterprise</groupId>
+						<artifactId>schema-export</artifactId>
+						<version>2012_05_01</version>
+					</dependency>
+				</dependencies>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>

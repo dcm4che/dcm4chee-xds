@@ -23,7 +23,8 @@
 	- the provisions above, a recipient may use your version of this file under 
 	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
 	BLOCK ***** -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dcm4che</groupId>
@@ -46,10 +47,9 @@
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
-		<asb></asb>
-		<jdbcprefs.classifier></jdbcprefs.classifier>
+		<asb/>
+		<jdbcprefs.classifier/>
 	</properties>
-
 	<profiles>
 		<profile>
 			<!-- Works only with maven 3.0.2 and above -->
@@ -59,21 +59,18 @@
 				<jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>
 			</properties>
 		</profile>
-
-    <profile>
-      <id>xd</id>
-      <properties>
-	<hbm2ddl.auto>validate</hbm2ddl.auto>
-      </properties>
-      <activation>
-        <property>
-          <name>environment</name>
-          <value>xdbuild</value>
-        </property>
-      </activation>
-    </profile>
-
-
+		<profile>
+			<id>xd</id>
+			<properties>
+				<hbm2ddl.auto>validate</hbm2ddl.auto>
+			</properties>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>xdbuild</value>
+				</property>
+			</activation>
+		</profile>
 		<profile>
 			<!-- Produces agility-specific artifacts -->
 			<id>asb</id>
@@ -84,7 +81,6 @@
 			</properties>
 		</profile>
 	</profiles>
-
 	<modules>
 		<module>dcm4chee-xds2-mvnprepare</module>
 		<module>dcm4chee-xds2-infoset</module>
@@ -102,7 +98,6 @@
 		<module>dcm4chee-xds2-hl7</module>
 		<module>dcm4chee-xds2-repository-ws</module>
 		<module>dcm4chee-xds2-repository-entity</module>
-		<module>dcm4chee-xds2-repository-hbm2ddl</module>
 		<module>dcm4chee-xds2-repository-ejb</module>
 		<module>dcm4chee-xds2-repository-ctrl</module>
 		<module>dcm4chee-xds2-repository-war</module>
@@ -122,17 +117,14 @@
 	</modules>
 	<dependencyManagement>
 		<dependencies>
-
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>1.6.1</version>
 				<scope>provided</scope>
 			</dependency>
-			
 			<!-- Override dependency resolver with latest version. This must go *BEFORE* 
 				the Arquillian BOM. -->
-
 			<dependency>
 				<groupId>org.jboss.shrinkwrap.resolver</groupId>
 				<artifactId>shrinkwrap-resolver-bom</artifactId>
@@ -140,7 +132,6 @@
 				<scope>import</scope>
 				<type>pom</type>
 			</dependency>
-
 			<!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill 
 				of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
 				of artifacts. We use this here so that we always get the correct versions 
