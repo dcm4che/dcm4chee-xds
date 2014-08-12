@@ -189,17 +189,17 @@ public class XdsServiceImpl implements XdsService {
 
     @Override
     public void start() throws Exception {
-    	if (hl7serviceAvail) {
-    		device.bindConnections();
-    		running = true;
+        running = true;
+        if (hl7serviceAvail) {
+            device.bindConnections();
     	}
     }
 
     @Override
     public void stop() {
-    	if (hl7serviceAvail) {
-    		device.unbindConnections();
-    		running = false;
+        running = false;
+        if (hl7serviceAvail) {
+            device.unbindConnections();
     	}
     }
 
