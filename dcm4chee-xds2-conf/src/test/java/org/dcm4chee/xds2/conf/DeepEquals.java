@@ -116,7 +116,11 @@ public class DeepEquals
     public static Object lastObject;
     
     public static String getLastPair() {
-    	return String.format("Object (class): %s (%s); \n %s", lastObject, lastObject.getClass().toString(), lastDualKey);
+        try {
+            return String.format("Object (class): %s (%s); \n %s", lastObject, lastObject.getClass().toString(), lastDualKey);
+        } catch (Exception x) {
+            return "lastObject:"+lastObject;
+        }
     }
     
     /**
