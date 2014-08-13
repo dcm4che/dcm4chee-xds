@@ -58,6 +58,9 @@ import org.dcm4chee.storage.entity.BaseFileRef;
     @NamedQuery(
             name="XdsFileRef.findByDocumentUID",
             query="SELECT f FROM XdsFileRef f WHERE f.document.uid = ?1"),
+    @NamedQuery(
+            name="XdsFileRef.findByDocumentUIDs",
+            query="SELECT f FROM XdsFileRef f WHERE f.document.uid IN (:docUIDs)"),
 })
 
 @Entity
@@ -66,6 +69,7 @@ public class XdsFileRef extends BaseFileRef {
     private static final long serialVersionUID = 6783820880409973745L;
 
     public static final String FIND_BY_DOCUMENT_UID ="XdsFileRef.findByDocumentUID";
+    public static final String FIND_BY_DOCUMENT_UIDS ="XdsFileRef.findByDocumentUIDs";
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "object_fk")

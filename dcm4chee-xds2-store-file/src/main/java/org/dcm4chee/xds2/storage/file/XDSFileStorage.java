@@ -168,7 +168,7 @@ public class XDSFileStorage implements XDSStorage {
                 }
             }
             if (docUIDs.size() > 0) {
-                List<XdsFileRef> fileRefs = ejb.deleteDocument(docUIDs);
+                List<XdsFileRef> fileRefs = ejb.findFileRefs(docUIDs);
                 for (XdsFileRef f : fileRefs) {
                     storage.deleteFileAndParentDirectories(storage.toPath(f));
                 }

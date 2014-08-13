@@ -38,13 +38,6 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-ejb</artifactId>
-			<type>ejb</type>
-			<version>${storage.version}</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-storage-entity</artifactId>
 			<version>${storage.version}</version>
 			<classifier>${db}</classifier>

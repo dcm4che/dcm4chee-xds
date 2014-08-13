@@ -64,23 +64,23 @@ import javax.persistence.Table;
  */
 @NamedQueries({
     @NamedQuery(
-        name="XdsDocument.findByUID",
-        query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid = ?1"),
-    @NamedQuery(
-            name="XdsDocument.findByUIDs",
-            query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid IN (:docUIDs)")
-    })
+            name="XdsDocument.findByUID",
+            query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid = ?1"),
+            @NamedQuery(
+                    name="XdsDocument.findByUIDs",
+                    query="SELECT d FROM XdsDocument d LEFT JOIN FETCH d.fileRefs WHERE d.uid IN (:docUIDs)")
+})
 
 @Entity
 @Table(name = "xds_document")
 public class XdsDocument implements Serializable {
 
-	private static final long serialVersionUID = 1070787830873350147L;
+    private static final long serialVersionUID = 1070787830873350147L;
 
     public static final String FIND_BY_UID = "XdsDocument.findByUID";
     public static final String FIND_BY_UIDS = "XdsDocument.findByUIDs";
 
-	@Id
+    @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "pk")
     private long pk;
@@ -117,7 +117,7 @@ public class XdsDocument implements Serializable {
 
     public XdsDocument(String uid, String mimetype, long docSize, String digest) {
         this.uid = uid;
-    	this.mimetype = mimetype;
+        this.mimetype = mimetype;
         this.size = docSize;
         this.digest = digest;
     }
@@ -128,7 +128,7 @@ public class XdsDocument implements Serializable {
         createdTime = now;
         updatedTime = now;
     }
-    
+
     @PreUpdate
     public void onPreUpdate() {
         updatedTime = new Date();
@@ -139,18 +139,18 @@ public class XdsDocument implements Serializable {
     }
 
     public String getUid() {
-		return uid;
-	}
+        return uid;
+    }
 
-	public Date getCreatedTime() {
+    public Date getCreatedTime() {
         return createdTime;
     }
 
     public Date getUpdatedTime() {
-		return updatedTime;
-	}
+        return updatedTime;
+    }
 
-	public String getMimetype() {
+    public String getMimetype() {
         return mimetype;
     }
 
@@ -160,18 +160,18 @@ public class XdsDocument implements Serializable {
 
 
     public String getDigest() {
-		return digest;
-	}
+        return digest;
+    }
 
-	public List<XdsFileRef> getFileRefs() {
-		return fileRefs;
-	}
+    public List<XdsFileRef> getFileRefs() {
+        return fileRefs;
+    }
 
-	public void setFileRefs(List<XdsFileRef> fileRefs) {
-		this.fileRefs = fileRefs;
-	}
+    public void setFileRefs(List<XdsFileRef> fileRefs) {
+        this.fileRefs = fileRefs;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "XdsDocument[pk=" + pk
                 + ", uid=" + uid

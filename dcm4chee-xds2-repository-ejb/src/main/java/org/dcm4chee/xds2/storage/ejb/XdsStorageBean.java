@@ -105,6 +105,14 @@ public class XdsStorageBean implements XdsStorageBeanLocal {
         qry.setParameter(1, docUID);
         return (List<XdsFileRef>) qry.getResultList();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<XdsFileRef> findFileRefs(List<String> docUIDs) {
+        Query qry = em.createNamedQuery(XdsFileRef.FIND_BY_DOCUMENT_UIDS);
+        qry.setParameter("docUIDs", docUIDs);
+        return (List<XdsFileRef>) qry.getResultList();
+    }
 
     @Override
     public List<XdsFileRef> deleteDocument(String... docUID) {
@@ -116,28 +124,17 @@ public class XdsStorageBean implements XdsStorageBeanLocal {
         List<XdsFileRef> fileRefs = new ArrayList<XdsFileRef>();
         if (docUIDs.isEmpty())
             return fileRefs;
-        log.info("################ docUIDs to delete:{}",docUIDs);
         Query qry = em.createNamedQuery(XdsDocument.FIND_BY_UIDS);
         qry.setParameter("docUIDs", docUIDs);
         @SuppressWarnings("unchecked")
         List<XdsDocument> docs = (List<XdsDocument>) qry.getResultList();
-        log.info("################ found docs to delete:{}",docs);
         List<XdsFileRef> tmp;
         for (XdsDocument doc : docs) {
             tmp = doc.getFileRefs();
-            log.info("################ fileRefs of doc {}: {}:", doc, tmp);
-            if (tmp == null) {
-                tmp = findFileRefs(doc.getUid());
-                log.info("################ findFileRefs for docUID {}: {}:", doc.getUid(), tmp);
-                           }
             if (tmp != null)
                 fileRefs.addAll(tmp);
-            
-            log.info("################ BEFORE remove doc:{}",doc);
             em.remove(doc);
-            log.info("################ AFTER remove doc:{}",doc);
         }
-        log.info("################ return fileRefs:{}",fileRefs);
         return fileRefs;
     }
 

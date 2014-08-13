@@ -11,7 +11,8 @@ public interface XdsStorageBeanLocal {
 
 	XdsDocument createDocument(String docUID, String mimetype, long size, String digest);
 	XdsDocument findDocument(String docUID);
-	List<XdsFileRef> findFileRefs(String docUID);
+        List<XdsFileRef> findFileRefs(String docUID);
+        List<XdsFileRef> findFileRefs(List<String> docUID);
 	
 	List<XdsFileRef> deleteDocument(String... docUID);
 	List<XdsFileRef> deleteDocument(List<String> docUIDs);
