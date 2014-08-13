@@ -169,7 +169,7 @@ public class XdsServiceImpl implements XdsService {
                     hl7ServicesCount++;
             	}
 
-                log.info("Registering HL7 services for {} @ {} ({} in total) ...", xdsServiceType, device.getDeviceName(), hl7ServicesCount);
+                log.info("Registering HL7 services for {} @ {} ({} in total) ...", new Object[]{xdsServiceType, device.getDeviceName(), hl7ServicesCount});
 
             	if (hl7serviceAvail) {
                     ExecutorService executorService = Executors.newCachedThreadPool();
