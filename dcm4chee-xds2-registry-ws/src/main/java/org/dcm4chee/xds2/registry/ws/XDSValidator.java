@@ -112,7 +112,7 @@ public class XDSValidator {
     public static void checkAlreadyExists(String uniqueId, ExtrinsicObjectType eoType, XDSRegistryBean session) throws XDSException {
         List<XDSDocumentEntry> docs = session.getDocumentEntriesByUniqueId(uniqueId);
         if (docs.size() > 0) {
-            List<String> hash1 = getSlotTypeValues(eoType.getSlot(), "hash");;
+            List<String> hash1 = getSlotTypeValues(eoType.getSlot(), XDSConstants.SLOT_NAME_HASH);
             if (hash1 == null || hash1.isEmpty()) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "Slot 'hash' missing in DocumentEntry uniqueId:"+uniqueId, null);
@@ -121,6 +121,16 @@ public class XDSValidator {
                         "DocumentEntry uniqueId:"+uniqueId+
                         " already exists but has different hash value! hash:'"+hash1+
                         "' vs. '"+docs.get(0).getHash()+"'", null);
+            }
+            List<String> size1 = getSlotTypeValues(eoType.getSlot(), XDSConstants.SLOT_NAME_SIZE);
+            if (size1 == null || size1.isEmpty()) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "Slot 'size' missing in DocumentEntry uniqueId:"+uniqueId, null);
+            } else if (!size1.get(0).equals(docs.get(0).getSize())) {
+                throw new XDSException(XDSException.XDS_ERR_NON_IDENTICAL_SIZE, 
+                        "DocumentEntry uniqueId:"+uniqueId+
+                        " already exists but has different size value! size:'"+size1+
+                        "' vs. '"+docs.get(0).getSize()+"'", null);
             }
         }
     }

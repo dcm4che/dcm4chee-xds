@@ -47,6 +47,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -118,7 +119,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     
     @Resource
     private WebServiceContext wsContext;
-    
+    @Resource
+    private EJBContext ejbContext;
+
     @Inject
     private void setXDSStorage(XDSStorage stg) {
     	storage = stg;
@@ -138,13 +141,16 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             ProvideAndRegisterDocumentSetRequestType req) {
         log.info("################ documentRepositoryProvideAndRegisterDocumentSetB called!");
         RegistryResponseType rsp;
-        String[] storedUIDs = null;
+        XDSDocument[] storedDocs = null;
         URL registryURL = null;
+        String[] submUIDAndpatid = getSubmissionUIDandPatID(req.getSubmitObjectsRequest());
         try {
-            registryURL = getRegistryWsdlUrl(getSourceID(req));
+        	String srcID = getSourceID(req);
+            registryURL = getRegistryWsdlUrl(srcID);
+            String groupID = getFsGroupID(submUIDAndpatid[1]);
             logRequest(req);
             List<ExtrinsicObjectType> extrObjs = checkRequest(req);
-            storedUIDs = storeDocuments(req, extrObjs);
+            storedDocs = storeDocuments(req, extrObjs, groupID);
             SubmitObjectsRequest submitRequest = req.getSubmitObjectsRequest();
             rsp = dispatchSubmitObjectsRequest(submitRequest, registryURL);
         } catch (Exception x) {
@@ -158,11 +164,12 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
         boolean success = XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus());
         AuditRequestInfo info = new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext);
-        String[] submUIDAndpatid = getSubmissionUIDandPatID(req.getSubmitObjectsRequest());
-        if (storedUIDs != null) {
+        if (storedDocs != null) {
             XDSAudit.logRepositoryPnRExport(submUIDAndpatid[0], submUIDAndpatid[1], info, registryURL, success);
         }
-        commit(storedUIDs, success);
+        commit(storedDocs, success);
+        if (!success)
+            ejbContext.setRollbackOnly();
         XDSAudit.logRepositoryImport(submUIDAndpatid[0], submUIDAndpatid[1], info, 
                 XDSConstants.XDS_B_STATUS_SUCCESS.equals(rsp.getStatus()));
         log.info("################ documentRepositoryProvideAndRegisterDocumentSetB finished!");
@@ -181,10 +188,10 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         return null;
     }
 
-    private void commit(String[] storedUIDs, boolean success) {
-        if (storedUIDs != null) {
+    private void commit(XDSDocument[] storedDocs, boolean success) {
+        if (storedDocs != null) {
             try {
-                storage.commit(storedUIDs, success);
+                storage.commit(storedDocs, success);
             } catch (Exception e) {
                 log.warn("Failed to commit stored documents!");
             }
@@ -264,13 +271,12 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         return rsp;
     }
     
-    private String[] storeDocuments(ProvideAndRegisterDocumentSetRequestType req, List<ExtrinsicObjectType> extrObjs) throws XDSException {
+    private XDSDocument[] storeDocuments(ProvideAndRegisterDocumentSetRequestType req, List<ExtrinsicObjectType> extrObjs, String groupID) throws XDSException {
         Map<String, Document> docs = InfosetUtil.getDocuments(req);
         Document doc;
         ExtrinsicObjectType eo;
         String docUID;
-        XDSDocument xdsDoc;
-        String[] storedUIDs = new String[extrObjs.size()];
+        XDSDocument[] storedDocs = new XDSDocument[extrObjs.size()];
         String[] mimetypes = cfg.isCheckMimetype() ? cfg.getAcceptedMimeTypes() : null;
         for (int i = 0, len = extrObjs.size() ; i < len ; i++ ) {
             eo = extrObjs.get(i);
@@ -287,30 +293,30 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                         throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Mimetype not supported:"+eo.getMimeType(), null);
                 }
             }
-            storedUIDs[i] = docUID;
             try {
-                xdsDoc = storage.storeDocument(docUID, doc.getValue(), eo.getMimeType());
-                if ( xdsDoc != null ) {
-                    Map<String, SlotType1> slots = InfosetUtil.addOrOverwriteSlot(eo, XDSConstants.SLOT_NAME_REPOSITORY_UNIQUE_ID, getRepositoryUniqueId());
-                    String oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_SIZE, String.valueOf(xdsDoc.getSize()));
-                    if (oldValue != null) {
-                        throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'size' already exists but has different value! old:"+oldValue+" new:"+xdsDoc.getSize(), null);
-                    }
-                    oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_HASH, xdsDoc.getHashString());
-                    if (oldValue != null) {
-                        throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'hash' already exists but has different value! old:"+oldValue+" new:"+xdsDoc.getHashString(), null);
-                    }
-                } else {
+            	storedDocs[i] = storage.storeDocument(groupID, docUID, doc.getValue(), eo.getMimeType());
+                if (storedDocs[i].isCommitted()) {
                     log.warn("Document already exists! docUid:"+docUID);
+                } 
+                Map<String, SlotType1> slots = InfosetUtil.addOrOverwriteSlot(eo, XDSConstants.SLOT_NAME_REPOSITORY_UNIQUE_ID, getRepositoryUniqueId());
+                String oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_SIZE, String.valueOf(storedDocs[i].getSize()));
+                if (oldValue != null) {
+                    throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'size' already exists but has different value! old:"+oldValue+" new:"+storedDocs[i].getSize(), null);
+                }
+                oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_HASH, storedDocs[i].getDigest());
+                if (oldValue != null) {
+                    throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'hash' already exists but has different value! old:"+oldValue+" new:"+storedDocs[i].getDigest(), null);
                 }
             } catch (XDSException x) {
+                this.commit(storedDocs, false);
                 throw x;
             } catch (Exception x) {
+                this.commit(storedDocs, false);
                 throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, 
                         "Storage of document "+docUID+" failed! : "+x.getMessage(),x);
             }
         }
-        return storedUIDs;
+        return storedDocs;
     }
     
     private XDSDocument retrieveDocument(String docUID) throws XDSException {
@@ -330,6 +336,20 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     private URL getRegistryWsdlUrl(String sourceID) throws MalformedURLException {
         String url = cfg.getRegistryURL(sourceID);
         return new URL(url);
+    }
+    private String getFsGroupID(String pid) throws MalformedURLException {
+        int pos;
+        if ( (pos = pid.indexOf('^')) == -1 || 
+             (pos = pid.indexOf('^', pos+1)) == -1 || 
+             (pos = pid.indexOf('^', pos+1)) == -1) {
+            throw new IllegalArgumentException("Missing Authority in patID! pid:"+pid);
+        }            
+        String authority = pid.substring(++pos);
+        pos = authority.indexOf('&');pos++;
+        int pos1 = authority.indexOf('&', pos);
+        String affinity = authority.substring(pos, pos1);
+        log.debug("Get filesystemGroupID for affinity {}", affinity);
+        return cfg.getFilesystemGroupID(affinity);
     }
 
     private RegistryResponseType dispatchSubmitObjectsRequest(SubmitObjectsRequest submitRequest, URL xdsRegistryURI) throws MalformedURLException,

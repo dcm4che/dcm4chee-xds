@@ -180,12 +180,12 @@ public class SQFindSubmissionSetTests extends AbstractSQTests {
         addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_FROM, "20041225235050");
         addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_TO, "20041226235050");
         AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
-        QueryResultCheck chk = new QueryResultCheck().setNrOfSubmissions(4).setNrOfDocs(0).setNrOfFolders(0).setNrOfAssocs(0);
+        QueryResultCheck chk = new QueryResultCheck().setNrOfSubmissions(5).setNrOfDocs(0).setNrOfFolders(0).setNrOfAssocs(0);
         chk.checkResponse(rsp);
         slots.remove(3);//remove to
-        addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_TO, "20041226235051");
+        addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_TO, "20041226235049");
         rsp = session.documentRegistryRegistryStoredQuery(req);
-        chk.setNrOfSubmissions(5).checkResponse(rsp);
+        chk.setNrOfSubmissions(4).checkResponse(rsp);
         slots.remove(3);slots.remove(2);//remove from to
         addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_FROM, "20041225235051");
         addQueryParam(slots, XDSConstants.QRY_SUBMISSIONSET_SUBMISSION_TIME_TO, "20041226235051");
