@@ -96,7 +96,7 @@ public class XdsDeviceCtrl {
     public Response reload() throws Exception {
         service.reload();
         log.info("Service reconfigured (device {})",service.getDevice().getDeviceName());
-        return Response.status(Status.OK).build();
+        return Response.status(Status.NO_CONTENT).build();
     }
 
     @GET
