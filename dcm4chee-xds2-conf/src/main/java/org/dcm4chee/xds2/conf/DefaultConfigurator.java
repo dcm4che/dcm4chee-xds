@@ -2,9 +2,7 @@ package org.dcm4chee.xds2.conf;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
@@ -24,8 +22,8 @@ public class DefaultConfigurator {
     private static final Logger log = LoggerFactory.getLogger(DefaultConfigurator.class);
 
     private static final String[] affinityDomain = { "1.2.3.4.5" };
-    private static final String[] MIME_TYPES2 = new String[] { "application/xml", "application/dicom", "application/pdf", "text/plain",
-            "text/xml" };
+    private static final String[] MIME_TYPES2 = new String[] { "application/xml", "application/dicom", "application/pdf", 
+        "application/msword", "application/msexcel", "text/plain", "text/xml", "image/jpeg", "image/png", "image/tiff" };
     
     public static void applyDefaultConfig(DicomConfiguration config, String deviceName) {
 
