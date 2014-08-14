@@ -80,6 +80,18 @@ public class DefaultConfigurator {
             rep.setAllowedCipherHostname("*");
             rep.setLogFullMessageHosts(new String[] {});
 
+            // storage
+            StorageConfiguration store = new StorageConfiguration();
+            device.addDeviceExtension(store);
+            store.setApplicationName("XDS-REPOSITORY-STORAGE");
+            FilesystemGroup grp = new FilesystemGroup("XDS_ONLINE", "1GiB");
+            Filesystem fs1 = new Filesystem("xds_fs_1", "file:///storage/xds/online/fs1", 10, Availability.ONLINE);
+            Filesystem fs2 = new Filesystem("xds_fs_2", "file:///storage/xds/online/fs2", 10, Availability.ONLINE);
+            fs1.setNextFilesystem(fs2);
+            fs2.setNextFilesystem(fs1);
+            grp.addFilesystem(fs1);
+            grp.addFilesystem(fs2);
+            
             // used elsewhere as well
             Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();
             deviceBySrcUid.put("*", device);
