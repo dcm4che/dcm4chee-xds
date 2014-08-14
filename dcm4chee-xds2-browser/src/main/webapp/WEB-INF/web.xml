@@ -38,9 +38,9 @@
             <http-method>GET</http-method>
             <http-method>POST</http-method>
         </web-resource-collection>
-        <!--auth-constraint>
+        <auth-constraint>
             <role-name>WebAdmin</role-name>
-        </auth-constraint-->
+        </auth-constraint>
     </security-constraint>
     <login-config>
         <auth-method>FORM</auth-method>
