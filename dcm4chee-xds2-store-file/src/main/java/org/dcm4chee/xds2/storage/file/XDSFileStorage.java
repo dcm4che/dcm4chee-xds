@@ -53,6 +53,7 @@ import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
@@ -72,8 +73,8 @@ import org.slf4j.LoggerFactory;
 
 @ApplicationScoped
 public class XDSFileStorage implements XDSStorage {
-    private static final String DEF_DEVICE_NAME ="dcm4chee-storage";
-    private static final String DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
+    private static final String DEF_STORAGE_DEVICE_NAME ="dcm4chee-storage";
+    private static final String STORAGE_DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
     private static final String DEFAULT_ONLINE_GROUP = "XDS_ONLINE";
     private static final String UNKNOWN_MIME = "application/octet-stream";
 
@@ -88,6 +89,9 @@ public class XDSFileStorage implements XDSStorage {
 
     @Inject
     private StorageService storage;
+
+    @Inject @Named("deviceNameProperty")
+    private String xdsDeviceNameProperty;
 
     @Inject
     @Storage    
@@ -199,7 +203,8 @@ public class XDSFileStorage implements XDSStorage {
     }
 
     private Device findDevice() throws ConfigurationException {
-        String deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
+        String deviceName = System.getProperty(STORAGE_DEVICE_NAME_PROPERTY, 
+                System.getProperty(xdsDeviceNameProperty, DEF_STORAGE_DEVICE_NAME));
         return conf.findDevice(deviceName);
     }
 
