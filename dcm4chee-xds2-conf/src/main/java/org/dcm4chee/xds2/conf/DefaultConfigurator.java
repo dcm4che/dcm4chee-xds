@@ -1,15 +1,21 @@
 package org.dcm4chee.xds2.conf;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.data.Code;
 import org.dcm4che3.data.Issuer;
 import org.dcm4che3.net.Device;
+import org.dcm4chee.storage.conf.Availability;
+import org.dcm4chee.storage.conf.Filesystem;
+import org.dcm4chee.storage.conf.FilesystemGroup;
+import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,18 +85,20 @@ public class DefaultConfigurator {
             rep.setCheckMimetype(false);
             rep.setAllowedCipherHostname("*");
             rep.setLogFullMessageHosts(new String[] {});
+            HashMap<String,String> fsGrps = new HashMap<String,String>(1);
+            fsGrps.put("*", "XDS_ONLINE");
+            rep.setFsGroupIDbyAffinity(fsGrps);
 
             // storage
             StorageConfiguration store = new StorageConfiguration();
             device.addDeviceExtension(store);
             store.setApplicationName("XDS-REPOSITORY-STORAGE");
             FilesystemGroup grp = new FilesystemGroup("XDS_ONLINE", "1GiB");
-            Filesystem fs1 = new Filesystem("xds_fs_1", "file:///storage/xds/online/fs1", 10, Availability.ONLINE);
-            Filesystem fs2 = new Filesystem("xds_fs_2", "file:///storage/xds/online/fs2", 10, Availability.ONLINE);
-            fs1.setNextFilesystem(fs2);
-            fs2.setNextFilesystem(fs1);
+            
+            String serverHomeDir = System.getProperty("jboss.server.base.dir");
+            File fsDir = new File(serverHomeDir, "xds-repository-storage");
+            Filesystem fs1 = new Filesystem("xds_fs_1", fsDir.toURI().toString(), 10, Availability.ONLINE);
             grp.addFilesystem(fs1);
-            grp.addFilesystem(fs2);
             
             // used elsewhere as well
             Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();
