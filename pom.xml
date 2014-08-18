@@ -54,6 +54,12 @@
 		<profile>
 			<!-- Works only with maven 3.0.2 and above -->
 			<id>jdbc-prefs</id>
+			<activation>
+				<property>
+					<name>environment</name>
+					<value>xdbuild</value>
+				</property>
+			</activation>
 			<properties>
 				<jdbc-prefs.version>1.1.0-SNAPSHOT</jdbc-prefs.version>
 				<jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>

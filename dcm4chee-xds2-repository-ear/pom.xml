@@ -190,6 +190,12 @@
 	<profiles>
 		<profile>
 			<id>jdbc-prefs</id>
+            <activation>
+                <property>
+                    <name>environment</name>
+                    <value>xdbuild</value>
+                </property>
+            </activation>
 			<dependencies>
 				<dependency>
 					<groupId>org.dcm4che.jdbc.prefs</groupId>
