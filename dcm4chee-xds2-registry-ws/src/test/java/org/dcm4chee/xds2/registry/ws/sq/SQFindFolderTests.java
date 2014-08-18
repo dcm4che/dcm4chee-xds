@@ -137,7 +137,7 @@ public class SQFindFolderTests extends AbstractSQTests {
      */
     public void findFoldersCodeList() {
         AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindFolders, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
-        addQueryParam(XDSConstants.QRY_FOLDER_CODE_LIST, "('Referrals^^Connect-a-thon folderCodeList')");
+        addQueryParam(XDSConstants.QRY_FOLDER_CODE_LIST, "('Referrals^^dcm4che folderCodeList')");
         AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         new QueryResultCheck().setNrOfFolders(2).setNrOfDocs(0).setNrOfSubmissions(0)
             .setNrOfAssocs(0).checkResponse(rsp);
