@@ -86,7 +86,7 @@ public class XdsDocument implements Serializable {
     private long pk;
 
     @Basic(optional = false)
-    @Column(name = "uid", updatable = false)
+    @Column(name = "unique_id", updatable = false)
     private String uid;
 
     @Basic(optional = false)
@@ -106,7 +106,7 @@ public class XdsDocument implements Serializable {
     private String mimetype;
 
     @Basic(optional = false)
-    @Column(name = "size", updatable = false)
+    @Column(name = "doc_size", updatable = false)
     private long size;
 
     @Basic(optional = false)
