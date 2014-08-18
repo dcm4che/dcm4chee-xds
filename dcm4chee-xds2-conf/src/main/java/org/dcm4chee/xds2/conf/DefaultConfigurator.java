@@ -97,6 +97,7 @@ public class DefaultConfigurator {
             File fsDir = new File(serverHomeDir, "xds-repository-storage");
             Filesystem fs1 = new Filesystem("xds_fs_1", fsDir.toURI().toString(), 10, Availability.ONLINE);
             grp.addFilesystem(fs1);
+            store.addFilesystemGroup(grp);
             
             // used elsewhere as well
             Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();

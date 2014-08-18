@@ -67,6 +67,7 @@ import org.dcm4che3.conf.prefs.generic.PreferencesGenericConfigExtension;
 import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
 import org.dcm4che3.util.StreamUtils;
 import org.dcm4che3.util.StringUtils;
+import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,6 +104,7 @@ public class XdsConfigurationFactory {
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
+        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsSource>(XdsSource.class));
         conf.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
         conf.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
@@ -128,7 +130,8 @@ public class XdsConfigurationFactory {
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));        
+        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
+        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));
         conf.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         conf.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
         conf.addDicomConfigurationExtension(new PreferencesHL7Configuration());
