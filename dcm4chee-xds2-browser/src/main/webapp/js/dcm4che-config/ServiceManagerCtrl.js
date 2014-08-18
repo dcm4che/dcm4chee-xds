@@ -19,7 +19,7 @@ angular.module('dcm4che-config.controllers', [])
             });
 
             //mock
-            //$scope.devices = JSON.parse('[{"deviceName":"dcm4chee-xds","appEntities":[],"deviceExtensions":["XdsSource","XdsRegistry","XdsRepository","XCAiInitiatingGWCfg","XCAInitiatingGWCfg","XCARespondingGWCfg","XCAiRespondingGWCfg"],"managable":false},{"deviceName":"tstprx","appEntities":["MYAE"],"deviceExtensions":["HL7DeviceExtension"],"managable":false}]');
+            //$scope.devices = JSON.parse('[{"deviceName":"dcm4chee-xds","appEntities":[],"deviceExtensions":["XdsSource","XdsRegistry","XdsRepository","XCAiInitiatingGWCfg","XCAInitiatingGWCfg","XCARespondingGWCfg","XCAiRespondingGWCfg"],"manageable":false},{"deviceName":"tstprx","appEntities":["MYAE"],"deviceExtensions":["HL7DeviceExtension"],"manageable":false}]');
         };
 
 		$scope.reconfigureAll = function() {
@@ -79,7 +79,7 @@ angular.module('dcm4che-config.controllers', [])
         });
 
         //mock
-        //$scope.devices = JSON.parse('[{"deviceName":"dcm4chee-xds","appEntities":[],"deviceExtensions":["XdsSource","XdsRegistry","XdsRepository","XCAiInitiatingGWCfg","XCAInitiatingGWCfg","XCARespondingGWCfg","XCAiRespondingGWCfg"],"managable":false},{"deviceName":"tstprx","appEntities":["MYAE"],"deviceExtensions":["HL7DeviceExtension"],"managable":false}]');
+        //$scope.devices = JSON.parse('[{"deviceName":"dcm4chee-xds","appEntities":[],"deviceExtensions":["XdsSource","XdsRegistry","XdsRepository","XCAiInitiatingGWCfg","XCAInitiatingGWCfg","XCARespondingGWCfg","XCAiRespondingGWCfg"],"manageable":false},{"deviceName":"tstprx","appEntities":["MYAE"],"deviceExtensions":["HL7DeviceExtension"],"manageable":false}]');
     };
 
 
