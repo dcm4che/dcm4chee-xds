@@ -157,12 +157,23 @@ public class ConfigRESTServicesServlet {
         if (extClass.getAnnotation(ConfigClass.class) == null)
             throw new ConfigurationException("Extension " + extJson.extensionType + " is not configured");
 
-        // deserialize config
-        ReflectiveAdapter<? extends DeviceExtension> ad = new ReflectiveAdapter(extClass);
-        DeviceExtension de = ad.deserialize(extJson.configuration.rootConfigNode, reflectiveConfig, null);
+        // get current config
+        Device d = config.findDevice(extJson.deviceName);
+        DeviceExtension currentDeviceExt = d.getDeviceExtension(extClass);
+
+        ReflectiveAdapter<DeviceExtension> ad = new ReflectiveAdapter(extClass);
+
+        // serialize current
+        Map<String, Object> configmap = ad.serialize(currentDeviceExt, reflectiveConfig, null);
+
+        // copy all the filled submitted fields
+        configmap.putAll(extJson.configuration.rootConfigNode);
+
+        // deserialize back
+
+        DeviceExtension de = ad.deserialize(configmap, reflectiveConfig, null);
 
         // merge config
-        Device d = config.findDevice(extJson.deviceName);
         d.removeDeviceExtension(de);
         d.addDeviceExtension(de);
 
@@ -182,6 +193,7 @@ public class ConfigRESTServicesServlet {
     public static final Map<String, String> XDS_REST_PATH = new HashMap<>();
 
     static {
+        XDS_REST_PATH.put("StorageConfiguration", "xds-rep-rs");
         XDS_REST_PATH.put("XdsRegistry", "xds-reg-rs");
         XDS_REST_PATH.put("XdsRepository", "xds-rep-rs");
         XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xds-xcai-rs");

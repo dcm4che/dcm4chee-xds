@@ -98,8 +98,9 @@ public class XdsRepositoryCtrl {
     @GET
     @Path("reload")
     public Response reload() throws Exception {
-    	reloadRepository();
-    	return reloadStorage();
+        reloadRepository();
+    	reloadStorage();
+        return Response.noContent().build();
     }
 
     @GET
