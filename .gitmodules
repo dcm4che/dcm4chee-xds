@@ -1,4 +1,0 @@
-[submodule "dcm4chee-xds2-browser/src/main/webapp/dcm4che-web-common"]
-	path = dcm4chee-xds2-browser/src/main/webapp/dcm4che-web-common
-	url = https://github.com/dcm4che/dcm4che-web-common
-	branch = master
