@@ -4,6 +4,8 @@ controller('IdentifiableListCtrl', [ '$scope', 'xdsEb',function($scope,xdsEb) {
 	// gotta watch if it changes
 	$scope.$watch('currentIdentifiableList.identifiable', function() {
 
+        if ($scope.currentIdentifiableList == null) return;
+
 		$scope.singleItems = $scope.currentIdentifiableList.identifiable;
 		$scope.pairedItems = [];
 
@@ -24,7 +26,6 @@ controller('IdentifiableListCtrl', [ '$scope', 'xdsEb',function($scope,xdsEb) {
 							item : v
 						};
 					}),
-
 					{
 						id : v.value.targetObject
 					});
@@ -50,15 +51,19 @@ controller('IdentifiableListCtrl', [ '$scope', 'xdsEb',function($scope,xdsEb) {
 		};
 		
 		$scope.isThisSearched = function(i) {
-			return i.value.id == $scope.currentIdentifiableList.__forUUID || 
-					(
-							$scope.currentIdentifiableList.__forUniqueId != null &&
-							(
-									xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSDocumentEntry_uniqueId") == $scope.currentIdentifiableList.__forUniqueId ||
-									xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSFolder_uniqueId") == $scope.currentIdentifiableList.__forUniqueId ||
-									xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSSubmissionSet_uniqueId") == $scope.currentIdentifiableList.__forUniqueId
-							)
-					);
+			try {
+                return i.value.id == $scope.currentIdentifiableList.__forUUID ||
+                    (
+                        $scope.currentIdentifiableList.__forUniqueId != null &&
+                        (
+                            xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSDocumentEntry_uniqueId") == $scope.currentIdentifiableList.__forUniqueId ||
+                            xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSFolder_uniqueId") == $scope.currentIdentifiableList.__forUniqueId ||
+                            xdsEb.extIdValueByIdentScheme(i.value, "UUID_XDSSubmissionSet_uniqueId") == $scope.currentIdentifiableList.__forUniqueId
+                            )
+                        );
+            } catch (e) {
+                return false;
+            }
 		};
 		
 	});

@@ -147,7 +147,7 @@ angular.module('dcm4che-config.controllers', [])
                 };
 
             },
-            templateUrl: "templates/dcm4che-config/config-attributes.html",
+            templateUrl: "config-browser/config-attributes.html",
             compile: function(element) {
                 // Use the compile function from the RecursionHelper,
                 // And return the linking function(s) which it returns

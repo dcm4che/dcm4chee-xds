@@ -9,7 +9,7 @@
                role="button" target="_blank">Download</a>
         </div>
         <div ng-show="type == 'XDSSubmissionSet'" class="pull-right">
-            <button type="button" class="btn btn-danger" data-animation="am-fade-and-slide-top" bs-modal="" data-template="templates/xds/confirmation.html">Delete
+            <button type="button" class="btn btn-danger" data-animation="am-fade-and-slide-top" bs-modal="" data-template="xds-browser/confirmation.html">Delete
             </button>
         </div>
 	</div>
@@ -19,7 +19,7 @@
 
 		<div
 			ng-repeat="currentIdentifiableList in currentIdentifiable.__extraLists">
-			<div ng-include="'templates/xds/identifiable-list.html'"></div>
+			<div ng-include="'xds-browser/identifiable-list.html'"></div>
 		</div>
 
 		<h4>Metadata</h4>

@@ -1,5 +1,13 @@
 var appCommon = angular.module('appCommon', ['mgcrea.ngStrap.popover']);
 
+appCommon.controller('NavbarController', ['$scope','$http', function($scope, $http) {
+    $scope.logout = function () {
+        $http({method:"POST", url:"data/logout"}).success(function(response, status) {
+            window.location.reload();
+        });
+    };
+}]);
+
 appCommon.factory('appLoadingIndicator', function() {
 
 	console.log("AppLoading factory!");
@@ -15,10 +23,8 @@ appCommon.factory('appLoadingIndicator', function() {
 
 		// call this when finished
 		finish : function() {
-			loadingPoolSize--;
-
-			if (loadingPoolSize < 0)
-				loadingPoolSize = 0;
+			if (loadingPoolSize > 0)
+                loadingPoolSize--;
 		},
 
 		// call this to show the user the status
@@ -102,7 +108,7 @@ appCommon.directive('appNotificationsPopover',['appNotifications','$popover', fu
 		link:function(scope, element, atttributes) {
 			// bind popover to the element
             scope.appNotifications = appNotifications;
-			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'templates/notifications.html', animation: "am-flip-x"});
+			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'dcm4che-web-common/notifications.html', animation: "am-flip-x"});
 
 			scope.$watch("appNotifications.notifications.length",function() {
 				if (appNotifications.notifications.length > 0)

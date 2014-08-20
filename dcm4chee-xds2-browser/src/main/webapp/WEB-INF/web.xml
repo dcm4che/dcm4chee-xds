@@ -20,8 +20,9 @@
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Stylesheets and libs</web-resource-name>
-            <url-pattern>/css/login.css</url-pattern>
+            <url-pattern>/dcm4che-web-common/css/login.css</url-pattern>
             <url-pattern>/lib/bootstrap/css/bootstrap.css</url-pattern>
+            <url-pattern>/lib/bootstrap/css/bootstrap.css.map</url-pattern>
             <url-pattern>/lib/angular.js</url-pattern>
             <url-pattern>/lib/angular.min.js</url-pattern>
             <http-method>GET</http-method>

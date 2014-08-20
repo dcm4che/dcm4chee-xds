@@ -4,14 +4,6 @@ var xdsCommon = angular.module('xds.common', []);
 angular.module('xds.controllers',[]);
 
 
-xdsCommon.controller('NavbarController', ['$scope','$http', function($scope, $http) {
-    $scope.logout = function () {
-        $http({method:"POST", url:"data/logout"}).success(function(response, status) {
-            window.location.reload();
-        });
-    };
-}]);
-
 /**
  * helper methods to deal with ebXml objects 
  */

@@ -135,9 +135,9 @@ browserLinkedView
                                                         try {
                                                             if (angular
                                                                 .isArray(scope.browserSubject.identifiable))
-                                                                scope.template = 'templates/xds/identifiable-list.html';
+                                                                scope.template = 'xds-browser/identifiable-list.html';
                                                             else if (scope.browserSubject.value.id != null)
-                                                                scope.template = 'templates/xds/identifiable-details.html'; else
+                                                                scope.template = 'xds-browser/identifiable-details.html'; else
                                                             throw "No template found";
                                                         } catch (e) {
                                                             scope.template = "";
