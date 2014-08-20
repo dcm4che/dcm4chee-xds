@@ -62,4 +62,6 @@ public interface XADCfgProviderSPI {
     boolean supportMimetypeCfg();
     
     boolean configChanged(String name, String... cfg);
+    
+    String getNameOfDefaultDomain();
 }

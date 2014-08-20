@@ -178,6 +178,7 @@ public class IheXmlCodeProvider implements XADCfgProviderSPI, Serializable {
         } else {
             log.info("File not found: codes.xml file for affinitydomain "+affinityDomain+"! file:"+f);
         }
+        codeRep.addAffinityDomainCodes(affinityDomain, null);
         return null;
     }
 
@@ -186,6 +187,11 @@ public class IheXmlCodeProvider implements XADCfgProviderSPI, Serializable {
         if (cfg == null || cfg.length == 0 || (name != null && name.equals(this.getName())))
             return true;
         return cfg[0] == null || !baseDir.equals(new File(cfg[0]));
+    }
+
+    @Override
+    public String getNameOfDefaultDomain() {
+        return DEFAULT_DOMAIN;
     }
 
 }
