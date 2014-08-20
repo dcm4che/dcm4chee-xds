@@ -116,7 +116,7 @@ public class XDSValidator {
             if (hash1 == null || hash1.isEmpty()) {
                 throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                         "Slot 'hash' missing in DocumentEntry uniqueId:"+uniqueId, null);
-            } else if (!hash1.get(0).equals(docs.get(0).getHash())) {
+            } else if (!hash1.get(0).equalsIgnoreCase(docs.get(0).getHash())) {
                 throw new XDSException(XDSException.XDS_ERR_NON_IDENTICAL_HASH, 
                         "DocumentEntry uniqueId:"+uniqueId+
                         " already exists but has different hash value! hash:'"+hash1+
