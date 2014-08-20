@@ -468,8 +468,12 @@ public class XDSPersistenceWrapper {
             ro.setLid(ro.getId());
         
         // Set status if not specified 
-        if (ro.getStatus() == null )
+        if (ro.getStatus() == null ) {
             ro.setStatus("urn:oasis:names:tc:ebxml-regrep:StatusType:Approved");
+        } else if (XDSConstants.STATUS_DEPRECATED.equals(ro.getStatus())) {
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
+                    "RegistryObject with status 'Deprecated'! id:"+ ro.getId(), null);
+        }
         
         //TODO VersionInfo
         // Set version if not specified 
