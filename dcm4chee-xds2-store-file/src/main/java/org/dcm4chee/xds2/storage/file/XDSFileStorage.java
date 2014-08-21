@@ -76,7 +76,6 @@ public class XDSFileStorage implements XDSStorage {
     private static final String DEF_STORAGE_DEVICE_NAME ="dcm4chee-storage";
     private static final String STORAGE_DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.storage.deviceName";
     private static final String DEFAULT_ONLINE_GROUP = "XDS_ONLINE";
-    private static final String UNKNOWN_MIME = "application/octet-stream";
 
     private static final int[] directoryTree = new int[]{347, 331, 317};
 
@@ -133,8 +132,6 @@ public class XDSFileStorage implements XDSStorage {
                 if (r.errorMsg != null) {
                     throw new XDSException(XDSException.XDS_ERR_REPOSITORY_OUT_OF_RESOURCES, r.errorMsg, null);
                 }
-                if (mime == null)
-                    mime = UNKNOWN_MIME;
                 XdsFileRef f = ejb.createFile(groupID, r.filesystem.getId(), docUID, r.filePath.toString(), mime, r.size, r.hash);
                 return new XDSDocument(docUID, mime, new DataHandler(new FileDataSource(storage.toPath(f).toFile())), 
                         f.getFileSize(), f.getDigest());
