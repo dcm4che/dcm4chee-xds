@@ -19,13 +19,14 @@
 			+++ XDSSubmissionSet +++ XDSFolder +++ XDSDocumentEntryStub XDS becomes a 
 			child of ObjectType ++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
-		<rim:ClassificationNode
-			id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3" parent="urn:uuid:415715f1-fc0b-47c4-90e5-c180b7b82db6"
-			code="Association Documentation">
-			<rim:Name>
-				<rim:LocalizedString value="Association Documentation" />
-			</rim:Name>
-		</rim:ClassificationNode>
+        <rim:ClassificationScheme id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3" isInternal="false" nodeType="EmbeddedPath">
+            <rim:Name>
+                <rim:LocalizedString value = "Association Documentation"/>
+            </rim:Name>
+            <rim:Description>
+                <rim:LocalizedString value = "Association Documentation"/>
+            </rim:Description>
+        </rim:ClassificationScheme>
 
 	</rim:RegistryObjectList>
 </lcm:SubmitObjectsRequest>

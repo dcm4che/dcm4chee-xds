@@ -679,7 +679,7 @@ public class XDSPersistenceWrapper {
         return session.getPatient(pid, createMissing);
     }
     
-    private boolean isXDSCode(ClassificationType cl) {
+    public boolean isXDSCode(ClassificationType cl) {
         List<SlotType1> slots = cl.getSlot();
         return slots != null && slots.size() == 1 && "codingScheme".equals(slots.get(0).getName());
     }

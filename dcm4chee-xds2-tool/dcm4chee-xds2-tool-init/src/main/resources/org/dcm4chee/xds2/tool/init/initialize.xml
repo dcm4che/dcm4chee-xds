@@ -137,12 +137,6 @@
 				</rim:Name>
 			</rim:ClassificationNode>
 
-			<rim:ClassificationNode
-				id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3" code="Association Documentation">
-				<rim:Name>
-					<rim:LocalizedString value="Association Documentation" />
-				</rim:Name>
-			</rim:ClassificationNode>
 		</rim:ClassificationNode>
 
 		<!-- ++++++++++++++++++++++++++++++++++++++++++++++++++ Additions to the 
@@ -326,6 +320,14 @@
 			</rim:Description>
 		</rim:ClassificationScheme>
 
+        <rim:ClassificationScheme id="urn:uuid:abd807a3-4432-4053-87b4-fd82c643d1f3" isInternal="false" nodeType="EmbeddedPath">
+            <rim:Name>
+                <rim:LocalizedString value = "Association Documentation"/>
+            </rim:Name>
+            <rim:Description>
+                <rim:LocalizedString value = "Association Documentation"/>
+            </rim:Description>
+        </rim:ClassificationScheme>
 
 	</rim:RegistryObjectList>
 </lcm:SubmitObjectsRequest>

@@ -403,6 +403,8 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
             } else if (obj instanceof RegistryPackageType) {
                 objects.add(wrapper.toRegistryPackage((RegistryPackageType)obj));
             } else if (obj instanceof AssociationType1) {
+                if (!cfg.isCreateMissingCodes())
+                    checkAssociationCodes((AssociationType1)obj, wrapper);
                 objects.add(wrapper.toAssociation((AssociationType1)obj));
             } else if (obj instanceof ClassificationSchemeType) {//for initialization
                 wrapper.toClassificationScheme((ClassificationSchemeType)obj, objects);
@@ -441,6 +443,23 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
         storeRegistryObjects(objects);
         handleLifecycle(objects);
         return objects;
+    }
+
+    private void checkAssociationCodes(AssociationType1 assocType, XDSPersistenceWrapper wrapper) throws XDSException {
+        List<ClassificationType> clList = assocType.getClassification();
+        if (clList != null) {
+            for (ClassificationType clType : clList) {
+                if (wrapper.isXDSCode(clType)) {
+                    String scheme = clType.getClassificationScheme();
+                    String codeValue = clType.getNodeRepresentation();
+                    String codeDesignator = clType.getSlot().get(0).getValueList().getValue().get(0);
+                    if (!adCodes.isClassSchemeCodeDefined(scheme, codeValue, codeDesignator)) {
+                        throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, "Unknown code:"+
+                                    codeValue+"^^"+codeDesignator+" ("+scheme+")", null);
+                    }
+                }
+            }
+        }
     }
 
     public RegistryObject getRegistryObjectByUUID(String id) {
