@@ -34,6 +34,23 @@
 	<artifactId>dcm4chee-xds2-browser</artifactId>
 	<packaging>war</packaging>
 	<name>Online registry browser for admininstration purposes </name>
+    <properties>
+        <serviceManager.enabled>true</serviceManager.enabled>
+    </properties>
+    <profiles>
+        <profile>
+            <id>xd</id>
+            <properties>
+                <serviceManager.enabled>false</serviceManager.enabled>
+            </properties>
+            <activation>
+                <property>
+                    <name>environment</name>
+                    <value>xdbuild</value>
+                </property>
+            </activation>
+        </profile>
+    </profiles>
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>

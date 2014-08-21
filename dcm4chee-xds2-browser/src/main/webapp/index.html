@@ -76,7 +76,7 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
             <li><a href="#/step/0">Registry browser</a></li>
-            <li><a href="#/service-manager">Service management</a></li>
+            <li ng-show="${serviceManager.enabled}"><a href="#/service-manager">Service management</a></li>
           </ul>
 
           <div class="nav navbar-form navbar-right"><a ng-click="logout()" class="btn btn-default">Logout <span class="icon-forward"></span></a></div>
