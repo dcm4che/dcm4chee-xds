@@ -194,7 +194,7 @@ public class StoredQueryParam {
                     }
                 } else {
                     throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                            "Wrong format of slot value! MultiValue Query parameter must be '(<value>[,<value>[..]])' name:"+name, null);
+                            "Wrong format of slot value! MultiValue Query parameter must be '({value}[,{value}[..]])' name:"+name, null);
                 }
             }
         }
