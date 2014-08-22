@@ -101,8 +101,8 @@ public class FindDocumentsQuery extends StoredQuery {
                 XDSConstants.UUID_XDSDocumentEntry_classCode, QXDSDocumentEntry.xDSDocumentEntry.xdsCodes);
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_PRACTICE_SETTING_CODE), 
                 XDSConstants.UUID_XDSDocumentEntry_practiceSettingCode, QXDSDocumentEntry.xDSDocumentEntry.xdsCodes);
-        addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_HEALTHCARE_FACILITY_TYPE_CODE), 
-                XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, QXDSDocumentEntry.xDSDocumentEntry.xdsCodes);
+        addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_TYPE_CODE), 
+                XDSConstants.UUID_XDSDocumentEntry_typeCode, QXDSDocumentEntry.xDSDocumentEntry.xdsCodes);
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_HEALTHCARE_FACILITY_TYPE_CODE), 
                 XDSConstants.UUID_XDSDocumentEntry_healthCareFacilityTypeCode, QXDSDocumentEntry.xDSDocumentEntry.xdsCodes);
         addXdsCodeMatch(builder, getQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_EVENT_CODE_LIST), 
