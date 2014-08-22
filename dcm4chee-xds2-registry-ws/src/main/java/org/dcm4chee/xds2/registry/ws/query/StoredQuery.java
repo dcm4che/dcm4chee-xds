@@ -211,12 +211,12 @@ public abstract class StoredQuery {
 
     protected void addStatusMatch(BooleanBuilder builder, StringPath status, StoredQueryParam statusParam) {
         List<String> stati = statusParam.getMultiValues(0);
-        if (stati != null && stati.size() > 0) {
-            if (stati.size() == 1) {
-                builder.and(status.eq(stati.get(0)));
-            } else {
-                builder.and(status.in(stati));
-            }
+        if (stati == null) {
+            builder.and(status.eq(statusParam.getStringValue()));
+        } else if (stati.size() == 1) {
+            builder.and(status.eq(stati.get(0)));
+        } else if (stati.size() > 1) {
+            builder.and(status.in(stati));
         }
     }
 
