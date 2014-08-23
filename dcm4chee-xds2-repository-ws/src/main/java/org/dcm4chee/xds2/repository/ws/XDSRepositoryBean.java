@@ -214,6 +214,11 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             for ( DocumentRequest docReq : req.getDocumentRequest() ) {
                 reqRepoUid = docReq.getRepositoryUniqueId();
                 docUid = docReq.getDocumentUniqueId();
+                if (reqRepoUid == null || docUid == null) {
+                    mainErrors.add(XDSUtil.getRegistryError(XDSException.XDS_ERR_SEVERITY_ERROR, XDSException.XDS_ERR_REPOSITORY_ERROR, 
+                            "Missing required request parameter! (Repository- or Document Unique ID)", null));
+                    continue;
+                }
                 if ( reqRepoUid.equals(repositoryUID)) {
                     doc = retrieveDocument(docUid);
                     if ( doc != null ) {
