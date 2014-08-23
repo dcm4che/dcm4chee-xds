@@ -90,6 +90,9 @@ public class GetDocumentsAndAssociationsQuery extends StoredQuery {
             predicate = values.length == 1 ? QXDSDocumentEntry.xDSDocumentEntry.id.eq(values[0]) :
                 QXDSDocumentEntry.xDSDocumentEntry.id.in(values);
         }
+        if (param.isConjunction())
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                    "Query parameter "+param.getName()+" with conjunction is not allowed!", null);
         AdhocQueryResponse rsp = initAdhocQueryResponse();
         JPAQuery docsQuery = new JPAQuery(getSession().getEntityManager());
         List<XDSDocumentEntry> docs = docsQuery.from(QXDSDocumentEntry.xDSDocumentEntry)
