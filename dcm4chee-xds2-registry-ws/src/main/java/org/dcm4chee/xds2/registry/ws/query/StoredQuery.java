@@ -288,13 +288,18 @@ public abstract class StoredQuery {
         QRegistryObjectIndex index = QRegistryObjectIndex.registryObjectIndex;
 
         // perform an OR for the list of values in QueryParam
-        BooleanExpression expr = null;
-        String[] values = param.getValues();
-        for (String val : values)
-            expr = expr == null ? index.value.like(val) : expr.or(index.value.like(val));
-
+        BooleanExpression orExpr;
+        BooleanBuilder andBuilder = new BooleanBuilder();
+        List<String> values;
+        for (int i = 0, len=param.getNumberOfANDElements() ; i < len ; i++) {
+            orExpr = null;
+            values = param.getMultiValues(i);
+            for (String val : values)
+                orExpr = orExpr == null ? index.value.like(val) : orExpr.or(index.value.like(val));
+            andBuilder.and(orExpr);
+        }
         // add this expression as subquery
-        JPASubQuery subq = new JPASubQuery().from(index).where(index.subject.pk.eq(registryObjectPk).and(index.key.eq(key)).and(expr));
+        JPASubQuery subq = new JPASubQuery().from(index).where(index.subject.pk.eq(registryObjectPk).and(index.key.eq(key)).and(andBuilder));
         builder.and(subq.exists());
         
             
