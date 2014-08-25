@@ -304,11 +304,11 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                     log.warn("Document already exists! docUid:"+docUID);
                 } 
                 Map<String, SlotType1> slots = InfosetUtil.addOrOverwriteSlot(eo, XDSConstants.SLOT_NAME_REPOSITORY_UNIQUE_ID, getRepositoryUniqueId());
-                String oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_SIZE, String.valueOf(storedDocs[i].getSize()));
+                String oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_SIZE, String.valueOf(storedDocs[i].getSize()), false);
                 if (oldValue != null) {
                     throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'size' already exists but has different value! old:"+oldValue+" new:"+storedDocs[i].getSize(), null);
                 }
-                oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_HASH, storedDocs[i].getDigest());
+                oldValue = InfosetUtil.addOrCheckedOverwriteSlot(eo, slots, XDSConstants.SLOT_NAME_HASH, storedDocs[i].getDigest(), true);
                 if (oldValue != null) {
                     throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Slot 'hash' already exists but has different value! old:"+oldValue+" new:"+storedDocs[i].getDigest(), null);
                 }

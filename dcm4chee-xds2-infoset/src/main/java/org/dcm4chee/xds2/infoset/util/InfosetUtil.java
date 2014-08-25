@@ -196,13 +196,15 @@ public class InfosetUtil {
     /*
      * Return null if slot has not exist or contains the same value, the old value if values are different.
      */
-    public static String addOrCheckedOverwriteSlot(RegistryObjectType ro, Map<String, SlotType1> slots, String slotName, String val) throws JAXBException {
+    public static String addOrCheckedOverwriteSlot(RegistryObjectType ro, Map<String, SlotType1> slots, 
+            String slotName, String val, boolean ignoreCase) throws JAXBException {
         if (slots == null)
             slots = getSlotsFromRegistryObject(ro);
         SlotType1 oldSlot = (SlotType1)slots.get(slotName);
         if (oldSlot != null) {
             List<String> values = oldSlot.getValueList().getValue();
-            if (values != null && values.size() > 0 && !val.equals(values.get(0))) {
+            if (values != null && values.size() > 0 && ! 
+                    (ignoreCase ? val.equalsIgnoreCase(values.get(0)) : val.equals(values.get(0))) ) {
                 return values.get(0);
             }
         }            
