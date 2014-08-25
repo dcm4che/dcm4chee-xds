@@ -196,10 +196,10 @@ public class ConfigRESTServicesServlet {
         XDS_REST_PATH.put("StorageConfiguration", "xds-rep-rs");
         XDS_REST_PATH.put("XdsRegistry", "xds-reg-rs");
         XDS_REST_PATH.put("XdsRepository", "xds-rep-rs");
-        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xds-xcai-rs");
-        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xds-xcai-rs");
-        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xds-xca-rs");
-        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xds-xca-rs");
+        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xcai-rs");
+        XDS_REST_PATH.put("XCAiInitiatingGWCfg", "xcai-rs");
+        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
+        XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
     }
 
     @GET
