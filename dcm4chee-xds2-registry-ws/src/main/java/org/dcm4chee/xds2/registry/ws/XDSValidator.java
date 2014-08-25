@@ -47,6 +47,8 @@ import org.dcm4chee.xds2.infoset.rim.ClassificationType;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
+import org.dcm4chee.xds2.infoset.rim.InternationalStringType;
+import org.dcm4chee.xds2.infoset.rim.LocalizedStringType;
 import org.dcm4chee.xds2.infoset.rim.RegistryObjectType;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
@@ -191,7 +193,15 @@ public class XDSValidator {
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
                     "Folder: Missing entryUUID attribute!", null);
         }
-        
+        List<LocalizedStringType> name = rpType.getName() == null ? null : rpType.getName().getLocalizedString();
+        if (name == null || name.size() == 0 || name.get(0).getValue() == null || name.get(0).getValue().trim().length() == 0) {
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
+                    "Folder: Missing Name element (Folder.title)!", null);
+        } else if (name.size() > 1 ) { 
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
+                    "Folder: Name element (Folder.title) has more than one value!", null);
+        }
+
         checkCodes(rpType, toList(XDSConstants.UUID_XDSFolder_codeList));
 
         checkExternalIdentifiers(rpType, toList(XDSConstants.UUID_XDSFolder_patientId,
