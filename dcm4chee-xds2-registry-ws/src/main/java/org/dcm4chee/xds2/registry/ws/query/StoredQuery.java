@@ -293,9 +293,13 @@ public abstract class StoredQuery {
         List<String> values;
         for (int i = 0, len=param.getNumberOfANDElements() ; i < len ; i++) {
             orExpr = null;
-            values = param.getMultiValues(i);
-            for (String val : values)
-                orExpr = orExpr == null ? index.value.like(val) : orExpr.or(index.value.like(val));
+            if (param.isMultiValue()) {
+                values = param.getMultiValues(i);
+                for (String val : values)
+                    orExpr = orExpr == null ? index.value.like(val) : orExpr.or(index.value.like(val));
+            } else {
+                orExpr = index.value.like(param.getStringValue());
+            }
             andBuilder.and(orExpr);
         }
         // add this expression as subquery
