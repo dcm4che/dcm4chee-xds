@@ -111,25 +111,26 @@
   </dependencies>
   <build>
     <plugins>
-      <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.2</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Dependencies>org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit, org.dcm4che.conf.prefs</Dependencies>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.13</version>
-        <configuration>
-          <skipTests>${skipTests}</skipTests>
-        </configuration>
-      </plugin>
+        <plugin>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.3.2</version>
+            <configuration>
+              <archive>
+                <manifestEntries>
+                  <Dependencies>org.dcm4che.conf.ldap-hl7, org.dcm4che.conf.prefs-hl7, org.dcm4che.conf.ldap-audit, org.dcm4che.conf.prefs-audit, org.dcm4che.conf.prefs</Dependencies>
+                  <Implementation-Build>${buildNumber}</Implementation-Build>
+                </manifestEntries>
+              </archive>
+            </configuration>
+        </plugin>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>2.13</version>
+            <configuration>
+              <skipTests>${skipTests}</skipTests>
+            </configuration>
+        </plugin>
     </plugins>
   </build>
   <profiles>
