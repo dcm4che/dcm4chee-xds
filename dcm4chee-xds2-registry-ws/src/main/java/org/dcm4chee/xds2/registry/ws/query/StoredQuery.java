@@ -201,7 +201,11 @@ public abstract class StoredQuery {
         }
     }
 
-    protected void addPatientIdMatch(BooleanBuilder builder, StoredQueryParam pid) {
+    protected void addPatientIdMatch(BooleanBuilder builder, StoredQueryParam pid) throws XDSException {
+        if (pid.isMultiValue()) 
+            throw new XDSException(XDSException.XDS_ERR_STORED_QUERY_PARAM_NUMBER, 
+                    this.getClass().getSimpleName()+" - "+pid.getName()+
+                    " only accepts a single value but is coded with multiple values!", null);
         XADPatient qryPat = new XADPatient(pid.getStringValue());
         patID = qryPat.getCXPatientID();
         builder.and(QXADPatient.xADPatient.patientID.eq(qryPat.getPatientID()));

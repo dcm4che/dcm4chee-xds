@@ -103,7 +103,7 @@ public class GetAllQuery extends StoredQuery {
         return docs;
     }
 
-    private List<XDSSubmissionSet> getSubmissionSets() {
+    private List<XDSSubmissionSet> getSubmissionSets() throws XDSException {
         BooleanBuilder builder = new BooleanBuilder();
         addPatientIdMatch(builder, getQueryParam(XDSConstants.QRY_PATIENT_ID));
         addStatusMatch(builder, QXDSSubmissionSet.xDSSubmissionSet.status, getQueryParam(XDSConstants.QRY_SUBMISSIONSET_STATUS));
@@ -117,7 +117,7 @@ public class GetAllQuery extends StoredQuery {
         return submissionSets;
     }
 
-    private List<XDSFolder> getFolders() {
+    private List<XDSFolder> getFolders() throws XDSException {
         JPAQuery query = new JPAQuery(getSession().getEntityManager());
         BooleanBuilder builder = new BooleanBuilder();
         addPatientIdMatch(builder, getQueryParam(XDSConstants.QRY_PATIENT_ID));
