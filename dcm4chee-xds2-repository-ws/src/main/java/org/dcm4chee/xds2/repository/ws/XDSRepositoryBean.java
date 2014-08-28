@@ -294,9 +294,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                         unsupportedMimetype = false;
                         break;
                     }
-                    if (unsupportedMimetype)
-                        throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Mimetype not supported:"+eo.getMimeType(), null);
                 }
+                if (unsupportedMimetype)
+                    throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Mimetype not supported:"+eo.getMimeType(), null);
             }
             try {
             	storedDocs[i] = storage.storeDocument(groupID, docUID, doc.getValue(), eo.getMimeType());
