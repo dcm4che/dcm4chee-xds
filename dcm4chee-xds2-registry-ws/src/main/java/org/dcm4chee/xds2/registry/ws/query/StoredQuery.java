@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
@@ -254,13 +255,14 @@ public abstract class StoredQuery {
         }
     }
 
-    protected void addFromToMatch(BooleanBuilder builder, StoredQueryParam from,
-            StoredQueryParam to, NumberPath<Long> subselectJoinPk,
-            String slotName) {
+    protected void addFromToMatch(BooleanBuilder builder, StoredQueryParam fromParam,
+            StoredQueryParam toParam, NumberPath<Long> subselectJoinPk, String slotName) {
+        String from = fromParam == null ? null : XDSUtil.normalizeDTM(fromParam.getStringValue(), false);
+        String to = toParam == null ? null : XDSUtil.normalizeDTM(toParam.getStringValue(), true);
         if (from != null || to != null) {
-            Predicate fromTo = from == null ? QSlot.slot.value.loe(to.getStringValue()) : to != null ? 
-                    ExpressionUtils.allOf(QSlot.slot.value.goe(from.getStringValue()), QSlot.slot.value.loe(to.getStringValue())) :
-                    QSlot.slot.value.goe(from.getStringValue());
+            Predicate fromTo = from == null ? QSlot.slot.value.loe(to) : to != null ? 
+                    ExpressionUtils.allOf(QSlot.slot.value.goe(from), QSlot.slot.value.loe(to)) :
+                    QSlot.slot.value.goe(from);
             builder.and(new JPASubQuery().from(QSlot.slot)
                     .where(QSlot.slot.parent.pk.eq(subselectJoinPk), 
                             QSlot.slot.name.eq(slotName), fromTo).exists());

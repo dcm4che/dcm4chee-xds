@@ -37,7 +37,9 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +69,7 @@ public class XDSUtil {
     private static Logger log = LoggerFactory.getLogger(XDSUtil.class);
     
     private static final char[] HEX_STRINGS = "0123456789abcdef".toCharArray();
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss.SSS");
     
     public static void addError(RegistryResponseType rsp, XDSException x) {
         rsp.setStatus(XDSConstants.XDS_B_STATUS_FAILURE);
@@ -283,6 +286,40 @@ public class XDSUtil {
                     rspErr.getRegistryError().addAll(errs.getRegistryError());
                 }
             }
+        }
+    }
+    
+    public static String normalizeDTM(String dtm, boolean to) {
+        Calendar cal = Calendar.getInstance();cal.setTimeInMillis(0l);
+        int idx1 = 0;
+        int idx2 = 4;
+        cal.set(Calendar.YEAR, Integer.parseInt(dtm.substring(idx1, idx2)));
+        idx1 = idx2;
+        idx2 += 2;
+        cal.set(Calendar.MONTH, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2))-1 :
+                     to ? 11 : 0);
+        idx1 = idx2;
+        idx2 += 2;
+        cal.set(Calendar.DAY_OF_MONTH, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
+                     to ? cal.getActualMaximum(Calendar.DAY_OF_MONTH) : 1);
+        idx1 = idx2;
+        idx2 += 2;
+        cal.set(Calendar.HOUR_OF_DAY, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
+                     to ? 23 : 0);
+        idx1 = idx2;
+        idx2 += 2;
+        cal.set(Calendar.MINUTE, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
+                     to ? 59 : 0);
+        idx1 = idx2;
+        idx2 += 2;
+        cal.set(Calendar.SECOND, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
+                     to ? 59 : 0);
+        idx1 = idx2+1;
+        idx2 = idx1+1;
+        cal.set(Calendar.MILLISECOND, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1)) :
+                     to ? 999 : 0);
+        synchronized (sdf) {
+            return sdf.format(cal.getTime());
         }
     }
 }

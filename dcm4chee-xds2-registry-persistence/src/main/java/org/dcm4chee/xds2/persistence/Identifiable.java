@@ -58,6 +58,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.OneToMany;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.infoset.rim.SlotType1;
 import org.hibernate.annotations.Index;
 
@@ -166,8 +167,10 @@ public abstract class Identifiable implements Serializable {
             for (SlotType1 slotType : slotTs) {
                 if (!XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slotType.getName())) {
                     values = slotType.getValueList().getValue();
+                    boolean isTimeSlot = slotType.getName().endsWith("Time");
                     for (int i = 0, len = values.size() ; i < len ; i++) {
-                        slots.add(newSlot(this, slotType.getName(), slotType.getSlotType(), values.get(i)));
+                        slots.add(newSlot(this, slotType.getName(), slotType.getSlotType(), 
+                                isTimeSlot ? XDSUtil.normalizeDTM(values.get(i), false) : values.get(i)));
                     }
                 }
             }
