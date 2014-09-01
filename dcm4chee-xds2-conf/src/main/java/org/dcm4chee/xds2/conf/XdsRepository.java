@@ -91,9 +91,6 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
     @ConfigField(name = "xdsAllowedCipherHostname")
     private String allowedCipherHostname;
 
-    @ConfigField(name = "xdsForceMTOM")
-    private boolean forceMTOM;
-
     @ConfigField(name = "xdsProvideUrl")
     private String provideUrl;
 
@@ -221,14 +218,6 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     public void setAllowedCipherHostname(String allowedCipherHostnames) {
         this.allowedCipherHostname = allowedCipherHostnames;
-    }
-
-    public boolean isForceMTOM() {
-        return forceMTOM;
-    }
-
-    public void setForceMTOM(boolean forceMTOM) {
-        this.forceMTOM = forceMTOM;
     }
 
     @Override

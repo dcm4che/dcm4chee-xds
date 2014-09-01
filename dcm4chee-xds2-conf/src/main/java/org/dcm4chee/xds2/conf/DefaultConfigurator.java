@@ -57,7 +57,6 @@ public class DefaultConfigurator {
             registry.setCreateMissingCodes(true);
             registry.setCheckAffinityDomain(true);
             registry.setCheckMimetype(true);
-            registry.setPreMetadataCheck(false);
             registry.setQueryUrl("http://"+ip+":8080/xds/registry");
             registry.setRegisterUrl("http://"+ip+":8080/xds/registry");
             registry.setCheckAffinityDomain(false);
@@ -82,7 +81,6 @@ public class DefaultConfigurator {
             rep.setSoapLogDir("../standalone/log/xds");
             rep.setCheckMimetype(false);
             rep.setAllowedCipherHostname("*");
-            rep.setLogFullMessageHosts(new String[] {});
             HashMap<String,String> fsGrps = new HashMap<String,String>(1);
             fsGrps.put("*", "XDS_ONLINE");
             rep.setFsGroupIDbyAffinity(fsGrps);
