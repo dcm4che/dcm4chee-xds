@@ -123,6 +123,8 @@ public class CheckErrorsTest {
         RegistryObjectType obj = (RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(0).getValue();
         XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
                 XDSConstants.UUID_XDSDocumentEntry_patientId, "11111^^^&1.2.3&ISO");
+        XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
+                XDSConstants.UUID_XDSFolder_patientId, "11111^^^&1.2.3&ISO");
         doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_UNKNOWN_PATID, "Check Unknown PID");
     }
 
@@ -135,7 +137,7 @@ public class CheckErrorsTest {
         RegistryObjectType obj = (RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(0).getValue();
         XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
                 XDSConstants.UUID_XDSDocumentEntry_patientId, mergedPID);
-        doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_UNKNOWN_PATID, "Check merged PID");
+        doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_PATID_DOESNOT_MATCH, "Check merged PID");
         session.linkPatient(mergedPID, null);
     }
     /**
