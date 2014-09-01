@@ -165,7 +165,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
             XDSException e;
             if (x instanceof XDSException) {
                 e = (XDSException) x;
-                log.info("XDSException: {}", e.getMessage());
+                log.error("XDSException: {}", e.getMessage());
                 log.debug("XDSException stacktrace:", x);
             } else {
                 // to prevent the disclosure of internal system details, we only return the user an error uuid
@@ -206,7 +206,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
             XDSException e;
             if (x instanceof XDSException) {
                 e = (XDSException) x;
-                log.info("XDSException: "+e.getMessage());
+                log.error("XDSException: "+e.getMessage());
                 log.debug("XDSException stacktrace:", x);
             } else {
                 // to prevent the disclosure of internal system details, we only return the user an error uuid
@@ -372,7 +372,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
         }
         if (unknownMime) {
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
-                    "Mimetype is not suppoerted! mimetype:"+mime, null);
+                    "Mimetype is not supported! mimetype:"+mime, null);
         }
     }
 
