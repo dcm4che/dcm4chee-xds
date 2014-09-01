@@ -179,7 +179,6 @@ public class XdsConfigTestBase {
         registry.setCreateMissingCodes(false);
         registry.setCheckAffinityDomain(true);
         registry.setCheckMimetype(true);
-        registry.setPreMetadataCheck(false);
         registry.setRegisterUrl("http://localhost/registryregister");
         registry.setQueryUrl("http://localhost/registryquery");
         return registry;
@@ -237,7 +236,6 @@ public class XdsConfigTestBase {
         rep.setLogFullMessageHosts(new String[] {});
         rep.setRetrieveUrl("http://retrieve");
         rep.setProvideUrl("http://provide");
-        rep.setForceMTOM(true);
 
         // reference registry
         Map<String, Device> deviceBySrcUid = new HashMap<String, Device>();
@@ -310,7 +308,6 @@ public class XdsConfigTestBase {
         registry.setCreateMissingCodes(true);
         registry.setCheckAffinityDomain(true);
         registry.setCheckMimetype(true);
-        registry.setPreMetadataCheck(false);
         registry.setRegisterUrl("http://localhost/registry");
         registry.setQueryUrl("http://localhost/registry");
         config.persist(d);
@@ -339,7 +336,6 @@ public class XdsConfigTestBase {
         registry.setCreateMissingCodes(true);
         registry.setCheckAffinityDomain(true);
         registry.setCheckMimetype(true);
-        registry.setPreMetadataCheck(false);
         registry.setRegisterUrl("http://localhost/registry");
         registry.setQueryUrl("http://localhost/registry");
         ArrayList<HL7Application> hl7Apps = addHL7(device);
@@ -371,7 +367,6 @@ public class XdsConfigTestBase {
         registry.setCreateMissingCodes(true);
         registry.setCheckAffinityDomain(true);
         registry.setCheckMimetype(true);
-        registry.setPreMetadataCheck(false);
         registry.setRegisterUrl("http://localhost/registry");
         registry.setQueryUrl("http://localhost/registry");
 
@@ -398,7 +393,6 @@ public class XdsConfigTestBase {
         xdsApp.setAcceptedMimeTypes(MIME_TYPES2);
         xdsApp.setCheckAffinityDomain(false);
         xdsApp.setCheckMimetype(false);
-        xdsApp.setPreMetadataCheck(true);
         
         for (Connection c : hl7App.getConnections()) {
             c.setPort(c.getPort() + 10000);
@@ -746,7 +740,6 @@ public class XdsConfigTestBase {
         registry.setCreateMissingCodes(true);
         registry.setCheckAffinityDomain(true);
         registry.setCheckMimetype(true);
-        registry.setPreMetadataCheck(false);
         registry.setQueryUrl("http://localhost:8080/xds/registry");
         registry.setRegisterUrl("http://localhost:8080/xds/registry");
         registry.setCheckAffinityDomain(false);

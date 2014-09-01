@@ -39,12 +39,6 @@ attributetype ( 1.2.40.0.13.1.15.20.3.6 NAME 'xdsCreateMissingCodes'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.7 NAME 'xdsDontSaveCodeClassifications'
-  DESC 'Specifies to not save Code Classifications in ebXML structure. i.e. that code values are only stored in code table and ebXML Classifications must be reconstructed!)'
-  EQUALITY booleanMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
-  SINGLE-VALUE )
-
 attributetype ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsCheckAffinityDomain'
   DESC 'Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)'
   EQUALITY booleanMatch
@@ -57,11 +51,6 @@ attributetype ( 1.2.40.0.13.1.15.20.3.9 NAME 'xdsCheckMimetype'
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.10 NAME 'xdsPreMetadataCheck'
-  DESC 'Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests'
-  EQUALITY booleanMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
-  SINGLE-VALUE )
 
 attributetype ( 1.2.40.0.13.1.15.20.3.11 NAME 'xdsAffinityDomainConfigDir'
   DESC 'Path to affinity domain configuration directory'
@@ -83,23 +72,11 @@ attributetype ( 1.2.40.0.13.1.15.20.3.21 NAME 'xdsRegistry'
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
 
-attributetype ( 1.2.40.0.13.1.15.20.3.22 NAME 'xdsLogFullMessageHosts'
-  DESC 'Host name for which the full message (with documents) should be logged instead of SOAPpart'
-  EQUALITY caseIgnoreMatch
-  SUBSTR caseIgnoreSubstringsMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
 attributetype ( 1.2.40.0.13.1.15.20.3.23 NAME 'xdsAllowedCipherHostname'
   DESC 'Hostname which is allowed in TLS hostname checking. Possible values: CERT , * (default) or <hostname>'
   EQUALITY caseIgnoreMatch
   SUBSTR caseIgnoreSubstringsMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )
-
-attributetype ( 1.2.40.0.13.1.15.20.3.24 NAME 'xdsForceMTOM'
-  DESC 'Force MTOM/XOP message, even message doesn't contain attachment(s)'
-  EQUALITY booleanMatch
-  SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
-  SINGLE-VALUE )
 
 attributetype ( 1.2.40.0.13.1.15.20.3.30 NAME 'xdsHomeCommunityID'
   DESC 'XDS/XCA HomeCommunityID'
@@ -232,10 +209,8 @@ objectclass ( 1.2.40.0.13.1.15.20.4.1
     xdsSoapMsgLogDir $
     xdsCreateMissingPIDs $
     xdsCreateMissingCodes $
-    xdsDontSaveCodeClassifications $
     xdsCheckAffinityDomain $
-    xdsCheckMimetype $
-    xdsPreMetadataCheck ) )
+    xdsCheckMimetype ) )
 
 objectclass ( 1.2.40.0.13.1.15.20.4.2
   NAME 'xdsRepository'
@@ -252,9 +227,7 @@ objectclass ( 1.2.40.0.13.1.15.20.4.2
     xdsAcceptedMimeTypes $
     xdsCheckMimetype $
     xdsSoapMsgLogDir $
-    xdsAllowedCipherHostname $
-    xdsForceMTOM $
-    xdsLogFullMessageHosts ) )
+    xdsAllowedCipherHostname ) )
 
 objectclass ( 1.2.40.0.13.1.15.20.4.3
   NAME 'xcaRespondingGW'

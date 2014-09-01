@@ -287,8 +287,6 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                         if (patIDtmp != null) {
                             if (patID == null) {
                                 patID = patIDtmp;
-                                if (!cfg.isPreMetadataCheck() && !cfg.isCheckMimetype())
-                                    break objLoop;
                             } else if (!patIDtmp.equals(patID)) {
                                 throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH,
                                         "PatientID of object"+obj.getId()+" does not match:"+patIDtmp+" vs. "+patID, null);
@@ -297,7 +295,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                     }
                 }
             }
-            if (cfg.isPreMetadataCheck() && (obj instanceof AssociationType1)) {
+            if (obj instanceof AssociationType1) {
                 AssociationType1 assoc = (AssociationType1) obj;
                 if (assoc.getSourceObject().startsWith("urn:") || assoc.getTargetObject().startsWith("urn:")) {
                     try {

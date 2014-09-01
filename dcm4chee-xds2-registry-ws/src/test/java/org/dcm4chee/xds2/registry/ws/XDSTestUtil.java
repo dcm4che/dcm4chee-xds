@@ -101,7 +101,7 @@ public class XDSTestUtil {
 
     private static Set<String> ebXmlClassificationSchemeIds = null;
     private static Set<String> xdsClassificationSchemeIds = null;
-    private static boolean oldCreateMissingPatient, oldCreateMissingCodes, oldCheckAffinity, oldPreMetadataCheck;
+    private static boolean oldCreateMissingPatient, oldCreateMissingCodes, oldCheckAffinity;
     
     private static XdsRegistry xdsRegistry;
     
@@ -305,11 +305,9 @@ public class XDSTestUtil {
         oldCreateMissingPatient = xdsRegistry.isCreateMissingPIDs();
         oldCreateMissingCodes = xdsRegistry.isCreateMissingCodes();
         oldCheckAffinity = xdsRegistry.isCheckAffinityDomain();
-        oldPreMetadataCheck = xdsRegistry.isPreMetadataCheck();
         xdsRegistry.setCreateMissingCodes(true);
         xdsRegistry.setCreateMissingPIDs(true);
         xdsRegistry.setCheckAffinityDomain(false);
-        xdsRegistry.setPreMetadataCheck(false);
         XDSTestUtil.prepareTestPatients(session, log);
         XDSTestUtil.prepareTestCodes(session, log);
         xdsRegistry.setCreateMissingCodes(false);
@@ -342,7 +340,6 @@ public class XDSTestUtil {
         xdsRegistry.setCreateMissingCodes(oldCreateMissingPatient);
         xdsRegistry.setCreateMissingPIDs(oldCreateMissingCodes);
         xdsRegistry.setCheckAffinityDomain(oldCheckAffinity);
-        xdsRegistry.setPreMetadataCheck(oldPreMetadataCheck);
     }
 
 
