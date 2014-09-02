@@ -90,7 +90,6 @@ xdsRepositoryUID: 1.2.3.4
 objectClass: xdsRepository
 objectClass: top
 xdsAllowedCipherHostname: *
-xdsForceMTOM: FALSE
 xdsRetrieveURL: http://localhost:8080/xds/repository
 cn: XDSRepository
 xdsSoapMsgLogDir: /var/log/xdslog

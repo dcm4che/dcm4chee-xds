@@ -101,16 +101,9 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
             optional = true)
     private boolean createMissingCodes;
 
-    @ConfigField(name = "xdsDontSaveCodeClassifications", 
-            label = "Dont Save Code Classifications",
-            description = "Specifies to save codes only as XDSCode entities and not as Classifications in ebRIM format",
-            def = "false",
-            optional = true)
-    private boolean dontSaveCodeClassifications;
-
     @ConfigField(name = "xdsCheckAffinityDomain", 
             label = "Check Affinity Domain",
-            description = "Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)",
+            description = "Check affinityDomain in received PatientIDs",
             def = "true",
             optional = true)
     private boolean checkAffinityDomain;
@@ -122,13 +115,6 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
             def = "true",
             optional = true)
     private boolean checkMimetype;
-
-    @ConfigField(name = "xdsPreMetadataCheck", 
-            label = "Pre-Metadata Check",
-            description = "Check metadta before processing the PnR request. (to get correct error (XDSPatientIdDoesNotMatch instead of XDSUnknownPatientId) in pre-connectathon tests)",
-            def = "false",
-            optional = true)
-    private boolean preMetadataCheck;
 
     @ConfigField(name = "xdsRegisterUrl",
             label = "Register URL",
@@ -232,14 +218,6 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
         this.createMissingCodes = createMissingCodes;
     }
 
-    public boolean isDontSaveCodeClassifications() {
-        return dontSaveCodeClassifications;
-    }
-
-    public void setDontSaveCodeClassifications(boolean dontSaveCodeClassifications) {
-        this.dontSaveCodeClassifications = dontSaveCodeClassifications;
-    }
-
     public boolean isCheckAffinityDomain() {
         return checkAffinityDomain;
     }
@@ -254,14 +232,6 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
 
     public void setCheckMimetype(boolean checkMimetype) {
         this.checkMimetype = checkMimetype;
-    }
-
-    public boolean isPreMetadataCheck() {
-        return preMetadataCheck;
-    }
-
-    public void setPreMetadataCheck(boolean b) {
-        preMetadataCheck = b;
     }
 
     @Override
