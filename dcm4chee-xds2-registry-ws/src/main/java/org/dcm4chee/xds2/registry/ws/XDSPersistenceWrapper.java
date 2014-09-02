@@ -356,7 +356,7 @@ public class XDSPersistenceWrapper {
         roType.getClassification().addAll(ro.getClassifications());
         roType.getExternalIdentifier().addAll(ro.getExternalIdentifiers());
         
-        copySlotType(ro.getSlots(), roType);
+        copySlotType(ro, roType);
         VersionInfoType version = factory.createVersionInfoType();
         version.setVersionName(ro.getVersionName());
         version.setComment(ro.getComment());
@@ -610,22 +610,29 @@ public class XDSPersistenceWrapper {
         ro.setSlotTypes(list);
     }
 
-    private void copySlotType(List<Slot> slots, RegistryObjectType roType) {
+    private void copySlotType(RegistryObject ro, RegistryObjectType roType) {
+        List<Slot> slots = ro.getSlots();
         if (slots != null) {
             SlotType1 slotType;
             HashMap<String, SlotType1> slotTypeMap = new HashMap<String, SlotType1>();
+            for (SlotType1 slotT : ro.getFullObject().getSlot()) {
+                slotTypeMap.put(slotT.getName(), slotT);
+            }
+
             for (Slot slot : slots) {
                 slotType = slotTypeMap.get(slot.getName());
-                if (log.isDebugEnabled())
-                    log.debug("######## Add slot name:"+slot.getName()+" value:"+slot.getValue()+" parent.pk:"+slot.getParent().getPk()+" pk:"+slot.getPk());
                 if (slotType == null) {
-                    slotType = factory.createSlotType1();
+                    log.warn("######## Missing Slot! (not in blob) name:"+slot.getName()+" value:"+slot.getValue()+" parent.pk:"+slot.getParent().getPk()+" pk:"+slot.getPk());
+                    /*slotType = factory.createSlotType1();
                     slotType.setName(slot.getName());
                     slotType.setSlotType(slot.getType());
                     slotType.setValueList(factory.createValueListType());
                     slotTypeMap.put(slot.getName(), slotType);
+                    slotType.getValueList().getValue().add(slot.getValue());*/
+                } else if (XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slot.getName())) {
+                    log.debug("Slot 'lastUpdateTime'. Use value from Slot entity");
+                    slotType.getValueList().getValue().set(0, slot.getValue());
                 }
-                slotType.getValueList().getValue().add(slot.getValue());
             }
             roType.getSlot().addAll(slotTypeMap.values());
         }

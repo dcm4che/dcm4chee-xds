@@ -78,7 +78,7 @@ import org.hibernate.annotations.Index;
 public abstract class Identifiable implements Serializable {
     private static final long serialVersionUID = -354612904987140207L;
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss.SSS");
 
     
     @Id

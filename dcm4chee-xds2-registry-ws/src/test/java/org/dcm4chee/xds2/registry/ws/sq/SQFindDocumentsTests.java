@@ -408,14 +408,14 @@ public class SQFindDocumentsTests extends AbstractSQTests {
      * Pre-Con Test 11897: servicestarttime
      * queries for:
      *  serviceStartTimeFrom: 2005
-     *  serviceStartTimeTo: 2006
+     *  serviceStartTimeTo: 2005 (changed! to 2005 means <= 20051231235959.999)
      * status = 'Approved'
      * must return: DocC, DocD
      */
     public void findDocumentsServiceStartTime() {
         AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocuments, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
         addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_START_TIME_FROM,"2005");
-        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_START_TIME_TO,"2006");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_START_TIME_TO,"2005");
         AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         new QueryResultCheck().setDocNames(DOC_C, DOC_D)
         .setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0).checkResponse(rsp);
@@ -424,14 +424,14 @@ public class SQFindDocumentsTests extends AbstractSQTests {
      * Pre-Con Test 11897: servicestoptime
      * queries for:
      *  serviceStartTimeFrom: 2005
-     *  serviceStartTimeTo: 2006
+     *  serviceStartTimeTo: 2005 (changed! to 2005 means <= 20051231235959.999)
      * status = 'Approved'
      * must return: DocC, DocD
      */
     public void findDocumentsServiceStopTime() {
         AdhocQueryRequest req = getQueryRequest(XDSConstants.XDS_FindDocuments, XDSConstants.QUERY_RETURN_TYPE_LEAF, DEFAULT_PARAMS);
         addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_STOP_TIME_FROM,"2005");
-        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_STOP_TIME_TO,"2006");
+        addQueryParam(XDSConstants.QRY_DOCUMENT_ENTRY_SERVICE_STOP_TIME_TO,"2005");
         AdhocQueryResponse rsp = session.documentRegistryRegistryStoredQuery(req);
         new QueryResultCheck().setDocNames(DOC_C, DOC_D)
         .setNrOfFolders(0).setNrOfSubmissions(0).setNrOfAssocs(0).checkResponse(rsp);

@@ -37,6 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.common;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -47,8 +48,8 @@ import java.util.Map;
 import javax.xml.bind.JAXBException;
 
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;
+import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest;
 import org.dcm4chee.xds2.infoset.iherad.RetrieveImagingDocumentSetRequestType.StudyRequest.SeriesRequest;
@@ -69,7 +70,10 @@ public class XDSUtil {
     private static Logger log = LoggerFactory.getLogger(XDSUtil.class);
     
     private static final char[] HEX_STRINGS = "0123456789abcdef".toCharArray();
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMddHHmmss.SSS");
+    private static final String DTM_FORMAT = "yyyyMMddHHmmss.SSS";
+    private static final String DTM_DEFAULT = "19700101000000.000";
+    private static final SimpleDateFormat DTM_PARSER = new SimpleDateFormat();
+    private static final SimpleDateFormat DTM_FORMATTER = new SimpleDateFormat(DTM_FORMAT);
     
     public static void addError(RegistryResponseType rsp, XDSException x) {
         rsp.setStatus(XDSConstants.XDS_B_STATUS_FAILURE);
@@ -290,36 +294,51 @@ public class XDSUtil {
     }
     
     public static String normalizeDTM(String dtm, boolean to) {
-        Calendar cal = Calendar.getInstance();cal.setTimeInMillis(0l);
-        int idx1 = 0;
-        int idx2 = 4;
-        cal.set(Calendar.YEAR, Integer.parseInt(dtm.substring(idx1, idx2)));
-        idx1 = idx2;
-        idx2 += 2;
-        cal.set(Calendar.MONTH, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2))-1 :
-                     to ? 11 : 0);
-        idx1 = idx2;
-        idx2 += 2;
-        cal.set(Calendar.DAY_OF_MONTH, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
-                     to ? cal.getActualMaximum(Calendar.DAY_OF_MONTH) : 1);
-        idx1 = idx2;
-        idx2 += 2;
-        cal.set(Calendar.HOUR_OF_DAY, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
-                     to ? 23 : 0);
-        idx1 = idx2;
-        idx2 += 2;
-        cal.set(Calendar.MINUTE, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
-                     to ? 59 : 0);
-        idx1 = idx2;
-        idx2 += 2;
-        cal.set(Calendar.SECOND, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1, idx2)) :
-                     to ? 59 : 0);
-        idx1 = idx2+1;
-        idx2 = idx1+1;
-        cal.set(Calendar.MILLISECOND, idx2 <= dtm.length() ? Integer.parseInt(dtm.substring(idx1)) :
-                     to ? 999 : 0);
-        synchronized (sdf) {
-            return sdf.format(cal.getTime());
+        switch (dtm == null ? 0 : dtm.length()) {
+        case 4: case 6: case 8: case 10: case 12: case 14:
+            break;
+        case 18:
+            log.info("return unchanged! :"+dtm);
+            return dtm;
+        default:
+            throw new IllegalArgumentException("DateTime value has wrong length!");
         }
+        String normalized;
+        if (to) {
+            try {
+                synchronized (DTM_PARSER) {
+                    DTM_PARSER.applyPattern(DTM_FORMAT.substring(0, dtm.length()));
+                    DTM_PARSER.parse(dtm);
+                    Calendar cal = DTM_PARSER.getCalendar();
+                    switch (dtm.length()) {
+                        case 4:
+                            cal.set(Calendar.MONTH, 11);
+                        case 6:
+                            cal.getTime();
+                            cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+                        case 8:
+                            cal.set(Calendar.HOUR_OF_DAY, 23);
+                        case 10:
+                            cal.set(Calendar.MINUTE, 59);
+                        case 12:
+                            cal.set(Calendar.SECOND, 59);
+                        case 14:
+                            cal.set(Calendar.MILLISECOND, 999);
+                    }
+                    normalized = DTM_FORMATTER.format(cal.getTime());
+                }
+            } catch (ParseException x) {
+                throw new IllegalArgumentException("DateTime value has wrong format!", x);
+            }
+        } else {
+            normalized = dtm + DTM_DEFAULT.substring(dtm.length());
+        }
+        log.debug("######### Normalized DTM:\nfrom {} to {}", dtm, normalized);
+        if (!normalized.startsWith(dtm))
+            log.warn("%%%%%%%%%%%%%%%% Normalize DTM value has changed the base! from {} to {}", dtm, normalized);
+        return normalized;
     }
+    
 }
+
+

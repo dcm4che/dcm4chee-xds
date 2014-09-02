@@ -846,15 +846,15 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     public void updateLastUpdateTime(RegistryObject ro) {
         log.debug("########## updateLastUpdateTime!");
         List<Slot> slots = ro.getSlots();
-        log.debug("########## updateLastUpdateTime! slots:"+slots);
+        log.debug("########## updateLastUpdateTime! slots:{}",slots);
         for (Slot slot : slots) {
-            log.debug("########## updateLastUpdateTime! slot Name:"+slot.getName());
+            log.debug("########## updateLastUpdateTime! slot Name:{}",slot.getName());
             if (XDSConstants.SLOT_NAME_LAST_UPDATE_TIME.equals(slot.getName())) {
                 log.debug("########## updateLastUpdateTime! slot setValue");
-                slot.setValue(new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()));
+                slot.setValue(new SimpleDateFormat("yyyyMMddHHmmss.SSS").format(new Date()));
                 log.debug("########## updateLastUpdateTime! persist:");
                 em.merge(slot);
-                log.debug("########## updateLastUpdateTime! persist done:"+slot.getName());
+                log.debug("########## updateLastUpdateTime! persist done:{}",slot.getName());
             }
         }
         log.debug("########## updateLastUpdateTime! done");

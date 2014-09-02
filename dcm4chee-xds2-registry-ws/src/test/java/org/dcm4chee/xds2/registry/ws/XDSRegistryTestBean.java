@@ -56,6 +56,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AssociationType1;
 import org.dcm4chee.xds2.infoset.rim.ClassificationType;
@@ -432,6 +433,8 @@ public class XDSRegistryTestBean implements XDSRegistryTestBeanI {
             assertEquals(msgPrefix+" Number of Slot values in Slot "+name, slotTypeValues.size(), slotValues.size());
             slotTypeValue: for (int j = 0, jLen=slotTypeValues.size() ; j  < jLen ; j++) {
                 value = slotTypeValues.get(j);
+                if (name.endsWith("Time"))
+                    value = XDSUtil.normalizeDTM(value, false);
                 for (int k = 0, kLen = slotValues.size() ; k < kLen ; k++) {
                     if (slotValues.get(k).equals(value)) {
                         continue slotTypeValue;
