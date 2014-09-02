@@ -40,7 +40,7 @@ attributetype ( 1.2.40.0.13.1.15.20.3.6 NAME 'xdsCreateMissingCodes'
   SINGLE-VALUE )
 
 attributetype ( 1.2.40.0.13.1.15.20.3.8 NAME 'xdsCheckAffinityDomain'
-  DESC 'Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)'
+  DESC 'Check affinityDomain in received PatientIDs'
   EQUALITY booleanMatch
   SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 
   SINGLE-VALUE )

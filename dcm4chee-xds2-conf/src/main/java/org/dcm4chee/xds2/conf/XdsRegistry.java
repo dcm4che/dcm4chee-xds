@@ -103,7 +103,7 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
 
     @ConfigField(name = "xdsCheckAffinityDomain", 
             label = "Check Affinity Domain",
-            description = "Check affinityDomain in received PatientIDs (Patient feed and preMetadataCheck)",
+            description = "Check affinityDomain in received PatientIDs",
             def = "true",
             optional = true)
     private boolean checkAffinityDomain;
