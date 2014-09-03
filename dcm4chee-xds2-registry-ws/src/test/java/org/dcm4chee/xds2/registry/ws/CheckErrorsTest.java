@@ -54,6 +54,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ejb.EJB;
+import javax.xml.bind.JAXBElement;
+
 import java.io.File;
 import java.util.List;
 
@@ -120,11 +122,15 @@ public class CheckErrorsTest {
     public void checkErrorUnknownPatId() throws Exception {
         log.info("\n############################# TEST: check unknown PatId ############################");
         SubmitObjectsRequest req = XDSTestUtil.getSubmitObjectsRequest(TEST_METADATA_FILENAME);
-        RegistryObjectType obj = (RegistryObjectType) req.getRegistryObjectList().getIdentifiable().get(0).getValue();
-        XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
-                XDSConstants.UUID_XDSDocumentEntry_patientId, "11111^^^&1.2.3&ISO");
-        XDSTestUtil.setExternalIdentifierValue(obj.getExternalIdentifier(), 
-                XDSConstants.UUID_XDSFolder_patientId, "11111^^^&1.2.3&ISO");
+        List<JAXBElement<? extends IdentifiableType>> objList = req.getRegistryObjectList().getIdentifiable();
+        RegistryObjectType obj = (RegistryObjectType) objList.get(0).getValue();
+        String unknownPID = "11111^^^&1.2.3&ISO";
+        XDSTestUtil.setExternalIdentifierValue(((RegistryObjectType) objList.get(0).getValue()).getExternalIdentifier(), 
+                XDSConstants.UUID_XDSDocumentEntry_patientId, unknownPID);
+        XDSTestUtil.setExternalIdentifierValue(((RegistryObjectType) objList.get(1).getValue()).getExternalIdentifier(), 
+                XDSConstants.UUID_XDSFolder_patientId, unknownPID);
+        XDSTestUtil.setExternalIdentifierValue(((RegistryObjectType) objList.get(2).getValue()).getExternalIdentifier(), 
+                XDSConstants.UUID_XDSSubmissionSet_patientId, unknownPID);
         doRegisterDocumentAndCheckError(req, XDSException.XDS_ERR_UNKNOWN_PATID, "Check Unknown PID");
     }
 
