@@ -178,7 +178,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         return rsp;
     }
 
-    private String getSourceID(ProvideAndRegisterDocumentSetRequestType req) {
+    private String getSourceID(ProvideAndRegisterDocumentSetRequestType req) throws XDSException {
         List<JAXBElement<? extends IdentifiableType>> objs = req.getSubmitObjectsRequest().getRegistryObjectList().getIdentifiable();
         IdentifiableType obj;
         for (int i = 0, len = objs.size() ; i < len ; i++) {
@@ -187,7 +187,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                 return InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSSubmissionSet_sourceId, (RegistryPackageType)obj);
             }
         }
-        return null;
+        throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Missing XDSSubmissionSet.sourceId!", null);
     }
 
     private void commit(XDSDocument[] storedDocs, boolean success) {
@@ -287,8 +287,12 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         String[] mimetypes = cfg.isCheckMimetype() ? cfg.getAcceptedMimeTypes() : null;
         for (int i = 0, len = extrObjs.size() ; i < len ; i++ ) {
             eo = extrObjs.get(i);
+            if (eo.getId() == null || eo.getId().trim().length() == 0)
+                throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Missing XDSDocumentEntry.entryUUID!", null);
             doc = docs.get(eo.getId());
             docUID = InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSDocumentEntry_uniqueId, eo);
+            if (docUID == null)
+                throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Missing XDSDocumentEntry.uniqueId!", null);
             if (mimetypes != null) {
                 boolean unsupportedMimetype = true;
                 for (int j = 0 ; j < mimetypes.length ; j++) {
@@ -318,6 +322,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                 this.commit(storedDocs, false);
                 throw x;
             } catch (Exception x) {
+                log.error("Storage of document failed! docUID:"+docUID, x);
                 this.commit(storedDocs, false);
                 throw new XDSException(XDSException.XDS_ERR_REPOSITORY_ERROR, 
                         "Storage of document "+docUID+" failed! : "+x.getMessage(),x);
@@ -385,6 +390,8 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             log.error("No RegistryPackage id=SubmissionSet found!");
             throw new XDSException( XDSException.XDS_ERR_REPOSITORY_ERROR, 
                     XDSException.XDS_ERR_MISSING_REGISTRY_PACKAGE, null);
+        } else if (submissionSet.getId() == null || submissionSet.getId().trim().length() == 0) {
+            throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Missing XDSSubmissionSet.entryUUID!", null);
         }
         List<ExtrinsicObjectType> extrObjs = InfosetUtil.getExtrinsicObjects(req.getSubmitObjectsRequest());
         checkPatientIDs(req, submissionSet, extrObjs);
