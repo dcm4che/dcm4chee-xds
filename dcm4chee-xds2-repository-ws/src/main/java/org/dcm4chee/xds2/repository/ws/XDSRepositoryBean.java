@@ -98,25 +98,25 @@ import org.slf4j.LoggerFactory;
 @BindingType(value = SOAPBinding.SOAP12HTTP_MTOM_BINDING)
 @Stateless
 @WebService(endpointInterface="org.dcm4chee.xds2.infoset.ws.repository.DocumentRepositoryPortType", 
-        name="b",
-        serviceName="XDSbRepository",
-        portName="DocumentRepository_Port_Soap12",
-        targetNamespace="urn:ihe:iti:xds-b:2007",
-        wsdlLocation = "/META-INF/wsdl/XDS.b_DocumentRepository.wsdl"
-)
+    name="b",
+    serviceName="XDSbRepository",
+    portName="DocumentRepository_Port_Soap12",
+    targetNamespace="urn:ihe:iti:xds-b:2007",
+    wsdlLocation = "/META-INF/wsdl/XDS.b_DocumentRepository.wsdl"
+        )
 
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
 @DeactivateableByConfiguration(extension = XdsRepository.class)
 public class XDSRepositoryBean implements DocumentRepositoryPortType {
-    
+
     private ObjectFactory factory = new ObjectFactory();
     private org.dcm4chee.xds2.infoset.ihe.ObjectFactory iheFactory = new org.dcm4chee.xds2.infoset.ihe.ObjectFactory();
 
     private static Logger log = LoggerFactory.getLogger(XDSRepositoryBean.class);
 
     private XDSStorage storage;
-    
+
     @Resource
     private WebServiceContext wsContext;
     @Resource
@@ -124,7 +124,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
 
     @Inject
     private void setXDSStorage(XDSStorage stg) {
-    	storage = stg;
+        storage = stg;
     }
 
     @Inject
@@ -133,9 +133,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
 
     @PostConstruct
     private void init() {
-    	cfg = device.getDeviceExtension(XdsRepository.class);
+        cfg = device.getDeviceExtension(XdsRepository.class);
     }
-    
+
     @Override
     public RegistryResponseType documentRepositoryProvideAndRegisterDocumentSetB(
             ProvideAndRegisterDocumentSetRequestType req) {
@@ -145,7 +145,9 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         URL registryURL = null;
         String[] submUIDAndpatid = getSubmissionUIDandPatID(req.getSubmitObjectsRequest());
         try {
-        	String srcID = getSourceID(req);
+            if (submUIDAndpatid[1] == null)
+                throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Missing patientID!", null);
+            String srcID = getSourceID(req);
             registryURL = getRegistryWsdlUrl(srcID);
             String groupID = getFsGroupID(submUIDAndpatid[1]);
             logRequest(req);
@@ -246,7 +248,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                 }
             }
             RegistryResponseType regRsp = factory.createRegistryResponseType();
-            
+
             int nrOfDocs = rsp.getDocumentResponse().size();
             if (nrOfDocs == 0) {
                 throw new XDSException(XDSException.XDS_ERR_MISSING_DOCUMENT, 
@@ -256,7 +258,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             } else {
                 regRsp.setStatus(XDSConstants.XDS_B_STATUS_SUCCESS);
             }
-    
+
             if (regErrors.getRegistryError().size() > 0) {
                 regRsp.setRegistryErrorList(regErrors);
             }
@@ -275,7 +277,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         log.info("################ documentRepositoryRetrieveDocumentSet finished!");
         return rsp;
     }
-    
+
     private XDSDocument[] storeDocuments(ProvideAndRegisterDocumentSetRequestType req, List<ExtrinsicObjectType> extrObjs, String groupID) throws XDSException {
         Map<String, Document> docs = InfosetUtil.getDocuments(req);
         Document doc;
@@ -299,7 +301,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                     throw new XDSException(XDSException.XDS_ERR_REPOSITORY_METADATA_ERROR, "Mimetype not supported:"+eo.getMimeType(), null);
             }
             try {
-            	storedDocs[i] = storage.storeDocument(groupID, docUID, doc.getValue(), eo.getMimeType());
+                storedDocs[i] = storage.storeDocument(groupID, docUID, doc.getValue(), eo.getMimeType());
                 if (storedDocs[i].isCommitted()) {
                     log.warn("Document already exists! docUid:"+docUID);
                 } 
@@ -323,7 +325,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
         return storedDocs;
     }
-    
+
     private XDSDocument retrieveDocument(String docUID) throws XDSException {
         try {
             XDSDocument xdsDoc = storage.retrieveDocument(docUID);
@@ -333,7 +335,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                     "Retrieve of document "+docUID+" failed! : "+x.getMessage(),x);
         }
     }
-    
+
     private String getRepositoryUniqueId() {
         return cfg.getRepositoryUID();
     }
@@ -345,8 +347,8 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     private String getFsGroupID(String pid) throws MalformedURLException {
         int pos;
         if ( (pos = pid.indexOf('^')) == -1 || 
-             (pos = pid.indexOf('^', pos+1)) == -1 || 
-             (pos = pid.indexOf('^', pos+1)) == -1) {
+                (pos = pid.indexOf('^', pos+1)) == -1 || 
+                (pos = pid.indexOf('^', pos+1)) == -1) {
             throw new IllegalArgumentException("Missing Authority in patID! pid:"+pid);
         }            
         String authority = pid.substring(++pos);
@@ -358,7 +360,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
     }
 
     private RegistryResponseType dispatchSubmitObjectsRequest(SubmitObjectsRequest submitRequest, URL xdsRegistryURI) throws MalformedURLException,
-            JAXBException, XDSException {
+    JAXBException, XDSException {
 
         DocumentRegistryPortType port = DocumentRegistryPortTypeFactory.getDocumentRegistryPortSoap12(xdsRegistryURI.toString());
         log.info("####################################################");
@@ -375,7 +377,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
         }
         return rsp;
     }
-    
+
     private List<ExtrinsicObjectType> checkRequest(ProvideAndRegisterDocumentSetRequestType req) throws XDSException {
         SubmitObjectsRequest sor = req.getSubmitObjectsRequest();
         RegistryPackageType submissionSet = InfosetUtil.getRegistryPackage(sor, XDSConstants.UUID_XDSSubmissionSet);
@@ -481,7 +483,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                             break whole;
                     }
                 }
-            
+
             }
         }
         return result;
