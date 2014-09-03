@@ -238,7 +238,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
                         String msg = "Document not found! document UID:"+docUid;
                         log.warn(msg);
                         mainErrors.add(XDSUtil.getRegistryError(XDSException.XDS_ERR_SEVERITY_ERROR, 
-                                XDSException.XDS_ERR_REPOSITORY_ERROR, msg, docUid));
+                                XDSException.XDS_ERR_MISSING_DOCUMENT, msg, docUid));
                     }
                 } else {
                     String msg = "DocumentRepositoryUID="+reqRepoUid+" is unknown! This repository unique ID:"+repositoryUID;
