@@ -251,15 +251,17 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
 
             int nrOfDocs = rsp.getDocumentResponse().size();
             if (nrOfDocs == 0) {
-                throw new XDSException(XDSException.XDS_ERR_MISSING_DOCUMENT, 
+                if (mainErrors.size() == 0)
+                    throw new XDSException(XDSException.XDS_ERR_MISSING_DOCUMENT, 
                         "None of the requested documents were found. This repository unique ID " + repositoryUID, null);
+                regRsp.setStatus(XDSConstants.XDS_B_STATUS_FAILURE);
             } else if (nrOfDocs < requestCount) {
                 regRsp.setStatus(XDSConstants.XDS_B_STATUS_PARTIAL_SUCCESS);
             } else {
                 regRsp.setStatus(XDSConstants.XDS_B_STATUS_SUCCESS);
             }
 
-            if (regErrors.getRegistryError().size() > 0) {
+            if (mainErrors.size() > 0) {
                 regRsp.setRegistryErrorList(regErrors);
             }
             rsp.setRegistryResponse(regRsp);
