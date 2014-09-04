@@ -426,7 +426,7 @@ public class XDSRepositoryBean implements DocumentRepositoryPortType {
             }
         }
         RegistryPackageType folder = InfosetUtil.getRegistryPackage(req.getSubmitObjectsRequest(), XDSConstants.UUID_XDSFolder);
-        String folderPatId = InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSFolder_patientId, folder);
+        String folderPatId = folder == null ? null : InfosetUtil.getExternalIdentifierValue(XDSConstants.UUID_XDSFolder_patientId, folder);
         if ( folderPatId != null && !folderPatId.equals(submissionPatId)) {
             String msg = "XDSFolder.patientId ("+folderPatId+")and XDSSubmissionSet.patientId ("+submissionPatId+") doesn't match!";
             log.warn(msg);
