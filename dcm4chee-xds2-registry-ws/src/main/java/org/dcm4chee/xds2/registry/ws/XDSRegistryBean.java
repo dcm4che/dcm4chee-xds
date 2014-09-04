@@ -88,6 +88,7 @@ import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.RemoveObjectsRequest;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
+import org.dcm4chee.xds2.infoset.util.InfosetUtil;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
 import org.dcm4chee.xds2.persistence.QIdentifiable;
@@ -99,6 +100,7 @@ import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSFolder;
+import org.dcm4chee.xds2.persistence.XDSObject;
 import org.dcm4chee.xds2.persistence.XDSSubmissionSet;
 import org.dcm4chee.xds2.registry.ws.query.StoredQuery;
 import org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration;
@@ -539,12 +541,25 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     public void storeRegistryObjects(List<Identifiable> objects) throws XDSException {
         log.debug("########## Store list of objects:{}", objects);
         ArrayList<String> ids = new ArrayList<String>(objects.size());
-        for (Identifiable i : objects) {ids.add(i.getId());}
-        
+        ArrayList<String> uids = new ArrayList<String>(objects.size());
+        String docUID = null;
+        for (Identifiable i : objects) {
+            ids.add(i.getId());
+            if (i instanceof XDSFolder || i instanceof XDSSubmissionSet) {
+                String uid = ((XDSObject) i).getUniqueId();
+                if (!uids.add(uid)) {
+                    throw new XDSException(XDSException.XDS_ERR_REGISTRY_DUPLICATE_UNIQUE_ID_IN_MSG, "Duplicate uniqueId:"+uid, null);
+                }
+                if (i instanceof XDSDocumentEntry)
+                    docUID = uid;
+            }
+        }
+        if (docUID != null)
+            uids.remove(docUID);
         // if the submitted list of objects is empty - throw an XDSException
         if (ids.isEmpty()) throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
                 "The list of submitted objects for registering is empty", null);
-        
+        long t1 = System.currentTimeMillis();
         @SuppressWarnings("unchecked")
         List<String> uuids = (List<String>) em.createQuery("SELECT i.id FROM Identifiable i WHERE i.id IN :ids")
             .setParameter("ids", ids).getResultList();
@@ -552,11 +567,31 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
             throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
                     "Objects with following UUIDs already exist! :"+uuids, null);
         }
+        long t2 = System.currentTimeMillis();
+        checkDuplicateUiqueIDs("XDSFolder", uids);
+        long t3 = System.currentTimeMillis();
+        checkDuplicateUiqueIDs("XDSDocumentEntry", uids);
+        long t4 = System.currentTimeMillis();
+        checkDuplicateUiqueIDs("XDSSubmissionSet", uids);
+        long t5 = System.currentTimeMillis();
+        log.info("##### Check of duplicate UUID and uniqueID takes {}ms! uuid:{}, folder:{}, docs:{}, submission:{}", 
+                new Object[]{t5-t1, t2-t1, t3-t2, t4-t3, t5-t4});
         Identifiable obj;
         for (int i = 0, len = objects.size() ; i < len ; i++) {
             obj = objects.get(i);
             log.debug("##### store {}   class:{}", obj.getId(), obj.getClass().getSimpleName());
             em.persist(obj);
+        }
+    }
+
+    private void checkDuplicateUiqueIDs(String objName, ArrayList<String> uids)
+            throws XDSException {
+        @SuppressWarnings("unchecked")
+        List<String> uniqueIds = (List<String>) em.createQuery("SELECT uniqueId FROM "+objName+" WHERE uniqueId IN :uids")
+            .setParameter("uids", uids).getResultList();
+        if (uniqueIds.size() > 0) {
+            throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
+                    objName+" Objects with following uniqueIDs already exist! :"+uniqueIds, null);
         }
     }
 

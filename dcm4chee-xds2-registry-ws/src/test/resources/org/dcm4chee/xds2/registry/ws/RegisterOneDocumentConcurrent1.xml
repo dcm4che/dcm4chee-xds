@@ -231,7 +231,7 @@
 				identificationScheme="urn:uuid:2e82c1f6-a085-4c72-9da3-8640a32e42ab"
 				objectType="urn:oasis:names:tc:ebxml-regrep:ObjectType:RegistryObject:ExternalIdentifier"
 				registryObject="urn:uuid:aabbccdd-bdda-424e-dddd-df4873be8501"
-				value="1.42.20120430135820.37">
+				value="1.42.20120430135820.0.37">
 				<rim:Name>
 					<rim:LocalizedString value="XDSDocumentEntry.uniqueId" />
 				</rim:Name>
