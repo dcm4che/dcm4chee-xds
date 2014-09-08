@@ -90,7 +90,7 @@ public class XDSSubmissionSet extends RegistryPackage implements XDSObject {
     private static final XDSSearchIndexKey[] THIS_INDEXES = { XDSSearchIndexKey.SUBMISSION_SET_AUTHOR, XDSSearchIndexKey.SUBMISSION_SET_SOURCE_ID};
     
     @Basic(optional = false)
-    @Column(name = "unique_id")
+    @Column(name = "unique_id", unique=true)
     @Index(name="xds_uniqueId_idx")
     private String uniqueId;
 

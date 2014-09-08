@@ -107,8 +107,8 @@ public class XDSDocumentEntry extends ExtrinsicObject implements XDSObject {
     }
     
     @Basic(optional = false)
-    @Column(name = "unique_id")
-    @Index(name="xds_uniqueId_idx")
+    @Column(name = "unique_id_doc", unique=false) 
+    @Index(name="xds_uniqueIdDoc_idx")
     private String uniqueId;
 
     @Basic(optional = false)

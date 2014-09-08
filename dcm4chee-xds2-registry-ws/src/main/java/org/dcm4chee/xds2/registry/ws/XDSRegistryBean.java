@@ -59,6 +59,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 import javax.xml.bind.JAXBElement;
 import javax.xml.ws.WebServiceContext;
@@ -568,30 +569,22 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                     "Objects with following UUIDs already exist! :"+uuids, null);
         }
         long t2 = System.currentTimeMillis();
-        checkDuplicateUiqueIDs("XDSFolder", uids);
-        long t3 = System.currentTimeMillis();
-        checkDuplicateUiqueIDs("XDSDocumentEntry", uids);
-        long t4 = System.currentTimeMillis();
-        checkDuplicateUiqueIDs("XDSSubmissionSet", uids);
-        long t5 = System.currentTimeMillis();
-        log.info("##### Check of duplicate UUID and uniqueID takes {}ms! uuid:{}, folder:{}, docs:{}, submission:{}", 
-                new Object[]{t5-t1, t2-t1, t3-t2, t4-t3, t5-t4});
-        Identifiable obj;
-        for (int i = 0, len = objects.size() ; i < len ; i++) {
-            obj = objects.get(i);
-            log.debug("##### store {}   class:{}", obj.getId(), obj.getClass().getSimpleName());
-            em.persist(obj);
-        }
-    }
-
-    private void checkDuplicateUiqueIDs(String objName, ArrayList<String> uids)
-            throws XDSException {
-        @SuppressWarnings("unchecked")
-        List<String> uniqueIds = (List<String>) em.createQuery("SELECT uniqueId FROM "+objName+" WHERE uniqueId IN :uids")
-            .setParameter("uids", uids).getResultList();
-        if (uniqueIds.size() > 0) {
-            throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
-                    objName+" Objects with following uniqueIDs already exist! :"+uniqueIds, null);
+        log.info("##### Check of duplicate UUID takes {}ms!", t2-t1);
+        Identifiable obj = null;
+        try {
+            for (int i = 0, len = objects.size() ; i < len ; i++) {
+                obj = objects.get(i);
+                log.debug("##### store {}   class:{}", obj.getId(), obj.getClass().getSimpleName());
+                em.persist(obj);
+            }
+        } catch (PersistenceException x) {
+            if (x.getMessage() != null && x.getMessage().toLowerCase().indexOf("unique_id") != -1) {
+                throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
+                        "Object with following uniqueID already exist! :"+((XDSObject) obj).getUniqueId(), null);
+            } else {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                    "Failed to persist object! :"+obj, x);
+            }
         }
     }
 
