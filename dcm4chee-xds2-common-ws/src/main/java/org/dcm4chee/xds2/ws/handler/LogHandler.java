@@ -41,6 +41,7 @@ package org.dcm4chee.xds2.ws.handler;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
@@ -235,7 +236,11 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
 
     private File getLogFile(String host, String action, String msgID, String extension, String logDir) {
         Calendar cal = Calendar.getInstance();
-        msgID = msgID == null ? "xxxx" : Integer.toHexString(msgID.hashCode());
+        try {
+            msgID = java.net.URLEncoder.encode(msgID, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            msgID = "xxxx";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append(logDir).append(sepChar).append(cal.get(Calendar.YEAR))
         .append(sepChar).append(cal.get(Calendar.MONTH)+1).append(sepChar)
