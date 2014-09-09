@@ -49,6 +49,7 @@ import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.DefaultConfigurator;
+import org.dcm4chee.xds2.service.ReconfigureEvent;
 import org.dcm4chee.xds2.service.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
@@ -107,6 +109,9 @@ public class XdsServiceImpl implements XdsService {
   
     @Inject @Named("deviceNameProperty")
     private String deviceNameProperty;
+
+    @Inject
+    Event<ReconfigureEvent> reconfigureEvent;
 
     @Inject
     @Xds
@@ -220,6 +225,7 @@ public class XdsServiceImpl implements XdsService {
     	if (hl7serviceAvail) {
     		device.rebindConnections();
     	}
+        reconfigureEvent.fire(new ReconfigureEvent());
     }
 
     @Override

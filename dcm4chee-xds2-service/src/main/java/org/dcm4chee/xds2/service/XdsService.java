@@ -44,5 +44,9 @@ import org.dcm4che3.net.DeviceServiceInterface;
  *
  */
 public interface XdsService extends DeviceServiceInterface {
+    /**
+     * Should reload the configuration and fire a ReconfigureEvent
+     * @throws Exception
+     */
     void reload() throws Exception;
 }
