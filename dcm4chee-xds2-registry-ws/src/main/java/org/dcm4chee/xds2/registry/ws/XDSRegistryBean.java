@@ -541,35 +541,18 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
 
     public void storeRegistryObjects(List<Identifiable> objects) throws XDSException {
         log.debug("########## Store list of objects:{}", objects);
-        ArrayList<String> ids = new ArrayList<String>(objects.size());
+        // if the submitted list of objects is empty - throw an XDSException
+        if (objects.isEmpty()) throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                "The list of submitted objects for registering is empty", null);
         ArrayList<String> uids = new ArrayList<String>(objects.size());
-        String docUID = null;
         for (Identifiable i : objects) {
-            ids.add(i.getId());
-            if (i instanceof XDSFolder || i instanceof XDSSubmissionSet) {
+            if (i instanceof XDSObject) {
                 String uid = ((XDSObject) i).getUniqueId();
                 if (!uids.add(uid)) {
                     throw new XDSException(XDSException.XDS_ERR_REGISTRY_DUPLICATE_UNIQUE_ID_IN_MSG, "Duplicate uniqueId:"+uid, null);
                 }
-                if (i instanceof XDSDocumentEntry)
-                    docUID = uid;
             }
         }
-        if (docUID != null)
-            uids.remove(docUID);
-        // if the submitted list of objects is empty - throw an XDSException
-        if (ids.isEmpty()) throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                "The list of submitted objects for registering is empty", null);
-        long t1 = System.currentTimeMillis();
-        @SuppressWarnings("unchecked")
-        List<String> uuids = (List<String>) em.createQuery("SELECT i.id FROM Identifiable i WHERE i.id IN :ids")
-            .setParameter("ids", ids).getResultList();
-        if (uuids.size() > 0) {
-            throw new XDSException(XDSException.XDS_ERR_REGISTRY_METADATA_ERROR, 
-                    "Objects with following UUIDs already exist! :"+uuids, null);
-        }
-        long t2 = System.currentTimeMillis();
-        log.info("##### Check of duplicate UUID takes {}ms!", t2-t1);
         Identifiable obj = null;
         try {
             for (int i = 0, len = objects.size() ; i < len ; i++) {
