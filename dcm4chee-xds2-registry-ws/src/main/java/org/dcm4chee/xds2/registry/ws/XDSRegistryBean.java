@@ -155,6 +155,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     }
     
     @Override
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
         log.info("XDS.b - documentRegistryRegisterDocumentSetB called");
@@ -559,6 +560,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                 obj = objects.get(i);
                 log.debug("##### store {}   class:{}", obj.getId(), obj.getClass().getSimpleName());
                 em.persist(obj);
+                em.flush();
             }
         } catch (Exception x) {
             if ( (obj instanceof XDSFolder) || (obj instanceof XDSSubmissionSet)) {
