@@ -39,6 +39,7 @@
 package org.dcm4chee.xds2.registry.ws;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -56,12 +57,15 @@ import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
+import org.dcm4chee.xds2.common.exception.XDSException;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
 import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
+import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
@@ -105,10 +109,18 @@ public class XDSRegistryBeanWS implements DocumentRegistryPortType {
             output="urn:ihe:iti:2007:RegisterDocumentSet-bResponse")
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
-
+        RegistryResponseType rsp;
         // call ejb
-        RegistryResponseType rsp = xdsEjb.documentRegistryRegisterDocumentSetB(req);
-
+        try {
+            rsp = xdsEjb.documentRegistryRegisterDocumentSetB(req);
+        } catch (Exception x) {
+            String erruuid = "xdserror:"+UUID.randomUUID().toString();
+            log.error("Unexpected error in XDS service (register document), error id = "+erruuid, x);
+            XDSException e = new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                    "Unexpected error in XDS service, error id = "+erruuid, null);
+            rsp = new ObjectFactory().createRegistryResponseType();
+            XDSUtil.addError(rsp, e);
+        }
         return rsp;
     }
     
