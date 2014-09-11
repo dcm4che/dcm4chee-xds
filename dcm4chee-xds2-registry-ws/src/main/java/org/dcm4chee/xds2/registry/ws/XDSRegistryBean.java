@@ -560,14 +560,19 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                 log.debug("##### store {}   class:{}", obj.getId(), obj.getClass().getSimpleName());
                 em.persist(obj);
             }
-        } catch (PersistenceException x) {
-            if (x.getMessage() != null && x.getMessage().toLowerCase().indexOf("unique_id") != -1) {
-                throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
-                        "Object with following uniqueID already exist! :"+((XDSObject) obj).getUniqueId(), null);
-            } else {
-                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
-                    "Failed to persist object! :"+obj, x);
+        } catch (Exception x) {
+            if ( (obj instanceof XDSFolder) || (obj instanceof XDSSubmissionSet)) {
+                Throwable t = x;
+                do {
+                    if ("ConstraintViolationException".equals(t.getClass().getSimpleName())) {
+                        throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
+                            "UniqueId '"+((XDSObject) obj).getUniqueId()+"' of "+obj.getClass().getSimpleName()+" already exist!", x);
+                    }
+                    t = t.getCause();
+                } while (t != null);
             }
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                "Failed to persist object! :"+obj, x);
         }
     }
 
