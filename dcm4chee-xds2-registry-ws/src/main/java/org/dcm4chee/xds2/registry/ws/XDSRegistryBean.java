@@ -155,7 +155,6 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
     }
     
     @Override
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public RegistryResponseType documentRegistryRegisterDocumentSetB(
             SubmitObjectsRequest req) {
         log.info("XDS.b - documentRegistryRegisterDocumentSetB called");
