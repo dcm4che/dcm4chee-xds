@@ -61,7 +61,7 @@
 				</property>
 			</activation>
 			<properties>
-				<jdbc-prefs.version>1.1.0-SNAPSHOT</jdbc-prefs.version>
+				<jdbc-prefs.version>1.1.0</jdbc-prefs.version>
 				<jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>
 			</properties>
 		</profile>
