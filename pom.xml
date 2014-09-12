@@ -34,7 +34,7 @@
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dcm4che.version>3.3.4-SNAPSHOT</dcm4che.version>
+		<dcm4che.version>3.3.4</dcm4che.version>
 		<storage.version>1.0.0-SNAPSHOT</storage.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
