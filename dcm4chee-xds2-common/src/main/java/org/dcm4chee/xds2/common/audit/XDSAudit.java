@@ -494,7 +494,7 @@ public class XDSAudit {
         if (logger != null && logger.isInstalled()) {
             try {
                 Calendar timeStamp = logger.timeStamp();
-                AuditMessage msg = XDSAudit.createPatientFeed(patID, EventActionCode.Create, msh10, 
+                AuditMessage msg = XDSAudit.createPatientFeed(patID, eventActionCode, msh10, 
                         srcUserID, null, remoteHost, destUserID, 
                         timeStamp, success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
                 sendAuditMessage(timeStamp, msg);
