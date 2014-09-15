@@ -114,7 +114,7 @@ public class XdsHL7mergeService implements HL7Service {
             }
         } finally {
     		XDSAudit.logPatientFeed(subsumedPID, EventActionCode.Delete, msh10, srcUserID, remoteHost, destUserID, success);
-    		XDSAudit.logPatientFeed(survivingPID, EventActionCode.Create, msh10, srcUserID, remoteHost, destUserID, success);
+    		XDSAudit.logPatientFeed(survivingPID, EventActionCode.Update, msh10, srcUserID, remoteHost, destUserID, success);
         }
     }
 
