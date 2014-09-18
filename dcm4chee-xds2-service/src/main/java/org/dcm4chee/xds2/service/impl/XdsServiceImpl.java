@@ -37,6 +37,7 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.service.impl;
 
+import org.dcm4che3.audit.AuditMessages.EventTypeCode;
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
@@ -48,6 +49,7 @@ import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.dcm4chee.xds2.conf.DefaultConfigurator;
 import org.dcm4chee.xds2.service.ReconfigureEvent;
 import org.dcm4chee.xds2.service.XdsService;
@@ -64,7 +66,10 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
+
 import java.io.File;
+import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -74,7 +79,8 @@ import java.util.concurrent.Executors;
  */
 @Singleton
 @Startup
-@Typed(XdsService.class)
+//@Typed(XdsService.class)
+@Xds
 public class XdsServiceImpl implements XdsService {
 
     private static final Logger log = LoggerFactory.getLogger(XdsServiceImpl.class);
@@ -109,6 +115,9 @@ public class XdsServiceImpl implements XdsService {
   
     @Inject @Named("deviceNameProperty")
     private String deviceNameProperty;
+
+    @Inject @Named("usedDeviceExtension")
+    private Instance<String[]> usedDeviceExtension;
 
     @Inject
     Event<ReconfigureEvent> reconfigureEvent;
@@ -155,7 +164,7 @@ public class XdsServiceImpl implements XdsService {
 
     @PostConstruct
     public void init() {
-        log.info("Initializing XDS service");
+        log.info("Initializing XDS service for {}", xdsServiceType);
         addJBossDirURLSystemProperties();
         try {
             device = findDevice();
@@ -205,6 +214,7 @@ public class XdsServiceImpl implements XdsService {
             device.bindConnections();
             log.info("HL7 XDS services started");
     	}
+        logApplicationActivity(true);
     }
 
     @Override
@@ -216,6 +226,7 @@ public class XdsServiceImpl implements XdsService {
             device.unbindConnections();
             log.info("HL7 XDS services stopped");
     	}
+        logApplicationActivity(false);
     }
 
     @Override
@@ -226,6 +237,36 @@ public class XdsServiceImpl implements XdsService {
     		device.rebindConnections();
     	}
         reconfigureEvent.fire(new ReconfigureEvent());
+    }
+
+    private void logApplicationActivity(boolean started) {
+        EventTypeCode event = started ? EventTypeCode.ApplicationStart : EventTypeCode.ApplicationStop;
+        if (usedDeviceExtension.isUnsatisfied()) {
+            XDSAudit.logApplicationActivity(device.getDeviceName() ,event, true);
+        } else {
+            for (String className : usedDeviceExtension.get()) {
+                try {
+                    Class<? extends DeviceExtension> extClass = (Class<? extends DeviceExtension>) Class.forName(className);
+                    DeviceExtension ext = device.getDeviceExtension(extClass);
+                    if (ext instanceof Deactivateable) {
+                        if (! ((Deactivateable) ext).isDeactivated() ) {
+                            XDSAudit.logApplicationActivity(getFullApplicationName(ext) ,event, true);
+                        }
+                    }
+                } catch (ClassNotFoundException e) {
+                    log.error("DeviceExtension class not found! className:"+className, e);;
+                }
+            }
+        }
+    }
+    private String getFullApplicationName(DeviceExtension ext) {
+        try {
+            Method m = ext.getClass().getMethod("getApplicationName", (Class<?>[])null);
+            String appName = (String) m.invoke(ext, (Object[])null);
+            return appName + "@" + device.getDeviceName();
+        } catch (Exception e) {
+            return device.getDeviceName();
+        }
     }
 
     @Override

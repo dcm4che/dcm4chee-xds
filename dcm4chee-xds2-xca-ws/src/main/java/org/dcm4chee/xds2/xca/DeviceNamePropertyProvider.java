@@ -38,10 +38,12 @@
 
 package org.dcm4chee.xds2.xca;
 
-import org.dcm4chee.xds2.common.cdi.Xds;
-
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
+
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 
 public class DeviceNamePropertyProvider {
 
@@ -54,5 +56,10 @@ public class DeviceNamePropertyProvider {
     @Named("xdsServiceType")
     public String getXdsServiceType() {
         return "xca";
+    }
+
+    @Produces @Named("usedDeviceExtension")
+    public String[] getXCADeviceExtensionClassNames() {
+        return new String[]{XCAInitiatingGWCfg.class.getName(), XCARespondingGWCfg.class.getName()};
     }
 }

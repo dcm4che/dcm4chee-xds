@@ -55,6 +55,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.net.DeviceExtension;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.service.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public class XdsDeviceCtrl {
 
     @Inject
+    @Xds
     private XdsService service;
     
     public static final Logger log = LoggerFactory.getLogger(XdsDeviceCtrl.class);

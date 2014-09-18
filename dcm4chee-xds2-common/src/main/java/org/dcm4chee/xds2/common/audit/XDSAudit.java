@@ -176,11 +176,11 @@ public class XDSAudit {
         XDSAudit.logger = logger;
     }
     
-    public static void logApplicationActivity(EventTypeCode eventType, boolean success) {
+    public static void logApplicationActivity(String appName, EventTypeCode eventType, boolean success) {
         if (logger != null && logger.isInstalled()) {
             try {
                 Calendar timeStamp = logger.timeStamp();
-                AuditMessage msg = createApplicationActivity(eventType, timeStamp,
+                AuditMessage msg = createApplicationActivity(appName, eventType, timeStamp,
                         success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MajorFailure);
                 sendAuditMessage(timeStamp, msg);
             } catch (Exception e) {
@@ -687,7 +687,7 @@ public class XDSAudit {
                 pod);
     }
 
-    private static AuditMessage createApplicationActivity(
+    private static AuditMessage createApplicationActivity(String appName,
             EventTypeCode eventType, Calendar timeStamp, String outcomeIndicator) {
         AuditMessage msg = new AuditMessage();
         msg.setEventIdentification(createEventIdentification(
@@ -700,7 +700,9 @@ public class XDSAudit {
         msg.getAuditSourceIdentification().add(
                 logger.createAuditSourceIdentification());
         msg.getActiveParticipant().add(
-                logger.createActiveParticipant(true, RoleIDCode.Application));
+                logger.createActiveParticipant(false, AuditLogger.processID(), null, 
+                        appName, AuditLogger.localHost().getHostName(), RoleIDCode.Application));
+        
         return msg;
     }
 

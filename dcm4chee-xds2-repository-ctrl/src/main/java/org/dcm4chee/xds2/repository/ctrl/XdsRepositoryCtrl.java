@@ -56,6 +56,7 @@ import javax.ws.rs.core.Response.Status;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.storage.service.StorageService;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.service.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public class XdsRepositoryCtrl {
     private HttpServletRequest request;
     
     @Inject
+    @Xds
     private XdsService service;
 
     @Inject

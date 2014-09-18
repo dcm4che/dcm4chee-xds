@@ -64,6 +64,7 @@ import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
@@ -85,6 +86,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     private static Logger log = LoggerFactory.getLogger(LogHandler.class);
     
     @Inject
+    @Xds
     private XdsService service;
     
     @Override

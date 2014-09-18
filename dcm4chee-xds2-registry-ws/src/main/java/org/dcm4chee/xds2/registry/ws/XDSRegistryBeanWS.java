@@ -38,35 +38,22 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
-import java.util.List;
-
-import javax.annotation.Resource;
 import javax.ejb.EJB;
-import javax.ejb.Local;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
 import javax.jws.WebMethod;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
-import javax.xml.bind.JAXBElement;
 import javax.xml.ws.Action;
 import javax.xml.ws.BindingType;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.soap.Addressing;
 
-import org.dcm4chee.xds2.common.XDSConstants;
-import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
-import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.ExternalIdentifierType;
-import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
-import org.dcm4chee.xds2.infoset.rim.RegistryPackageType;
 import org.dcm4chee.xds2.infoset.rim.RegistryResponseType;
 import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.infoset.ws.registry.DocumentRegistryPortType;
-import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
@@ -88,13 +75,9 @@ import org.slf4j.LoggerFactory;
 @HandlerChain(file="handlers.xml")
 public class XDSRegistryBeanWS implements DocumentRegistryPortType {
 
-    private static final String UNKNOWN = "UNKNOWN";
-
     @EJB
     XDSRegistryBeanLocal xdsEjb;
 
-    private static Logger log = LoggerFactory.getLogger(XDSRegistryBeanWS.class);
-    
     public XDSRegistryBeanWS() {
     }
     

@@ -43,6 +43,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.Typed;
 
 import org.dcm4che3.net.Device;
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.service.XdsService;
 
@@ -51,7 +52,8 @@ import org.dcm4chee.xds2.service.XdsService;
  *
  */
 @ApplicationScoped
-@Typed(XdsService.class)
+//@Typed(XdsService.class)
+@Xds
 public class XdsTestServiceImpl implements XdsService {
 
     

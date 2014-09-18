@@ -51,6 +51,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.common.code.AffinityDomainCodes;
 import org.dcm4chee.xds2.common.code.Code;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
@@ -74,6 +75,7 @@ public class XdsRegistryCtrl extends XdsDeviceCtrl {
     private HttpServletRequest request;
     
     @Inject
+    @Xds
     private XdsService service;
         
     @GET

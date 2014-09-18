@@ -37,15 +37,16 @@
 
 package org.dcm4chee.xds2.common.deactivatable;
 
-import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.inject.Inject;
 import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
+
+import org.dcm4che3.net.DeviceExtension;
+import org.dcm4che3.net.DeviceServiceInterface;
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -60,7 +61,8 @@ public class ConfigurationBasedDeactivatingInterceptor {
     private static final Logger log = LoggerFactory.getLogger(ConfigurationBasedDeactivatingInterceptor.class);
 
     @Inject
-    Device device;
+    @Xds
+    private DeviceServiceInterface service;
 
     @AroundInvoke
     public Object processEjbCall(InvocationContext ctx) throws Exception {
@@ -71,16 +73,19 @@ public class ConfigurationBasedDeactivatingInterceptor {
 
         try {
 
-            if (((Deactivateable) device.getDeviceExtension(extension)).isDeactivated())
+            if (((Deactivateable) service.getDevice().getDeviceExtension(extension)).isDeactivated())
                 throw new Exception();
 
         } catch (NullPointerException e) {
-            throw new XDSServiceDeactivatedException(String.format("The specified extension %s was not found for device %s. Service is deactivated.", extension.getSimpleName(), device.getDeviceName()));
+            throw new XDSServiceDeactivatedException(String.format("The specified extension %s was not found for device %s. Service is deactivated.", extension.getSimpleName(), service.getDevice().getDeviceName()));
         } catch (ClassCastException e) {
             throw new XDSServiceDeactivatedException(String.format("The specified extension %s must implement Deactivateable interface to support deactivation", extension.getSimpleName()));
         } catch (Exception e) {
-            throw new XDSServiceDeactivatedException(String.format("Attempted to use the service for deactivated extension %s for device %s", extension.getSimpleName(), device.getDeviceName()));
+            throw new XDSServiceDeactivatedException(String.format("Attempted to use the service for deactivated extension %s for device %s", extension.getSimpleName(), service.getDevice().getDeviceName()));
         }
+
+        if (!service.isRunning())
+            throw new XDSServiceDeactivatedException("Attempted to use a stopped service!");
 
         return ctx.proceed();
     }
