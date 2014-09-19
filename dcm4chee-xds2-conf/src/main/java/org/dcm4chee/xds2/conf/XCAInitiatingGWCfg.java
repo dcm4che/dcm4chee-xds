@@ -161,7 +161,8 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
 
     public String getRespondingGWRetrieveURL(String homeCommunityID) {
         try {
-            return respondingGWByHomeCommunityIdMap.get(homeCommunityID).getRespondingGWdevice()
+            GatewayReference ref = respondingGWByHomeCommunityIdMap.get(homeCommunityID);
+            return ref == null ? null : ref.getRespondingGWdevice()
                     .getDeviceExtensionNotNull(XCARespondingGWCfg.class).getRetrieveUrl();
         } catch (Exception e) {
             try {
