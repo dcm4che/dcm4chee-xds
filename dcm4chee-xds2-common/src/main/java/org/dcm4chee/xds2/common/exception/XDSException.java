@@ -75,7 +75,7 @@ public class XDSException extends Exception {
     public static final String XDS_ERR_STORED_QUERY_PARAM_NUMBER = "XDSStoredQueryParamNumber";
     public static final String XDS_ERR_REGISTRY_DEPRECATED_DOC_ERROR = "XDSRegistryDeprecatedDocumentError";
     public static final String XDS_ERR_UNKNOWN_REPOSITORY_ID = "XDSUnknownRepositoryId";
-    public static final String XDS_ERR_QRY_DOCUMENT_UNIQUE_IDE_ID_ERROR = "XDSDocumentUniqueIdError";
+    public static final String XDS_ERR_DOCUMENT_UNIQUE_ID_ERROR = "XDSDocumentUniqueIdError";
     public static final String XDS_ERR_RESULT_NOT_SINGLE_PATIENT = "XDSResultNotSinglePatient";
     public static final String XDS_ERR_PARTIAL_FOLDER_CONTENT_NOT_PROCESSED = "PartialFolderContentNotProcessed";
     public static final String XDS_ERR_PARTIAL_REPLACE_CONTENT_NOT_PROCESSED = "PartialReplaceContentNotProcessed";
