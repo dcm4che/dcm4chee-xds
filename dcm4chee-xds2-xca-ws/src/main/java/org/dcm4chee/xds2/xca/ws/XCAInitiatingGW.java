@@ -294,8 +294,8 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         AdhocQueryResponse rsp;
         URL registryURL = null;
         try {
-        	registryURL = new URL(url);
-        	if (patSlot != null) {
+            registryURL = new URL(url);
+            if (patSlot != null) {
                 String domain = cfg.getAssigningAuthority(communityID);
                 if (!patSlot.updateSlotValuesForDomain(domain)) {
                     String msg = "No patientID found for HomeCommunityID "+communityID+" (Assigning Authority:"+domain+
@@ -566,9 +566,11 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                 FileInputStream fis = null;
                 try {
                     PatSlot patSlot = null;
+                    String reqPID = null;
                     for (SlotType1 slot : req.getAdhocQuery().getSlot()) {
                         if (slot.getName().endsWith("PatientId")) {
                             patSlot = new PatSlot(slot);
+                            reqPID = slot.getValueList().getValue().get(0);
                         }
                         break;
                     }
@@ -576,7 +578,12 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                         fis = new FileInputStream(f);
                         p.load(fis);
                         for (Entry<Object, Object> e : p.entrySet()) {
-                            patSlot.addPatID(e.getKey().toString(), e.getValue().toString());
+                            String pid = e.getValue().toString();
+                            if (pid.charAt(0) != '\'')
+                                pid = "'" + pid + "'";
+                            if (pid.charAt(1) == '*')
+                                pid = "'" + reqPID + pid.substring(2);
+                            patSlot.addPatID(e.getKey().toString(), pid);
                         }
                     }
                     return patSlot;
