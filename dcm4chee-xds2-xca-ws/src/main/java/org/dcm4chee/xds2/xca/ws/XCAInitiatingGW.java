@@ -206,9 +206,15 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             	// if homeCommunityId is specified but not found among configured responding gateways, throw exception 
                 if (home != null && !cfg.getHomeCommunityIDs().contains(home))
                     throw new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, "Unknown communityID "+home, null);
+                SlotType1 patSlotType = null;
+                for (SlotType1 slot : req.getAdhocQuery().getSlot()) {
+                    if (slot.getName().endsWith("atientId")) {
+                        patSlotType = slot;
+                    }
+                    break;
+                }
                 
-                
-                PatSlot patSlot = pixQuery(req, cfg.getAssigningAuthorities());
+                PatSlot patSlot = patSlotType == null ? null : pixQuery(req, patSlotType, cfg.getAssigningAuthorities());
                 for (String communityID : home == null ? cfg.getHomeCommunityIDs() : Arrays.asList(home)) {
                     AdhocQueryResponse xcaRsp = sendXCAQuery(communityID, req, patSlot, cfg);
                     if (rsp == null) {
@@ -542,49 +548,35 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         return addHomeCommunityID(rsp);
     }
     
-    private PatSlot pixQuery(AdhocQueryRequest req, String... domains) throws XDSException {
+    private PatSlot pixQuery(AdhocQueryRequest req, SlotType1 patSlotType, String... domains) throws XDSException {
+        PatSlot patSlot = new PatSlot(patSlotType);
         if (domains != null && domains.length > 0 && getPixClient() != null) {
             AdhocQueryType qry = req.getAdhocQuery();
-            for (SlotType1 slot : qry.getSlot()) {
-                if (slot.getName().endsWith("PatientId")) {
-                    PatSlot patSlot = new PatSlot(slot);
-                    try {
-                        for (String pid : slot.getValueList().getValue()) {
-                            patSlot.addPatIDs(pixClient.queryXadPIDs(pid.substring(1, pid.length()-1), domains));
-                        }
-                    } catch (Exception x) {
-                        log.error("PIX QUERY FAILED!", x);
-                        throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, "PIX Query failed!", x);
-                    }
-                    return patSlot;
+            try {
+                for (String pid : patSlotType.getValueList().getValue()) {
+                    patSlot.addPatIDs(pixClient.queryXadPIDs(pid.substring(1, pid.length()-1), domains));
                 }
+            } catch (Exception x) {
+                log.error("PIX QUERY FAILED!", x);
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, "PIX Query failed!", x);
             }
+            return patSlot;
         } else {
             File f = new File(System.getProperty("jboss.server.config.dir","/tmp"),"pix_patids.properties");
             if (f.exists()) {
+                String reqPID = patSlotType.getValueList().getValue().get(0);
                 Properties p = new Properties();
                 FileInputStream fis = null;
                 try {
-                    PatSlot patSlot = null;
-                    String reqPID = null;
-                    for (SlotType1 slot : req.getAdhocQuery().getSlot()) {
-                        if (slot.getName().endsWith("PatientId")) {
-                            patSlot = new PatSlot(slot);
-                            reqPID = slot.getValueList().getValue().get(0);
-                        }
-                        break;
-                    }
-                    if (patSlot != null) {
-                        fis = new FileInputStream(f);
-                        p.load(fis);
-                        for (Entry<Object, Object> e : p.entrySet()) {
-                            String pid = e.getValue().toString();
-                            if (pid.charAt(0) != '\'')
-                                pid = "'" + pid + "'";
-                            if (pid.charAt(1) == '*')
-                                pid = "'" + reqPID + pid.substring(2);
-                            patSlot.addPatID(e.getKey().toString(), pid);
-                        }
+                    fis = new FileInputStream(f);
+                    p.load(fis);
+                    for (Entry<Object, Object> e : p.entrySet()) {
+                        String pid = e.getValue().toString();
+                        if (pid.charAt(0) != '\'')
+                            pid = "'" + pid + "'";
+                        if (pid.charAt(1) == '*')
+                            pid = "'" + reqPID + pid.substring(2);
+                        patSlot.addPatID(e.getKey().toString(), pid);
                     }
                     return patSlot;
                 } catch (Exception x) {
@@ -603,7 +595,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     }
 
     public PixQueryClient getPixClient() {
-        if (pixClient == null) {
+        if (pixClient == null && cfg.getLocalPIXConsumerApplication() != null) {
             log.info("########### set PIXClient!");
             try {
                 HL7Application pix = getHL7Application(cfg.getLocalPIXConsumerApplication());
