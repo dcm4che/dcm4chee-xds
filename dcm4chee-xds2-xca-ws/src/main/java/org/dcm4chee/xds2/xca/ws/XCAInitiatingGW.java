@@ -501,7 +501,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             String url = cfg.getRespondingGWRetrieveURL(homeCommunityID);
             if (url == null) {
                 log.warn("Unknown Responding Gateway for homeCommunityID:"+homeCommunityID);
-                return null;
+                throw new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, "Unknown communityID "+homeCommunityID, null);
             }
             gatewayURL = new URL(url);
             RespondingGatewayPortType port = RespondingGatewayPortTypeFactory.getRespondingGatewayPortSoap12(url);
@@ -565,6 +565,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
             File f = new File(System.getProperty("jboss.server.config.dir","/tmp"),"pix_patids.properties");
             if (f.exists()) {
                 String reqPID = patSlotType.getValueList().getValue().get(0);
+                reqPID = reqPID.substring(1, reqPID.indexOf('^'));
                 Properties p = new Properties();
                 FileInputStream fis = null;
                 try {
