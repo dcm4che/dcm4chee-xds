@@ -134,24 +134,23 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
     }
 
     private void logMessage(SOAPMessageContext ctx) {
-    	String pathInfo = (String) ctx.get(MessageContext.PATH_INFO);
+    	String serviceName = ctx.get(MessageContext.WSDL_SERVICE).toString();
         String action = getWsaHeader(ctx, "Action", "noAction");
         String msgID = getWsaHeader(ctx, "MessageID", null);
         String logDir = null;
         try {
         	Device d = service.getDevice();
-            if (!pathInfo.endsWith("/")) pathInfo+="/";
-            if (pathInfo.endsWith("registry/")) {
+            if (serviceName.endsWith("XDSbRegistry")) {
                 logDir = d.getDeviceExtension(XdsRegistry.class).getSoapLogDir();
-            } else if (pathInfo.endsWith("repository/")) {
+            } else if (serviceName.endsWith("XDSbRepository")) {
                 logDir = d.getDeviceExtension(XdsRepository.class).getSoapLogDir();
-            } else if (pathInfo.endsWith("xca/RespondingGW/")) {
+            } else if (serviceName.endsWith("RespondingGateway")) {
                 logDir = d.getDeviceExtension(XCARespondingGWCfg.class).getSoapLogDir();
-            } else if (pathInfo.endsWith("xca/InitiatingGW/")) {
+            } else if (serviceName.endsWith("InitiatingGateway")) {
                 logDir = d.getDeviceExtension(XCAInitiatingGWCfg.class).getSoapLogDir();
-            } else if (pathInfo.endsWith("xcai/RespondingGW/")) {
+            } else if (serviceName.endsWith("XCAIRespondingGateway")) {
                 logDir = d.getDeviceExtension(XCAiRespondingGWCfg.class).getSoapLogDir();
-            } else if (pathInfo.endsWith("xcai/InitiatingGW/")) {
+            } else if (serviceName.endsWith("XCAI_InitiatingGateway")) {
                 logDir = d.getDeviceExtension(XCAiInitiatingGWCfg.class).getSoapLogDir();
             } else {
             	logDir = "/var/log/xdslog";
