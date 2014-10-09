@@ -567,7 +567,7 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
                 do {
                     if ("ConstraintViolationException".equals(t.getClass().getSimpleName())) {
                         throw new XDSException(XDSException.XDS_ERR_DUPLICATE_UNIQUE_ID_IN_REGISTRY, 
-                            "UniqueId '"+((XDSObject) obj).getUniqueId()+"' of "+obj.getClass().getSimpleName()+" already exist!", x);
+                            "UniqueId '"+((XDSObject) obj).getUniqueId()+"' of "+obj.getClass().getSimpleName()+" already exist! (or entryUUID:"+obj.getId()+")", x);
                     }
                     t = t.getCause();
                 } while (t != null);
