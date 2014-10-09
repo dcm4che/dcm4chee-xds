@@ -153,8 +153,8 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             } else if (serviceName.endsWith("XCAI_InitiatingGateway")) {
                 logDir = d.getDeviceExtension(XCAiInitiatingGWCfg.class).getSoapLogDir();
             } else {
-            	logDir = "/var/log/xdslog";
-        	}
+                log.warn("Do not log this SOAP message! WSDL service {} not recognized! action:{}", serviceName, action);
+    	    }
         } catch (Exception ignore) {
             log.warn("Failed to get logDir from XDS configuration!", ignore);
         }
