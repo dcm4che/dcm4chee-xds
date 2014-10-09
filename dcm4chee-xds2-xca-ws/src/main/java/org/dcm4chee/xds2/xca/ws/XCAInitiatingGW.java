@@ -533,7 +533,7 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
                     log.info("Sync Response:"+rsp);
                 }
             } catch ( Exception x) {
-                throw new XDSException( XDSException.XDS_ERR_REPOSITORY_BUSY, "Responding Gateway not available: "+url, x);
+                throw new XDSException( XDSException.XDS_ERR_UNAVAILABLE_COMMUNITY, "Responding Gateway not available: "+url, x);
             }
         } catch (Exception x) {
             rsp = iheFactory.createRetrieveDocumentSetResponseType();
