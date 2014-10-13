@@ -300,6 +300,11 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
         AdhocQueryResponse rsp;
         URL registryURL = null;
         try {
+            if (url == null) {
+                XDSException x = new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, "Configuration Error: Query URL of Responding Gateway not configured!", null)
+                .setLocation(communityID);
+                throw x;
+            }
             registryURL = new URL(url);
             if (patSlot != null) {
                 String domain = cfg.getAssigningAuthority(communityID);
