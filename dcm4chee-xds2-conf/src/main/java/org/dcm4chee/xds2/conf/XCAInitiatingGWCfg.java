@@ -40,7 +40,6 @@ package org.dcm4chee.xds2.conf;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -49,8 +48,6 @@ import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4che3.net.hl7.HL7Application;
-import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,6 +133,8 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
 
     @ConfigField(name = "xdsPIXConsumerApplication")
     private String localPIXConsumerApplication;
+    
+    private long lastReconfigured;
 
     public Collection<String> getHomeCommunityIDs() {
         return respondingGWByHomeCommunityIdMap.keySet();
@@ -319,6 +318,11 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
     public void reconfigure(DeviceExtension from) {
         XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
         ReflectiveConfig.reconfigure(src, this);
+        this.lastReconfigured = System.currentTimeMillis();
+    }
+    
+    public long getLastReconfigured() {
+        return this.lastReconfigured;
     }
 
 }

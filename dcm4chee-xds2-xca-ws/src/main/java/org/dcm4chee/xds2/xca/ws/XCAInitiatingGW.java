@@ -83,7 +83,6 @@ import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetResponseType.DocumentResponse;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryRequest;
 import org.dcm4chee.xds2.infoset.rim.AdhocQueryResponse;
-import org.dcm4chee.xds2.infoset.rim.AdhocQueryType;
 import org.dcm4chee.xds2.infoset.rim.ExtrinsicObjectType;
 import org.dcm4chee.xds2.infoset.rim.IdentifiableType;
 import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
@@ -141,6 +140,8 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     @Inject
     private IHL7ApplicationCache hl7AppCache;
     
+    private long lastReconfigured;
+
     @PostConstruct
     public void init() {
     	cfg = device.getDeviceExtension(XCAInitiatingGWCfg.class);
@@ -556,7 +557,6 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     private PatSlot pixQuery(AdhocQueryRequest req, SlotType1 patSlotType, String... domains) throws XDSException {
         PatSlot patSlot = new PatSlot(patSlotType);
         if (domains != null && domains.length > 0 && getPixClient() != null) {
-            AdhocQueryType qry = req.getAdhocQuery();
             try {
                 for (String pid : patSlotType.getValueList().getValue()) {
                     patSlot.addPatIDs(pixClient.queryXadPIDs(pid.substring(1, pid.length()-1), domains));
@@ -601,8 +601,12 @@ public class XCAInitiatingGW implements InitiatingGatewayPortType {
     }
 
     public PixQueryClient getPixClient() {
-        if (pixClient == null && cfg.getLocalPIXConsumerApplication() != null) {
+        if (cfg.getLocalPIXConsumerApplication() == null) {
+            pixClient = null;
+        } else if (pixClient == null || cfg.getLastReconfigured() > lastReconfigured) {
             log.info("########### set PIXClient!");
+            lastReconfigured = cfg.getLastReconfigured();
+            hl7AppCache.clear();
             try {
                 HL7Application pix = getHL7Application(cfg.getLocalPIXConsumerApplication());
                 if (pix != null) {
