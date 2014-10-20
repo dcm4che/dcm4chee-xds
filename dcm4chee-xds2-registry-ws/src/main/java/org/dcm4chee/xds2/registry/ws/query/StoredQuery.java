@@ -53,7 +53,6 @@ import org.dcm4chee.xds2.infoset.rim.ObjectFactory;
 import org.dcm4chee.xds2.persistence.Association;
 import org.dcm4chee.xds2.persistence.Identifiable;
 import org.dcm4chee.xds2.persistence.QAssociation;
-import org.dcm4chee.xds2.persistence.QClassificationScheme;
 import org.dcm4chee.xds2.persistence.QRegistryObjectIndex;
 import org.dcm4chee.xds2.persistence.QSlot;
 import org.dcm4chee.xds2.persistence.QXADIssuer;
@@ -61,10 +60,10 @@ import org.dcm4chee.xds2.persistence.QXADPatient;
 import org.dcm4chee.xds2.persistence.QXDSCode;
 import org.dcm4chee.xds2.persistence.QXDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.RegistryObject;
+import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
-import org.dcm4chee.xds2.persistence.RegistryObject.XDSSearchIndexKey;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +75,6 @@ import com.mysema.query.types.ExpressionUtils;
 import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.CollectionPath;
-import com.mysema.query.types.path.EntityPathBase;
 import com.mysema.query.types.path.NumberPath;
 import com.mysema.query.types.path.StringPath;
 
@@ -207,11 +205,16 @@ public abstract class StoredQuery {
             throw new XDSException(XDSException.XDS_ERR_STORED_QUERY_PARAM_NUMBER, 
                     this.getClass().getSimpleName()+" - "+pid.getName()+
                     " only accepts a single value but is coded with multiple values!", null);
-        XADPatient qryPat = new XADPatient(pid.getStringValue());
-        patID = qryPat.getCXPatientID();
-        builder.and(QXADPatient.xADPatient.patientID.eq(qryPat.getPatientID()));
-        builder.and(QXADIssuer.xADIssuer.universalID.eq(qryPat.getIssuerOfPatientID().getUniversalID()));
-        builder.and(QXADPatient.xADPatient.linkedPatient.isNull());
+        try {
+            XADPatient qryPat = new XADPatient(pid.getStringValue());
+            patID = qryPat.getCXPatientID();
+            builder.and(QXADPatient.xADPatient.patientID.eq(qryPat.getPatientID()));
+            builder.and(QXADIssuer.xADIssuer.universalID.eq(qryPat.getIssuerOfPatientID().getUniversalID()));
+            builder.and(QXADPatient.xADPatient.linkedPatient.isNull());
+        } catch (Exception x) {
+            throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
+                    "PatientID is not correct! "+x.getMessage(), null);
+        }
     }
 
     protected void addStatusMatch(BooleanBuilder builder, StringPath status, StoredQueryParam statusParam) {
