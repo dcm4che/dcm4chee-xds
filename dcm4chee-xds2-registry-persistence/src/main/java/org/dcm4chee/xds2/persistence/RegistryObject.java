@@ -275,8 +275,6 @@ public abstract class RegistryObject extends Identifiable implements Serializabl
         this.currIndexedValues = indexedValues;
     }
     
-    // TODO:DB_RESTRUCT override sub setters to save into blob!
-
     /* These getters/setter pull the data from the blob singleton */
 
     public Collection<ClassificationType> getClassifications() {

@@ -45,6 +45,11 @@
 		<show_sql>false</show_sql>
 		<hbm2ddl.auto>update</hbm2ddl.auto>
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
+
+        <!-- XDS Browser access control -->
+        <security.domain>dcm4chee</security.domain>
+        <security.adminRole>WebAdmin</security.adminRole>
+
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
 		<asb/>
@@ -84,6 +89,10 @@
 				<asb>-asb</asb>
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
+
+                <!-- XDS Browser access control -->
+                <security.domain>authnservice</security.domain>
+                <security.adminRole>JBossAdmin</security.adminRole>
 			</properties>
 		</profile>
 	</profiles>
