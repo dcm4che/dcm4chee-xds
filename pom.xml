@@ -23,13 +23,11 @@
 	- the provisions above, a recipient may use your version of this file under 
 	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
 	BLOCK ***** -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-parent</artifactId>
-	<version>2.0.4-SNAPSHOT</version>
+	<version>2.0.4</version>
 	<packaging>pom</packaging>
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
@@ -52,8 +50,8 @@
 
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
-		<asb/>
-		<jdbcprefs.classifier/>
+		<asb />
+		<jdbcprefs.classifier />
 	</properties>
 	<profiles>
 		<profile>
@@ -292,6 +290,6 @@
 		<connection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</connection>
 		<developerConnection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</developerConnection>
 		<url>https://github.com/dcm4che/dcm4chee-xds</url>
-		<tag>HEAD</tag>
+		<tag>dcm4chee-xds2-parent-2.0.4</tag>
 	</scm>
 </project>
