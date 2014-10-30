@@ -37,22 +37,14 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-repository-entity</artifactId>
 			<version>${project.version}</version>
 			<classifier>${db}</classifier>
-			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-entity</artifactId>
-			<version>${storage.version}</version>
-			<classifier>${db}</classifier>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>
 			<artifactId>jboss-ejb-api_3.1_spec</artifactId>

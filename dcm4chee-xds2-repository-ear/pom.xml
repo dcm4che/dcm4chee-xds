@@ -82,18 +82,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-xds2-repository-entity</artifactId>
-			<version>${project.version}</version>
-			<classifier>${db}</classifier>
-			<exclusions>
-				<exclusion>
-					<groupId>*</groupId>
-					<artifactId>*</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-repository-ejb</artifactId>
 			<type>ejb</type>
 			<version>${project.version}</version>
@@ -114,13 +102,6 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-storage-service</artifactId>
 			<type>jar</type>
-			<version>${storage.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.dcm4che</groupId>
-			<artifactId>dcm4chee-storage-entity</artifactId>
-			<type>jar</type>
-			<classifier>${db}</classifier>
 			<version>${storage.version}</version>
 		</dependency>
 		<dependency>
