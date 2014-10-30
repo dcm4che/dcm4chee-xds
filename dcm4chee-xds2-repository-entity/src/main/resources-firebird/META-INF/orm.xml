@@ -18,7 +18,7 @@
   </mapped-superclass>
 
   <entity class="XdsFileRef">
-    <table name="file_ref" />
+    <table name="xds_file_ref" />
     <sequence-generator name="seq" sequence-name="files_pk_seq" allocation-size="1" />
     <attributes>
       <id name="pk">

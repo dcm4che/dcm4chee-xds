@@ -1,0 +1,1 @@
+Convention for oracle (also used by ADUP): please keep the names of sequences = {tablename}_pks
