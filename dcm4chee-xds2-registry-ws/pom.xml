@@ -329,6 +329,12 @@
 				</configuration>
 			</plugin>
 		</plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 		<testResources>
 		    <testResource>
 		    	<directory>src/test/resources/org/dcm4chee/xds2/registry/ws</directory>

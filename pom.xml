@@ -45,8 +45,11 @@
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 
         <!-- XDS Browser access control -->
-        <security.domain>dcm4chee</security.domain>
-        <security.adminRole>WebAdmin</security.adminRole>
+        <browser.security.domain>dcm4chee</browser.security.domain>
+        <browser.security.adminRole>WebAdmin</browser.security.adminRole>
+
+        <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
+        <ws.security.parameters></ws.security.parameters>
 
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
@@ -92,9 +95,15 @@
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
 
                 <!-- XDS Browser access control -->
-                <security.domain>authnservice</security.domain>
-                <security.adminRole>JBossAdmin</security.adminRole>
-			</properties>
+                <browser.security.domain>authnservice</browser.security.domain>
+                <browser.security.adminRole>JBossAdmin</browser.security.adminRole>
+
+                <ws.security.parameters>
+                    &lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;
+                    &lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
+                </ws.security.parameters>
+
+            </properties>
 		</profile>
 	</profiles>
 	<modules>
