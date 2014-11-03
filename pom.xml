@@ -51,6 +51,10 @@
         <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
         <ws.security.parameters></ws.security.parameters>
 
+        <!--  empty value or security domain enclosed in the corresponding tag-->
+        <ws.security.domain></ws.security.domain>
+
+
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
 
@@ -97,6 +101,10 @@
                 <!-- XDS Browser access control -->
                 <browser.security.domain>authnservice</browser.security.domain>
                 <browser.security.adminRole>JBossAdmin</browser.security.adminRole>
+
+                <ws.security.domain>
+                    &lt;security:security-domain&gt;client-certificate-authentication&lt;/security:security-domain&gt;
+                </ws.security.domain>
 
                 <ws.security.parameters>
                     &lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;
