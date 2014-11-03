@@ -27,7 +27,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-parent</artifactId>
-	<version>2.0.5-ASB2-SNAPSHOT</version>
+	<version>2.0.5-ASB2-alpha4</version>
 	<packaging>pom</packaging>
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
@@ -49,10 +49,10 @@
         <browser.security.adminRole>WebAdmin</browser.security.adminRole>
 
         <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
-        <ws.security.parameters></ws.security.parameters>
+        <ws.security.parameters />
 
         <!--  empty value or security domain enclosed in the corresponding tag-->
-        <ws.security.domain></ws.security.domain>
+        <ws.security.domain />
 
 
 		<jboss.version>6.0.0.Final</jboss.version>
@@ -310,6 +310,6 @@
 		<connection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</connection>
 		<developerConnection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</developerConnection>
 		<url>https://github.com/dcm4che/dcm4chee-xds</url>
-		<tag>HEAD</tag>
+		<tag>2.0.5-ASB2-alpha4</tag>
 	</scm>
 </project>
