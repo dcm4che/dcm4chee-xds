@@ -7,10 +7,12 @@
 		<ejb-name>XCAInitiatingGW</ejb-name>
 		<port-component-name>InitiatingGateway_Port_Soap12</port-component-name>
 		<port-component-uri>/InitiatingGW/*</port-component-uri>
+        ${ws.security.parameters}
 	</port-component>
 	<port-component>
 		<ejb-name>XCARespondingGW</ejb-name>
 		<port-component-name>RespondingGateway_Port_Soap12</port-component-name>
 		<port-component-uri>/RespondingGW/*</port-component-uri>
+        ${ws.security.parameters}
 	</port-component>
 </webservices>
