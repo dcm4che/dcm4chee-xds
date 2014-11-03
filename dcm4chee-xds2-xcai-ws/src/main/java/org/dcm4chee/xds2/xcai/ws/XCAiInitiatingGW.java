@@ -44,6 +44,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -88,6 +89,7 @@ import org.slf4j.LoggerFactory;
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
 @DeactivateableByConfiguration(extension = XCAiInitiatingGWCfg.class)
+@PermitAll
 public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
     
     private org.dcm4chee.xds2.infoset.ihe.ObjectFactory iheFactory = new org.dcm4chee.xds2.infoset.ihe.ObjectFactory();
