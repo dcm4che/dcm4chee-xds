@@ -30,4 +30,10 @@ public class ImagingDocumentSourcePortTypeFactory extends BasePortTypeFactory {
         configurePort((BindingProvider)port, endpointAddress, true, true, true);
         return port;
     }
+    
+    public static ImagingDocumentSourcePortType getImagingDocumentSourcePort(String endpointAddress, String logDir) {
+        ImagingDocumentSourcePortType port = getImagingDocumentSourcePort();
+        configurePort((BindingProvider)port, endpointAddress, true, true, logDir);
+        return port;
+    }
 }

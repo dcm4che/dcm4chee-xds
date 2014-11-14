@@ -61,8 +61,17 @@ public class XDSSourceWSClient {
     //only effective if webservice stack supports javax.xml.ws.client.connectionTimeout or BindingProviderProperties.CONNECT_TIMEOUT property in BindingProvider (jbossws-3.4.0, JBoss7)
     private int           connectionTimeout = -1;
     private int           receiveTimeout    = -1;
+    private String logDir;
+    
     private static Logger log               = LoggerFactory.getLogger(XDSSourceWSClient.class);
 
+    public XDSSourceWSClient() {
+    }
+
+    public XDSSourceWSClient(String logDir) {
+        this.logDir = logDir;
+    }
+    
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
@@ -79,6 +88,14 @@ public class XDSSourceWSClient {
         return receiveTimeout;
     }
 
+    public String getLogDir() {
+        return logDir;
+    }
+
+    public void setLogDir(String logDir) {
+        this.logDir = logDir;
+    }
+
     /**
      * Sends a webservice request to the given URL and allows the addition of handlers for e.g. logging.
      * 
@@ -90,7 +107,7 @@ public class XDSSourceWSClient {
      */
     public RegistryResponseType
         sendProvideAndRegister(PnRRequest req, URL xdsRegistryURI, @SuppressWarnings("rawtypes") List<Handler> handlers) throws MetadataConfigurationException {
-        DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(xdsRegistryURI.toString());
+        DocumentRepositoryPortType port = DocumentRepositoryPortTypeFactory.getDocumentRepositoryPortSoap12(xdsRegistryURI.toString(), logDir);
         Map<String, Object> ctx = ((BindingProvider) port).getRequestContext();
         if (handlers != null && handlers.size() > 0) {
             addHandlers(port, handlers);

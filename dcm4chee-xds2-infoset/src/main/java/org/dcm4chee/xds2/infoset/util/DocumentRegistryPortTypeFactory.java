@@ -29,4 +29,11 @@ public class DocumentRegistryPortTypeFactory extends BasePortTypeFactory{
         configurePort((BindingProvider)port, endpointAddress, false, true, true);
         return port;
     }
+    
+    public static DocumentRegistryPortType getDocumentRegistryPortSoap12(String endpointAddress, String logDir) {
+        DocumentRegistryPortType port = getDocumentRegistryPortSoap12();
+        configurePort((BindingProvider)port, endpointAddress, false, true, logDir);
+        return port;
+    }
+
 }

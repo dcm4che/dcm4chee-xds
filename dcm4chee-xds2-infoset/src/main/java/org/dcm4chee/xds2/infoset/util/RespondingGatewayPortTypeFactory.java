@@ -29,4 +29,10 @@ public class RespondingGatewayPortTypeFactory extends BasePortTypeFactory {
         configurePort((BindingProvider)port, endpointAddress, false, true, true);
         return port;
     }
+
+    public static RespondingGatewayPortType getRespondingGatewayPortSoap12(String endpointAddress, String logDir) {
+        RespondingGatewayPortType port = getRespondingGatewayPortSoap12();
+        configurePort((BindingProvider)port, endpointAddress, false, true, logDir);
+        return port;
+    }
 }

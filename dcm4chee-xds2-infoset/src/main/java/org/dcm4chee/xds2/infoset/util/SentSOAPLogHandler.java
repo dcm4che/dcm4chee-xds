@@ -62,9 +62,22 @@ import org.w3c.dom.NodeList;
 
 public class SentSOAPLogHandler implements SOAPHandler<SOAPMessageContext> {
     private Set<QName> headers = new HashSet<QName>();
+    private String logDir;
+    
     private static final char sepChar = File.separatorChar;
     
     private static Logger log = LoggerFactory.getLogger(SentSOAPLogHandler.class);
+    
+    private static String DEFAULT_LOG_DIR = System.getProperty("jboss.server.log.dir")
+            +sepChar+"xdslog"+sepChar+"sentMessages";
+    
+    public SentSOAPLogHandler() {
+        logDir = DEFAULT_LOG_DIR;
+    }
+
+    public SentSOAPLogHandler(String logDir) {
+        this.logDir = logDir;
+    }
     
     @Override
     public boolean handleMessage(SOAPMessageContext ctx) {
@@ -98,13 +111,15 @@ public class SentSOAPLogHandler implements SOAPHandler<SOAPMessageContext> {
             String msgID = ((Boolean)ctx.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) ? 
                     getWsaHeader(ctx, "MessageID", null) : getWsaHeader(ctx, "RelatesTo", null);
             File f = getLogFile(action, msgID);
-            f.getParentFile().mkdirs();
-            log.info("sent SOAP message saved to file "+f);
-            out = new FileOutputStream(f);
-            Source s = ctx.getMessage().getSOAPPart().getContent();
-            Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty("indent", "yes");
-            t.transform(s, new StreamResult(out));
+            if (f != null) {
+                f.getParentFile().mkdirs();
+                log.info("sent SOAP message saved to file "+f);
+                out = new FileOutputStream(f);
+                Source s = ctx.getMessage().getSOAPPart().getContent();
+                Transformer t = TransformerFactory.newInstance().newTransformer();
+                t.setOutputProperty("indent", "yes");
+                t.transform(s, new StreamResult(out));
+            }
         } catch (Exception x) {
             log.error("Error logging sent SOAP message to file!", x);
         } finally {
@@ -118,9 +133,13 @@ public class SentSOAPLogHandler implements SOAPHandler<SOAPMessageContext> {
     private File getLogFile(String action, String msgID) {
         String dir = MDC.get("initiatorLogDir"); 
         if (dir == null) {
+            if (logDir == null) {
+                log.debug("Soap message logging disabled! skip action {} with messageID {}", action, msgID);
+                return null;
+            }
             Calendar cal = Calendar.getInstance();
             StringBuilder sb = new StringBuilder();
-            sb.append("/var/log/xdslog/sentMessages").append(sepChar).append(cal.get(Calendar.YEAR))
+            sb.append(logDir).append(sepChar).append(cal.get(Calendar.YEAR))
             .append(sepChar).append(cal.get(Calendar.MONTH)+1).append(sepChar)
             .append(cal.get(Calendar.DAY_OF_MONTH));
             dir = sb.toString();

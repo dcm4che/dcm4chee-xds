@@ -38,4 +38,18 @@ public class DocumentRepositoryPortTypeFactory extends BasePortTypeFactory {
         return port;
     }
         
+    public static DocumentRepositoryPortType getDocumentRepositoryPortSoap12(String endpointAddress, String logDir) {
+        
+        DocumentRepositoryPortType port = getDocumentRepositoryPortSoap12();
+        
+        // the handler may only be added if MTOM is active so we tie it together
+        final boolean MTOM_ACTIVE = true;
+                
+        if(MTOM_ACTIVE) {
+            addHandler((BindingProvider)port, new XDSDocumentAttachmentHandler());
+        }
+        configurePort((BindingProvider)port, endpointAddress, MTOM_ACTIVE, true, logDir);
+        return port;
+    }
+        
 }
