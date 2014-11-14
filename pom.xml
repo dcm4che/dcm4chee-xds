@@ -23,19 +23,17 @@
 	- the provisions above, a recipient may use your version of this file under 
 	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
 	BLOCK ***** -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.dcm4che</groupId>
 	<artifactId>dcm4chee-xds2-parent</artifactId>
-	<version>2.0.4-SNAPSHOT</version>
+	<version>2.0.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dcm4che.version>3.3.4</dcm4che.version>
-		<storage.version>1.0.0-SNAPSHOT</storage.version>
+		<storage.version>1.0.0</storage.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
@@ -45,10 +43,15 @@
 		<show_sql>false</show_sql>
 		<hbm2ddl.auto>update</hbm2ddl.auto>
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
+
+        <!-- XDS Browser access control -->
+        <security.domain>dcm4chee</security.domain>
+        <security.adminRole>WebAdmin</security.adminRole>
+
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
-		<asb/>
-		<jdbcprefs.classifier/>
+		<asb />
+		<jdbcprefs.classifier />
 	</properties>
 	<profiles>
 		<profile>
@@ -61,7 +64,7 @@
 				</property>
 			</activation>
 			<properties>
-				<jdbc-prefs.version>1.1.1-SNAPSHOT</jdbc-prefs.version>
+				<jdbc-prefs.version>1.1.1</jdbc-prefs.version>
 				<jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>
 			</properties>
 		</profile>
@@ -84,6 +87,10 @@
 				<asb>-asb</asb>
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
+
+                <!-- XDS Browser access control -->
+                <security.domain>authnservice</security.domain>
+                <security.adminRole>JBossAdmin</security.adminRole>
 			</properties>
 		</profile>
 	</profiles>
