@@ -26,7 +26,7 @@ public class BasePortTypeFactory {
      * @param endpointAddress the target address
      * @param mtom enables mtom
      * @param mustUnderstand sets the must understand flag in certain headers, see {@link EnsureMustUnderstandHandler}
-     * @param addLogHandler add the log handler
+     * @param addLogHandler add the log handler using default directory <JBOSS_LOG_DIR>/xdslog/sentMessages
      */
     public static void configurePort(BindingProvider bindingProvider, String endpointAddress, boolean mtom, boolean mustUnderstand, boolean addLogHandler) {
         SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding(); 
@@ -36,6 +36,33 @@ public class BasePortTypeFactory {
         }
         if (addLogHandler) {
             addHandler(bindingProvider, new SentSOAPLogHandler());
+        }
+        Map<String, Object> reqCtx = bindingProvider.getRequestContext();
+        reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
+    }
+
+    /**
+     * Configures the port with the default handlers, endpoint and mtom.<br/>
+     * <br/>
+     * <b>ATTENTION:</b> If <i>mtom</i> is enabled, you need to provide a handler that forces MTOM
+     * to be done manually. There is a bug in the JDK classes which prevents MTOM and handlers to
+     * work at the same time. For more information about this issue, see <a
+     * href="https://java.net/jira/browse/WSIT-1320">this link</a>.
+     * 
+     * @param bindingProvider the current binding provider
+     * @param endpointAddress the target address
+     * @param mtom enables mtom
+     * @param mustUnderstand sets the must understand flag in certain headers, see {@link EnsureMustUnderstandHandler}
+     * @param logDir Directory where SOAP message are logged. use null to disable SOAP messsage logging.
+     */
+    public static void configurePort(BindingProvider bindingProvider, String endpointAddress, boolean mtom, boolean mustUnderstand, String logDir) {
+        SOAPBinding binding = (SOAPBinding) bindingProvider.getBinding(); 
+        binding.setMTOMEnabled(mtom);
+        if (mustUnderstand) {
+            addHandler(bindingProvider, new EnsureMustUnderstandHandler());
+        }
+        if (logDir != null) {
+            addHandler(bindingProvider, new SentSOAPLogHandler(logDir));
         }
         Map<String, Object> reqCtx = bindingProvider.getRequestContext();
         reqCtx.put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpointAddress);
