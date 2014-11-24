@@ -74,6 +74,7 @@ public class XdsConfigPrefsTest extends XdsConfigTestBase {
         cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new  PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));
+        cfg.addDicomConfigurationExtension(new  PreferencesGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
 
         
         cfg.addDicomConfigurationExtension(new PreferencesHL7Configuration());

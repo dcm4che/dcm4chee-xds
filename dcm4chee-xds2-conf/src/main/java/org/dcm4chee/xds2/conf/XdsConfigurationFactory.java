@@ -106,6 +106,7 @@ public class XdsConfigurationFactory {
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsSource>(XdsSource.class));
+        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
         conf.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
         conf.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
         conf.addDicomConfigurationExtension(new LdapHL7Configuration());
@@ -132,6 +133,7 @@ public class XdsConfigurationFactory {
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));
+        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
         conf.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
         conf.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
         conf.addDicomConfigurationExtension(new PreferencesHL7Configuration());

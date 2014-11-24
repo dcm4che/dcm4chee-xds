@@ -714,6 +714,39 @@ public class XdsConfigTestBase {
         Assert.assertEquals("getXDSiSourceURL ", "srcUrl", loaded.getXDSiSourceURL("1.2.1.2"));
 
     }
+    @Test
+    public void testXDSiSourceCfg() throws Exception {
+        Device d = createDevice("xdsi_src", SITE_A, INST_A);
+        createdDevices.add("xdsi_src");
+
+        //XDS-I Source 
+        XDSiSourceCfg xdsi = new XDSiSourceCfg();
+        d.addDeviceExtension(xdsi);        
+        xdsi.setApplicationName("XDSiSource");
+        xdsi.setDicomObjectProvider("WADO:http://localhost:8080/wado");
+
+        config.persist(d);
+        afterPersist();
+
+        // check
+        loadConfigAndAssertEquals("xdsi_src", XDSiSourceCfg.class, xdsi);
+
+        // modify merge
+        xdsi.setDicomObjectProvider("DICOM:cget:PACS@localhost:11112");
+        xdsi.setSoapLogDir(VAR_LOG_XDSLOG);
+
+        config.merge(d);
+
+        // check
+        XDSiSourceCfg loaded = loadConfigAndAssertEquals("xdsi_src", XDSiSourceCfg.class, xdsi);
+
+        // check methods
+
+        Assert.assertEquals("getDicomObjectProvider ", "DICOM:cget:PACS@localhost:11112", loaded.getDicomObjectProvider());
+
+        Assert.assertEquals("getSoapLogDir ", VAR_LOG_XDSLOG, loaded.getSoapLogDir());
+
+    }
 
     @Test
     public void testDefaultConfig() throws Exception {
@@ -843,9 +876,31 @@ public class XdsConfigTestBase {
         rgwbycid.put(DEFAULTID, d);
         iinitGW.setRespondingGWDevicebyHomeCommunityId(rgwbycid);
 
+        //XDS-I Source 
+        XDSiSourceCfg xdsi = new XDSiSourceCfg();
+        d.addDeviceExtension(xdsi);        
+        xdsi.setApplicationName("XDSiSource");
+        xdsi.setDicomObjectProvider("WADO:http://localhost:8080/wado");
+
         ArrayList<HL7Application> hl7Apps = this.addHL7(d);
         this.addAuditLogger(d);
 
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        XDSiSourceCfg ttt = d.getDeviceExtension(XDSiSourceCfg.class);
+        System.out.println("DeviceExtension XDSiSourceCfg:"+ttt);
+        if (ttt != null) {
+            System.out.println("DeviceExtension XDSiSourceCfg.getApplicationName:"+ttt.getApplicationName());
+            System.out.println("DeviceExtension XDSiSourceCfg.getDicomObjectProvider:"+ttt.getDicomObjectProvider());
+            System.out.println("DeviceExtension XDSiSourceCfg.getSoapLogDir:"+ttt.getSoapLogDir());
+        }
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
+        System.out.println("\n###################################################");
         config.persist(d);
         afterPersist();
         checkHL7Apps(DEFAULT_XDS_DEVICE, hl7Apps);

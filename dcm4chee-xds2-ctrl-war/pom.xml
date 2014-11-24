@@ -117,6 +117,17 @@
                             <goal>war</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>imgsrc-ctrl-war</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <classifier>imgsrc</classifier>
+                            <webappDirectory>${project.build.directory}/${project.build.finalName}-imgsrc</webappDirectory>
+                        </configuration>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
                 </executions>
       </plugin>
     </plugins>

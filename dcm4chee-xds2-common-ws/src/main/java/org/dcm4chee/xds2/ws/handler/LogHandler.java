@@ -46,8 +46,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -69,6 +67,7 @@ import org.dcm4chee.xds2.conf.XCAInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
+import org.dcm4chee.xds2.conf.XDSiSourceCfg;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.service.XdsService;
@@ -152,6 +151,8 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
                 logDir = d.getDeviceExtension(XCAiRespondingGWCfg.class).getSoapLogDir();
             } else if (serviceName.endsWith("XCAI_InitiatingGateway")) {
                 logDir = d.getDeviceExtension(XCAiInitiatingGWCfg.class).getSoapLogDir();
+            } else if (serviceName.endsWith("ImagingDocumentSource")) {
+                logDir = d.getDeviceExtension(XDSiSourceCfg.class).getSoapLogDir();
             } else {
                 log.warn("Do not log this SOAP message! WSDL service {} not recognized! action:{}", serviceName, action);
     	    }
@@ -196,7 +197,7 @@ public class LogHandler implements SOAPHandler<SOAPMessageContext> {
             log.debug("Start processing SOAP message "+msgID);
         }
     }
-
+    
     private String getWsaHeader(SOAPMessageContext ctx, String name, String def) {
         try {
             SOAPHeader hdr =ctx.getMessage().getSOAPHeader();

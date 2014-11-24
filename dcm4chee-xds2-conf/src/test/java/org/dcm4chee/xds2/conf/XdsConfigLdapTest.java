@@ -65,6 +65,7 @@ public class XdsConfigLdapTest extends XdsConfigTestBase{
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
         cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsSource>(XdsSource.class));
+        cfg.addDicomConfigurationExtension(new LdapGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
         
         cfg.addDicomConfigurationExtension(new LdapHL7Configuration());
         cfg.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());

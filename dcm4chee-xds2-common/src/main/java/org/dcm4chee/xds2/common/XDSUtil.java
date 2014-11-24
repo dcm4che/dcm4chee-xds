@@ -102,10 +102,22 @@ public class XDSUtil {
         }
     }
     public static void addError(RetrieveDocumentSetResponseType rsp, XDSException x) {
+        RegistryResponseType regRsp = rsp.getRegistryResponse();
+        if (regRsp == null) {
+            regRsp = factory.createRegistryResponseType();
+            rsp.setRegistryResponse(regRsp);
+        }
         try {
-            rsp.setRegistryResponse(getErrorRegistryResponse(x));
+            RegistryErrorList errList = regRsp.getRegistryErrorList();
+            if (errList == null) {
+                errList = factory.createRegistryErrorList();
+                regRsp.setRegistryErrorList( errList );
+            }
+            List<RegistryError> errors = errList.getRegistryError();
+            RegistryError error = getRegistryError(x);
+            errors.add(error);
         } catch (JAXBException e) {
-            log.error("Failed to set RegistryResponse in RetrieveDocumentSetResponse!", e);
+            log.error("Failed to set ErrorList in response!", e);
         }
     }
 
