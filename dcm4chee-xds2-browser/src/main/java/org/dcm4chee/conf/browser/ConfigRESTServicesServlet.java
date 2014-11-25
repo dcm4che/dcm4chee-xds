@@ -200,6 +200,7 @@ public class ConfigRESTServicesServlet {
         XDS_REST_PATH.put("XCAiRespondingGWCfg", "xcai-rs");
         XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
         XDS_REST_PATH.put("XCARespondingGWCfg", "xca-rs");
+        XDS_REST_PATH.put("XDSiSourceCfg", "imgsrc-rs");
     }
 
     @GET
