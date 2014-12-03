@@ -64,6 +64,9 @@ public class XDSiSourceCfg extends DeviceExtension implements Deactivateable{
     @ConfigField(name = "xdsApplicationName")
     private String applicationName;
 
+    @ConfigField(name = "xdsURL")
+    private String url;
+
     @ConfigField(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 
@@ -77,6 +80,14 @@ public class XDSiSourceCfg extends DeviceExtension implements Deactivateable{
 
     public final void setApplicationName(String applicationName) {
         this.applicationName = applicationName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getDicomObjectProvider() {

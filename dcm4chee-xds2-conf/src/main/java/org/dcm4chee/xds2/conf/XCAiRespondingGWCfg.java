@@ -38,7 +38,6 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.dcm4che3.conf.api.generic.ConfigClass;
@@ -46,7 +45,6 @@ import org.dcm4che3.conf.api.generic.ConfigField;
 import org.dcm4che3.conf.api.generic.ReflectiveConfig;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,18 +82,25 @@ public class XCAiRespondingGWCfg extends DeviceExtension implements Deactivateab
     private String retrieveUrl;
 
     public String getXDSiSourceURL(String sourceID) {
-        try {
-            return srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-        } catch (Exception e) {
-
-            try {
-                String url = srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-                log.warn("Using default imaging source for sourceID {}!", sourceID);
-                return url;
-            } catch (Exception ee) {
-                throw new RuntimeException("Cannot retrieve source URL for sourceID" + sourceID, e);
-            }
+        String url = null;
+        Device srcDevice = srcDevicebySrcIdMap.get(sourceID);
+        if (srcDevice == null) {
+            srcDevice = srcDevicebySrcIdMap.get(DEFAULTID);
+            log.warn("Using default device for sourceID {}!", sourceID);
         }
+        log.info("Using device {} to get URL for XDS-I Source.", srcDevice.getDeviceName());
+        XDSiSourceCfg iSrcCfg = srcDevice.getDeviceExtension(XDSiSourceCfg.class);
+        if (iSrcCfg == null) {
+            log.warn("Device {} has no XDSiSourceCfg DeviceExtension! Try to get URL from XdsSource DeviceExtension.",
+                    srcDevice.getDeviceName());
+            XdsSource srcCfg = srcDevice.getDeviceExtension(XdsSource.class);
+            url = srcCfg == null ? null : srcCfg.getUrl();
+        } else {
+            url = iSrcCfg.getUrl();
+        }
+        if (url == null)
+            throw new RuntimeException("Cannot retrieve XDS-I Source URL for sourceID " + sourceID);
+        return url;
     }
 
     public Map<String, Device> getSrcDevicebySrcIdMap() {

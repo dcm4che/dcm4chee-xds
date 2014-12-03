@@ -125,15 +125,16 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
     private RetrieveDocumentSetResponseType doRetrieve(RetrieveImagingDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp = null, tmpRsp;
         String homeCommunityID = cfg.getHomeCommunityID();
+        boolean hasRespondingGWforHome = cfg.getRespondingGWURL(homeCommunityID) != null;
         String home;
         for (Entry<String, List<StudyRequest>> entry : XDSUtil.splitRequestPerHomeCommunityID(req).entrySet()) {
             req.getStudyRequest().clear();
             req.getStudyRequest().addAll(entry.getValue());
             home = entry.getKey();
             if (homeCommunityID.equals(home)) {
-                tmpRsp = doSourceRetrieve(req);
+                tmpRsp = doSourceRetrieve(req, hasRespondingGWforHome);
             } else if (cfg.getRespondingGWURL(home) != null) {
-                tmpRsp = doXcaiRetrieve(entry.getKey(), req, cfg);
+                tmpRsp = doXcaiRetrieve(entry.getKey(), req);
             } else {
                 log.warn("Unknown HomeCommunityID! :"+home);
                 XDSException x = new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, 
@@ -157,12 +158,12 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
         return rsp;
     }
 
-    private RetrieveDocumentSetResponseType doSourceRetrieve(RetrieveImagingDocumentSetRequestType req) {
+    private RetrieveDocumentSetResponseType doSourceRetrieve(RetrieveImagingDocumentSetRequestType req, boolean hasRespondingGWforHome) {
         RetrieveDocumentSetResponseType rsp = null, tmpRsp;
         for (Entry<String, List<StudyRequest>> entry : XDSUtil.splitRequestPerSrcID(req).entrySet()) {
             req.getStudyRequest().clear();
             req.getStudyRequest().addAll(entry.getValue());
-            tmpRsp = doSourceRetrieve(entry.getKey(), req);
+            tmpRsp = doSourceRetrieve(entry.getKey(), req, hasRespondingGWforHome);
             if (rsp == null) {
                 rsp = tmpRsp;
             } else {
@@ -173,12 +174,18 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
             rsp = iheFactory.createRetrieveDocumentSetResponseType();
         return rsp;
     }
-    private RetrieveDocumentSetResponseType doSourceRetrieve(String sourceID, RetrieveImagingDocumentSetRequestType req) {
+    private RetrieveDocumentSetResponseType doSourceRetrieve(String sourceID, RetrieveImagingDocumentSetRequestType req, boolean hasRespondingGWforHome) {
         RetrieveDocumentSetResponseType rsp;
         try {
             String url = cfg.getXDSiSourceURL(sourceID);
             if (url == null) {
-                return iheFactory.createRetrieveDocumentSetResponseType();
+                if (hasRespondingGWforHome) {
+                    log.info("XDS-I Source ({}) is not configured on XCA-I Initiating GW! Try XCA-I Responding GW!", sourceID);
+                    return doXcaiRetrieve(cfg.getHomeCommunityID(), req);
+                }
+                log.error("XDS-I Source ({}) is not configured on XCA-I Initiating GW and homeCommunityID is not mapped to a XCA-I Responding GW! Retrieve failed!", sourceID);
+                throw new XDSException(XDSException.XDS_ERR_UNAVAILABLE_COMMUNITY,
+                        "XDS-I Source "+sourceID+" and homeCommunity "+cfg.getHomeCommunityID()+" not configured!", null);
             }
             ImagingDocumentSourcePortType port = ImagingDocumentSourcePortTypeFactory.getImagingDocumentSourcePort(url);
             log.info("####################################################");
@@ -190,7 +197,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
             try {
                 rsp = port.imagingDocumentSourceRetrieveImagingDocumentSet(req);
             } catch ( Exception x) {
-                throw new XDSException( XDSException.XDS_ERR_REPOSITORY_BUSY, "XDS-I Imaging Source not available: "+url, x);
+                throw new XDSException(XDSException.XDS_ERR_REPOSITORY_BUSY, "XDS-I Imaging Source not available: "+url, x);
             }
         } catch (Exception x) {
             rsp = iheFactory.createRetrieveDocumentSetResponseType();
@@ -205,7 +212,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
         return rsp;
     }
 
-    private RetrieveDocumentSetResponseType doXcaiRetrieve(String home, RetrieveImagingDocumentSetRequestType req, XCAiInitiatingGWCfg cfg) {
+    private RetrieveDocumentSetResponseType doXcaiRetrieve(String home, RetrieveImagingDocumentSetRequestType req) {
         RetrieveDocumentSetResponseType rsp = null;
         try {
             String url = cfg.getRespondingGWURL(home);

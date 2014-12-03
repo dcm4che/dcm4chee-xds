@@ -278,7 +278,7 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.7
   MAY (
     xdsRegistry $
     xdsRepository $
-    xdsUrl )
+    xdsURL )
  )   
 objectClasses: ( 1.2.40.0.13.1.15.20.4.8
   NAME 'xdsGatewayRef'
@@ -341,9 +341,10 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.16
   SUP top STRUCTURAL
   MUST ( 
     xdsIsDeactivated $
-    xdsApplicationName $
-    xdsDicomObjectProvider )
+    xdsApplicationName )
   MAY (
-    cn $  
+    cn $
+    xdsDicomObjectProvider $
+    xdsURL $
     xdsSoapMsgLogDir ) )
  

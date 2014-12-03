@@ -149,9 +149,6 @@ public class XCAiRespondingGW implements XCAIRespondingGatewayPortType {
         RetrieveDocumentSetResponseType rsp;
         try {
             String url = cfg.getXDSiSourceURL(sourceID);
-            if (url == null) {
-                return iheFactory.createRetrieveDocumentSetResponseType();
-            }
             ImagingDocumentSourcePortType port = ImagingDocumentSourcePortTypeFactory.getImagingDocumentSourcePort(url);
             log.info("####################################################");
             log.info("####################################################");

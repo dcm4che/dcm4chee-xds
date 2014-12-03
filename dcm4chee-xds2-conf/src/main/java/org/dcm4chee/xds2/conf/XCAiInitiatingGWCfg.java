@@ -112,18 +112,23 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
     }
 
     public String getXDSiSourceURL(String sourceID) {
-        try {
-            return srcDevicebySrcIdMap.get(sourceID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-        } catch (Exception e) {
-            try {
-                String srcurl =  srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-                log.warn("Using default URL of XDSiSource for source id {}!", homeCommunityID);
-                return srcurl;
-            } catch (Exception ee) {
-                throw new RuntimeException("Cannot retrieve URL of XDSiSource for source id " + sourceID, e);
-            }
-
-        }        
+        Device srcDevice = srcDevicebySrcIdMap.get(sourceID);
+        if (srcDevice == null) {
+            srcDevice = srcDevicebySrcIdMap.get(DEFAULTID);
+            if (srcDevice == null)
+                return null;
+            log.debug("Using default device for sourceID {}!",sourceID);
+        }
+        log.debug("Using device {} to get URL for XDS-I Source.",srcDevice.getDeviceName());
+        XDSiSourceCfg iSrcCfg = srcDevice.getDeviceExtension(XDSiSourceCfg.class);
+        if (iSrcCfg == null) {
+            log.debug("Device {} has no XDSiSourceCfg DeviceExtension! Try to get URL from XdsSource DeviceExtension.",
+                    srcDevice.getDeviceName());
+            XdsSource srcCfg = srcDevice.getDeviceExtension(XdsSource.class);
+            return srcCfg == null ? null :srcCfg.getUrl();
+        } else {
+            return iSrcCfg.getUrl();
+        }
     }
 
     public Map<String, Device> getRespondingGWDevicebyHomeCommunityId() {
