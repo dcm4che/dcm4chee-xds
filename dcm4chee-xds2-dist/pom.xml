@@ -102,6 +102,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-imgsrc-ear</artifactId>
+			<classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
+			<type>ear</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-tool-init</artifactId>
 			<version>${project.version}</version>
 		</dependency>
