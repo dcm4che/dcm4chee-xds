@@ -42,7 +42,7 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
 import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
+import org.dcm4chee.xds2.conf.XDSiSourceCfg;
 
 public class DeviceNamePropertyProvider {
 
@@ -59,6 +59,6 @@ public class DeviceNamePropertyProvider {
 
     @Produces @Named("usedDeviceExtension")
     public String[] getXDSiSourceDeviceExtensionClassNames() {
-        return new String[] {XCAiInitiatingGWCfg.class.getName()};
+        return new String[] {XDSiSourceCfg.class.getName()};
     }
 }
