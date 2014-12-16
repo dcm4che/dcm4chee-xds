@@ -134,7 +134,7 @@ public class XCAiInitiatingGW implements ImagingDocumentSourcePortType {
             if (homeCommunityID.equals(home)) {
                 tmpRsp = doSourceRetrieve(req, hasRespondingGWforHome);
             } else if (cfg.getRespondingGWURL(home) != null) {
-                tmpRsp = doXcaiRetrieve(entry.getKey(), req);
+                tmpRsp = doXcaiRetrieve(home, req);
             } else {
                 log.warn("Unknown HomeCommunityID! :"+home);
                 XDSException x = new XDSException(XDSException.XDS_ERR_UNKNOWN_COMMUNITY, 

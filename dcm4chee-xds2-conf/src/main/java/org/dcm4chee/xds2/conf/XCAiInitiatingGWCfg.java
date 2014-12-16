@@ -90,21 +90,20 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
     private Map<String, Device> srcDevicebySrcIdMap;
 
     public String getRespondingGWURL(String homeCommunityID) {
-        try {
-            return respondingGWDevicebyHomeCommunityId.get(homeCommunityID).getDeviceExtensionNotNull(XCAiRespondingGWCfg.class)
-                    .getRetrieveUrl();
-        } catch (Exception e) {
-
-            try {
-                String url = respondingGWDevicebyHomeCommunityId.get(DEFAULTID).getDeviceExtensionNotNull(XCAiRespondingGWCfg.class)
-                        .getRetrieveUrl();
-                log.warn("Using default XCAi responding GW for home community id {}!", homeCommunityID);
-                return url;
-            } catch (Exception ee) {
-                throw new RuntimeException("Cannot retrieve URL of responding GW for homeCommunityId " + homeCommunityID, e);
-            }
-
+        Device respGWDevice = respondingGWDevicebyHomeCommunityId.get(homeCommunityID);
+        if (respGWDevice == null) {
+            respGWDevice = respondingGWDevicebyHomeCommunityId.get(DEFAULTID);
+            if (respGWDevice == null)
+                return null;
+            log.debug("Using default device for homeCommunityID {}!",homeCommunityID);
         }
+        log.debug("Using device {} to get URL for XCA-I Responding Gateway.",respGWDevice.getDeviceName());
+        XCAiRespondingGWCfg respGwCfg = respGWDevice.getDeviceExtension(XCAiRespondingGWCfg.class);
+        if (respGwCfg == null) {
+            log.debug("Device {} has no XCAiRespondingGWCfg DeviceExtension! Can not get URL for Responding Gateway in homeCommunityID {}!", respGWDevice.getDeviceName(), homeCommunityID);
+            return null;
+        }
+        return respGwCfg.getRetrieveUrl();
     }
 
     public Collection<String> getCommunityIDs() {

@@ -670,7 +670,9 @@ public class XDSAudit {
                 
             }
         }
-        return attrs == null ? null : attrs.getString(Tag.PatientID);
+        return attrs == null ? null : attrs.containsValue(Tag.IssuerOfPatientID) ? 
+                attrs.getString(Tag.PatientID)+"^^^"+attrs.getString(Tag.IssuerOfPatientID) :
+                attrs.getString(Tag.PatientID);
     }
 
     private static ParticipantObjectIdentification createStudyPOI(String studyIUID,
