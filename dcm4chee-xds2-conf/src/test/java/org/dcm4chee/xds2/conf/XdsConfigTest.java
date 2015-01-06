@@ -38,37 +38,29 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.lang.reflect.Method;
+import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
+import org.dcm4che3.net.audit.AuditLogger;
+import org.dcm4che3.net.audit.AuditRecordRepository;
+import org.dcm4che3.net.hl7.HL7DeviceExtension;
+import org.dcm4chee.storage.conf.StorageConfiguration;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-import org.junit.internal.runners.model.EachTestNotifier;
-import org.junit.runner.notification.RunNotifier;
-import org.junit.runners.BlockJUnit4ClassRunner;
-import org.junit.runners.model.FrameworkMethod;
+@RunWith(JUnit4.class)
+public class XdsConfigTest extends XdsConfigTestBase{
 
-public class IgnoreableJUnitTestRunner extends BlockJUnit4ClassRunner {
+    @Before
+    public void setUp() throws Exception {
+        testCount++;
 
-    private Class<?> testClass;
-    public IgnoreableJUnitTestRunner(Class<?> clazz) throws Throwable {
-        super(clazz);
-        testClass = clazz;
-    }
-    
-    private boolean ignoreTests() {
-        try {
-            Method m = testClass.getMethod("ignoreTests", (Class[])null);
-            return m == null ? false : (Boolean) m.invoke(null, (Object[])null);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-    
-    @Override
-    protected void runChild(FrameworkMethod method, RunNotifier notifier) {
-        if (ignoreTests()) {
-            EachTestNotifier eachNotifier= new EachTestNotifier(notifier, describeChild(method));
-            eachNotifier.fireTestIgnored();
-        } else {
-            super.runChild(method, notifier);
-        }
+        if (System.getProperty("org.dcm4che.conf.filename") == null)
+            System.setProperty("org.dcm4che.conf.filename", "target/config.json");
+
+        if (System.getProperty("org.dcm4che.conf.cached") == null)
+            System.setProperty("org.dcm4che.conf.cached", "false");
+
+        config = XdsConfigurationFactory.getDicomConfiguration();;
+        cleanUp();
     }
 }

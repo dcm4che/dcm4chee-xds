@@ -38,100 +38,79 @@
 
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
+import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.util.StringUtils;
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 
-@ConfigClass(commonName = "XDSRegistry", objectClass = "xdsRegistry", nodeName = "xdsRegistry")
-public class XdsRegistry extends DeviceExtension implements Deactivateable {
+@LDAP(objectClasses = "xdsRegistry")
+@ConfigurableClass
+public class XdsRegistry extends XdsExtension {
 
     private static final String DEFAULT_AFFINITYDOMAIN_CFG_DIR = "${jboss.server.config.dir}/affinitydomain";
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the registry service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName",
-                label = "Application Name",
-                description = "XDS Application name")
-    private String applicationName;
-
-    @ConfigField(name = "xdsAffinityDomain",
+    @ConfigurableProperty(name = "xdsAffinityDomain",
                 label =  "Affinity Domain",
                 description = "Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)")
     private String[] affinityDomain = new String[] {};
 
-    @ConfigField(name = "xdsAffinityDomainConfigDir",
+    @ConfigurableProperty(name = "xdsAffinityDomainConfigDir",
             label = "Affinity Domain Config Directory",
             description = "Path to affinity domain configuration directory")
     private String affinityDomainConfigDir;
 
-    @ConfigField(name = "xdsAcceptedMimeTypes",
+    @ConfigurableProperty(name = "xdsAcceptedMimeTypes",
             label = "Accept MIME Types",
-            description = "MIME types accepted by the webservice",
-            optional = true)
+            description = "MIME types accepted by the webservice")
     private String[] acceptedMimeTypes = new String[] {};
 
-    @ConfigField(name = "xdsSoapMsgLogDir",
-            optional = true)
-    private String soapLogDir;
-
-    @ConfigField(name = "xdsCreateMissingPIDs", 
+    @ConfigurableProperty(name = "xdsCreateMissingPIDs",
             label= "Create Missing Patient IDs",
             description = "Specifies to create Patient IDs that are not yet known. (not conform to XDS specification!)",
-            def = "false",
-            optional = true)
+            defaultValue = "false")
     private boolean createMissingPIDs;
 
-    @ConfigField(name = "xdsCreateMissingCodes",
+    @ConfigurableProperty(name = "xdsCreateMissingCodes",
             label = "Create Missing Codes",
             description= "Specifies to create Codes that are not known in the Affinity Domain. (not conform to XDS specification!)",
-            def = "false",
-            optional = true)
+            defaultValue = "false")
     private boolean createMissingCodes;
 
-    @ConfigField(name = "xdsCheckAffinityDomain", 
+    @ConfigurableProperty(name = "xdsCheckAffinityDomain", 
             label = "Check Affinity Domain",
             description = "Check affinityDomain in received PatientIDs",
-            def = "true",
-            optional = true)
+            defaultValue = "true")
     private boolean checkAffinityDomain;
 
     // TODO: confirm correct meaning
-    @ConfigField(name = "xdsCheckMimetype", 
+    @ConfigurableProperty(name = "xdsCheckMimetype",
             label = "Check MIME Type",
             description = "Indicates whether MIME types of incoming SOAP messages should be checked against accepted mime types",
-            def = "true",
-            optional = true)
+            defaultValue = "true")
     private boolean checkMimetype;
 
-    @ConfigField(name = "xdsRegisterUrl",
+    @ConfigurableProperty(name = "xdsRegisterUrl",
             label = "Register URL",
             description = "Register URL that should be used to register documents with this registry (Does NOT actually configure the registry's endpoint!)"
             )
     private String registerUrl;
 
-    @ConfigField(name = "xdsQueryUrl",
+    @ConfigurableProperty(name = "xdsQueryUrl",
             label = "Query URL",
             description = "Query URL that should be used to query this registry (Does NOT actually configure the registry endpoint!)")
     private String queryUrl;
 
     private XADCfgRepository xadCfgRepository;
 
-    public String getApplicationName() {
-        return applicationName;
-    }
 
     public String getRegisterUrl() {
         return registerUrl;
@@ -147,10 +126,6 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
 
     public void setQueryUrl(String queryUrl) {
         this.queryUrl = queryUrl;
-    }
-
-    public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
     }
 
     public String[] getAffinityDomain() {
@@ -194,14 +169,6 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
         this.acceptedMimeTypes = mimeTypes;
     }
 
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
-    }
-
     public boolean isCreateMissingPIDs() {
         return createMissingPIDs;
     }
@@ -237,15 +204,7 @@ public class XdsRegistry extends DeviceExtension implements Deactivateable {
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRegistry src = (XdsRegistry) from;
-        ReflectiveConfig.reconfigure(src, this);
+        ConfigIterators.reconfigure(src, this, XdsRegistry.class);
     }
 
-    @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
 }

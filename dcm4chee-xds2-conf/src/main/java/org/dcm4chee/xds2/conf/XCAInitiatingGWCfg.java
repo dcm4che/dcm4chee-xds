@@ -38,36 +38,38 @@
 
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
+import org.dcm4che3.conf.core.util.ConfigIterators;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.DeviceExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-@ConfigClass(commonName = "XCAInitiatingGW", objectClass = "xcaInitiatingGW", nodeName = "xcaInitiatingGW")
-public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateable {
+@LDAP(objectClasses = "xcaInitiatingGW")
+@ConfigurableClass
+public class XCAInitiatingGWCfg extends XCAExtension {
 
-    @ConfigClass(objectClass = "xdsGatewayRef")
+    @LDAP(objectClasses = "xdsGatewayRef")
+    @ConfigurableClass
     public static class GatewayReference implements Serializable
     {
 
         private static final long serialVersionUID = 9174301221517954931L;
 
-        @ConfigField(name = "xdsAffinityDomain")
+        @ConfigurableProperty(name = "xdsAffinityDomain")
         private String affinityDomain;
 
-        @ConfigField(name = "xdsRespondingGateway")
+        @ConfigurableProperty(name = "xdsRespondingGateway", isReference = true)
         private Device respondingGWdevice;
 
         public String getAffinityDomain() {
@@ -98,40 +100,33 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
 
     private static final String DEFAULTID = "*";
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName")
-    private String applicationName;
-
-    @ConfigField(name = "xdsHomeCommunityID")
-    private String homeCommunityID;
-
-    @ConfigField(name = "xdsRespondingGateways", mapKey = "xdsHomeCommunityID")
+    @LDAP(distinguishingField = "xdsHomeCommunityID")
+    @ConfigurableProperty(name = "xdsRespondingGateways")
     private Map<String, GatewayReference> respondingGWByHomeCommunityIdMap;
 
-    @ConfigField(mapName = "xdsRepositories", mapKey = "xdsRepositoryUid", name = "xdsRepository", mapElementObjectClass = "xdsRepositoryByUid")
+
+    @LDAP(
+            mapValueAttribute = "xdsRepository",
+            distinguishingField = "xdsRepositoryUid",
+            mapEntryObjectClass = "xdsRepositoryByUid"
+    )
+    @ConfigurableProperty(name = "xdsRepositories", collectionOfReferences = true)
     private Map<String, Device> repositoryDeviceByUidMap;
 
     // AffinityDomain Option
-    @ConfigField(name = "xdsRegistry")
+    @ConfigurableProperty(name = "xdsRegistry", isReference = true)
     private Device registry;
 
-    @ConfigField(name = "xdsSoapMsgLogDir")
-    private String soapLogDir;
-
-    @ConfigField(name = "xdsAsync")
+    @ConfigurableProperty(name = "xdsAsync")
     private boolean async;
 
-    @ConfigField(name = "xdsAsyncHandler")
+    @ConfigurableProperty(name = "xdsAsyncHandler")
     private boolean asyncHandler;
 
-    @ConfigField(name = "xdsPIXManagerApplication")
+    @ConfigurableProperty(name = "xdsPIXManagerApplication")
     private String remotePIXManagerApplication;
 
-    @ConfigField(name = "xdsPIXConsumerApplication")
+    @ConfigurableProperty(name = "xdsPIXConsumerApplication")
     private String localPIXConsumerApplication;
     
     private long lastReconfigured;
@@ -249,30 +244,6 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
         this.registry = registry;
     }
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    public String getHomeCommunityID() {
-        return homeCommunityID;
-    }
-
-    public void setHomeCommunityID(String homeCommunityID) {
-        this.homeCommunityID = homeCommunityID;
-    }
-
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
-    }
-
     public boolean isAsync() {
         return async;
     }
@@ -306,18 +277,9 @@ public class XCAInitiatingGWCfg extends DeviceExtension implements Deactivateabl
     }
 
     @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
-
-    @Override
     public void reconfigure(DeviceExtension from) {
         XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
-        ReflectiveConfig.reconfigure(src, this);
+        ConfigIterators.reconfigure(src, this, XCAInitiatingGWCfg.class);
         this.lastReconfigured = System.currentTimeMillis();
     }
     

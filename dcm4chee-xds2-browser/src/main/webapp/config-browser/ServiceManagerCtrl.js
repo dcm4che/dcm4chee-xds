@@ -105,7 +105,7 @@ angular.module('dcm4che-config.controllers', [])
                         return metadata.attributes[k].label;
                     };
 
-                    scope.metadata = {};
+                    scope.schema = {};
 
                     scope.$watch(
                         'config.rootConfigNode', function() {
@@ -117,15 +117,15 @@ angular.module('dcm4che-config.controllers', [])
                         function() {
                             if (scope.config == null) {
                                 scope.confignode = null;
-                                scope.metadata = null;
+                                scope.schema = null;
                             } else {
                                 scope.confignode = scope.config.rootConfigNode;
-                                scope.metadata = scope.config.metadata;
-                                //scope.reindexmetadata(scope.config.rootConfigNode, scope.config.metadata);
+                                scope.schema = scope.config.schema;
+                                //scope.reindexmetadata(scope.config.rootConfigNode, scope.config.schema);
                             }}
                     );
                 },
-                template : '<div confignode="confignode" metadata="metadata" editor="editor"></div>'
+                template : '<div confignode="confignode" schema="schema" editor="editor"></div>'
             };
         } ]
 ).directive("confignode", function(RecursionHelper, ConfigConfig) {
@@ -133,17 +133,17 @@ angular.module('dcm4che-config.controllers', [])
             scope: {
                 editor: '=',
                 confignode: '=',
-                metadata : '=',
+                schema : '=',
                 parentnode : '=',
                 index : '='
             },
             controller: function($scope) {
                 $scope.isNodeComposite= function() {
-                    return $scope.metadata != null && !_.contains(ConfigConfig.nonCompositeTypes, $scope.metadata.type);
+                    return $scope.schema != null && !_.contains(ConfigConfig.nonCompositeTypes, $scope.schema.type);
                 };
 
                 $scope.isNodePrimitive= function() {
-                    return $scope.metadata != null && _.contains(ConfigConfig.primitiveTypes, $scope.metadata.type);
+                    return $scope.schema != null && _.contains(ConfigConfig.primitiveTypes, $scope.schema.type);
                 };
 
             },
@@ -165,14 +165,14 @@ angular.module('dcm4che-config.controllers', [])
             return widths[type]; else return 12;
         }
 
-        $scope.$watch("metadata", function() {
+        $scope.$watch("schema", function() {
             // Map, array, or set
-            if (_.contains(ConfigConfig.collectionTypes, $scope.metadata.type)) {
-                $scope.nodeMetadata = $scope.metadata.elementMetadata;
+            if (_.contains(ConfigConfig.collectionTypes, $scope.schema.type)) {
+                $scope.nodeMetadata = $scope.schema.elementMetadata;
             } else
             // composite object
-            if ($scope.metadata.attributes != null) {
-                $scope.nodeMetadata = $scope.metadata.attributes[$scope.k];
+            if ($scope.schema.attributes != null) {
+                $scope.nodeMetadata = $scope.schema.attributes[$scope.k];
             }
         });
 
@@ -182,8 +182,8 @@ angular.module('dcm4che-config.controllers', [])
     $scope.newkey = $scope.k;
 
     $scope.addEntry= function() {
-        $scope.confignode['new'] = (   $scope.metadata.elementMetadata.type == 'Array' ||
-            $scope.metadata.elementMetadata.type == 'Set' ? [] : {});
+        $scope.confignode['new'] = (   $scope.schema.elementMetadata.type == 'Array' ||
+            $scope.schema.elementMetadata.type == 'Set' ? [] : {});
         $scope.editor.checkModified();
     };
 

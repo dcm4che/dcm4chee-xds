@@ -38,26 +38,24 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.dcm4che3.conf.api.ConfigurationException;
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.ldap.generic.LdapConfigIO;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
+import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 
-@ConfigClass(commonName = "XDSRepository", objectClass = "xdsRepository", nodeName = "xdsRepository")
-public class XdsRepository extends DeviceExtension implements Deactivateable {
+@LDAP(objectClasses = "xdsRepository")
+@ConfigurableClass
+public class XdsRepository extends XdsExtension {
 
     public static final Logger log = LoggerFactory.getLogger(XdsRepository.class);
 
@@ -65,42 +63,41 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the repository service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName")
-    private String applicationName;
-
-    @ConfigField(name = "xdsRepositoryUID")
+    @ConfigurableProperty(name = "xdsRepositoryUID")
     private String repositoryUID;
 
-    @ConfigField(name = "xdsSoapMsgLogDir")
-    private String soapLogDir;
-
-    @ConfigField(name = "xdsAcceptedMimeTypes")
+    @ConfigurableProperty(name = "xdsAcceptedMimeTypes")
     private String[] acceptedMimeTypes = new String[] {};
 
-    @ConfigField(name = "xdsLogFullMessageHosts")
+    @ConfigurableProperty(name = "xdsLogFullMessageHosts")
     private String[] logFullMessageHosts = new String[] {};
 
-    @ConfigField(name = "xdsCheckMimetype")
+    @ConfigurableProperty(name = "xdsCheckMimetype")
     private boolean checkMimetype;
 
-    @ConfigField(name = "xdsAllowedCipherHostname")
+    @ConfigurableProperty(name = "xdsAllowedCipherHostname")
     private String allowedCipherHostname;
 
-    @ConfigField(name = "xdsProvideUrl")
+    @ConfigurableProperty(name = "xdsProvideUrl")
     private String provideUrl;
 
-    @ConfigField(name = "xdsRetrieveUrl")
+    @ConfigurableProperty(name = "xdsRetrieveUrl")
     private String retrieveUrl;
 
-    @ConfigField(mapName = "xdsSources", mapKey = "xdsSourceUid", name = "xdsSource", mapElementObjectClass = "xdsSourceByUid")
+    @LDAP(
+            distinguishingField = "xdsSourceUid",
+            mapValueAttribute = "xdsSource",
+            mapEntryObjectClass = "xdsSourceByUid"
+    )
+    @ConfigurableProperty(name = "xdsSources", collectionOfReferences = true)
     private Map<String, Device> srcDevicebySrcIdMap;
 
-    @ConfigField(mapName = "xdsFileSystemGroupIDs", mapKey = "xdsAffinityDomain", name = "xdsFileSystemGroupID", mapElementObjectClass = "xdsFilesystemGroupByAffinity")
+    @LDAP(
+            distinguishingField = "xdsAffinityDomain",
+            mapValueAttribute = "xdsFileSystemGroupID",
+            mapEntryObjectClass = "xdsFilesystemGroupByAffinity"
+    )
+    @ConfigurableProperty(name = "xdsFileSystemGroupIDs")
     private Map<String, String> fsGroupIDbyAffinity;
 
     public String getRegistryURL(String sourceID) {
@@ -133,13 +130,6 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     // Getters&setters
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-	public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
     public Map<String, Device> getSrcDevicebySrcIdMap() {
         return srcDevicebySrcIdMap;
     }
@@ -170,14 +160,6 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     public void setRetrieveUrl(String retrieveUrl) {
         this.retrieveUrl = retrieveUrl;
-    }
-
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
     }
 
     public String getRepositoryUID() {
@@ -223,15 +205,7 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
     @Override
     public void reconfigure(DeviceExtension from) {
         XdsRepository src = (XdsRepository) from;
-        ReflectiveConfig.reconfigure(src, this);
+        ConfigIterators.reconfigure(src, this, XdsRepository.class);
     }
 
-    @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
 }

@@ -323,8 +323,6 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.13
     xdsSourceUid $
     xdsSource 
  ) )
-
- ) )
 objectClasses: ( 1.2.40.0.13.1.15.20.4.15
   NAME 'xdsFilesystemGroupByAffinity'
   DESC 'FilesystemGroup map entry'
@@ -332,3 +330,4 @@ objectClasses: ( 1.2.40.0.13.1.15.20.4.15
   MUST ( 
     xdsAffinityDomain $
     xdsFileSystemGroupID 
+ ) )

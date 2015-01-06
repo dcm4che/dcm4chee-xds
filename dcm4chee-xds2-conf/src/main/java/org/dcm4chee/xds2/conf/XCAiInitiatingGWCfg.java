@@ -38,23 +38,24 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.Collection;
-import java.util.Map;
-
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
+import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.Device;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
+import org.dcm4che3.net.DeviceExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-@ConfigClass(commonName = "XCAiInitiatingGW", objectClass = "xcaiInitiatingGW", nodeName = "xcaiInitiatingGW")
-public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateable{
+@LDAP(objectClasses = "xcaiInitiatingGW")
+@ConfigurableClass
+public class XCAiInitiatingGWCfg extends XCAExtension {
 
     public static final Logger log = LoggerFactory.getLogger(XCAiInitiatingGWCfg.class);
 
@@ -63,30 +64,27 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
     private static final Object DEFAULTID = "*";
 
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName")
-    private String applicationName;
-
-    @ConfigField(name = "xdsHomeCommunityID")
-    private String homeCommunityID;
-
-    @ConfigField(name = "xdsSoapMsgLogDir")
-    private String soapLogDir;
-
-    @ConfigField(name = "xdsAsync")
+    @ConfigurableProperty(name = "xdsAsync")
     private boolean async;
 
-    @ConfigField(name = "xdsAsyncHandler")
+    @ConfigurableProperty(name = "xdsAsyncHandler")
     private boolean asyncHandler;
 
-    @ConfigField(mapName = "xdsRespondingGateways", mapKey = "xdsHomeCommunityId", name = "xdsRespondingGateway", mapElementObjectClass = "xdsRespondingGatewayByHomeCommunityId")
+
+    @LDAP(
+            distinguishingField = "xdsHomeCommunityId",
+            mapValueAttribute = "xdsRespondingGateway",
+            mapEntryObjectClass = "xdsRespondingGatewayByHomeCommunityId"
+    )
+    @ConfigurableProperty(name = "xdsRespondingGateways", collectionOfReferences = true)
     private Map<String, Device> respondingGWDevicebyHomeCommunityId;
 
-    @ConfigField(mapName = "xdsImagingSources", mapKey = "xdsSourceUid", name = "xdsImagingSource", mapElementObjectClass = "xdsImagingSourceByUid")
+    @LDAP(
+            distinguishingField = "xdsSourceUid",
+            mapValueAttribute = "xdsImagingSource",
+            mapEntryObjectClass = "xdsImagingSourceByUid"
+    )
+    @ConfigurableProperty(name = "xdsImagingSources", collectionOfReferences = true)
     private Map<String, Device> srcDevicebySrcIdMap;
 
     public String getRespondingGWURL(String homeCommunityID) {
@@ -117,7 +115,7 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
         } catch (Exception e) {
             try {
                 String srcurl =  srcDevicebySrcIdMap.get(DEFAULTID).getDeviceExtensionNotNull(XdsSource.class).getUrl();
-                log.warn("Using default URL of XDSiSource for source id {}!", homeCommunityID);
+                log.warn("Using default URL of XDSiSource for source id {}!", getHomeCommunityID());
                 return srcurl;
             } catch (Exception ee) {
                 throw new RuntimeException("Cannot retrieve URL of XDSiSource for source id " + sourceID, e);
@@ -142,30 +140,6 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
         this.srcDevicebySrcIdMap = srcDevicebySrcIdMap;
     }
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    public String getHomeCommunityID() {
-        return homeCommunityID;
-    }
-
-    public void setHomeCommunityID(String homeCommunityID) {
-        this.homeCommunityID = homeCommunityID;
-    }
-
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
-    }
-
     public boolean isAsync() {
         return async;
     }
@@ -185,15 +159,7 @@ public class XCAiInitiatingGWCfg extends DeviceExtension implements Deactivateab
     @Override
     public void reconfigure(DeviceExtension from) {
         XCAiInitiatingGWCfg src = (XCAiInitiatingGWCfg) from;
-        ReflectiveConfig.reconfigure(src, this);
+        ConfigIterators.reconfigure(src, this, XCAiInitiatingGWCfg.class);
     }
 
-    @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
 }

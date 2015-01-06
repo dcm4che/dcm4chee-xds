@@ -14,7 +14,7 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.conf.XCARespondingGWCfg;
 import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
-import org.dcm4chee.xds2.conf.XdsConfigLdapTest;
+import org.dcm4chee.xds2.conf.XdsConfigTest;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
 import org.dcm4chee.xds2.conf.XdsSource;
@@ -74,7 +74,7 @@ public class ConnectathonImport {
 
     public static void main(String[] args) throws Exception {
 
-        XdsConfigLdapTest ldaptst = new XdsConfigLdapTest();
+        XdsConfigTest ldaptst = new XdsConfigTest();
 
         ldaptst.setUp();
         // Device d = ldaptst.config.findDevice("dcm4chee-xds");

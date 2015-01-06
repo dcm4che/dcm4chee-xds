@@ -53,6 +53,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.generic.ConfigClass;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;
@@ -101,10 +102,15 @@ public class XdsDeviceCtrl {
         return Response.status(Status.NO_CONTENT).build();
     }
 
+
+    @Inject
+    DicomConfiguration config;
+
     @GET
     @Path("config")
     @Produces(MediaType.APPLICATION_JSON)      
     public List<ConfigObjectJSON> getConfig() throws Exception {
+        config.get
     	
     	List<ConfigObjectJSON> jsonexts = new ArrayList<ConfigObjectJSON>();
     	Collection<DeviceExtension> exts = service.getDevice().listDeviceExtensions();
