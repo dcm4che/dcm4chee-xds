@@ -120,6 +120,7 @@
 		<module>dcm4chee-xds2-common</module>
 		<module>dcm4chee-xds2-common-ws</module>
 		<module>dcm4chee-xds2-conf</module>
+		<module>dcm4chee-xds2-conf-test</module>
 		<module>dcm4chee-xds2-registry-persistence</module>
 		<module>dcm4chee-xds2-service</module>
 		<module>dcm4chee-xds2-ctrl</module>

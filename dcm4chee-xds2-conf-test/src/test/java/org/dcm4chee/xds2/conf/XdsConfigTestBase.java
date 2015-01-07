@@ -107,7 +107,6 @@ public class XdsConfigTestBase {
     private static final String[] AFFINITY_DOMAIN2 = { "5.4.3.2.1" };
     private static final String DEFAULTID = "*";
 
-    protected static int testCount = 0;
     protected static String testDeviceName;
     protected static String arrDeviceName;
     public DicomConfiguration config;
@@ -116,26 +115,19 @@ public class XdsConfigTestBase {
 
     @After
     public void tearDown() throws Exception {
-        if (System.getProperty("keep") == null)
-        	cleanUp();
-        if (config != null)
-            config.close();
-    }
+        if (System.getProperty("keep") == null) {
 
-    protected void cleanUp() throws Exception {
-        if (config == null || testCount == 0)
-            return;
-    
-    
-        // clean up created devices
-        for (String dName : createdDevices) {
-            try {
-                config.removeDevice(dName);
-            } catch (ConfigurationNotFoundException e) {
+            // clean up created devices
+            for (String dName : createdDevices) {
+                try {
+                    config.removeDevice(dName);
+                } catch (ConfigurationNotFoundException e) {
+                }
             }
+            createdDevices.clear();
         }
-        createdDevices.clear();
-    
+
+        config.close();
     }
 
     public Device addDeviceWithExtensionAndPersist(DeviceExtension extension, String deviceName) throws Exception {

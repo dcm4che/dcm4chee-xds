@@ -52,7 +52,6 @@ public class XdsConfigTest extends XdsConfigTestBase{
 
     @Before
     public void setUp() throws Exception {
-        testCount++;
 
         if (System.getProperty("org.dcm4che.conf.filename") == null)
             System.setProperty("org.dcm4che.conf.filename", "target/config.json");
@@ -61,6 +60,5 @@ public class XdsConfigTest extends XdsConfigTestBase{
             System.setProperty("org.dcm4che.conf.cached", "false");
 
         config = XdsConfigurationFactory.getDicomConfiguration();;
-        cleanUp();
     }
 }
