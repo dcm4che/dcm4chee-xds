@@ -43,6 +43,9 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
+import org.dcm4che3.conf.core.ConfigurationManager;
+import org.dcm4che3.conf.dicom.CommonDicomConfiguration;
+import org.dcm4che3.conf.dicom.CommonDicomConfigurationWithHL7;
 import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.audit.AuditRecordRepository;
@@ -75,8 +78,19 @@ public class XdsConfigurationFactory {
     @Produces
     @Xds
     @ApplicationScoped
-    public static DicomConfiguration getDicomConfiguration()
-            throws ConfigurationException {
+    public static ConfigurationManager getConfigurationManager() throws ConfigurationException {
+        return makeConfig();
+    }
+
+    @Produces
+    @Xds
+    @ApplicationScoped
+    public static DicomConfiguration getDicomConfiguration() throws ConfigurationException {
+        return makeConfig();
+    }
+
+
+    private static CommonDicomConfigurationWithHL7 makeConfig() throws ConfigurationException {
         DicomConfigurationBuilder builder = DicomConfigurationBuilder
                 .newConfigurationBuilder(System.getProperties());
 

@@ -2,17 +2,21 @@ package org.dcm4chee.conf.browser;
 
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.api.generic.adapters.ReflectiveAdapter;
+import org.dcm4che3.conf.api.hl7.HL7Configuration;
+import org.dcm4che3.conf.core.AnnotatedConfigurableProperty;
+import org.dcm4che3.conf.core.BeanVitalizer;
+import org.dcm4che3.conf.core.ConfigurationManager;
+import org.dcm4che3.conf.core.adapters.ConfigTypeAdapter;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.dicom.DicomPath;
+import org.dcm4che3.net.AEExtension;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
+import org.dcm4che3.net.hl7.HL7ApplicationExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.ctrl.ConfigObjectJSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -46,11 +50,46 @@ public class ConfigRESTServicesServlet {
 
     }
 
+    public static class SchemasJSON {
+
+        public SchemasJSON() {
+        }
+
+        public Map<String, Object> device;
+        /**
+         * Simple class name to schema
+         */
+        public Map<String, Map<String,Object>> deviceExtensions;
+
+        /**
+         * Simple class name to schema
+         */
+        public Map<String, Map<String,Object>> aeExtensions;
+
+        /**
+         * Simple class name to schema
+         */
+        public Map<String, Map<String,Object>> hl7AppExtensions;
+
+    }
+
+    public static class ConfigObjectJSON {
+
+        public ConfigObjectJSON() {
+        }
+
+        /**
+         * Object here is either a primitive, an array, a list, or Map<String, Object>
+         */
+        public Map<String,Object> rootConfigNode;
+        public Map<String, Object> schema;
+
+    }
+
     public static class ExtensionJSON {
 
         public ExtensionJSON() {
         }
-
         public String deviceName;
         /**
          * user-friendly name
@@ -61,10 +100,6 @@ public class ConfigRESTServicesServlet {
          */
         public String extensionType;
         /**
-         * Is the device currently running 
-         */
-        //public OnlineStatus isOnline;
-        /**
          * Can the user restart the device
          */
         public boolean restartable;
@@ -72,6 +107,7 @@ public class ConfigRESTServicesServlet {
          * Can the user reconfigure the device
          */
         public boolean reconfigurable;
+
         public ConfigObjectJSON configuration;
 
     }
@@ -80,13 +116,9 @@ public class ConfigRESTServicesServlet {
     @Xds
     DicomConfiguration config;
 
-    ReflectiveConfig reflectiveConfig;
-
-    @PostConstruct
-    private void init() {
-        reflectiveConfig = new ReflectiveConfig(null, config);
-    }
-
+    @Inject
+    @Xds
+    ConfigurationManager configurationManager;
 
     @GET
     @Path("/devices")
@@ -114,30 +146,66 @@ public class ConfigRESTServicesServlet {
     }
 
     @GET
-    @Path("/extensions/{deviceName}")
+    @Path("/device/{deviceName}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<ExtensionJSON> getExtensions(@PathParam(value = "deviceName") String deviceName) throws ConfigurationException {
-        Device d = config.findDevice(deviceName);
-
-        List<ExtensionJSON> extList = new ArrayList<ExtensionJSON>();
-
-        for (DeviceExtension de : d.listDeviceExtensions()) {
-            if (de.getClass().getAnnotation(ConfigClass.class) == null) continue;
-
-            ExtensionJSON extJson = new ExtensionJSON();
-
-            extJson.deviceName = deviceName;
-            extJson.reconfigurable = false;
-            extJson.restartable = false;
-            extJson.extensionName = de.getClass().getSimpleName();
-            extJson.extensionType = de.getClass().getName();
-            extJson.configuration = ConfigObjectJSON.serializeDeviceExtension(de);
-
-            extList.add(extJson);
-        }
-        return extList;
+    public Map<String,Object> getDeviceConfig(@PathParam(value = "deviceName") String deviceName) throws ConfigurationException {
+        return (Map<String, Object>) configurationManager.getConfigurationStorage().getConfigurationNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), Device.class);
     }
 
+
+
+
+
+    @POST
+    @Path("/device/{deviceName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response modifyDeviceConfig(@PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
+        try {
+            configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
+        } catch (Exception e) {
+            return Response.serverError().build();
+        }
+        return Response.ok().build();
+    }
+
+    @GET
+    @Path("/schemas")
+    @Produces(MediaType.APPLICATION_JSON)
+    public SchemasJSON getSchema() throws ConfigurationException {
+
+
+        SchemasJSON schemas = new SchemasJSON();
+        schemas.device = getSchemaForConfigurableClass(Device.class);
+
+        schemas.deviceExtensions = new HashMap<>();
+        for (Class<? extends DeviceExtension> deviceExt : config.getRegisteredDeviceExtensions())
+            schemas.deviceExtensions.put(deviceExt.getSimpleName(), getSchemaForConfigurableClass(deviceExt));
+
+        schemas.aeExtensions = new HashMap<>();
+        for (Class<? extends AEExtension> aeExt : config.getRegisteredAEExtensions())
+            schemas.aeExtensions.put(aeExt.getSimpleName(), getSchemaForConfigurableClass(aeExt));
+
+        schemas.hl7AppExtensions = new HashMap<>();
+        for (Class<? extends HL7ApplicationExtension> hl7Ext : config.getDicomConfigurationExtension(HL7Configuration.class).getRegisteredHL7ApplicationExtensions())
+            schemas.aeExtensions.put(hl7Ext.getSimpleName(), getSchemaForConfigurableClass(hl7Ext));
+
+        // TODO: PERFORMANCE: cache schemas
+        return schemas;
+    }
+
+    private Map<String, Object> getSchemaForConfigurableClass(Class<?> clazz) throws ConfigurationException {
+        BeanVitalizer vitalizer = configurationManager.getVitalizer();
+        return vitalizer.lookupDefaultTypeAdapter(clazz).getSchema(null, vitalizer);
+    }
+
+    /***
+     * this method is just left for backwards-compatibility
+     * @param ctx
+     * @param extJson
+     * @throws ConfigurationException
+     */
+    @Deprecated
     @SuppressWarnings("unchecked")
     @POST
     @Path("/save-extension")
@@ -154,24 +222,24 @@ public class ConfigRESTServicesServlet {
         }
 
         // check if the supplied classname is actually a configclass
-        if (extClass.getAnnotation(ConfigClass.class) == null)
+        if (extClass.getAnnotation(ConfigurableClass.class) == null)
             throw new ConfigurationException("Extension " + extJson.extensionType + " is not configured");
 
         // get current config
         Device d = config.findDevice(extJson.deviceName);
         DeviceExtension currentDeviceExt = d.getDeviceExtension(extClass);
 
-        ReflectiveAdapter<DeviceExtension> ad = new ReflectiveAdapter(extClass);
+        ConfigTypeAdapter ad = configurationManager.getVitalizer().lookupDefaultTypeAdapter(extClass);
 
         // serialize current
-        Map<String, Object> configmap = ad.serialize(currentDeviceExt, reflectiveConfig, null);
+        Map<String, Object> configmap = (Map<String, Object>) ad.toConfigNode(currentDeviceExt, null, configurationManager.getVitalizer());
 
         // copy all the filled submitted fields
         configmap.putAll(extJson.configuration.rootConfigNode);
 
         // deserialize back
 
-        DeviceExtension de = ad.deserialize(configmap, reflectiveConfig, null);
+        DeviceExtension de = (DeviceExtension) ad.fromConfigNode(configmap, new AnnotatedConfigurableProperty(extClass), configurationManager.getVitalizer());
 
         // merge config
         d.removeDeviceExtension(de);
