@@ -196,7 +196,7 @@ public class ConfigRESTServicesServlet {
 
     private Map<String, Object> getSchemaForConfigurableClass(Class<?> clazz) throws ConfigurationException {
         BeanVitalizer vitalizer = configurationManager.getVitalizer();
-        return vitalizer.lookupDefaultTypeAdapter(clazz).getSchema(null, vitalizer);
+        return vitalizer.lookupDefaultTypeAdapter(clazz).getSchema(new AnnotatedConfigurableProperty(clazz), vitalizer);
     }
 
     /***
