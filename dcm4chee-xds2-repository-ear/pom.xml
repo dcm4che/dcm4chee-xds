@@ -141,7 +141,7 @@
 				<version>2.6</version>
 				<configuration>
 					<defaultJavaBundleDir>lib</defaultJavaBundleDir>
-					<classifier>${db}</classifier>
+					<classifier>${db}${asb}</classifier>
 					<modules>
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>

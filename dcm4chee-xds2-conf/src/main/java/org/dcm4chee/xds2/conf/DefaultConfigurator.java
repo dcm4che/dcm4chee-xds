@@ -36,14 +36,6 @@ public class DefaultConfigurator {
             
 
             Device device = new Device(deviceName);
-            Issuer issuer = new Issuer("XDS_A", "1.2.40.0.13.1.1.999.111.1111", "ISO");
-            Code institutionCode = new Code("111.1111", "99DCM4CHEE", null, "Site A");
-            device.setIssuerOfPatientID(issuer);
-            device.setIssuerOfAccessionNumber(issuer);
-            if (institutionCode != null) {
-                device.setInstitutionNames(institutionCode.getCodeMeaning());
-                device.setInstitutionCodes(institutionCode);
-            }
 
             // registry
             XdsRegistry registry = new XdsRegistry();
