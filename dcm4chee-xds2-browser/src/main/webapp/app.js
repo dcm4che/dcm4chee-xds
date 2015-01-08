@@ -5,8 +5,8 @@
 
 var dcm4cheBrowserApp = angular.module('dcm4cheBrowserApp', [
   'ngRoute',
-  'ngAnimate',
   'ngSanitize',
+  'ngAnimate',
   'mgcrea.ngStrap',  
 
   'appCommon',

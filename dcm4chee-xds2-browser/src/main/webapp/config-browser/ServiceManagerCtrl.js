@@ -49,6 +49,7 @@ angular.module('dcm4che-config.controllers', [])
     }
 ).controller('DeviceEditorController', function ($scope, appHttp, appNotifications, ConfigConfig) {
 
+        $scope.deviceCollapsed = true;
         $scope.editor = {
             a: 1,
             checkModified: function () {

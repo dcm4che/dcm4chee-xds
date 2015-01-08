@@ -30,7 +30,7 @@ angular.module('xds.controllers').controller('AdhocQueryUICtrl',
 
             // we need to blur from search field, otherwise it is confusing as the
             // typeahead is not popping up until re-focused
-            angular.element("#searchButton").focus();
+            //angular.element("#searchButton").focus();
 
             // search depending on type of input
 

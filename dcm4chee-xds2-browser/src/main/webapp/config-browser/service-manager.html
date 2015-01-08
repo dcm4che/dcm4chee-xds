@@ -12,11 +12,19 @@
     <div class="col-md-3">
 
         <div class="list-group">
-            <a href="" class="list-group-item" ng-repeat="device in devices" ng-class="(selectedDevice == device ? 'active' : '')"  ng-click="selectDevice(device)" >
-                <h4 class="list-group-item-heading"><small><span class="icon-cogs"></span></small> {{device.deviceName}}</h4>
+            <a href="" class="list-group-item" ng-repeat="device in devices"
+               ng-class="(selectedDevice == device ? 'active' : '')" ng-click="selectDevice(device)">
+                <h4 class="list-group-item-heading">
+                    <small><span class="icon-cogs"></span></small>
+                    {{device.deviceName}}
+                </h4>
                 <small>
-                    <p class="list-group-item-text" ng-show="device.appEntities.length>0">AEs: <small>{{device.appEntities.join(', ')}}</small></p>
-                    <p class="list-group-item-text" ng-show="device.deviceExtensions.length>0">Extensions: <small>{{device.deviceExtensions.join(', ')}}</small></p>
+                    <p class="list-group-item-text" ng-show="device.appEntities.length>0">AEs:
+                        <small>{{device.appEntities.join(', ')}}</small>
+                    </p>
+                    <p class="list-group-item-text" ng-show="device.deviceExtensions.length>0">Extensions:
+                        <small>{{device.deviceExtensions.join(', ')}}</small>
+                    </p>
                 </small>
             </a>
         </div>
@@ -25,32 +33,59 @@
 
     <div class="col-md-9" ng-show="selectedDevice" ng-controller="DeviceEditorController">
         <h1><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h1>
+
         <h2><span class="red icon-expand"></span> Extensions</h2>
 
 
-        <div class="panel-body" config-node-editor schema="ConfigConfig.schemas.device" config="selectedDevice.config" editor="editor"></div>
+        <div class="panel-group">
+            <div class="panel-default" ng-class="(deviceCollapsed ? '' : 'panel' )" ng-model="deviceCollapsed" bs-collapse>
+                <div class="panel-body">
 
-        <!--ul class="nav nav-pills">
-            <li ng-repeat="extension in selectedDevice.extensions | orderBy:'extensionName'" ng-class="(selectedExtension == extension ? 'active' : '')"><a href="" ng-click="selectExtension(extension)">{{extension.extensionName}}</a></li>
-        </ul-->
 
-        <!--div class="panel panel-primary" ng-show="selectedExtension" >
-            <div class="panel-heading">
-                <span class="details-header"> {{selectedExtension.extensionName}} </span>
-                <span ng-include src="'/SaveCancel.html'"></span>
+                    <!--<div class="nice-solid-regular nice-pane-padding">-->
+                        <div class="group-component group-component-regular">
+
+                            <a href="" class="title" ng-class="(deviceCollapsed ? 'collapsed' : '')"
+                               bs-collapse-toggle>Device parameters</p></a>
+
+                            <div config-node-editor
+                                 schema="ConfigConfig.schemas.device"
+                                 config="selectedDevice.config"
+                                 editor="editor"
+                                 class="panel-body"
+                                 bs-collapse-target>
+                            </div>
+                            <br/>
+                        </div>
+
+                    <!--</div>-->
+                </div>
             </div>
-            <div class="panel-body" config-node-editor schema="" config="selectedExtension.configuration" editor="editor"></div>
-            <div class="panel-footer">
-                <span class="details-header"> &nbsp; </span>
-                <span ng-include src="'/SaveCancel.html'"></span>
-            </div>
-        </div-->
+
+
+            <!--ul class="nav nav-pills">
+                <li ng-repeat="extension in selectedDevice.extensions | orderBy:'extensionName'" ng-class="(selectedExtension == extension ? 'active' : '')"><a href="" ng-click="selectExtension(extension)">{{extension.extensionName}}</a></li>
+            </ul-->
+
+            <!--div class="panel panel-primary" ng-show="selectedExtension" >
+                <div class="panel-heading">
+                    <span class="details-header"> {{selectedExtension.extensionName}} </span>
+                    <span ng-include src="'/SaveCancel.html'"></span>
+                </div>
+                <div class="panel-body" config-node-editor schema="" config="selectedExtension.configuration" editor="editor"></div>
+                <div class="panel-footer">
+                    <span class="details-header"> &nbsp; </span>
+                    <span ng-include src="'/SaveCancel.html'"></span>
+                </div>
+            </div-->
+        </div>
+
+        <!-- Save and Cancel buttons template -->
+        <script type="text/ng-template" id="/SaveCancel.html">
+            <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)"
+               class="btn btn-success pull-right">Save</a>
+            <a ng-show="selectedExtension.isModified" href="" ng-click="cancelChangesExtension(selectedExtension)"
+               class="btn btn-danger pull-right">Cancel</a>
+        </script>
+
     </div>
-
-    <!-- Save and Cancel buttons template -->
-    <script type="text/ng-template" id="/SaveCancel.html">
-        <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)" class="btn btn-success pull-right">Save</a>
-        <a ng-show="selectedExtension.isModified" href="" ng-click="cancelChangesExtension(selectedExtension)" class="btn btn-danger pull-right">Cancel</a>
-    </script>
-
-</div>

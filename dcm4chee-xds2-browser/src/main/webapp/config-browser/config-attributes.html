@@ -1,66 +1,67 @@
-
 <!-- Composite (Object) -->
 <div class="row" ng-if="isNodeComposite()">
 
-    	<div ng-class="'col-md-'+getWidthForType(subNodeSchema.type)" ng-repeat="(k,nodeMetadataVal) in schema.properties" ng-controller="ConfigSubNodeController">
-            <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{subNodeSchema.title ? subNodeSchema.title : k}} <small>{{subNodeSchema.description}}</small></h3>
+    <legend>{{schema.class}}</legend>
+    <div class="form-horizontal">
+
+        <div ng-repeat="(k,nodeMetadataVal) in schema.properties" ng-controller="ConfigSubNodeController">
+
+            <div confignode="confignode[k]" schema="subNodeSchema" parentnode="confignode" index="k"
+                 editor="editor"></div>
+
+        </div>
+    </div>
+</div>
+
+<div class="form-group"
+     ng-if="(schema.type == 'string' || schema.type == 'integer' || schema.type == 'boolean' || schema.type == 'array')">
+    <label class="col-sm-3 control-label">{{schema.title ? schema.title : index}}</label>
+
+    <div class="col-sm-9">
+
+        <!-- Primitives -->
+        <div ng-if="(schema.type == 'string' || schema.type == 'integer')">
+                <input class="form-control" ng-model="parentnode[index]">
+        </div>
+
+        <!-- Boolean -->
+        <div class="checkbox" ng-if="schema.type == 'boolean'">
+            <input ng-model="parentnode[index]" type="checkbox">
+        </div>
+
+        <!-- Collections -->
+        <div ng-if="(schema.type == 'array')">
+            <!-- Collection view -->
+            <div ng-show="edited != confignode">
+                <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigSubNodeController">
+                    <span class="label label-info">{{node}}</span>
+                </span>
+                <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'"
+                   ng-mouseenter="focused = confignode" ng-mouseleave="focused = null"
+                   ng-click="edited = confignode"><span
+                        class="icon-pencil"></span></a>
             </div>
-            <div class="panel-body">
-               <div confignode="confignode[k]" schema="subNodeSchema" parentnode="confignode" index="k" editor="editor"></div>
+            <!-- Collection edit -->
+            <div ng-show="edited == confignode">
+                <div ng-repeat="(k, node) in confignode track by k">
+                    <input ng-model="confignode[k]"/>
+                    <a href="" ng-click="confignode.splice(k,1)">Delete</a>
+                </div>
+                <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href=""
+                                                                                         ng-click="edited = null; editor.checkModified();">Save</a>
             </div>
         </div>
-		</div>
-</div>
 
-
-<!-- Boolean -->
-<div ng-if="schema.type == 'boolean'">
-        <button class='btn' ng-class="(confignode ? 'btn-success' : 'btn-default')" ng-click="parentnode[index] = (confignode ? false : true); editor.checkModified();">{{ confignode ? 'Enabled' : 'Disabled' }}</button>
-
-</div>
-
-<!-- Primitives -->
-<div ng-if="(schema.type == 'string' || schema.type == 'integer')">
-    <!-- view -->
-    <div ng-show="!edited">
-        {{confignode}}
-        <a href="" class="btn" ng-class="focused ?'btn-success':'btn-default'" ng-mouseenter="focused = true" ng-mouseleave="focused = false" ng-click="edited = true"><span class="icon-pencil"></span></a>
-    </div>
-    <!-- edit -->
-    <div ng-show="edited">
-        <input class="form-control" ng-model="parentnode[index]">
-        <a class="btn btn-success" href="" ng-click="edited = false; editor.checkModified();">Save</a>
     </div>
 </div>
 
-
-<!-- Collections -->
-<div ng-if="(schema.type == 'array')">
-    <!-- Collection view -->
-    <div ng-show="edited != confignode">
-        <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigSubNodeController">
-            <span class="label label-info">{{node}}</span>
-        </span>
-        <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'" ng-mouseenter="focused = confignode" ng-mouseleave="focused = null" ng-click="edited = confignode"><span class="icon-pencil"></span></a>
-    </div>
-    <!-- Collection edit -->
-    <div ng-show="edited == confignode">
-        <div ng-repeat="(k, node) in confignode track by k">
-            <input ng-model="confignode[k]"/>
-            <a href="" ng-click="confignode.splice(k,1)">Delete</a>
-        </div>
-        <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href="" ng-click="edited = null; editor.checkModified();">Save</a>
-    </div>
-</div>
 
 <!-- Map -->
 <div ng-if="(schema.type == 'Map')" ng-controller="MapController">
     <!-- Map view -->
     <a href="" ng-click="addEntry()">Add</a>
     <table class="table table-condensed smallprops">
-        <tr ng-repeat="(k,node) in confignode" >
+        <tr ng-repeat="(k,node) in confignode">
             <!-- view key -->
             <td ng-show="!edited"><span class="label label-success details-header">{{k}}</span>
                 <a href="" class="btn btn-default pull-right" ng-click="edited = true"><span class="icon-pencil"></span></a>

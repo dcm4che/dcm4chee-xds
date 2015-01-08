@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="loginApp">
 <head>
     <meta charset="UTF-8">
     <title>XDS Login</title>
@@ -8,15 +8,17 @@
     <link rel="stylesheet" href="dcm4che-web-common/css/login.css">
 
 
-    <script type="text/javascript" src="lib/angular.js"></script>
+    <script type="text/javascript" src="lib/angular/angular.js"></script>
 
 </head>
 <body>
 
 <script type="text/javascript">
-    function LoginController($scope) {
+
+    angular.module("loginApp", []).controller("LoginController", function($scope)
+    {
         $scope.isError = window.location.href.indexOf("j_security_check") !== -1;
-    }
+    });
 
 </script>
 <div class="container" ng-controller="LoginController">

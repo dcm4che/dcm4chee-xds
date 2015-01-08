@@ -23,8 +23,8 @@
             <url-pattern>/dcm4che-web-common/css/login.css</url-pattern>
             <url-pattern>/lib/bootstrap/css/bootstrap.css</url-pattern>
             <url-pattern>/lib/bootstrap/css/bootstrap.css.map</url-pattern>
-            <url-pattern>/lib/angular.js</url-pattern>
-            <url-pattern>/lib/angular.min.js</url-pattern>
+            <url-pattern>/lib/angular/angular.js</url-pattern>
+            <url-pattern>/lib/angular/angular.min.js</url-pattern>
             <http-method>GET</http-method>
         </web-resource-collection>
     </security-constraint>
