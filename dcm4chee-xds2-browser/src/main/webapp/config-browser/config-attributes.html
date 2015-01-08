@@ -1,16 +1,14 @@
+
 <!-- Composite (Object) -->
 <div class="row" ng-if="isNodeComposite()">
 
-    <!-- debug  <tr><td></td><td>
-        {{confignode}}
-</td></tr> -->
-    	<div ng-class="'col-md-'+getWidthForType(nodeMetadata.type)" ng-repeat="(k,nodeMetadataVal) in metadata.attributes" ng-controller="ConfigNodeController">
+    	<div ng-class="'col-md-'+getWidthForType(subNodeSchema.type)" ng-repeat="(k,nodeMetadataVal) in schema.properties" ng-controller="ConfigSubNodeController">
             <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">{{nodeMetadata.label ? nodeMetadata.label : k}} <small>{{nodeMetadata.description}}</small></h3>
+                <h3 class="panel-title">{{subNodeSchema.title ? subNodeSchema.title : k}} <small>{{subNodeSchema.description}}</small></h3>
             </div>
             <div class="panel-body">
-               <div confignode="confignode[k]" metadata="nodeMetadata" parentnode="confignode" index="k" editor="editor"></div>
+               <div confignode="confignode[k]" schema="subNodeSchema" parentnode="confignode" index="k" editor="editor"></div>
             </div>
         </div>
 		</div>
@@ -18,13 +16,13 @@
 
 
 <!-- Boolean -->
-<div ng-if="metadata.type == 'Boolean'">
+<div ng-if="schema.type == 'boolean'">
         <button class='btn' ng-class="(confignode ? 'btn-success' : 'btn-default')" ng-click="parentnode[index] = (confignode ? false : true); editor.checkModified();">{{ confignode ? 'Enabled' : 'Disabled' }}</button>
 
 </div>
 
 <!-- Primitives -->
-<div ng-if="(metadata.type == 'String' || metadata.type == 'Integer')">
+<div ng-if="(schema.type == 'string' || schema.type == 'integer')">
     <!-- view -->
     <div ng-show="!edited">
         {{confignode}}
@@ -39,10 +37,10 @@
 
 
 <!-- Collections -->
-<div ng-if="(metadata.type == 'Array' || metadata.type == 'Set')">
+<div ng-if="(schema.type == 'array')">
     <!-- Collection view -->
     <div ng-show="edited != confignode">
-        <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigNodeController">
+        <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigSubNodeController">
             <span class="label label-info">{{node}}</span>
         </span>
         <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'" ng-mouseenter="focused = confignode" ng-mouseleave="focused = null" ng-click="edited = confignode"><span class="icon-pencil"></span></a>
@@ -58,7 +56,7 @@
 </div>
 
 <!-- Map -->
-<div ng-if="(metadata.type == 'Map')" ng-controller="MapController">
+<div ng-if="(schema.type == 'Map')" ng-controller="MapController">
     <!-- Map view -->
     <a href="" ng-click="addEntry()">Add</a>
     <table class="table table-condensed smallprops">
@@ -73,7 +71,7 @@
                 <input ng-model="newkey"/>
                 <a class="btn btn-success" href="" ng-click="edited = !saveKey(k,newkey)">Save</a>
             </td>
-            <td ng-controller="ConfigNodeController">
+            <td ng-controller="ConfigSubNodeController">
                 <div confignode="node" metadata="nodeMetadata" parentnode="confignode" index="k" editor="editor"></div>
             </td>
         </tr>
@@ -81,7 +79,7 @@
 </div>
 
 <!-- Device -->
-<div ng-if="metadata.type == 'Device'" ng-controller="ConfigNodeController">
+<div ng-if="schema.type == 'Device'" ng-controller="ConfigSubNodeController">
     <span class="grey"> Device: </span>
     <button type="button" class="btn btn-default"
             ng-model="parentnode[index]" data-html="1"
