@@ -36,6 +36,8 @@
 	<name>Online registry browser for admininstration purposes </name>
     <properties>
         <serviceManager.enabled>true</serviceManager.enabled>
+		<browser.security.enabled.l></browser.security.enabled.l>
+		<browser.security.enabled.r></browser.security.enabled.r>
     </properties>
     <profiles>
         <profile>
@@ -50,6 +52,15 @@
                 </property>
             </activation>
         </profile>
+		<profile>
+
+			<id>security-disabled</id>
+			<properties>
+				<browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
+				<browser.security.enabled.r>--&gt;</browser.security.enabled.r>
+			</properties>
+
+		</profile>
     </profiles>
 	<dependencies>
 		<dependency>
@@ -150,6 +161,7 @@
 			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
 
 	</dependencies>
 	<build>
