@@ -14,7 +14,7 @@
 </div>
 
 <div class="form-group"
-     ng-if="(schema.type == 'string' || schema.type == 'integer' || schema.type == 'boolean' || schema.type == 'array')">
+     ng-if="(schema.type == 'string' || schema.type == 'integer' || schema.type == 'boolean' || (schema.type == 'array' && schema.items.type != 'object'))">
     <label class="col-sm-3 control-label">{{schema.title ? schema.title : index}}</label>
 
     <div class="col-sm-9">
@@ -55,6 +55,35 @@
     </div>
 </div>
 
+<!-- Object collection -->
+<div ng-if="(schema.type == 'array' && schema.items.type == 'object')" >
+    <legend>{{index}}</legend>
+
+    <div class="row">
+    <div class="nice-pane-padding nice-solid-regular col-sm-3">
+        <table class="table table-regular table-bordered table-hover">
+            <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr ng-repeat="item in confignode" ng-click="selectItem(item);">
+                <td>{{getLabel(item, schema.items)}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+        <div class="col-sm-9">
+            <div config-node-editor
+                 schema="schema.items"
+                 config="selectedItemConfig"
+                 editor="editor">
+            </div>
+        </div>
+    </div>
+
+</div>
 
 <!-- Map -->
 <div ng-if="(schema.type == 'Map')" ng-controller="MapController">

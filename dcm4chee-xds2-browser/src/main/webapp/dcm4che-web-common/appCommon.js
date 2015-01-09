@@ -6,6 +6,8 @@ appCommon.controller('NavbarController', ['$scope','$http', function($scope, $ht
             window.location.reload();
         });
     };
+
+	$scope.serviceManagerEnabled = "${serviceManager.enabled}";
 }]);
 
 appCommon.factory('appLoadingIndicator', function() {

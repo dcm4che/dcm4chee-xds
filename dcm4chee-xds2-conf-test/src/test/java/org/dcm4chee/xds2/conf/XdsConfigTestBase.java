@@ -882,7 +882,6 @@ public class XdsConfigTestBase {
         device.addConnection(udp);
         arrDeviceName = "dcm4chee-AuditRecordRepository";
         Device arrDevice = new Device(arrDeviceName);
-        createdDevices.add(arrDeviceName);
         AuditRecordRepository arr = new AuditRecordRepository();
         arrDevice.addDeviceExtension(arr);
         Connection arrUDP = new Connection("audit-udp", "arr.dcm4che.org");

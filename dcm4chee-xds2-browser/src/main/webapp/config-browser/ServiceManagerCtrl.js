@@ -28,22 +28,17 @@ angular.module('dcm4che-config.controllers', [])
          });
          };*/
 
-
-        $scope.selectDevice = function (device) {
-            $scope.selectedExtension = undefined;
-            $scope.selectedDevice = device;
-            if ($scope.selectedDevice.config == null) {
-                $scope.loadDeviceConfig(device);
+        $scope.$watch("selectedDevice", function () {
+            if ($scope.selectedDevice != null && $scope.selectedDevice.config == null) {
+                $scope.loadDeviceConfig($scope.selectedDevice);
             }
-        };
-
-        $scope.selectExtension = function (extension) {
-            $scope.selectedExtension = extension;
-        };
+        });
 
         // load devicelist
         ConfigConfig.load(function () {
             $scope.devices = ConfigConfig.devices;
+            if ($scope.devices.length > 0)
+                $scope.selectedDevice = $scope.devices[0];
         });
 
     }
@@ -76,6 +71,14 @@ angular.module('dcm4che-config.controllers', [])
 
         };
 
+        $scope.selectDeviceExtension = function (extensionName, extensionConfig) {
+            if (_.chain(ConfigConfig.schemas.deviceExtensions)
+                    .keys()
+                    .contains(extensionName)
+                    .value())
+                $scope.selectedDeviceExtensionName = extensionName;
+                $scope.selectedDeviceExtensionConfig = extensionConfig;
+        };
 
         $scope.cancelChangesExtension = function (extension) {
             extension.configuration.rootConfigNode = angular.copy(extension.lastPersistedConfig);
@@ -104,7 +107,7 @@ angular.module('dcm4che-config.controllers', [])
                 template: '<div confignode="config" schema="schema" editor="editor"></div>'
             };
         }]
-).directive("confignode", function (RecursionHelper, ConfigConfig) {
+).directive("confignode", function (RecursionHelper, ConfigConfig, $filter) {
         return {
             scope: {
                 editor: '=',
@@ -114,13 +117,27 @@ angular.module('dcm4che-config.controllers', [])
                 index: '='
             },
             controller: function ($scope) {
+
+                $scope.selectedItemConfig = {};
+
+                $scope.selectItem = function(item) {
+                    $scope.selectedItemConfig = item;
+                };
+
                 $scope.isNodeComposite = function () {
-                    return $scope.schema != null && $scope.schema.type=="object" && $scope.schema.class!="Map";
+                    return $scope.schema != null && $scope.schema.type == "object" && $scope.schema.class != "Map";
                 };
 
                 $scope.isNodePrimitive = function () {
                     return $scope.schema != null && _.contains(ConfigConfig.primitiveTypes, $scope.schema.type);
                 };
+
+                $scope.getLabel = function(node, schema) {
+                    if (schema.properties.cn != null)
+                        return node.cn;
+                    else
+                        return $filter('limitTo')(angular.toJson(node), 20);
+                }
 
             },
             templateUrl: "config-browser/config-attributes.html",
@@ -142,14 +159,13 @@ angular.module('dcm4che-config.controllers', [])
         }
 
         $scope.$watch("schema", function () {
-            if ($scope.schema.type=="object" && $scope.schema.class=="Map") {
+            if ($scope.schema.type == "object" && $scope.schema.class == "Map") {
                 $scope.subNodeSchema = $scope.schema.properties['*'];
-            } else
-            if ($scope.schema.type=="array") {
+            } else if ($scope.schema.type == "array") {
                 $scope.subNodeSchema = $scope.schema.items;
             } else
             // composite object
-            if ($scope.schema.type=="object" && $scope.schema.properties != null) {
+            if ($scope.schema.type == "object" && $scope.schema.properties != null) {
                 $scope.subNodeSchema = $scope.schema.properties[$scope.k];
             }
         });
