@@ -42,11 +42,28 @@ angular.module('dcm4che-config.controllers', [])
             options: null
         };
 
-
-        $scope.$watch("selectedDevice", function () {
+        // refresh things on device selection
+        $scope.$watch("selectedDevice.config", function () {
             $scope.selectedConfigNode = null;
             $scope.selectedConfigNodeSchema = null;
             $scope.editor.options = null;
+
+            if ($scope.selectedDevice && $scope.selectedDevice.config) {
+                $scope.editor.deviceRefs = _.map(ConfigConfig.devices, function (device) {
+                    return {
+                        name: device.deviceName,
+                        ref: "/dicomConfigurationRoot/dicomDevicesRoot/*[dicomDeviceName='" + device.deviceName.replace("'", "&apos;") + "']"
+                    }
+                });
+
+                $scope.editor.connectionRefs = $scope.selectedDevice ? _.map($scope.selectedDevice.config.dicomConnection, function (connection) {
+                    return {
+                        name: connection.cn + "," + connection.dcmProtocol + "(" + connection.dicomHostname + ":" + connection.dicomPort + ")",
+                        ref: "/dicomConfigurationRoot/dicomDevicesRoot/*[dicomDeviceName='" + $scope.selectedDevice.config.dicomDeviceName.replace("'", "&apos;") + "']/dicomConnection[cn='" + connection.cn.replace("'", "&apos;") + "']"
+                    };
+                }) : {};
+            }
+
         });
 
 
@@ -73,14 +90,6 @@ angular.module('dcm4che-config.controllers', [])
                     'schema': '=',
                     'editor': '='
                 },
-                link: function (scope) {
-
-
-                    scope.getLabel = function (metadata, k) {
-                        return metadata.attributes[k].label;
-                    };
-
-                },
                 template: '<div confignode="config" schema="schema" editor="editor"></div>'
             };
         }]
@@ -91,7 +100,8 @@ angular.module('dcm4che-config.controllers', [])
                 confignode: '=',
                 schema: '=',
                 parentnode: '=',
-                index: '='
+                index: '=',
+                noLabel: '@'
             },
             controller: function ($scope) {
 
@@ -131,14 +141,12 @@ angular.module('dcm4che-config.controllers', [])
                         });
 
                     // generate tooltip
-
-
                     if ($scope.schema == null)
                         $scope.propertyTooltip = null;
                     else
                         $scope.propertyTooltip = {
                             title: ($scope.schema.description ? $scope.schema.description + "<br/>" : "") +
-                            ($scope.schema.default ? "Default: <strong>" + $scope.schema.default +"</strong>": "")
+                            ($scope.schema.default ? "Default: <strong>" + $scope.schema.default + "</strong>" : "")
 
                         }
 
@@ -154,7 +162,23 @@ angular.module('dcm4che-config.controllers', [])
             }
         };
     }
-).controller("CollectionController", function ($scope, ConfigConfig) {
+).controller("CompositeNodeController", function ($scope, ConfigConfig) {
+        $scope.$watch("schema", function () {
+
+            $scope.groups = null;
+
+            if ($scope.schema) {
+                $scope.groups = _.chain($scope.schema.properties)
+                    .map(function (prop) {
+                        if (prop.uiGroup) return prop.uiGroup;
+                    })
+                    .uniq().value();
+            }
+
+        });
+
+
+    }).controller("CollectionController", function ($scope, ConfigConfig) {
 
         $scope.$watch('confignode', function () {
             $scope.selectedItemConfig = null;
@@ -233,6 +257,16 @@ angular.module('dcm4che-config.controllers', [])
             collectionTypes: collectionTypes,
             nonCompositeTypes: nonCompositeTypes,
 
+
+            groupOrder:[
+                "General",
+                "Affinity domain",
+                "XDS profile strictness",
+                "Endpoints",
+                "Other",
+                "Logging"
+            ],
+
             devices: [],
 
             schemas: {},
@@ -295,6 +329,12 @@ angular.module('dcm4che-config.controllers', [])
             });
             return map;
         }
+    }).filter('groupSorter', function(ConfigConfig) {
+        return function (groups) {
+            // force order provided by groupOrder
+            return _.chain(ConfigConfig.groupOrder).intersection(groups).union(groups).value();
+        };
+
     });
 
 

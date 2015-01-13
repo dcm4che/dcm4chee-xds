@@ -1,29 +1,40 @@
 <!-- Composite (Object) -->
-<div class="row" ng-if="isNodeComposite()">
+<div ng-if="isNodeComposite()">
 
     <!--legend>{{schema.class}}</legend-->
-    <div class="form-horizontal">
+    <div class="form-horizontal" ng-controller="CompositeNodeController">
+        <div ng-repeat="group in groups | groupSorter">
+            <fieldset>
+                <legend ng-show="groups.length>1">{{group}}</legend>
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps| filterProperties:editor.options | filter:{uiGroup:group}">
 
-        <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps|  filterProperties:editor.options | orderBy: '-type'">
-
-            <div confignode="confignode[propertySchema.$key]" schema="propertySchema" parentnode="confignode"
-                 index="propertySchema.$key"
-                 editor="editor">
-
-            </div>
-
+                    <div confignode="confignode[propertySchema.$key]" schema="propertySchema" parentnode="confignode"
+                         index="propertySchema.$key"
+                         editor="editor">
+                    </div>
+                </div>
+            </fieldset>
         </div>
+
         <a href=""
            class="btn btn-default pull-right"
            ng-click="toggleShowAllProps()"
-           ng-show="isShowAllTogglable">{{doShowAllProps ? "Show only primary "+schema.class+" properties" : "Show all "+schema.class+" properties..."}}
+           ng-show="isShowAllTogglable">{{doShowAllProps ?
+            "Show only primary "+schema.class+" properties" :
+            "Show all "+schema.class+" properties..."}}
         </a>
     </div>
 </div>
 
-<div class="form-group"
-     ng-if="(schema.type == 'string' || schema.type == 'integer' || schema.type == 'boolean' || (schema.type == 'array' && schema.items.type != 'object'))">
-    <label class="col-sm-3 control-label"
+<div ng-class="(!noLabel ? 'form-group' : '')"
+     ng-if="(schema.type == 'string' ||
+     schema.type == 'integer' ||
+     schema.type == 'boolean' ||
+     schema.type == 'enum' ||
+     (schema.type == 'array' && schema.items.type != 'object'))">
+
+    <label class="col-sm-4 control-label"
+           ng-if="!noLabel"
            data-placement="bottom-right"
            data-animation="am-fade-and-scale"
            data-html="true"
@@ -31,40 +42,60 @@
            bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
 
 
-    <div class="col-sm-9">
+    <div class="col-sm-8">
 
         <!-- Primitives -->
-        <div ng-if="(schema.type == 'string' || schema.type == 'integer')">
+        <div ng-if="((schema.type == 'string' || schema.type == 'integer') && schema.class!='Reference')">
             <input class="form-control" ng-model="parentnode[index]">
         </div>
+
 
         <!-- Boolean -->
         <div class="checkbox" ng-if="schema.type == 'boolean'">
             <input ng-model="parentnode[index]" type="checkbox">
         </div>
 
+        <!-- enum -->
+        <div ng-if="schema.type == 'enum'">
+            <select ng-if="schema.enumRepresentation=='STRING'" ng-model="parentnode[index]" class="form-control"
+                    ng-options="option for option in schema.enum">
+            </select>
+            <select ng-if="schema.enumRepresentation=='ORDINAL'" ng-model="parentnode[index]" class="form-control"
+                    ng-options="option as schema.enumStrValues[option] for option in schema.enum">
+            </select>
+        </div>
+
+        <!-- reference -->
+        <div ng-if="(schema.type == 'string' && schema.class=='Reference')">
+            <select class="form-control"
+                    ng-if="schema.referencedClass=='Device'"
+                    ng-model="parentnode[index]"
+                    ng-options="option.ref as option.name for option in editor.deviceRefs">
+            </select>
+            <select class="form-control"
+                    ng-if="schema.referencedClass=='Connection'"
+                    ng-model="parentnode[index]"
+                    ng-options="option.ref as option.name for option in editor.connectionRefs">
+            </select>
+        </div>
+
+
         <!-- Collections -->
         <div ng-if="(schema.type == 'array')">
-            <!-- Collection view -->
-            <div ng-show="edited != confignode">
-                <span ng-repeat="(k,node) in confignode track by k">
-                    <span class="label label-info">{{node}}</span>
-                </span>
-                <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'"
-                   ng-mouseenter="focused = confignode" ng-mouseleave="focused = null"
-                   ng-click="edited = confignode"><span
-                        class="icon-pencil"></span></a>
-            </div>
-            <!-- Collection edit -->
-            <div ng-show="edited == confignode">
-                <div ng-repeat="(k, node) in confignode track by k">
-                    <input ng-model="confignode[k]"/>
-                    <a href="" ng-click="confignode.splice(k,1)">Delete</a>
+            <div class="row" ng-repeat="(k, node) in confignode track by k">
+
+                <div confignode="node"
+                     schema="schema.items"
+                     parentnode="confignode"
+                     index="k"
+                     editor="editor"
+                     no-label="true">
                 </div>
-                <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a><a class="btn btn-success" href=""
-                                                                                         ng-click="edited = null; editor.checkModified();">Save</a>
+                <a href="" class="btn btn-info" ng-click="confignode.splice(k,1)">Delete</a>
             </div>
+            <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a>
         </div>
+
 
     </div>
 </div>
@@ -81,7 +112,7 @@
             <div class="row">
                 <div class="nice-pane-padding nice-solid-regular col-sm-3">
                     <p ng-show="isCollectionEmpty()">No items.</p>
-                    <table class="table table-regular table-bordered table-hover"  ng-show="!isCollectionEmpty()">
+                    <table class="table table-regular table-bordered table-hover" ng-show="!isCollectionEmpty()">
                         <thead>
                         <tr>
                             <th>Name</th>

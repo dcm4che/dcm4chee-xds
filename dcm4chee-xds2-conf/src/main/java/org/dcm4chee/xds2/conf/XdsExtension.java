@@ -12,18 +12,22 @@ public class XdsExtension extends DeviceExtension implements Deactivateable {
     @ConfigurableProperty(name = "xdsIsDeactivated",
             label = "Deactivated",
             description = "Controls whether the service is deactivated",
-            defaultValue = "false"
+            defaultValue = "false",
+            group = "General"
     )
     private boolean deactivated = false;
 
     @ConfigurableProperty(name = "xdsApplicationName",
             label = "Application Name",
-            description = "XDS Application name")
+            description = "XDS Application name",
+            group = "General"
+    )
     private String applicationName;
 
     @ConfigurableProperty(name = "xdsSoapMsgLogDir",
             label = "Path for SOAP log",
             description = "Path where to store SOAP messages log",
+            group = "Logging",
             required = false)
     private String soapLogDir;
 
