@@ -23,7 +23,7 @@
 
     </div -->
 
-    <div class="col-md-9">
+    <div class="col-sm-12">
 
         <label>Device:&nbsp;</label>
         <button type="button" class="btn btn-default"
@@ -35,65 +35,55 @@
             Device <span class="caret"></span>
         </button>
 
-        <div ng-show="selectedDevice.config" ng-controller="DeviceEditorController">
-
+        <div class="row" ng-show="selectedDevice.config" ng-controller="DeviceEditorController">
             <h1><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h1>
 
-
-            <div class="panel-group">
-                <div class="panel-default" ng-class="(deviceCollapsed ? '' : 'panel' )" ng-model="deviceCollapsed"
-                     bs-collapse>
-                    <div class="panel-body">
-                        <div class="group-component group-component-regular">
-
-                            <a href="" class="title" ng-class="(deviceCollapsed ? 'collapsed' : '')"
-                               bs-collapse-toggle>Device parameters</p></a>
-
-                            <div config-node-editor
-                                 schema="ConfigConfig.schemas.device"
-                                 config="selectedDevice.config"
-                                 editor="editor"
-                                 class="panel-body"
-                                 bs-collapse-target>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <h2><span class="red icon-expand"></span> Extensions</h2>
-                <ul class="nav nav-pills">
-                    <li ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
-                        ng-class="(selectedDeviceExtensionConfig == extensionConfig ? 'active' : '')">
-                        <a href="" ng-click="selectDeviceExtension(extensionName,extensionConfig)">{{extensionName}}</a>
+            <div class="col-sm-2">
+                <ul class="nav nav-pills nav-stacked">
+                    <li role="presentation" ng-class="(selectedConfigNode == selectedDevice.config ? 'active' : '')">
+                        <a href="" ng-click="selectConfigNode(selectedDevice.config,ConfigConfig.schemas.device, {excludeProps:['dicomConnection','dicomNetworkAE']})">Device properties</a>
+                    </li>
+                    <li role="presentation"><h3>Application entities</a></h3>
+                    <li role="presentation"><h3>Connections</a></h3>
+                    <li role="presentation">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation"
+                                ng-repeat="connection in selectedDevice.config.dicomConnection"
+                                ng-class="(selectedConfigNode == connection ? 'active' : '')">
+                                <a href="" ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items)">{{connection.cn}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li role="presentation"><h3>Extensions</h3></li>
+                    <li role="presentation">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation"
+                                ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
+                                ng-class="(selectedConfigNode == extensionConfig ? 'active' : '')">
+                                <a href="" ng-click="selectConfigNode(extensionConfig,ConfigConfig.schemas.deviceExtensions[extensionName])">{{extensionName}}</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
+            </div>
+            <div class="col-sm-10">
+
 
                 <div config-node-editor
-                     schema="ConfigConfig.schemas.deviceExtensions[selectedDeviceExtensionName]"
-                     config="selectedDeviceExtensionConfig"
+                     schema="selectedConfigNodeSchema"
+                     config="selectedConfigNode"
                      editor="editor">
                 </div>
 
-                <!--div class="panel panel-primary" ng-show="selectedExtension" >
-                    <div class="panel-heading">
-                        <span class="details-header"> {{selectedExtension.extensionName}} </span>
-                        <span ng-include src="'/SaveCancel.html'"></span>
-                    </div>
-                    <div class="panel-body" config-node-editor schema="" config="selectedExtension.configuration" editor="editor"></div>
-                    <div class="panel-footer">
-                        <span class="details-header"> &nbsp; </span>
-                        <span ng-include src="'/SaveCancel.html'"></span>
-                    </div>
-                </div-->
+                <!-- Save and Cancel buttons template -->
+                <script type="text/ng-template" id="/SaveCancel.html">
+                    <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)"
+                       class="btn btn-success pull-right">Save</a>
+                    <a ng-show="selectedExtension.isModified" href=""
+                       ng-click="cancelChangesExtension(selectedExtension)"
+                       class="btn btn-danger pull-right">Cancel</a>
+                </script>
             </div>
-
-            <!-- Save and Cancel buttons template -->
-            <script type="text/ng-template" id="/SaveCancel.html">
-                <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)"
-                   class="btn btn-success pull-right">Save</a>
-                <a ng-show="selectedExtension.isModified" href="" ng-click="cancelChangesExtension(selectedExtension)"
-                   class="btn btn-danger pull-right">Cancel</a>
-            </script>
 
         </div>
     </div>

@@ -13,20 +13,8 @@ angular.module('dcm4che-config.controllers', [])
                 })
             });
 
-            //mock
-            //$scope.devices = JSON.parse('[{"deviceName":"dcm4chee-xds","appEntities":[],"deviceExtensions":["XdsSource","XdsRegistry","XdsRepository","XCAiInitiatingGWCfg","XCAInitiatingGWCfg","XCARespondingGWCfg","XCAiRespondingGWCfg"],"manageable":false},{"deviceName":"tstprx","appEntities":["MYAE"],"deviceExtensions":["HL7DeviceExtension"],"manageable":false}]');
         };
 
-        /*$scope.reconfigureAll = function() {
-         $scope.reconfiguring = true;
-         $http.get("data/reconfigure-all/").success(function(data) {
-         $scope.reloadConfig();
-         $scope.reconfiguring = false;
-         }).error(function(data) {
-         $scope.reloadConfig();
-         $scope.reconfiguring = false;
-         });
-         };*/
 
         $scope.$watch("selectedDevice", function () {
             if ($scope.selectedDevice != null && $scope.selectedDevice.config == null) {
@@ -44,40 +32,29 @@ angular.module('dcm4che-config.controllers', [])
     }
 ).controller('DeviceEditorController', function ($scope, appHttp, appNotifications, ConfigConfig) {
 
-        $scope.deviceCollapsed = true;
+        $scope.ConfigConfig = ConfigConfig;
+
         $scope.editor = {
             a: 1,
             checkModified: function () {
                 $scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
-            }
+            },
+            options: null
         };
 
-        $scope.ConfigConfig = ConfigConfig;
 
-        $scope.saveDevice = function () {
-            $scope.isSaving = true;
-            appHttp.post("data/config/save-extension", _.omit(extension, ['lastPersistedConfig', 'isModified']), function (data) {
-                extension.lastPersistedConfig = angular.copy(extension.configuration.rootConfigNode);
-                $scope.isSaving = false;
-                $scope.editor.checkModified();
-            }, function (data, status) {
-                $scope.isSaving = false;
-                appNotifications.showNotification({
-                    level: "danger",
-                    text: "Could not save extension",
-                    details: [data, status]
-                });
-            });
+        $scope.$watch("selectedDevice", function () {
+            $scope.selectedConfigNode = null;
+            $scope.selectedConfigNodeSchema = null;
+            $scope.editor.options = null;
+        });
 
-        };
 
-        $scope.selectDeviceExtension = function (extensionName, extensionConfig) {
-            if (_.chain(ConfigConfig.schemas.deviceExtensions)
-                    .keys()
-                    .contains(extensionName)
-                    .value())
-                $scope.selectedDeviceExtensionName = extensionName;
-                $scope.selectedDeviceExtensionConfig = extensionConfig;
+        $scope.selectConfigNode = function (node, schema, options) {
+            if (schema == null) throw "Schema not defined";
+            $scope.selectedConfigNode = node;
+            $scope.selectedConfigNodeSchema = schema;
+            $scope.editor.options = options;
         };
 
         $scope.cancelChangesExtension = function (extension) {
@@ -118,11 +95,6 @@ angular.module('dcm4che-config.controllers', [])
             },
             controller: function ($scope) {
 
-                $scope.selectedItemConfig = {};
-
-                $scope.selectItem = function(item) {
-                    $scope.selectedItemConfig = item;
-                };
 
                 $scope.isNodeComposite = function () {
                     return $scope.schema != null && $scope.schema.type == "object" && $scope.schema.class != "Map";
@@ -132,12 +104,46 @@ angular.module('dcm4che-config.controllers', [])
                     return $scope.schema != null && _.contains(ConfigConfig.primitiveTypes, $scope.schema.type);
                 };
 
-                $scope.getLabel = function(node, schema) {
+                $scope.getLabel = function (node, schema) {
                     if (schema.properties.cn != null)
                         return node.cn;
                     else
                         return $filter('limitTo')(angular.toJson(node), 20);
-                }
+                };
+
+                $scope.toggleShowAllProps = function () {
+                    !$scope.doShowAllProps ? $scope.doShowAllProps = true : $scope.doShowAllProps = false;
+                };
+
+
+                $scope.$watch("schema", function () {
+
+                    $scope.doShowAllProps = true;
+                    $scope.isShowAllTogglable = false;
+
+                    // determine if there are any primary props
+                    if ($scope.schema != null)
+                        angular.forEach($scope.schema.properties, function (value, index) {
+                            if (_.contains(value.tags, "PRIMARY")) {
+                                $scope.doShowAllProps = false;
+                                $scope.isShowAllTogglable = true;
+                            }
+                        });
+
+                    // generate tooltip
+
+
+                    if ($scope.schema == null)
+                        $scope.propertyTooltip = null;
+                    else
+                        $scope.propertyTooltip = {
+                            title: ($scope.schema.description ? $scope.schema.description + "<br/>" : "") +
+                            ($scope.schema.default ? "Default: <strong>" + $scope.schema.default +"</strong>": "")
+
+                        }
+
+                });
+
 
             },
             templateUrl: "config-browser/config-attributes.html",
@@ -148,29 +154,20 @@ angular.module('dcm4che-config.controllers', [])
             }
         };
     }
-).controller("ConfigSubNodeController", function ($scope, ConfigConfig) {
+).controller("CollectionController", function ($scope, ConfigConfig) {
 
-        var widths = {"boolean": 6};
-
-        // bootstrap widths for elements with default 12
-        $scope.getWidthForType = function (type) {
-            if (widths[type] != null)
-                return widths[type]; else return 12;
-        }
-
-        $scope.$watch("schema", function () {
-            if ($scope.schema.type == "object" && $scope.schema.class == "Map") {
-                $scope.subNodeSchema = $scope.schema.properties['*'];
-            } else if ($scope.schema.type == "array") {
-                $scope.subNodeSchema = $scope.schema.items;
-            } else
-            // composite object
-            if ($scope.schema.type == "object" && $scope.schema.properties != null) {
-                $scope.subNodeSchema = $scope.schema.properties[$scope.k];
-            }
+        $scope.$watch('confignode', function () {
+            $scope.selectedItemConfig = null;
         });
 
-        $scope.devices = ConfigConfig.devices;
+
+        $scope.selectItem = function (item) {
+            $scope.selectedItemConfig = item;
+        };
+        $scope.isCollectionEmpty = function () {
+            return _.isEmpty($scope.confignode);
+        };
+
     }
 ).controller("MapController", function ($scope, appNotifications) {
         $scope.newkey = $scope.k;
@@ -272,6 +269,32 @@ angular.module('dcm4che-config.controllers', [])
 
         return conf;
 
-    }
-);
+    }).filter("primaryPropsOnly", function () {
+        return function (value, showAllProps) {
+
+            if (showAllProps) return value;
+
+            return _.filter(value, function (value) {
+                return _.contains(value.tags, "PRIMARY");
+            });
+        }
+    }).filter("filterProperties", function () {
+        return function (value, options) {
+
+            if (options == null) return value;
+
+            return _.filter(value, function (value) {
+                return !_.contains(options.excludeProps, value.$key);
+            });
+        }
+    }).filter('toArray', function () {
+        return function (obj) {
+            if (!(obj instanceof Object)) return obj;
+            var map = _.map(obj, function (val, key) {
+                return Object.defineProperty(val, '$key', {__proto__: null, value: key});
+            });
+            return map;
+        }
+    });
+
 

@@ -1,27 +1,41 @@
 <!-- Composite (Object) -->
 <div class="row" ng-if="isNodeComposite()">
 
-    <legend>{{schema.class}}</legend>
+    <!--legend>{{schema.class}}</legend-->
     <div class="form-horizontal">
 
-        <div ng-repeat="(k,nodeMetadataVal) in schema.properties" ng-controller="ConfigSubNodeController">
+        <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps|  filterProperties:editor.options | orderBy: '-type'">
 
-            <div confignode="confignode[k]" schema="subNodeSchema" parentnode="confignode" index="k"
-                 editor="editor"></div>
+            <div confignode="confignode[propertySchema.$key]" schema="propertySchema" parentnode="confignode"
+                 index="propertySchema.$key"
+                 editor="editor">
+
+            </div>
 
         </div>
+        <a href=""
+           class="btn btn-default pull-right"
+           ng-click="toggleShowAllProps()"
+           ng-show="isShowAllTogglable">{{doShowAllProps ? "Show only primary "+schema.class+" properties" : "Show all "+schema.class+" properties..."}}
+        </a>
     </div>
 </div>
 
 <div class="form-group"
      ng-if="(schema.type == 'string' || schema.type == 'integer' || schema.type == 'boolean' || (schema.type == 'array' && schema.items.type != 'object'))">
-    <label class="col-sm-3 control-label">{{schema.title ? schema.title : index}}</label>
+    <label class="col-sm-3 control-label"
+           data-placement="bottom-right"
+           data-animation="am-fade-and-scale"
+           data-html="true"
+           data-delay="200"
+           bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
+
 
     <div class="col-sm-9">
 
         <!-- Primitives -->
         <div ng-if="(schema.type == 'string' || schema.type == 'integer')">
-                <input class="form-control" ng-model="parentnode[index]">
+            <input class="form-control" ng-model="parentnode[index]">
         </div>
 
         <!-- Boolean -->
@@ -33,7 +47,7 @@
         <div ng-if="(schema.type == 'array')">
             <!-- Collection view -->
             <div ng-show="edited != confignode">
-                <span ng-repeat="(k,node) in confignode track by k" ng-controller="ConfigSubNodeController">
+                <span ng-repeat="(k,node) in confignode track by k">
                     <span class="label label-info">{{node}}</span>
                 </span>
                 <a href="" class="btn" ng-class="focused == confignode ?'btn-success':'btn-default'"
@@ -56,29 +70,37 @@
 </div>
 
 <!-- Object collection -->
-<div ng-if="(schema.type == 'array' && schema.items.type == 'object')" >
-    <legend>{{index}}</legend>
+<div ng-if="(schema.type == 'array' && schema.items.type == 'object')" ng-controller="CollectionController">
 
-    <div class="row">
-    <div class="nice-pane-padding nice-solid-regular col-sm-3">
-        <table class="table table-regular table-bordered table-hover">
-            <thead>
-            <tr>
-                <th>Name</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr ng-repeat="item in confignode" ng-click="selectItem(item);">
-                <td>{{getLabel(item, schema.items)}}</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-        <div class="col-sm-9">
-            <div config-node-editor
-                 schema="schema.items"
-                 config="selectedItemConfig"
-                 editor="editor">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{schema.title!='' ? schema.title : index}}</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="nice-pane-padding nice-solid-regular col-sm-3">
+                    <p ng-show="isCollectionEmpty()">No items.</p>
+                    <table class="table table-regular table-bordered table-hover"  ng-show="!isCollectionEmpty()">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="item in confignode" ng-click="selectItem(item);">
+                            <td>{{getLabel(item, schema.items)}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-sm-9" ng-if="selectedItemConfig">
+                    <div config-node-editor
+                         schema="schema.items"
+                         config="selectedItemConfig"
+                         editor="editor">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
