@@ -1,12 +1,14 @@
 <!-- Composite (Object) -->
-<div ng-if="isNodeComposite()">
+<div ng-if="schema.type == 'object' &&
+            schema.class != 'Map'" xmlns="http://java.sun.com/jsf/core">
 
     <!--legend>{{schema.class}}</legend-->
     <div class="form-horizontal" ng-controller="CompositeNodeController">
         <div ng-repeat="group in groups | groupSorter">
             <fieldset>
                 <legend ng-show="groups.length>1">{{group}}</legend>
-                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps| filterProperties:editor.options | filter:{uiGroup:group}">
+                <legend ng-show="groups.length==1">{{schema.class}}</legend>
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps| filterProperties:editor.options | filter:{uiGroup:group} | orderBy:'title'">
 
                     <div confignode="confignode[propertySchema.$key]" schema="propertySchema" parentnode="confignode"
                          index="propertySchema.$key"
@@ -26,12 +28,14 @@
     </div>
 </div>
 
+<!-- properties with a label on the left-->
 <div ng-class="(!noLabel ? 'form-group' : '')"
-     ng-if="(schema.type == 'string' ||
+     ng-if="schema.type == 'string' ||
      schema.type == 'integer' ||
      schema.type == 'boolean' ||
      schema.type == 'enum' ||
-     (schema.type == 'array' && schema.items.type != 'object'))">
+     (schema.type == 'array' && schema.items.type != 'object') ||
+     (schema.class == 'Map' && schema.properties['*'].type != 'object')">
 
     <label class="col-sm-4 control-label"
            ng-if="!noLabel"
@@ -42,7 +46,7 @@
            bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
 
 
-    <div class="col-sm-8">
+    <div ng-class="(!noLabel ? 'col-sm-8' : 'col-sm-10')">
 
         <!-- Primitives -->
         <div ng-if="((schema.type == 'string' || schema.type == 'integer') && schema.class!='Reference')">
@@ -91,17 +95,51 @@
                      editor="editor"
                      no-label="true">
                 </div>
-                <a href="" class="btn btn-info" ng-click="confignode.splice(k,1)">Delete</a>
+                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1)">&times</a>
             </div>
             <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a>
         </div>
 
+        <!-- Maps with primitives -->
+        <div ng-if="(schema.class == 'Map' && schema.properties['*'].type != 'object')" ng-controller="CollectionController">
 
+            <table class="table table-regular table-bordered table-hover">
+                <tr ng-repeat="(k, node) in confignode track by k">
+
+                    <!-- view key -->
+                    <td ng-show="!edited">{{k}}
+                        <a href="" class="btn btn-default pull-right" ng-click="edited = true"><span
+                                class="icon-pencil"></span></a>
+                    </td>
+                    <!-- edit key -->
+                    <td ng-show="edited" ng-init="newkey = k">
+                        <input ng-model="newkey"/>
+                        <a class="btn btn-success" href="" ng-click="edited = !saveMapKey(k,newkey)">Save</a>
+                    </td>
+
+                    <td>
+                        <div confignode="node"
+                             schema="schema.properties['*']"
+                             parentnode="confignode"
+                             index="k"
+                             editor="editor"
+                             no-label="true">
+                        </div>
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k)">&times</a>
+                    </td>
+                </tr>
+            </table>
+            <a href="" class="btn btn-info" ng-click="addMapEntry()">Add</a>
+        </div>
     </div>
 </div>
 
-<!-- Object collection -->
-<div ng-if="(schema.type == 'array' && schema.items.type == 'object')" ng-controller="CollectionController">
+<!-- Object map/collection -->
+<div ng-if="(schema.type == 'array' && schema.items.type == 'object') ||
+            (schema.type == 'object' && schema.class == 'Map' && schema.properties['*'].type == 'object')"
+     ng-controller="CollectionController">
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -119,15 +157,29 @@
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="item in confignode" ng-click="selectItem(item);">
+                        <tr ng-if="schema.type == 'array'"
+                            ng-repeat="item in confignode"
+                            ng-click="selectItem(item);">
                             <td>{{getLabel(item, schema.items)}}</td>
+                        </tr>
+                        <tr ng-if="schema.class == 'Map'"
+                            ng-repeat="(key,value) in confignode"
+                            ng-click="selectItem(value);">
+                            <td>{{key}}</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-sm-9" ng-if="selectedItemConfig">
-                    <div config-node-editor
+                    <div ng-if="schema.type == 'array'"
+                         config-node-editor
                          schema="schema.items"
+                         config="selectedItemConfig"
+                         editor="editor">
+                    </div>
+                    <div ng-if="schema.class == 'Map'"
+                         config-node-editor
+                         schema="schema.properties['*']"
                          config="selectedItemConfig"
                          editor="editor">
                     </div>
@@ -137,39 +189,3 @@
     </div>
 
 </div>
-
-<!-- Map -->
-<div ng-if="(schema.type == 'Map')" ng-controller="MapController">
-    <!-- Map view -->
-    <a href="" ng-click="addEntry()">Add</a>
-    <table class="table table-condensed smallprops">
-        <tr ng-repeat="(k,node) in confignode">
-            <!-- view key -->
-            <td ng-show="!edited"><span class="label label-success details-header">{{k}}</span>
-                <a href="" class="btn btn-default pull-right" ng-click="edited = true"><span class="icon-pencil"></span></a>
-                <a href="" class="btn btn-danger close" ng-click="deleteEntry(k)">&times</a>
-            </td>
-            <!-- edit key -->
-            <td ng-show="edited" ng-init="newkey = k">
-                <input ng-model="newkey"/>
-                <a class="btn btn-success" href="" ng-click="edited = !saveKey(k,newkey)">Save</a>
-            </td>
-            <td ng-controller="ConfigSubNodeController">
-                <div confignode="node" metadata="nodeMetadata" parentnode="confignode" index="k" editor="editor"></div>
-            </td>
-        </tr>
-    </table>
-</div>
-
-<!-- Device -->
-<div ng-if="schema.type == 'Device'" ng-controller="ConfigSubNodeController">
-    <span class="grey"> Device: </span>
-    <button type="button" class="btn btn-default"
-            ng-model="parentnode[index]" data-html="1"
-            ng-options="device.deviceName as device.deviceName for device in devices"
-            ng-change="editor.checkModified()"
-            bs-select>
-        Status <span class="caret"></span>
-    </button>
-</div>
-

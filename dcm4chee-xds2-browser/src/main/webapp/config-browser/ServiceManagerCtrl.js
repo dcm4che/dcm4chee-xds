@@ -37,7 +37,7 @@ angular.module('dcm4che-config.controllers', [])
         $scope.editor = {
             a: 1,
             checkModified: function () {
-                $scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
+                //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
             },
             options: null
         };
@@ -106,15 +106,12 @@ angular.module('dcm4che-config.controllers', [])
             controller: function ($scope) {
 
 
-                $scope.isNodeComposite = function () {
-                    return $scope.schema != null && $scope.schema.type == "object" && $scope.schema.class != "Map";
-                };
-
                 $scope.isNodePrimitive = function () {
                     return $scope.schema != null && _.contains(ConfigConfig.primitiveTypes, $scope.schema.type);
                 };
 
                 $scope.getLabel = function (node, schema) {
+
                     if (schema.properties.cn != null)
                         return node.cn;
                     else
@@ -184,21 +181,22 @@ angular.module('dcm4che-config.controllers', [])
             $scope.selectedItemConfig = null;
         });
 
+        $scope.deleteMapEntry = function (key) {
+            delete $scope.confignode[key];
+            $scope.editor.checkModified();
+        };
 
         $scope.selectItem = function (item) {
             $scope.selectedItemConfig = item;
         };
+
         $scope.isCollectionEmpty = function () {
             return _.isEmpty($scope.confignode);
         };
 
-    }
-).controller("MapController", function ($scope, appNotifications) {
-        $scope.newkey = $scope.k;
 
-        $scope.addEntry = function () {
-            $scope.confignode['new'] = (   $scope.schema.elementMetadata.type == 'Array' ||
-            $scope.schema.elementMetadata.type == 'Set' ? [] : {});
+        $scope.addMapEntry = function () {
+            $scope.confignode['new'] = null;
             $scope.editor.checkModified();
         };
 
@@ -208,7 +206,7 @@ angular.module('dcm4che-config.controllers', [])
          * @param newkey
          * @returns {boolean} Returns true if the editor should close, false otherwise
          */
-        $scope.saveKey = function (oldkey, newkey) {
+        $scope.saveMapKey = function (oldkey, newkey) {
 
             // check if not empty
             if (newkey == "") {
@@ -236,10 +234,6 @@ angular.module('dcm4che-config.controllers', [])
             }
         };
 
-        $scope.deleteEntry = function (key) {
-            delete $scope.confignode[key];
-            $scope.editor.checkModified();
-        };
     }
 // Configuration of configuration
 ).factory("ConfigConfig", function (appNotifications, appHttp) {
@@ -258,7 +252,7 @@ angular.module('dcm4che-config.controllers', [])
             nonCompositeTypes: nonCompositeTypes,
 
 
-            groupOrder:[
+            groupOrder: [
                 "General",
                 "Affinity domain",
                 "XDS profile strictness",
@@ -329,7 +323,7 @@ angular.module('dcm4che-config.controllers', [])
             });
             return map;
         }
-    }).filter('groupSorter', function(ConfigConfig) {
+    }).filter('groupSorter', function (ConfigConfig) {
         return function (groups) {
             // force order provided by groupOrder
             return _.chain(ConfigConfig.groupOrder).intersection(groups).union(groups).value();

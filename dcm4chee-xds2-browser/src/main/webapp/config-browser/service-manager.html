@@ -25,46 +25,65 @@
 
     <div class="col-sm-12">
 
-        <label>Device:&nbsp;</label>
-        <button type="button" class="btn btn-default"
-                ng-model="selectedDevice"
-                data-html="1"
-                ng-options="device as device.deviceName for device in devices"
-                data-placeholder="Select device ..."
-                bs-select>
-            Device <span class="caret"></span>
-        </button>
+        <h2>Device
+            <button type="button" class="btn btn-default"
+                    ng-model="selectedDevice"
+                    data-html="1"
+                    ng-options="device as device.deviceName for device in devices"
+                    data-placeholder="Select device ..."
+                    bs-select>
+                Device <span class="caret"></span>
+            </button>
+        </h2>
 
         <div class="row" ng-show="selectedDevice.config" ng-controller="DeviceEditorController">
-            <h1><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h1>
-
             <div class="col-sm-3">
-                <ul class="nav nav-pills nav-stacked">
-                    <li role="presentation" ng-class="(selectedConfigNode == selectedDevice.config ? 'active' : '')">
-                        <a href="" ng-click="selectConfigNode(selectedDevice.config,ConfigConfig.schemas.device, {excludeProps:['dicomConnection','dicomNetworkAE']})">Device properties</a>
-                    </li>
-                    <li role="presentation"><h3>Application entities</a></h3>
-                    <li role="presentation"><h3>Connections</a></h3>
-                    <li role="presentation">
+                <div class="panel panel-default">
+                    <!--<div class="panel-heading">-->
+                    <!--<h3 class="panel-title"><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h3>-->
+                    <!--</div>-->
+                    <div class="panel-body">
+
                         <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation"
-                                ng-repeat="connection in selectedDevice.config.dicomConnection"
-                                ng-class="(selectedConfigNode == connection ? 'active' : '')">
-                                <a href="" ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items)">{{connection.cn}}</a>
+                            <li ng-class="(selectedConfigNode == selectedDevice.config ? 'active' : '')">
+                                <a href=""
+                                   ng-click="selectConfigNode(selectedDevice.config,ConfigConfig.schemas.device, {excludeProps:['dicomConnection','dicomNetworkAE']})">Device
+                                    properties</a>
+                            </li>
+                            <li><h3>Application entities</a></h3>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li ng-repeat="(aeName, ae) in selectedDevice.config.dicomNetworkAE"
+                                        ng-class="(selectedConfigNode == ae ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(ae,ConfigConfig.schemas.device.properties.dicomNetworkAE.properties['*'])">{{aeName}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><h3>Connections</a></h3>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li ng-repeat="connection in selectedDevice.config.dicomConnection"
+                                        ng-class="(selectedConfigNode == connection ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items)">{{connection.cn}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><h3>Extensions</h3></li>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li
+                                            ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
+                                            ng-class="(selectedConfigNode == extensionConfig ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(extensionConfig,ConfigConfig.schemas.deviceExtensions[extensionName])">{{extensionName}}</a>
+                                    </li>
+                                </ul>
                             </li>
                         </ul>
-                    </li>
-                    <li role="presentation"><h3>Extensions</h3></li>
-                    <li role="presentation">
-                        <ul class="nav nav-pills nav-stacked">
-                            <li role="presentation"
-                                ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
-                                ng-class="(selectedConfigNode == extensionConfig ? 'active' : '')">
-                                <a href="" ng-click="selectConfigNode(extensionConfig,ConfigConfig.schemas.deviceExtensions[extensionName])">{{extensionName}}</a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
             <div class="col-sm-9">
 
