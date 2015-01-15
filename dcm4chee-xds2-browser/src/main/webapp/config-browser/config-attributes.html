@@ -160,7 +160,7 @@
                         <thead>
                         <tr>
                             <th>Name</th>
-                            <th ng-show="deletionMode"></th>
+                            <th ng-show="modificationMode"></th>
                         </tr>
                         </thead>
                         <tbody>
@@ -171,7 +171,7 @@
                                 ng-click="selectItem(index,item);">
                                 {{getLabel(item, schema.items)}}
                             </td>
-                            <td ng-show="deletionMode">
+                            <td ng-show="modificationMode">
                                 <a href="" class="btn btn-danger close" ng-click="deleteArrayItem(index)">
                                     <small>&times</small>
                                 </a>
@@ -180,11 +180,20 @@
                         <tr ng-if="schema.class == 'Map'"
                             ng-repeat="(key,value) in confignode"
                             ng-class="selectedItemConfig == value ? 'active' : ''">
-                            <td style="cursor: pointer;"
-                                ng-click="selectItem(key, value);">
-                                {{key}}
+                            <!-- view key -->
+                            <td ng-show="editedIndex!=key"
+                                style="cursor: pointer;"
+                                ng-click="selectItem(key, value);">{{key}}
                             </td>
-                            <td ng-show="deletionMode">
+                            <!-- edit key -->
+                            <td ng-show="editedIndex == key" ng-init="newkey = key">
+                                <input ng-model="newkey"
+                                       focus-on="{{key}}"
+                                       ng-keydown="$event.keyCode == 13 ? saveMapKey(key,newkey) : null"
+                                        />
+                            </td>
+
+                            <td ng-show="modificationMode">
                                 <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(key)">
                                     <small>&times</small>
                                 </a>
@@ -192,7 +201,18 @@
                         </tr>
                         </tbody>
                     </table>
-                    <a class="btn" ng-class="deletionMode ? 'btn-info' : 'btn-danger'" ng-show="!isCollectionEmpty()" ng-click="deletionMode = !deletionMode" href="">{{deletionMode ? "Done deleting" : "Delete entries..."}}</a>
+
+                    <!-- add btn -->
+
+                    <a href=""
+                       class="btn btn-info"
+                       ng-click="addMapEntryOrArrayItem()">Add</a>
+                    <!-- modify/delete btn -->
+                    <a class="btn"
+                       ng-class="modificationMode ? 'btn-info' : 'btn-danger'" ng-show="!isCollectionEmpty()"
+                       ng-click="modificationMode = !modificationMode"
+                       href="">{{modificationMode ? "Done deleting" : "Delete ..."}}
+                    </a>
                 </div>
                 <div class="col-sm-9" ng-if="selectedItemConfig">
                     <div ng-if="schema.type == 'array'"

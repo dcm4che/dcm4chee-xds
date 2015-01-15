@@ -34,21 +34,8 @@ angular.module('dcm4che-config.controllers', [])
 
         $scope.ConfigConfig = ConfigConfig;
 
-        $scope.editor = {
-            a: 1,
-            checkModified: function () {
-                //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
-            },
-            options: null
-        };
-
-        // refresh things on device selection
-        $scope.$watch("selectedDevice.config", function () {
-            $scope.selectedConfigNode = null;
-            $scope.selectedConfigNodeSchema = null;
-            $scope.editor.options = null;
-
-            if ($scope.selectedDevice && $scope.selectedDevice.config) {
+        function refreshConnectionsAndDevices() {
+            {
                 $scope.editor.deviceRefs = _.map(ConfigConfig.devices, function (device) {
                     return {
                         name: device.deviceName,
@@ -63,6 +50,25 @@ angular.module('dcm4che-config.controllers', [])
                     };
                 }) : {};
             }
+        }
+
+
+        $scope.editor = {
+            a: 1,
+            checkModified: function () {
+                refreshConnectionsAndDevices();
+                //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
+            },
+            options: null
+        };
+
+        $scope.$watch("selectedDevice.config", function () {
+            $scope.selectedConfigNode = null;
+            $scope.selectedConfigNodeSchema = null;
+            $scope.editor.options = null;
+
+            // refresh things on device selection
+            if ($scope.selectedDevice && $scope.selectedDevice.config) refreshConnectionsAndDevices();
 
         });
 
@@ -162,11 +168,12 @@ angular.module('dcm4che-config.controllers', [])
         });
 
 
-    }).controller("CollectionController", function ($scope, ConfigConfig) {
+    }).controller("CollectionController", function ($rootScope, $scope, $timeout, ConfigConfig, appNotifications) {
 
         $scope.$watch('confignode', function () {
             $scope.selectedItemConfig = null;
             $scope.selectedItemIndex = null;
+            $scope.editedIndex = null;
         });
 
         $scope.deleteMapEntry = function (key) {
@@ -199,6 +206,21 @@ angular.module('dcm4che-config.controllers', [])
 
 
         $scope.selectItem = function (key, item) {
+
+            // if selected something else, disable editing
+            if ($scope.selectedItemIndex != key) {
+                $scope.editedIndex = null;
+            }
+
+            // if already selected, go into edit mode
+            if ($scope.selectedItemIndex == key) {
+                $scope.editedIndex = key;
+                // send event to focus on the field
+                $timeout(function () {
+                    $rootScope.$broadcast('focusOn', key);
+                });
+            }
+
             $scope.selectedItemConfig = item;
             $scope.selectedItemIndex = key;
         };
@@ -208,10 +230,23 @@ angular.module('dcm4che-config.controllers', [])
         };
 
 
-        $scope.addMapEntry = function () {
-            $scope.confignode['new'] = null;
+        $scope.addMapEntryOrArrayItem = function () {
+            if ($scope.schema.class == 'Map') {
+                $scope.confignode['new'] = ConfigConfig.createNewItem($scope.schema.properties['*']);
+
+                $scope.editedIndex = 'new';
+
+                // send event to focus on the field
+                $timeout(function () {
+                    $rootScope.$broadcast('focusOn', 'new');
+                });
+            } else {
+                $scope.confignode.push(ConfigConfig.createNewItem($scope.schema.items));
+            }
+
             $scope.editor.checkModified();
         };
+
 
         /**
          * Saves the edited map key
@@ -224,32 +259,47 @@ angular.module('dcm4che-config.controllers', [])
             // check if not empty
             if (newkey == "") {
                 appNotifications.showNotification({text: "The key cannot be empty!", level: "warning"});
-                return false;
+                return;
             }
 
             // check if not changed
             if (oldkey == newkey) {
-                return true;
+                $scope.editedIndex= null;
+                return;
             }
 
             if (_.has($scope.confignode, newkey)) {
                 // if new key already exists - show notification and abort
                 appNotifications.showNotification({text: "The key " + newkey + " already exists!", level: "warning"});
-                return false;
+                return;
             } else {
                 // if not, set new prop, remove old prop
                 $scope.confignode[newkey] = $scope.confignode[oldkey];
                 delete $scope.confignode[oldkey];
 
+                if ($scope.selectedItemIndex == oldkey)
+                    $scope.selectedItemIndex = newkey;
+
                 $scope.editor.checkModified();
 
-                return true;
+                $scope.editedIndex= null;
+                return;
             }
         };
 
-    }
+    })
+    .directive('focusOn', function () {
+        return function (scope, elem, attr) {
+            scope.$on('focusOn', function (e, name) {
+                if (name === attr.focusOn) {
+                    elem[0].focus();
+                }
+            });
+        };
+    })
+
 // Configuration of configuration
-).factory("ConfigConfig", function (appNotifications, appHttp) {
+    .factory("ConfigConfig", function (appNotifications, appHttp) {
 
         var customTypes = ['Device'];
         var primitiveTypes = ["integer", "string", "boolean"];
@@ -303,8 +353,22 @@ angular.module('dcm4che-config.controllers', [])
                     });
                     callback();
                 });
+            },
 
+            // returns a properly editable object for specified schema
+            createNewItem: function (schema) {
+                var df = schema.distinguishingField ? schema.distinguishingField : 'cn';
 
+                var obj = {};
+                angular.forEach(schema.properties, function (value, index) {
+                    if (value.type == "object")
+                        obj[index] = {};
+                    if (value.type == "array")
+                        obj[index] = [];
+                    if (index == df)
+                        obj[index] = "new";
+                });
+                return obj;
             }
         };
 
