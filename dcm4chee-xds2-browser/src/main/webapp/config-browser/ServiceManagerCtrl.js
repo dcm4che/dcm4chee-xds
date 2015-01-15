@@ -357,6 +357,9 @@ angular.module('dcm4che-config.controllers', [])
 
             // returns a properly editable object for specified schema
             createNewItem: function (schema) {
+
+                if (schema.type != "object" ) return null;
+
                 var df = schema.distinguishingField ? schema.distinguishingField : 'cn';
 
                 var obj = {};
