@@ -88,11 +88,16 @@
             <div class="col-sm-9">
 
 
-                <div config-node-editor
+                <div confignode="selectedConfigNode"
                      schema="selectedConfigNodeSchema"
-                     config="selectedConfigNode"
                      editor="editor">
                 </div>
+
+                <!--<div config-node-editor-->
+                     <!--schema="ConfigConfig.schemas.deviceExtensions['HL7DeviceExtension'].properties.hl7Apps.properties['*'].properties.dicomNetworkConnectionReference"-->
+                     <!--config="selectedDevice.config.deviceExtensions.HL7DeviceExtension.hl7Apps['XDS^DCM4CHEE'].dicomNetworkConnectionReference"-->
+                     <!--editor="editor">-->
+                <!--</div>-->
 
                 <!-- Save and Cancel buttons template -->
                 <script type="text/ng-template" id="/SaveCancel.html">

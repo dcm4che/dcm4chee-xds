@@ -80,19 +80,6 @@ angular.module('dcm4che-config.controllers', [])
         };
 
     }
-).directive(
-    'configNodeEditor',
-    [
-        function () {
-            return {
-                scope: {
-                    'config': '=',
-                    'schema': '=',
-                    'editor': '='
-                },
-                template: '<div confignode="config" schema="schema" editor="editor"></div>'
-            };
-        }]
 ).directive("confignode", function (RecursionHelper, ConfigConfig, $filter) {
         return {
             scope: {
@@ -179,6 +166,7 @@ angular.module('dcm4che-config.controllers', [])
 
         $scope.$watch('confignode', function () {
             $scope.selectedItemConfig = null;
+            $scope.selectedItemIndex = null;
         });
 
         $scope.deleteMapEntry = function (key) {
@@ -186,8 +174,9 @@ angular.module('dcm4che-config.controllers', [])
             $scope.editor.checkModified();
         };
 
-        $scope.selectItem = function (item) {
+        $scope.selectItem = function (key, item) {
             $scope.selectedItemConfig = item;
+            $scope.selectedItemIndex = key;
         };
 
         $scope.isCollectionEmpty = function () {

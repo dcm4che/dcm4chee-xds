@@ -7,10 +7,11 @@
         <div ng-repeat="group in groups | groupSorter">
             <fieldset>
                 <legend ng-show="groups.length>1">{{group}}</legend>
-                <legend ng-show="groups.length==1">{{schema.class}}</legend>
-                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps| filterProperties:editor.options | filter:{uiGroup:group} | orderBy:'title'">
-
-                    <div confignode="confignode[propertySchema.$key]" schema="propertySchema" parentnode="confignode"
+                <legend ng-show="groups.length==1">{{schema.class}}({{index}})</legend>
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:editor.options | filter:{uiGroup:group} | orderBy:'title'">
+                    <div confignode="confignode[propertySchema.$key]"
+                         schema="propertySchema"
+                         parentnode="confignode"
                          index="propertySchema.$key"
                          editor="editor">
                     </div>
@@ -101,7 +102,8 @@
         </div>
 
         <!-- Maps with primitives -->
-        <div ng-if="(schema.class == 'Map' && schema.properties['*'].type != 'object')" ng-controller="CollectionController">
+        <div ng-if="(schema.class == 'Map' && schema.properties['*'].type != 'object')"
+             ng-controller="CollectionController">
 
             <table class="table table-regular table-bordered table-hover">
                 <tr ng-repeat="(k, node) in confignode track by k">
@@ -127,7 +129,9 @@
                         </div>
                     </td>
                     <td>
-                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k)">&times</a>
+                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k)">
+                            <small>&times</small>
+                        </a>
                     </td>
                 </tr>
             </table>
@@ -158,13 +162,15 @@
                         </thead>
                         <tbody>
                         <tr ng-if="schema.type == 'array'"
-                            ng-repeat="item in confignode"
-                            ng-click="selectItem(item);">
+                            ng-repeat="(index,item) in confignode"
+                            ng-click="selectItem(index,item);"
+                            ng-class="selectedItemConfig == item ? 'active' : ''">
                             <td>{{getLabel(item, schema.items)}}</td>
                         </tr>
                         <tr ng-if="schema.class == 'Map'"
                             ng-repeat="(key,value) in confignode"
-                            ng-click="selectItem(value);">
+                            ng-click="selectItem(key, value);"
+                            ng-class="selectedItemConfig == value ? 'active' : ''">
                             <td>{{key}}</td>
                         </tr>
                         </tbody>
@@ -172,16 +178,18 @@
                 </div>
                 <div class="col-sm-9" ng-if="selectedItemConfig">
                     <div ng-if="schema.type == 'array'"
-                         config-node-editor
+                         confignode="selectedItemConfig"
                          schema="schema.items"
-                         config="selectedItemConfig"
-                         editor="editor">
+                         editor="editor"
+                         parentnode="confignode"
+                         index="selectedItemIndex">
                     </div>
                     <div ng-if="schema.class == 'Map'"
-                         config-node-editor
+                         confignode="selectedItemConfig"
                          schema="schema.properties['*']"
-                         config="selectedItemConfig"
-                         editor="editor">
+                         editor="editor"
+                         parentnode="confignode"
+                         index="selectedItemIndex">
                     </div>
                 </div>
             </div>
