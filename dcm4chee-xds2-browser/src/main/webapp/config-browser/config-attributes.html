@@ -96,7 +96,9 @@
                      editor="editor"
                      no-label="true">
                 </div>
-                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1)">&times</a>
+                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1)">
+                    <small>&times</small>
+                </a>
             </div>
             <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a>
         </div>
@@ -158,23 +160,39 @@
                         <thead>
                         <tr>
                             <th>Name</th>
+                            <th ng-show="deletionMode"></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr ng-if="schema.type == 'array'"
-                            ng-repeat="(index,item) in confignode"
-                            ng-click="selectItem(index,item);"
+                            ng-repeat="(index,item) in confignode track by index"
                             ng-class="selectedItemConfig == item ? 'active' : ''">
-                            <td>{{getLabel(item, schema.items)}}</td>
+                            <td style="cursor: pointer;"
+                                ng-click="selectItem(index,item);">
+                                {{getLabel(item, schema.items)}}
+                            </td>
+                            <td ng-show="deletionMode">
+                                <a href="" class="btn btn-danger close" ng-click="deleteArrayItem(index)">
+                                    <small>&times</small>
+                                </a>
+                            </td>
                         </tr>
                         <tr ng-if="schema.class == 'Map'"
                             ng-repeat="(key,value) in confignode"
-                            ng-click="selectItem(key, value);"
                             ng-class="selectedItemConfig == value ? 'active' : ''">
-                            <td>{{key}}</td>
+                            <td style="cursor: pointer;"
+                                ng-click="selectItem(key, value);">
+                                {{key}}
+                            </td>
+                            <td ng-show="deletionMode">
+                                <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(key)">
+                                    <small>&times</small>
+                                </a>
+                            </td>
                         </tr>
                         </tbody>
                     </table>
+                    <a class="btn" ng-class="deletionMode ? 'btn-info' : 'btn-danger'" ng-show="!isCollectionEmpty()" ng-click="deletionMode = !deletionMode" href="">{{deletionMode ? "Done deleting" : "Delete entries..."}}</a>
                 </div>
                 <div class="col-sm-9" ng-if="selectedItemConfig">
                     <div ng-if="schema.type == 'array'"

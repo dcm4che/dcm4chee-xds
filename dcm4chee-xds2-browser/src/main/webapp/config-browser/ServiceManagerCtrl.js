@@ -171,8 +171,32 @@ angular.module('dcm4che-config.controllers', [])
 
         $scope.deleteMapEntry = function (key) {
             delete $scope.confignode[key];
+
+            if (key == $scope.selectedItemIndex) {
+                $scope.selectedItemConfig = null;
+                $scope.selectedItemIndex = null;
+            }
+
             $scope.editor.checkModified();
         };
+
+        $scope.deleteArrayItem = function (key) {
+            $scope.confignode.splice(key, 1);
+
+            // reset the current index if an item is selected
+            if ($scope.selectedItemConfig) {
+                var newInd = _.indexOf($scope.confignode, $scope.selectedItemConfig);
+                if (newInd == -1) {
+                    $scope.selectedItemConfig = null;
+                    $scope.selectedItemIndex = null;
+                } else {
+                    $scope.selectedItemIndex = newInd;
+                }
+            }
+
+            $scope.editor.checkModified();
+        };
+
 
         $scope.selectItem = function (key, item) {
             $scope.selectedItemConfig = item;
