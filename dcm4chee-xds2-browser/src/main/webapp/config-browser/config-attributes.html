@@ -8,7 +8,7 @@
             <fieldset>
                 <legend ng-show="groups.length>1">{{group}}</legend>
                 <legend ng-show="groups.length==1">{{schema.class}}({{index}})</legend>
-                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:editor.options | filter:{uiGroup:group} | orderBy:'title'">
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:'title'">
                     <div confignode="confignode[propertySchema.$key]"
                          schema="propertySchema"
                          parentnode="confignode"

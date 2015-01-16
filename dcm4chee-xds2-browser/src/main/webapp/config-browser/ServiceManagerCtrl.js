@@ -73,11 +73,16 @@ angular.module('dcm4che-config.controllers', [])
         });
 
 
-        $scope.selectConfigNode = function (node, schema, options) {
+        $scope.selectConfigNode = function (node, schema, parent, parentschema, index, options) {
             if (schema == null) throw "Schema not defined";
-            $scope.selectedConfigNode = node;
-            $scope.selectedConfigNodeSchema = schema;
-            $scope.editor.options = options;
+            $scope.selectedConfigNode = {
+                node:node,
+                schema: schema,
+                parentNode: parent,
+                parentSchema: parentschema,
+                index: index,
+                options: options
+            };
         };
 
         $scope.cancelChangesExtension = function (extension) {
@@ -92,6 +97,7 @@ angular.module('dcm4che-config.controllers', [])
                 editor: '=',
                 confignode: '=',
                 schema: '=',
+                options: '=',
                 parentnode: '=',
                 index: '=',
                 noLabel: '@'
@@ -168,13 +174,38 @@ angular.module('dcm4che-config.controllers', [])
         });
 
 
-    }).controller("CollectionController", function ($rootScope, $scope, $timeout, ConfigConfig, appNotifications) {
+    })
+.controller('DeleteTopLevelElementController', function($scope) {
+
+        $scope.deleteCurrentElement = function () {
+            var selectedNodeConf = $scope.selectedConfigNode;
+
+            if (selectedNodeConf.parentSchema.type == 'array')
+                selectedNodeConf.parentNode.splice( selectedNodeConf.index, 1);
+
+            else
+                delete selectedNodeConf.parentNode[ selectedNodeConf.index];
+
+            $scope.selectedConfigNode.parentSchema = null;
+            $scope.selectedConfigNode.parentNode = null;
+            $scope.selectedConfigNode.node = null;
+            $scope.selectedConfigNode.schema = null;
+
+        };
+
+
+
+
+    })
+
+    .controller("CollectionController", function ($rootScope, $scope, $timeout, ConfigConfig, appNotifications) {
 
         $scope.$watch('confignode', function () {
             $scope.selectedItemConfig = null;
             $scope.selectedItemIndex = null;
             $scope.editedIndex = null;
         });
+
 
         $scope.deleteMapEntry = function (key) {
             delete $scope.confignode[key];
@@ -264,7 +295,7 @@ angular.module('dcm4che-config.controllers', [])
 
             // check if not changed
             if (oldkey == newkey) {
-                $scope.editedIndex= null;
+                $scope.editedIndex = null;
                 return;
             }
 
@@ -282,7 +313,7 @@ angular.module('dcm4che-config.controllers', [])
 
                 $scope.editor.checkModified();
 
-                $scope.editedIndex= null;
+                $scope.editedIndex = null;
                 return;
             }
         };
@@ -358,7 +389,7 @@ angular.module('dcm4che-config.controllers', [])
             // returns a properly editable object for specified schema
             createNewItem: function (schema) {
 
-                if (schema.type != "object" ) return null;
+                if (schema.type != "object") return null;
 
                 var df = schema.distinguishingField ? schema.distinguishingField : 'cn';
 

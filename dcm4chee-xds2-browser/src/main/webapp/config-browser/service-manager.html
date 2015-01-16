@@ -45,28 +45,36 @@
                     <div class="panel-body">
 
                         <ul class="nav nav-pills nav-stacked">
-                            <li ng-class="(selectedConfigNode == selectedDevice.config ? 'active' : '')">
+                            <li ng-class="(selectedConfigNode.node == selectedDevice.config ? 'active' : '')">
+                                <!--,{excludeProps:['dicomConnection','dicomNetworkAE']}-->
                                 <a href=""
-                                   ng-click="selectConfigNode(selectedDevice.config,ConfigConfig.schemas.device, {excludeProps:['dicomConnection','dicomNetworkAE']})">Device
+                                   ng-click="selectConfigNode(selectedDevice.config,ConfigConfig.schemas.device)">Device
                                     properties</a>
                             </li>
                             <li><h3>Application entities</a></h3>
                             <li>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li ng-repeat="(aeName, ae) in selectedDevice.config.dicomNetworkAE"
-                                        ng-class="(selectedConfigNode == ae ? 'active' : '')">
+                                        ng-class="(selectedConfigNode.node == ae ? 'active' : '')">
                                         <a href=""
-                                           ng-click="selectConfigNode(ae,ConfigConfig.schemas.device.properties.dicomNetworkAE.properties['*'])">{{aeName}}</a>
+                                           ng-click="selectConfigNode(ae,ConfigConfig.schemas.device.properties.dicomNetworkAE.properties['*'], selectedDevice.config.dicomNetworkAE, ConfigConfig.schemas.device.properties.dicomNetworkAE)">{{aeName}}</a>
                                     </li>
                                 </ul>
                             </li>
-                            <li><h3>Connections</a></h3>
+                            <li>
+                                <h3>
+                                    Connections
+                                    <a href=""
+                                       ng-click="selectedDevice.config.dicomConnection.push(ConfigConfig.createNewItem(ConfigConfig.schemas.device.properties.dicomConnection.items))">
+                                        <span class="badge">+</span>
+                                    </a>
+                                </h3>
                             <li>
                                 <ul class="nav nav-pills nav-stacked">
                                     <li ng-repeat="connection in selectedDevice.config.dicomConnection"
-                                        ng-class="(selectedConfigNode == connection ? 'active' : '')">
+                                        ng-class="(selectedConfigNode.node == connection ? 'active' : '')">
                                         <a href=""
-                                           ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items)">{{connection.cn}}</a>
+                                           ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items, selectedDevice.config.dicomConnection, ConfigConfig.schemas.device.properties.dicomConnection)">{{connection.cn}}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -75,9 +83,9 @@
                                 <ul class="nav nav-pills nav-stacked">
                                     <li
                                             ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
-                                            ng-class="(selectedConfigNode == extensionConfig ? 'active' : '')">
+                                            ng-class="(selectedConfigNode.node == extensionConfig ? 'active' : '')">
                                         <a href=""
-                                           ng-click="selectConfigNode(extensionConfig,ConfigConfig.schemas.deviceExtensions[extensionName])">{{extensionName}}</a>
+                                           ng-click="selectConfigNode(extensionConfig,ConfigConfig.schemas.deviceExtensions[extensionName],selectedDevice.config.deviceExtensions,{class:'Map',type:'object'})">{{extensionName}}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -87,17 +95,26 @@
             </div>
             <div class="col-sm-9">
 
+                <div class="pull-right" ng-show="selectedConfigNode.parentSchema.type == 'array'"
+                     ng-controller="DeleteTopLevelElementController">
+                    <a href="" class="btn btn-danger" ng-click="deleteCurrentElement()">
+                        Delete this {{selectedConfigNode.schema.class}}
+                    </a>
+                </div>
+                <div class="clearfix"></div>
 
-                <div confignode="selectedConfigNode"
-                     schema="selectedConfigNodeSchema"
-                     editor="editor">
+                <div confignode="selectedConfigNode.node"
+                     schema="selectedConfigNode.schema"
+                     editor="editor"
+                     options="selectedConfigNode.options">
                 </div>
 
                 <!--<div config-node-editor-->
-                     <!--schema="ConfigConfig.schemas.deviceExtensions['HL7DeviceExtension'].properties.hl7Apps.properties['*'].properties.dicomNetworkConnectionReference"-->
-                     <!--config="selectedDevice.config.deviceExtensions.HL7DeviceExtension.hl7Apps['XDS^DCM4CHEE'].dicomNetworkConnectionReference"-->
-                     <!--editor="editor">-->
+                <!--schema="ConfigConfig.schemas.deviceExtensions['HL7DeviceExtension'].properties.hl7Apps.properties['*'].properties.dicomNetworkConnectionReference"-->
+                <!--config="selectedDevice.config.deviceExtensions.HL7DeviceExtension.hl7Apps['XDS^DCM4CHEE'].dicomNetworkConnectionReference"-->
+                <!--editor="editor">-->
                 <!--</div>-->
+
 
                 <!-- Save and Cancel buttons template -->
                 <script type="text/ng-template" id="/SaveCancel.html">
