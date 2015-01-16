@@ -90,6 +90,17 @@
                                 </ul>
                             </li>
                         </ul>
+
+                        <!-- save device/cancel -->
+                        <div ng-show="selectedDevice.isModified">
+                            <a href=""
+                               ng-click="saveDevice()"
+                               class="btn btn-success pull-right">Save</a>
+                            <a href=""
+                               ng-click="cancelChangesDevice()"
+                               class="btn btn-danger pull-right">Cancel</a>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -117,13 +128,6 @@
 
 
                 <!-- Save and Cancel buttons template -->
-                <script type="text/ng-template" id="/SaveCancel.html">
-                    <a ng-show="selectedExtension.isModified" href="" ng-click="saveExtension(selectedExtension)"
-                       class="btn btn-success pull-right">Save</a>
-                    <a ng-show="selectedExtension.isModified" href=""
-                       ng-click="cancelChangesExtension(selectedExtension)"
-                       class="btn btn-danger pull-right">Cancel</a>
-                </script>
             </div>
 
         </div>

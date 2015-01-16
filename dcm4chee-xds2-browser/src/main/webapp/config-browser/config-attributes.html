@@ -51,22 +51,22 @@
 
         <!-- Primitives -->
         <div ng-if="((schema.type == 'string' || schema.type == 'integer') && schema.class!='Reference')">
-            <input class="form-control" ng-model="parentnode[index]">
+            <input class="form-control" ng-model="parentnode[index]" ng-change="editor.checkModified()">
         </div>
 
 
         <!-- Boolean -->
         <div class="checkbox" ng-if="schema.type == 'boolean'">
-            <input ng-model="parentnode[index]" type="checkbox">
+            <input ng-model="parentnode[index]" type="checkbox" ng-change="editor.checkModified()">
         </div>
 
         <!-- enum -->
         <div ng-if="schema.type == 'enum'">
             <select ng-if="schema.enumRepresentation=='STRING'" ng-model="parentnode[index]" class="form-control"
-                    ng-options="option for option in schema.enum">
+                    ng-options="option for option in schema.enum" ng-change="editor.checkModified()">
             </select>
             <select ng-if="schema.enumRepresentation=='ORDINAL'" ng-model="parentnode[index]" class="form-control"
-                    ng-options="option as schema.enumStrValues[option] for option in schema.enum">
+                    ng-options="option as schema.enumStrValues[option] for option in schema.enum" ng-change="editor.checkModified()">
             </select>
         </div>
 
@@ -75,12 +75,14 @@
             <select class="form-control"
                     ng-if="schema.referencedClass=='Device'"
                     ng-model="parentnode[index]"
-                    ng-options="option.ref as option.name for option in editor.deviceRefs">
+                    ng-options="option.ref as option.name for option in editor.deviceRefs"
+                    ng-change="editor.checkModified()">
             </select>
             <select class="form-control"
                     ng-if="schema.referencedClass=='Connection'"
                     ng-model="parentnode[index]"
-                    ng-options="option.ref as option.name for option in editor.connectionRefs">
+                    ng-options="option.ref as option.name for option in editor.connectionRefs"
+                    ng-change="editor.checkModified()">
             </select>
         </div>
 
@@ -96,11 +98,11 @@
                      editor="editor"
                      no-label="true">
                 </div>
-                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1)">
+                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1);editor.checkModified()">
                     <small>&times</small>
                 </a>
             </div>
-            <a href="" class="btn btn-info" ng-click="confignode.push('')">Add</a>
+            <a href="" class="btn btn-info" ng-click="confignode.push('');editor.checkModified()">Add</a>
         </div>
 
         <!-- Maps with primitives -->
@@ -119,7 +121,7 @@
                     <td ng-show="editedIndex==k" ng-init="newkey = k">
                         <input focus-on="{{k}}"
                                ng-model="newkey"
-                               ng-keydown="$event.keyCode == 13 ? saveMapKey(k,newkey) : null"/>
+                               ng-keydown="$event.keyCode == 13 ? saveMapKey(k,newkey) : null;editor.checkModified()"/>
                     </td>
 
                     <td>
@@ -132,13 +134,13 @@
                         </div>
                     </td>
                     <td>
-                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k)">
+                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k);editor.checkModified()">
                             <small>&times</small>
                         </a>
                     </td>
                 </tr>
             </table>
-            <a href="" class="btn btn-info" ng-click="addMapEntryOrArrayItem()">Add</a>
+            <a href="" class="btn btn-info" ng-click="addMapEntryOrArrayItem();editor.checkModified()">Add</a>
         </div>
     </div>
 </div>

@@ -5,6 +5,8 @@ angular.module('dcm4che-config.controllers', [])
         $scope.loadDeviceConfig = function (device) {
             appHttp.get("data/config/device/" + device.deviceName, null, function (data) {
                 device.config = data;
+                device.lastPersistedConfig = angular.copy(data);
+
             }, function (data, status) {
                 appNotifications.showNotification({
                     level: "danger",
@@ -30,7 +32,7 @@ angular.module('dcm4che-config.controllers', [])
         });
 
     }
-).controller('DeviceEditorController', function ($scope, appHttp, appNotifications, ConfigConfig) {
+).controller('DeviceEditorController', function ($scope, appHttp, appNotifications, ConfigConfig, $timeout) {
 
         $scope.ConfigConfig = ConfigConfig;
 
@@ -55,9 +57,21 @@ angular.module('dcm4che-config.controllers', [])
 
         $scope.editor = {
             a: 1,
+            checking: 0,
             checkModified: function () {
-                refreshConnectionsAndDevices();
-                //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
+
+                $scope.editor.checking++;
+
+                $timeout(function () {
+                    if ( $scope.editor.checking == 1) {
+                        console.log('slow..');
+                        refreshConnectionsAndDevices();
+                        //$scope.selectedDevice.isModified = !angular.equals($scope.selectedDevice.lastPersistedConfig, $scope.selectedDevice.config);
+
+                    }
+                    $scope.editor.checking--;
+                    //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
+                },2000);
             },
             options: null
         };
@@ -76,7 +90,7 @@ angular.module('dcm4che-config.controllers', [])
         $scope.selectConfigNode = function (node, schema, parent, parentschema, index, options) {
             if (schema == null) throw "Schema not defined";
             $scope.selectedConfigNode = {
-                node:node,
+                node: node,
                 schema: schema,
                 parentNode: parent,
                 parentSchema: parentschema,
@@ -85,8 +99,8 @@ angular.module('dcm4che-config.controllers', [])
             };
         };
 
-        $scope.cancelChangesExtension = function (extension) {
-            extension.configuration.rootConfigNode = angular.copy(extension.lastPersistedConfig);
+        $scope.cancelChangesDevice = function () {
+            $scope.selectedDevice.config = angular.copy(selectedDevice.lastPersistedConfig);
             $scope.editor.checkModified();
         };
 
@@ -175,25 +189,24 @@ angular.module('dcm4che-config.controllers', [])
 
 
     })
-.controller('DeleteTopLevelElementController', function($scope) {
+    .controller('DeleteTopLevelElementController', function ($scope) {
 
         $scope.deleteCurrentElement = function () {
             var selectedNodeConf = $scope.selectedConfigNode;
 
             if (selectedNodeConf.parentSchema.type == 'array')
-                selectedNodeConf.parentNode.splice( selectedNodeConf.index, 1);
+                selectedNodeConf.parentNode.splice(selectedNodeConf.index, 1);
 
             else
-                delete selectedNodeConf.parentNode[ selectedNodeConf.index];
+                delete selectedNodeConf.parentNode[selectedNodeConf.index];
 
             $scope.selectedConfigNode.parentSchema = null;
             $scope.selectedConfigNode.parentNode = null;
             $scope.selectedConfigNode.node = null;
             $scope.selectedConfigNode.schema = null;
 
+            $scope.editor.checkModified();
         };
-
-
 
 
     })
