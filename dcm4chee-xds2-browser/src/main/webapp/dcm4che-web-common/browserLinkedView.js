@@ -1,4 +1,4 @@
-var browserLinkedView= angular.module('browserLinkedView', []);
+var browserLinkedView= angular.module('dcm4che.browserLinkedView', []);
 
 browserLinkedView.factory('browserLinkedViewPath',[function() {
 	return [ null ];

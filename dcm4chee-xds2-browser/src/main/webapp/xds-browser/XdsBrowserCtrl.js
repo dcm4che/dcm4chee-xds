@@ -1,4 +1,4 @@
-angular.module('xds.controllers').
+angular.module('dcm4che.xds.controllers').
 controller('XdsBrowserCtrl', function($scope, $http, xdsConstants, xdsAdhocQuery, appLoadingIndicator, xdsConfig) {
 
 

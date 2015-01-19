@@ -1,7 +1,7 @@
-var xdsCommon = angular.module('xds.common', []);
+var xdsCommon = angular.module('dcm4che.xds.common', []);
 
 // create controllers module, controllers added later
-angular.module('xds.controllers',[]);
+angular.module('dcm4che.xds.controllers',[]);
 
 
 /**

@@ -1,4 +1,4 @@
-var xdsREST = angular.module('xds.REST', []);
+var xdsREST = angular.module('dcm4che.xds.REST', []);
 
 xdsREST.factory('xdsConfig', [ 'appNotifications', 'appHttp', function(appNotifications, appHttp) {
 

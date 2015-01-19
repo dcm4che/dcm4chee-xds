@@ -9,14 +9,14 @@ var dcm4cheBrowserApp = angular.module('dcm4cheBrowserApp', [
   'ngAnimate',
   'mgcrea.ngStrap',
 
-  'appCommon',
-  'browserLinkedView',
+  'dcm4che.appCommon',
+  'dcm4che.browserLinkedView',
   
-  'xds.common',
-  'xds.controllers',
-  'xds.REST',
+  'dcm4che.xds.common',
+  'dcm4che.xds.controllers',
+  'dcm4che.xds.REST',
 
-  'dcm4che-config.controllers'
+  'dcm4che.configurationManager'
 
 ]);
 
@@ -32,6 +32,6 @@ dcm4cheBrowserApp.config(['$routeProvider',
           controller: 'ServiceManagerCtrl'
       }).
       otherwise({
-        redirectTo: '/step/0'
+        redirectTo: '/service-manager'
       });
   }]);

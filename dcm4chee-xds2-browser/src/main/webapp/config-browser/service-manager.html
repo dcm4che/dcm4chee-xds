@@ -71,10 +71,10 @@
                                 </h3>
                             <li>
                                 <ul class="nav nav-pills nav-stacked">
-                                    <li ng-repeat="connection in selectedDevice.config.dicomConnection"
+                                    <li ng-repeat="(index, connection) in selectedDevice.config.dicomConnection"
                                         ng-class="(selectedConfigNode.node == connection ? 'active' : '')">
                                         <a href=""
-                                           ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items, selectedDevice.config.dicomConnection, ConfigConfig.schemas.device.properties.dicomConnection)">{{connection.cn}}</a>
+                                           ng-click="selectConfigNode(connection,ConfigConfig.schemas.device.properties.dicomConnection.items, selectedDevice.config.dicomConnection, ConfigConfig.schemas.device.properties.dicomConnection, index)">{{connection.cn}}</a>
                                     </li>
                                 </ul>
                             </li>
@@ -94,7 +94,7 @@
                         <!-- save device/cancel -->
                         <div ng-show="selectedDevice.isModified">
                             <a href=""
-                               ng-click="saveDevice()"
+                               ng-click="saveChangesDevice()"
                                class="btn btn-success pull-right">Save</a>
                             <a href=""
                                ng-click="cancelChangesDevice()"
@@ -117,7 +117,8 @@
                 <div confignode="selectedConfigNode.node"
                      schema="selectedConfigNode.schema"
                      editor="editor"
-                     options="selectedConfigNode.options">
+                     options="selectedConfigNode.options"
+                     index="selectedConfigNode.index">
                 </div>
 
                 <!--<div config-node-editor-->

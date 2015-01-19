@@ -1,18 +1,23 @@
-var appCommon = angular.module('appCommon', ['mgcrea.ngStrap.popover']);
+var appCommon = angular.module('dcm4che.appCommon', ['mgcrea.ngStrap.popover']);
 
-appCommon.controller('NavbarController', ['$scope','$http', function($scope, $http) {
+// temporary re-use of config
+appCommon.factory('appConfiguration', function (customizations) {
+
+	return customizations;
+});
+appCommon.controller('NavbarController', function($scope, $http, appConfiguration) {
+	$scope.logoutEnabled = appConfiguration.logoutEnabled;
+	$scope.useNICETheme = appConfiguration.useNICETheme;
+
     $scope.logout = function () {
         $http({method:"POST", url:"data/logout"}).success(function(response, status) {
             window.location.reload();
         });
     };
 
-	$scope.serviceManagerEnabled = "${serviceManager.enabled}";
-}]);
+});
 
 appCommon.factory('appLoadingIndicator', function() {
-
-	console.log("AppLoading factory!");
 
 	var loadingPoolSize = 0;
 
@@ -62,7 +67,7 @@ appCommon.factory('appHttp', function(appNotifications, appLoadingIndicator, $ht
             appLoadingIndicator.start();
             $http({method: method, data: data, url: url}).success(function (data, status) {
                 onSuccess(data, status, callbackSuccess, notification);
-            }).error(function (data, status) {
+            }).error(function (data, status, headers, config, statustext) {
                 onError(data, status, callbackError, notification);
             });
         };
@@ -110,12 +115,13 @@ appCommon.directive('appNotificationsPopover',['appNotifications','$popover', fu
 		link:function(scope, element, atttributes) {
 			// bind popover to the element
             scope.appNotifications = appNotifications;
-			var myPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'dcm4che-web-common/notifications.html', animation: "am-flip-x"});
+			var notificationsPopover = $popover(element, {trigger: 'manual', placement:'bottom' ,template:'dcm4che-web-common/notifications.html', animation: "am-flip-x"});
+			//var logPopover = $popover(element, { placement:'bottom' ,template:'dcm4che-web-common/log.html', animation: "am-flip-x"});
 
 			scope.$watch("appNotifications.notifications.length",function() {
 				if (appNotifications.notifications.length > 0)
-					myPopover.$promise.then(myPopover.show); else 
-						myPopover.$promise.then(myPopover.hide);
+					notificationsPopover.$promise.then(notificationsPopover.show); else
+						notificationsPopover.$promise.then(notificationsPopover.hide);
 						
 			});
 		}

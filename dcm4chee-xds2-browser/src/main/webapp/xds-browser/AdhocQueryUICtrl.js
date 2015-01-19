@@ -1,4 +1,4 @@
-angular.module('xds.controllers').controller('AdhocQueryUICtrl',
+angular.module('dcm4che.xds.controllers').controller('AdhocQueryUICtrl',
     function ($scope, $http, xdsConstants, xdsAdhocQuery, xdsConfig) {
 
         // services

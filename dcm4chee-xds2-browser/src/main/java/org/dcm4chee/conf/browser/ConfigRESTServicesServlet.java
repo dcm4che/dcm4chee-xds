@@ -161,6 +161,11 @@ public class ConfigRESTServicesServlet {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public Response modifyDeviceConfig(@PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
+
+        // vitalize device to perform basic validation
+        configurationManager.getVitalizer().newConfiguredInstance(config, Device.class);
+
+
         try {
             configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
         } catch (Exception e) {

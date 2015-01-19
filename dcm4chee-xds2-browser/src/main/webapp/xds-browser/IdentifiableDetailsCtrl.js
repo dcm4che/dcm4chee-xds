@@ -1,4 +1,4 @@
-angular.module('xds.controllers').
+angular.module('dcm4che.xds.controllers').
 controller('IdentifiableDetailsCtrl',
 		[ '$scope', '$http', 'xdsConstants', 'xdsAdhocQuery', 'xdsGetEntityType', 'xdsEb','xdsConfig','browserLinkedViewXdsService', 'xdsDeleteObjectsQuery',
         function($scope, $http, xdsConstants, xdsAdhocQuery, xdsGetEntityType,xdsEb, xdsConfig, browserLinkedViewXdsService, xdsDeleteObjectsQuery) {

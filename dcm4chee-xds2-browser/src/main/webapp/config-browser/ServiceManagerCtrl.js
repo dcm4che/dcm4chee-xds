@@ -1,4 +1,4 @@
-angular.module('dcm4che-config.controllers', [])
+angular.module('dcm4che.configurationManager', [])
     .controller('ServiceManagerCtrl', function ($scope, appHttp, appNotifications, ConfigConfig) {
         $scope.configuration = {};
 
@@ -17,6 +17,21 @@ angular.module('dcm4che-config.controllers', [])
 
         };
 
+        $scope.saveDeviceConfig = function (device, callback) {
+            var configToSave = angular.copy(device.config);
+            appHttp.post("data/config/device/" + device.deviceName, configToSave, function (data) {
+                device.lastPersistedConfig = configToSave;
+                callback();
+
+            }, function (data, status) {
+                appNotifications.showNotification({
+                    level: "danger",
+                    text: "Could not save device config",
+                    details: [data, status]
+                })
+            });
+
+        };
 
         $scope.$watch("selectedDevice", function () {
             if ($scope.selectedDevice != null && $scope.selectedDevice.config == null) {
@@ -58,20 +73,20 @@ angular.module('dcm4che-config.controllers', [])
         $scope.editor = {
             a: 1,
             checking: 0,
+            checkModifiedForced: function () {
+                refreshConnectionsAndDevices();
+                $scope.selectedDevice.isModified = !angular.equals($scope.selectedDevice.lastPersistedConfig, $scope.selectedDevice.config);
+            },
             checkModified: function () {
 
                 $scope.editor.checking++;
 
                 $timeout(function () {
                     if ( $scope.editor.checking == 1) {
-                        console.log('slow..');
-                        refreshConnectionsAndDevices();
-                        //$scope.selectedDevice.isModified = !angular.equals($scope.selectedDevice.lastPersistedConfig, $scope.selectedDevice.config);
-
+                        $scope.editor.checkModifiedForced();
                     }
                     $scope.editor.checking--;
-                    //$scope.selectedExtension.isModified = !angular.equals($scope.selectedExtension.lastPersistedConfig, $scope.selectedExtension.configuration.rootConfigNode);
-                },2000);
+                },1000);
             },
             options: null
         };
@@ -100,8 +115,17 @@ angular.module('dcm4che-config.controllers', [])
         };
 
         $scope.cancelChangesDevice = function () {
-            $scope.selectedDevice.config = angular.copy(selectedDevice.lastPersistedConfig);
-            $scope.editor.checkModified();
+            $scope.selectedDevice.config = angular.copy($scope.selectedDevice.lastPersistedConfig);
+            $scope.editor.checkModifiedForced();
+        };
+
+        $scope.saveChangesDevice = function () {
+
+            $scope.saveDeviceConfig($scope.selectedDevice, function() {
+                $scope.editor.checkModifiedForced();
+            });
+
+
         };
 
     }
@@ -342,6 +366,8 @@ angular.module('dcm4che-config.controllers', [])
         };
     })
 
+
+
 // Configuration of configuration
     .factory("ConfigConfig", function (appNotifications, appHttp) {
 
@@ -357,7 +383,6 @@ angular.module('dcm4che-config.controllers', [])
             primitiveTypes: primitiveTypes,
             collectionTypes: collectionTypes,
             nonCompositeTypes: nonCompositeTypes,
-
 
             groupOrder: [
                 "General",
@@ -409,11 +434,13 @@ angular.module('dcm4che-config.controllers', [])
                 var obj = {};
                 angular.forEach(schema.properties, function (value, index) {
                     if (value.type == "object")
-                        obj[index] = {};
+                        obj[index] = {}; else
                     if (value.type == "array")
-                        obj[index] = [];
+                        obj[index] = []; else
                     if (index == df)
-                        obj[index] = "new";
+                        obj[index] = "new"; else
+                    if (value.default)
+                        obj[index] = value.default;
                 });
                 return obj;
             }
