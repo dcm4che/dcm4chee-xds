@@ -19,9 +19,18 @@ angular.module('dcm4che.configurationManager', [])
 
         $scope.saveDeviceConfig = function (device, callback) {
             var configToSave = angular.copy(device.config);
-            appHttp.post("data/config/device/" + device.deviceName, configToSave, function (data) {
+            appHttp.post("data/config/device/" + device.deviceName, configToSave, function (data, status) {
                 device.lastPersistedConfig = configToSave;
+
+                //TODO: update
+
                 callback();
+
+                appNotifications.showNotification({
+                    level: "success",
+                    text: "Configuration successfully saved",
+                    details: [data, status]
+                });
 
             }, function (data, status) {
                 appNotifications.showNotification({
@@ -81,12 +90,14 @@ angular.module('dcm4che.configurationManager', [])
 
                 $scope.editor.checking++;
 
+                var delay = 500;
+
                 $timeout(function () {
                     if ( $scope.editor.checking == 1) {
                         $scope.editor.checkModifiedForced();
                     }
                     $scope.editor.checking--;
-                },1000);
+                }, delay);
             },
             options: null
         };

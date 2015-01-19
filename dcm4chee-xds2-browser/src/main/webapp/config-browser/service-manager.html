@@ -65,7 +65,7 @@
                                 <h3>
                                     Connections
                                     <a href=""
-                                       ng-click="selectedDevice.config.dicomConnection.push(ConfigConfig.createNewItem(ConfigConfig.schemas.device.properties.dicomConnection.items))">
+                                       ng-click="selectedDevice.config.dicomConnection.push(ConfigConfig.createNewItem(ConfigConfig.schemas.device.properties.dicomConnection.items));editor.checkModified()">
                                         <span class="badge">+</span>
                                     </a>
                                 </h3>

@@ -5,7 +5,7 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.core.AnnotatedConfigurableProperty;
 import org.dcm4che3.conf.core.BeanVitalizer;
-import org.dcm4che3.conf.core.ConfigurationManager;
+import org.dcm4che3.conf.core.DicomConfigurationManager;
 import org.dcm4che3.conf.core.adapters.ConfigTypeAdapter;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.dicom.DicomPath;
@@ -118,7 +118,7 @@ public class ConfigRESTServicesServlet {
 
     @Inject
     @Xds
-    ConfigurationManager configurationManager;
+    DicomConfigurationManager configurationManager;
 
     @GET
     @Path("/devices")
@@ -163,7 +163,7 @@ public class ConfigRESTServicesServlet {
     public Response modifyDeviceConfig(@PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
 
         // vitalize device to perform basic validation
-        configurationManager.getVitalizer().newConfiguredInstance(config, Device.class);
+        configurationManager.vitalizeDevice(deviceName, config);
 
 
         try {

@@ -2,12 +2,11 @@
 <div ng-if="schema.type == 'object' &&
             schema.class != 'Map'" xmlns="http://java.sun.com/jsf/core">
 
-    <!--legend>{{schema.class}}</legend-->
     <div class="form-horizontal" ng-controller="CompositeNodeController">
         <div ng-repeat="group in groups | groupSorter">
             <fieldset>
                 <legend ng-show="groups.length>1">{{group}}</legend>
-                <legend ng-show="groups.length==1">{{schema.class}}({{index}})</legend>
+                <legend ng-show="groups.length==1">{{schema.class}}<span ng-show="index!=null">({{index}})</span></legend>
                 <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:'title'">
                     <div confignode="confignode[propertySchema.$key]"
                          schema="propertySchema"

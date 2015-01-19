@@ -56,7 +56,7 @@ import java.util.List;
 public class ConfigExceptionHandler implements ExceptionMapper<ConfigurationException>
 {
     @Override
-    //@Produces({ MediaType.APPLICATION_JSON })
+    @Produces({ MediaType.APPLICATION_JSON })
     public Response toResponse(ConfigurationException exception)
     {
         return Response.status(Response.Status.BAD_REQUEST).entity(getNiceErrorMessageList(exception)).build();
