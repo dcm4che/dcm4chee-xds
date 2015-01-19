@@ -35,3 +35,7 @@ dcm4cheBrowserApp.config(['$routeProvider',
         redirectTo: '/service-manager'
       });
   }]);
+
+dcm4cheBrowserApp.controller('dcm4cheAppController', function($scope, appConfiguration){
+  $scope.appConfiguration = appConfiguration;
+});
