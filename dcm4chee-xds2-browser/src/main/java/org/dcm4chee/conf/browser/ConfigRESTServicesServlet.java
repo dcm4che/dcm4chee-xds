@@ -160,17 +160,19 @@ public class ConfigRESTServicesServlet {
     @Path("/device/{deviceName}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response modifyDeviceConfig(@PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
+    public Response modifyDeviceConfig(@Context UriInfo ctx, @PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
 
         // vitalize device to perform basic validation
         configurationManager.vitalizeDevice(deviceName, config);
 
+        configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
 
         try {
-            configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
-        } catch (Exception e) {
-            return Response.serverError().build();
+            reloadAllExtensionsOfDevice(ctx, deviceName);
+        } catch (ConfigurationException e) {
+            log.warn("Error while reloading the configuration for device "+deviceName,e);
         }
+
         return Response.ok().build();
     }
 
@@ -273,6 +275,20 @@ public class ConfigRESTServicesServlet {
         XDS_REST_PATH.put("XCAiRespondingGWCfg", "xcai-rs");
         XDS_REST_PATH.put("XCAInitiatingGWCfg", "xca-rs");
         XDS_REST_PATH.put("XCARespondingGWCfg", "xca-rs");
+    }
+
+    @GET
+    @Path("/reconfigure-all-extensions/{deviceName}")
+    public void reloadAllExtensionsOfDevice(@Context UriInfo ctx,@PathParam("deviceName")  String deviceName) throws ConfigurationException {
+        Device device = config.findDevice(deviceName);
+
+        for (DeviceExtension deviceExtension : device.listDeviceExtensions()) {
+            String extensionName = deviceExtension.getClass().getSimpleName();
+            if (XDS_REST_PATH.get(extensionName)!=null)
+                reconfigureExtension(ctx, deviceName, extensionName);
+        }
+
+
     }
 
     @GET

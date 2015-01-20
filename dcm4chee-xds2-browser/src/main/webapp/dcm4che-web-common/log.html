@@ -18,14 +18,16 @@
                     <tbody>
                     <tr ng-repeat="n in appNotifications.notificationsArchive">
                         <td>
-                            {{:: n.time}}
+                            {{:: n.time | date:'mediumTime'}}
                         </td>
                         <td>
                             <div class='alert' ng-class="'alert-'+n.level">{{:: n.text}}</div>
                         </td>
                         <td>
                             Status: {{n.details[1]}}
-                            <div ng-repeat="(k,item) in n.details[0] track by k">{{:: item}}</div>
+
+                            <div ng-if="_.isArray(n.details[0])" ng-repeat="(k,item) in n.details[0] track by k">{{:: item}} </div>
+                            <div ng-if="!_.isArray(n.details[0])" >{{:: n.details[0]}} </div>
                         </td>
                     </tr>
                     </tbody>

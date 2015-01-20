@@ -224,8 +224,6 @@ public class XdsConfigTestBase {
         rep.setAcceptedMimeTypes(MIME_TYPES1);
         rep.setSoapLogDir(null);
         rep.setCheckMimetype(true);
-        rep.setAllowedCipherHostname("*");
-        rep.setLogFullMessageHosts(new String[] {});
         rep.setRetrieveUrl("http://retrieve");
         rep.setProvideUrl("http://provide");
 
@@ -755,8 +753,6 @@ public class XdsConfigTestBase {
         rep.setAcceptedMimeTypes(MIME_TYPES2);
         rep.setSoapLogDir(DEFAULT_XDSLOG);
         rep.setCheckMimetype(false);
-        rep.setAllowedCipherHostname("*");
-        rep.setLogFullMessageHosts(new String[] {});
 
 
         // used elsewhere as well

@@ -93,7 +93,7 @@ angular.module('dcm4che.configurationManager', [])
                 var delay = 500;
 
                 $timeout(function () {
-                    if ( $scope.editor.checking == 1) {
+                    if ($scope.editor.checking == 1) {
                         $scope.editor.checkModifiedForced();
                     }
                     $scope.editor.checking--;
@@ -131,12 +131,27 @@ angular.module('dcm4che.configurationManager', [])
         };
 
         $scope.saveChangesDevice = function () {
-
-            $scope.saveDeviceConfig($scope.selectedDevice, function() {
+            $scope.saveDeviceConfig($scope.selectedDevice, function () {
                 $scope.editor.checkModifiedForced();
             });
+        };
 
+        $scope.reconfigureDevice = function () {
 
+            appHttp.get("data/config/reconfigure-all-extensions/" + $scope.selectedDevice.deviceName, null, function (data) {
+                appNotifications.showNotification({
+                    level: "success",
+                    text: "The service has successfully reloaded the configuration",
+                    details: [data, status]
+                })
+
+            }, function (data, status) {
+                appNotifications.showNotification({
+                    level: "danger",
+                    text: "The service was not able to reload the configuration",
+                    details: [data, status]
+                })
+            });
         };
 
     }
@@ -378,7 +393,6 @@ angular.module('dcm4che.configurationManager', [])
     })
 
 
-
 // Configuration of configuration
     .factory("ConfigConfig", function (appNotifications, appHttp) {
 
@@ -445,12 +459,9 @@ angular.module('dcm4che.configurationManager', [])
                 var obj = {};
                 angular.forEach(schema.properties, function (value, index) {
                     if (value.type == "object")
-                        obj[index] = {}; else
-                    if (value.type == "array")
-                        obj[index] = []; else
-                    if (index == df)
-                        obj[index] = "new"; else
-                    if (value.default)
+                        obj[index] = {}; else if (value.type == "array")
+                        obj[index] = []; else if (index == df)
+                        obj[index] = "new"; else if (value.default)
                         obj[index] = value.default;
                 });
                 return obj;

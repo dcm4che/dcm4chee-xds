@@ -34,6 +34,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
 		<storage.version>1.0.2-SNAPSHOT</storage.version>
+		<dcm4chee-conf-db.version>1.0.0-SNAPSHOT</dcm4chee-conf-db.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
@@ -98,19 +99,18 @@
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
 
-                <!-- XDS Browser access control -->
-                <browser.security.domain>authnservice</browser.security.domain>
-                <browser.security.adminRole>JBossAdmin</browser.security.adminRole>
+				<!-- XDS Browser access control -->
+				<browser.security.domain>authnservice</browser.security.domain>
+				<browser.security.adminRole>XDSAdmin</browser.security.adminRole>
 
-                <ws.security.domain>
-                    &lt;security:security-domain&gt;client-certificate-authentication&lt;/security:security-domain&gt;
-                </ws.security.domain>
+				<ws.security.domain>
+					&lt;security:security-domain&gt;client-certificate-authentication&lt;/security:security-domain&gt;
+				</ws.security.domain>
 
-                <ws.security.parameters>
-                    &lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;
-                    &lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
-                </ws.security.parameters>
-
+				<ws.security.parameters>
+					&lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;
+					&lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
+				</ws.security.parameters>
             </properties>
 		</profile>
 	</profiles>

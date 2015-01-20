@@ -59,11 +59,11 @@ public class XdsRegistry extends XdsExtension {
     private static final long serialVersionUID = -8258532093950989486L;
 
     @ConfigurableProperty(name = "xdsAffinityDomain",
-                label =  "Affinity Domain",
-                description = "Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)",
-                group = "Affinity domain"
+            label = "Affinity Domain",
+            description = "Affinity Domain given as Universal Entity ID and Universal Entity ID Type ISO (e.g.: 1.2.3.4.5&ISO)",
+            group = "Affinity domain"
     )
-    private String[] affinityDomain = new String[] {};
+    private String[] affinityDomain = new String[]{};
 
     @ConfigurableProperty(name = "xdsAffinityDomainConfigDir",
             label = "Affinity Domain Config Directory",
@@ -71,45 +71,45 @@ public class XdsRegistry extends XdsExtension {
             group = "Affinity domain")
     private String affinityDomainConfigDir;
 
+    @ConfigurableProperty(name = "xdsCheckMimetype",
+            label = "Check MIME Type",
+            description = "Perform MIME type check for registered documents",
+            defaultValue = "true",
+            group = "XDS profile strictness")
+    private boolean checkMimetype;
+
     @ConfigurableProperty(name = "xdsAcceptedMimeTypes",
             label = "Accept MIME Types",
-            description = "MIME types accepted by the webservice")
-    private String[] acceptedMimeTypes = new String[] {};
+            description = "Which MIME types documents that are registered with this registry allowed to have.",
+            group = "XDS profile strictness")
+    private String[] acceptedMimeTypes = new String[]{};
 
     @ConfigurableProperty(name = "xdsCreateMissingPIDs",
-            label= "Create Missing Patient IDs",
-            description = "Specifies to create Patient IDs that are not yet known. (not conform to XDS specification!)",
+            label = "Create Missing Patient IDs",
+            description = "Specifies to create Patient IDs that are not known by the registry. (not conform to XDS specification!)",
             defaultValue = "false",
             group = "XDS profile strictness")
     private boolean createMissingPIDs;
 
     @ConfigurableProperty(name = "xdsCreateMissingCodes",
             label = "Create Missing Codes",
-            description= "Specifies to create Codes that are not known in the Affinity Domain. (not conform to XDS specification!)",
+            description = "Specifies to create Codes that are not known in the Affinity Domain. (not conform to XDS specification!)",
             defaultValue = "false",
             group = "XDS profile strictness")
     private boolean createMissingCodes;
 
-    @ConfigurableProperty(name = "xdsCheckAffinityDomain", 
+    @ConfigurableProperty(name = "xdsCheckAffinityDomain",
             label = "Check Affinity Domain",
-            description = "Check affinityDomain in received PatientIDs",
+            description = "Checks for matching affinity domain in received patient feeds and when registering documents. Only deactivate for testing.",
             defaultValue = "true",
             group = "Affinity domain")
     private boolean checkAffinityDomain;
-
-    // TODO: confirm correct meaning
-    @ConfigurableProperty(name = "xdsCheckMimetype",
-            label = "Check MIME Type",
-            description = "Indicates whether MIME types of incoming SOAP messages should be checked against accepted mime types",
-            defaultValue = "true",
-            group = "XDS profile strictness")
-    private boolean checkMimetype;
 
     @ConfigurableProperty(name = "xdsRegisterUrl",
             label = "Register URL",
             description = "Register URL that should be used to register documents with this registry (Does NOT actually configure the registry's endpoint!)",
             group = "Endpoints"
-            )
+    )
     private String registerUrl;
 
     @ConfigurableProperty(name = "xdsQueryUrl",

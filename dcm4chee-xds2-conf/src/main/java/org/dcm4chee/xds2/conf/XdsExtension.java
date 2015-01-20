@@ -26,7 +26,7 @@ public class XdsExtension extends DeviceExtension implements Deactivateable {
 
     @ConfigurableProperty(name = "xdsSoapMsgLogDir",
             label = "Path for SOAP log",
-            description = "Path where to store SOAP messages log",
+            description = "Path where to store SOAP messages log. If empty, SOAP logging is disabled.",
             group = "Logging",
             required = false)
     private String soapLogDir;

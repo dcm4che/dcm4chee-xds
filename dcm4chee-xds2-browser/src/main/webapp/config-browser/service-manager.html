@@ -91,12 +91,16 @@
                             </li>
                         </ul>
 
-                        <!-- save device/cancel -->
-                        <div ng-show="selectedDevice.isModified">
+                        <!-- reload/save device/cancel -->
+                        <div>
                             <a href=""
+                               ng-click="reconfigureDevice()"
+                               title="Trigger a reload of configuration in the backend"
+                               class="btn btn-info pull-right">Force reload</a>
+                            <a ng-show="selectedDevice.isModified" href=""
                                ng-click="saveChangesDevice()"
                                class="btn btn-success pull-right">Save</a>
-                            <a href=""
+                            <a ng-show="selectedDevice.isModified" href=""
                                ng-click="cancelChangesDevice()"
                                class="btn btn-danger pull-right">Cancel</a>
                         </div>

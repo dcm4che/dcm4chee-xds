@@ -7,7 +7,7 @@
             <fieldset>
                 <legend ng-show="groups.length>1">{{group}}</legend>
                 <legend ng-show="groups.length==1">{{schema.class}}<span ng-show="index!=null">({{index}})</span></legend>
-                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:'title'">
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:['uiOrder','title']">
                     <div confignode="confignode[propertySchema.$key]"
                          schema="propertySchema"
                          parentnode="confignode"
@@ -151,7 +151,7 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">{{schema.title!='' ? schema.title : index}}</h3>
+            <h3 class="panel-title">{{schema.title ? schema.title : index}}</h3>
         </div>
         <div class="panel-body">
 

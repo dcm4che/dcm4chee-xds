@@ -131,6 +131,8 @@ appCommon.directive('appNotificationsPopover',['appNotifications','$popover', fu
 appCommon.controller('appNotificationsPopoverController', function($scope, appNotifications) {
 
     $scope.appNotifications = appNotifications;
+	$scope._ = _;
+
 
 });
 

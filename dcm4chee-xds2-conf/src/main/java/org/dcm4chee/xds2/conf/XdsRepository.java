@@ -63,25 +63,36 @@ public class XdsRepository extends XdsExtension {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigurableProperty(name = "xdsRepositoryUID")
+    @ConfigurableProperty(name = "xdsRepositoryUID",
+            label = "XDS repository UID",
+            description = "The unique identifier assigned to the repository",
+            group = "General")
     private String repositoryUID;
 
-    @ConfigurableProperty(name = "xdsAcceptedMimeTypes")
-    private String[] acceptedMimeTypes = new String[] {};
+    @ConfigurableProperty(name = "xdsAcceptedMimeTypes",
+            label = "Accept MIME Types",
+            description = "Which MIME types documents that are stored in this repository allowed to have.",
+            group = "XDS profile strictness")
+    private String[] acceptedMimeTypes = new String[]{};
 
-    @ConfigurableProperty(name = "xdsLogFullMessageHosts")
-    private String[] logFullMessageHosts = new String[] {};
-
-    @ConfigurableProperty(name = "xdsCheckMimetype")
+    @ConfigurableProperty(name = "xdsCheckMimetype",
+            label = "Check MIME Type",
+            description = "Perform MIME type check for registered documents",
+            defaultValue = "true",
+            group = "XDS profile strictness")
     private boolean checkMimetype;
 
-    @ConfigurableProperty(name = "xdsAllowedCipherHostname")
-    private String allowedCipherHostname;
-
-    @ConfigurableProperty(name = "xdsProvideUrl")
+    @ConfigurableProperty(name = "xdsProvideUrl",
+            label = "Provide URL",
+            description = "Provide URL that should be used to store documents with this repository (Does NOT actually configure the endpoint!)",
+            group = "Endpoints")
     private String provideUrl;
 
-    @ConfigurableProperty(name = "xdsRetrieveUrl")
+    @ConfigurableProperty(name = "xdsRetrieveUrl",
+            label = "Retrieve URL",
+            description = "Retrieve URL that should be used to retrieve documents from this repository (Does NOT actually configure the endpoint!)",
+            group = "Endpoints"
+    )
     private String retrieveUrl;
 
     @LDAP(
@@ -89,7 +100,14 @@ public class XdsRepository extends XdsExtension {
             mapValueAttribute = "xdsSource",
             mapEntryObjectClass = "xdsSourceByUid"
     )
-    @ConfigurableProperty(name = "xdsSources", collectionOfReferences = true)
+    @ConfigurableProperty(name = "xdsSources",
+            label = "XDS Sources",
+            description = "For different source ids the repository can forward to different registries. " +
+                    "This mapping (Source Id -> Device) specifies which device is used to lookup the source configuration. " +
+                    "The source's configuration is then used to define the registry where the data is forwarded to. Wildcard * is supported.",
+
+            collectionOfReferences= true
+    )
     private Map<String, Device> srcDevicebySrcIdMap;
 
     @LDAP(
@@ -97,7 +115,11 @@ public class XdsRepository extends XdsExtension {
             mapValueAttribute = "xdsFileSystemGroupID",
             mapEntryObjectClass = "xdsFilesystemGroupByAffinity"
     )
-    @ConfigurableProperty(name = "xdsFileSystemGroupIDs")
+    @ConfigurableProperty(name = "xdsFileSystemGroupIDs",
+            label = "Filesystem groups",
+            description = "Mapping (Affinity domain -> Filesystem group) that defines which filesystem groups in the storage are used for which affinity domains. Wildcard * is supported.",
+            group = "Storage"
+    )
     private Map<String, String> fsGroupIDbyAffinity;
 
     public String getRegistryURL(String sourceID) {
@@ -123,7 +145,7 @@ public class XdsRepository extends XdsExtension {
     public String getFilesystemGroupID(String affinity) {
         String groupID = fsGroupIDbyAffinity.get(affinity);
         if (groupID == null) {
-        	groupID = fsGroupIDbyAffinity.get(DEFAULTID);
+            groupID = fsGroupIDbyAffinity.get(DEFAULTID);
         }
         return groupID;
     }
@@ -139,12 +161,12 @@ public class XdsRepository extends XdsExtension {
     }
 
     public Map<String, String> getFsGroupIDbyAffinity() {
-		return fsGroupIDbyAffinity;
-	}
+        return fsGroupIDbyAffinity;
+    }
 
-	public void setFsGroupIDbyAffinity(Map<String, String> fsGroupIDbyAffinity) {
-		this.fsGroupIDbyAffinity = fsGroupIDbyAffinity;
-	}
+    public void setFsGroupIDbyAffinity(Map<String, String> fsGroupIDbyAffinity) {
+        this.fsGroupIDbyAffinity = fsGroupIDbyAffinity;
+    }
 
     public String getProvideUrl() {
         return provideUrl;
@@ -184,22 +206,6 @@ public class XdsRepository extends XdsExtension {
 
     public void setCheckMimetype(boolean checkMimetype) {
         this.checkMimetype = checkMimetype;
-    }
-
-    public String[] getLogFullMessageHosts() {
-        return logFullMessageHosts;
-    }
-
-    public void setLogFullMessageHosts(String[] logFullMessageHosts) {
-        this.logFullMessageHosts = logFullMessageHosts;
-    }
-
-    public String getAllowedCipherHostname() {
-        return allowedCipherHostname;
-    }
-
-    public void setAllowedCipherHostname(String allowedCipherHostnames) {
-        this.allowedCipherHostname = allowedCipherHostnames;
     }
 
     @Override
