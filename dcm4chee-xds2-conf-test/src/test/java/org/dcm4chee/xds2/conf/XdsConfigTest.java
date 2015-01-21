@@ -59,6 +59,6 @@ public class XdsConfigTest extends XdsConfigTestBase{
         if (System.getProperty("org.dcm4che.conf.cached") == null)
             System.setProperty("org.dcm4che.conf.cached", "false");
 
-        config = XdsConfigurationFactory.getDicomConfiguration();;
+        config = new XdsConfigurationFactory().getDicomConfiguration();
     }
 }

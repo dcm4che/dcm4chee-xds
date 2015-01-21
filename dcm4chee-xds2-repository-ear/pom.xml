@@ -207,5 +207,36 @@
 				</plugins>
 			</build>
 		</profile>
+		<profile>
+			<id>asb</id>
+			<dependencies>
+				<dependency>
+					<groupId>org.dcm4chee</groupId>
+					<artifactId>dcm4chee-conf-db</artifactId>
+					<classifier>asb</classifier>
+					<type>ejb</type>
+					<version>${conf-db-storage.version}</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-ear-plugin</artifactId>
+						<version>2.6</version>
+						<configuration>
+							<defaultJavaBundleDir>lib</defaultJavaBundleDir>
+							<modules combine.children="append">
+								<ejbModule>
+									<groupId>org.dcm4chee</groupId>
+									<artifactId>dcm4chee-conf-db</artifactId>
+								</ejbModule>
+							</modules>
+							<version>6</version>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 	</profiles>
 </project>

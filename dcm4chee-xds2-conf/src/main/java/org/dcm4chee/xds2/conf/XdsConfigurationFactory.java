@@ -43,6 +43,7 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
+import org.dcm4che3.conf.core.Configuration;
 import org.dcm4che3.conf.core.DicomConfigurationManager;
 import org.dcm4che3.conf.dicom.CommonDicomConfigurationWithHL7;
 import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
@@ -56,42 +57,55 @@ import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
- * 
  */
+@ApplicationScoped
 public class XdsConfigurationFactory {
 
     public static final Logger log = LoggerFactory.getLogger(XdsConfigurationFactory.class);
 
-    
+
     /**
-     * Allows for custom Preferences implementations to be used, like jdbc-prefs
-     *
+     * Allows for custom config storage backend
+     */
     @Inject
-    Instance<PrefsFactory> prefsFactoryInstance;
-    */
+    Instance<Configuration> dbConfigStorage;
+
 
     @Produces
     @Xds
     @ApplicationScoped
-    public static DicomConfigurationManager getConfigurationManager() throws ConfigurationException {
+    public DicomConfigurationManager getConfigurationManager() throws ConfigurationException {
         return makeConfig();
     }
 
     @Produces
     @Xds
     @ApplicationScoped
-    public static DicomConfiguration getDicomConfiguration() throws ConfigurationException {
+    public DicomConfiguration getDicomConfiguration() throws ConfigurationException {
         return makeConfig();
     }
 
 
-    private static CommonDicomConfigurationWithHL7 makeConfig() throws ConfigurationException {
+    private CommonDicomConfigurationWithHL7 createdConfig;
+
+    private synchronized CommonDicomConfigurationWithHL7 makeConfig() throws ConfigurationException {
+
+        if (createdConfig != null) return createdConfig;
+
         DicomConfigurationBuilder builder = DicomConfigurationBuilder
                 .newConfigurationBuilder(System.getProperties());
+
+        // register custom config storage backend if provided
+        if (    dbConfigStorage != null &&
+                !dbConfigStorage.isUnsatisfied() &&
+                !dbConfigStorage.isAmbiguous())
+            builder.registerCustomConfigurationStorage(dbConfigStorage.get());
 
         builder.registerDeviceExtension(XdsRegistry.class);
         builder.registerDeviceExtension(XdsRepository.class);
@@ -106,7 +120,8 @@ public class XdsConfigurationFactory {
         builder.registerDeviceExtension(AuditRecordRepository.class);
         builder.registerDeviceExtension(AuditLogger.class);
 
-        return builder.build();
+        createdConfig = builder.build();
+        return createdConfig;
     }
 
     public void disposeDicomConfiguration(@Disposes @Xds DicomConfiguration conf) {

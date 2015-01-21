@@ -21,7 +21,7 @@
         <dependency>
             <groupId>org.dcm4chee</groupId>
             <artifactId>dcm4chee-conf-db</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${conf-db-storage.version}</version>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>

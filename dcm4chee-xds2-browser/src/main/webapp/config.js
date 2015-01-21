@@ -12,7 +12,7 @@ angular.module('dcm4che.appCommon')
             ////////////////
 
 
-            logoutEnabled: false,
+            logoutEnabled: true,
             useNICETheme: false
 
         }
