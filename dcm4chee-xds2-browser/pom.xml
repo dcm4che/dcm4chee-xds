@@ -29,15 +29,15 @@
 	<parent>
 		<groupId>org.dcm4che</groupId>
 		<artifactId>dcm4chee-xds2-parent</artifactId>
-		<version>2.0.5-ASB2-SNAPSHOT</version>
+		<version>2.0.6-SNAPSHOT</version>
 	</parent>
 	<artifactId>dcm4chee-xds2-browser</artifactId>
 	<packaging>war</packaging>
 	<name>Online registry browser for admininstration purposes </name>
     <properties>
         <serviceManager.enabled>true</serviceManager.enabled>
-		<browser.security.enabled.l></browser.security.enabled.l>
-		<browser.security.enabled.r></browser.security.enabled.r>
+		<browser.security.enabled.l />
+		<browser.security.enabled.r />
     </properties>
     <profiles>
         <profile>
