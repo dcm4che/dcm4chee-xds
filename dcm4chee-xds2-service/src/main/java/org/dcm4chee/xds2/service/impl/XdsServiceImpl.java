@@ -107,7 +107,6 @@ public class XdsServiceImpl implements XdsService {
 
 
     @Inject
-    @Xds    
     private DicomConfiguration conf;
     
     @Inject

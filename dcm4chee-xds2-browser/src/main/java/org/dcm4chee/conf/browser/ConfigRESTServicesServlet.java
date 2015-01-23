@@ -5,7 +5,7 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.core.AnnotatedConfigurableProperty;
 import org.dcm4che3.conf.core.BeanVitalizer;
-import org.dcm4che3.conf.core.DicomConfigurationManager;
+import org.dcm4che3.conf.dicom.DicomConfigurationManager;
 import org.dcm4che3.conf.core.adapters.ConfigTypeAdapter;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.dicom.DicomPath;
@@ -13,7 +13,6 @@ import org.dcm4che3.net.AEExtension;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.hl7.HL7ApplicationExtension;
-import org.dcm4chee.xds2.common.cdi.Xds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,12 +111,8 @@ public class ConfigRESTServicesServlet {
 
     }
 
-    @Inject
-    @Xds
-    DicomConfiguration config;
 
     @Inject
-    @Xds
     DicomConfigurationManager configurationManager;
 
     @GET
@@ -126,8 +121,8 @@ public class ConfigRESTServicesServlet {
     public List<DeviceJSON> listDevices() throws ConfigurationException {
 
         List<DeviceJSON> list = new ArrayList<DeviceJSON>();
-        for (String deviceName : config.listDeviceNames()) {
-            Device d = config.findDevice(deviceName);
+        for (String deviceName : configurationManager.listDeviceNames()) {
+            Device d = configurationManager.findDevice(deviceName);
 
             DeviceJSON jd = new DeviceJSON();
             jd.deviceName = deviceName;
@@ -169,6 +164,7 @@ public class ConfigRESTServicesServlet {
 
         try {
             reloadAllExtensionsOfDevice(ctx, deviceName);
+            log.info("Configuration for device {} stored successfully",deviceName);
         } catch (ConfigurationException e) {
             log.warn("Error while reloading the configuration for device "+deviceName,e);
         }
@@ -186,15 +182,15 @@ public class ConfigRESTServicesServlet {
         schemas.device = getSchemaForConfigurableClass(Device.class);
 
         schemas.deviceExtensions = new HashMap<>();
-        for (Class<? extends DeviceExtension> deviceExt : config.getRegisteredDeviceExtensions())
+        for (Class<? extends DeviceExtension> deviceExt : configurationManager.getRegisteredDeviceExtensions())
             schemas.deviceExtensions.put(deviceExt.getSimpleName(), getSchemaForConfigurableClass(deviceExt));
 
         schemas.aeExtensions = new HashMap<>();
-        for (Class<? extends AEExtension> aeExt : config.getRegisteredAEExtensions())
+        for (Class<? extends AEExtension> aeExt : configurationManager.getRegisteredAEExtensions())
             schemas.aeExtensions.put(aeExt.getSimpleName(), getSchemaForConfigurableClass(aeExt));
 
         schemas.hl7AppExtensions = new HashMap<>();
-        for (Class<? extends HL7ApplicationExtension> hl7Ext : config.getDicomConfigurationExtension(HL7Configuration.class).getRegisteredHL7ApplicationExtensions())
+        for (Class<? extends HL7ApplicationExtension> hl7Ext : configurationManager.getDicomConfigurationExtension(HL7Configuration.class).getRegisteredHL7ApplicationExtensions())
             schemas.aeExtensions.put(hl7Ext.getSimpleName(), getSchemaForConfigurableClass(hl7Ext));
 
         // TODO: PERFORMANCE: cache schemas
@@ -233,7 +229,7 @@ public class ConfigRESTServicesServlet {
             throw new ConfigurationException("Extension " + extJson.extensionType + " is not configured");
 
         // get current config
-        Device d = config.findDevice(extJson.deviceName);
+        Device d = configurationManager.findDevice(extJson.deviceName);
         DeviceExtension currentDeviceExt = d.getDeviceExtension(extClass);
 
         ConfigTypeAdapter ad = configurationManager.getVitalizer().lookupDefaultTypeAdapter(extClass);
@@ -252,7 +248,7 @@ public class ConfigRESTServicesServlet {
         d.removeDeviceExtension(de);
         d.addDeviceExtension(de);
 
-        config.merge(d);
+        configurationManager.merge(d);
 
         // also try to call reconfigure after saving
         try {
@@ -280,7 +276,7 @@ public class ConfigRESTServicesServlet {
     @GET
     @Path("/reconfigure-all-extensions/{deviceName}")
     public void reloadAllExtensionsOfDevice(@Context UriInfo ctx,@PathParam("deviceName")  String deviceName) throws ConfigurationException {
-        Device device = config.findDevice(deviceName);
+        Device device = configurationManager.findDevice(deviceName);
 
         for (DeviceExtension deviceExtension : device.listDeviceExtensions()) {
             String extensionName = deviceExtension.getClass().getSimpleName();

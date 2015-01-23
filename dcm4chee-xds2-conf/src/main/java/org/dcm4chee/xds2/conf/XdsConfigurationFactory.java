@@ -44,11 +44,14 @@ import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
 import org.dcm4che3.conf.core.Configuration;
-import org.dcm4che3.conf.core.DicomConfigurationManager;
+import org.dcm4che3.conf.dicom.DicomConfigurationManager;
 import org.dcm4che3.conf.dicom.CommonDicomConfigurationWithHL7;
 import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
+import org.dcm4che3.net.AEExtension;
+import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.audit.AuditRecordRepository;
+import org.dcm4che3.net.hl7.HL7ApplicationExtension;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.dcm4chee.xds2.common.cdi.Xds;
@@ -59,11 +62,14 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
+import java.util.Collection;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
+
 @ApplicationScoped
 public class XdsConfigurationFactory {
 
@@ -73,39 +79,28 @@ public class XdsConfigurationFactory {
     /**
      * Allows for custom config storage backend
      */
+
     @Inject
     Instance<Configuration> dbConfigStorage;
 
-
     @Produces
-    @Xds
     @ApplicationScoped
-    public DicomConfigurationManager getConfigurationManager() throws ConfigurationException {
-        return makeConfig();
+    public DicomConfigurationManager getDicomConfigurationManager() throws ConfigurationException {
+        return getCommonDicomConfigurationWithHL7();
     }
 
-    @Produces
-    @Xds
-    @ApplicationScoped
-    public DicomConfiguration getDicomConfiguration() throws ConfigurationException {
-        return makeConfig();
-    }
-
-
-    private CommonDicomConfigurationWithHL7 createdConfig;
-
-    private synchronized CommonDicomConfigurationWithHL7 makeConfig() throws ConfigurationException {
-
-        if (createdConfig != null) return createdConfig;
-
+    public CommonDicomConfigurationWithHL7 getCommonDicomConfigurationWithHL7() throws ConfigurationException {
         DicomConfigurationBuilder builder = DicomConfigurationBuilder
                 .newConfigurationBuilder(System.getProperties());
 
         // register custom config storage backend if provided
-        if (    dbConfigStorage != null &&
+        if (dbConfigStorage != null &&
                 !dbConfigStorage.isUnsatisfied() &&
-                !dbConfigStorage.isAmbiguous())
-            builder.registerCustomConfigurationStorage(dbConfigStorage.get());
+                !dbConfigStorage.isAmbiguous()) {
+            Configuration storage = dbConfigStorage.get();
+            log.info("Using custom configuration storage {}", storage.getClass());
+            builder.registerCustomConfigurationStorage(storage);
+        }
 
         builder.registerDeviceExtension(XdsRegistry.class);
         builder.registerDeviceExtension(XdsRepository.class);
@@ -115,22 +110,21 @@ public class XdsConfigurationFactory {
         builder.registerDeviceExtension(XCAInitiatingGWCfg.class);
         builder.registerDeviceExtension(XdsSource.class);
         builder.registerDeviceExtension(StorageConfiguration.class);
-
         builder.registerDeviceExtension(HL7DeviceExtension.class);
         builder.registerDeviceExtension(AuditRecordRepository.class);
         builder.registerDeviceExtension(AuditLogger.class);
 
-        createdConfig = builder.build();
-        return createdConfig;
+        return  builder.build();
     }
 
-    public void disposeDicomConfiguration(@Disposes @Xds DicomConfiguration conf) {
+
+    public void disposeDicomConfiguration(@Disposes DicomConfiguration conf) {
         conf.close();
     }
 
     @Produces
     @ApplicationScoped
-    public IHL7ApplicationCache getHL7ApplicationCache(@Xds DicomConfiguration conf) {
+    public IHL7ApplicationCache getHL7ApplicationCache(DicomConfiguration conf) {
         return new HL7ApplicationCache(conf.getDicomConfigurationExtension(HL7Configuration.class));
     }
 

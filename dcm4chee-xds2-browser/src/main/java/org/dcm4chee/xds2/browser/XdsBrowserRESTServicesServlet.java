@@ -98,7 +98,6 @@ public class XdsBrowserRESTServicesServlet extends HttpServlet {
     private static XDSRegistryBeanLocal xdsRegistryLocalBean;
 
     @Inject
-    @Xds
     DicomConfiguration config;
     /**
      * Registry device
