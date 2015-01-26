@@ -1,0 +1,9 @@
+@media (min-width: 768px) {
+    .column-border-right{
+        padding-right: 8px;
+        border-right: 1px solid #4E8EC7;
+    }
+    .column-border-right + div[class*=col]{
+        padding-left: 8px;
+    }
+}

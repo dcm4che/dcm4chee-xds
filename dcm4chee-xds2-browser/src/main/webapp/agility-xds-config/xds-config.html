@@ -1,44 +1,89 @@
-<div class="col-sm-12" ng-controller="AgilityXDSConfigManagerCtrl">
+<!--advanced view-->
+<a href=""
+   ng-click="advancedView = false"
+   ng-show="advancedView" class="btn btn-default">Back to simple view</a>
 
+<div ng-if="advancedView" static-include="config-browser/service-manager.html"></div>
 
-    <h2>XDS configuration
+<!--'Simple' ;) view-->
+<div ng-show="!advancedView" class="col-md-12" ng-controller="AgilityXDSConfigManagerCtrl">
 
-            <span>
+    <div class="nice-solid-regular nice-pane-padding">
+        <h2><span>
                 <a href=""
-                   ng-click="reconfigureDevice()"
+                   ng-click="switchToAdvancedView()"
+                   class="btn btn-default">Advanced...</a>
+                <a href=""
+                   ng-click="reconfigureDevice(xdsDevice)"
                    title="Trigger a reload of configuration in the backend"
                    class="btn btn-info ">Force reload</a>
-                <a ng-show="selectedDevice.isModified" href=""
-                   ng-click="saveDeviceConfig()"
+                <a ng-show="xdsDevice.isModified" href=""
+                   ng-click="saveDeviceConfig(xdsDevice)"
                    class="btn btn-success ">Save</a>
-                <a ng-show="selectedDevice.isModified" href=""
-                   ng-click="cancelChangesDevice()"
-                   class="btn btn-danger ">Cancel</a>
-            </span>
-    </h2>
+                <a ng-show="xdsDevice.isModified" href=""
+                   ng-click="cancelChangesDevice(xdsDevice)"
+                   class="btn btn-danger ">Revert changes</a>
+            </span></h2>
 
 
-    <div class="nice-solid-regular nice-pane-padding" >
-        <h2>Tabs - Regular color</h2>
-        <!-- Nav tabs -->
-        <ul class="nav nav-tabs" role="tablist">
-            <li><a href=""
-                   ng-class="tab == 'registry' ? 'active' : ''"
-                   ng-click="tab = 'registry'">XDS Registry</a></li>
-            <li><a href=""
-                   ng-class="tab == 'repository' ? 'active' : ''"
-                   ng-click="tab = 'repository'">XDS Repository</a></li>
+        <ul class="nav nav-tabs" style="margin-bottom: 8px;">
+            <li ng-class="(tab == 'registry' ? 'active' : '')">
+                <a href="" ng-click="tab = 'registry'">XDS Registry</a></li>
+            <li ng-class="tab == 'repository' ? 'active' : ''">
+                <a href="" ng-click="tab = 'repository'">XDS Repository</a></li>
         </ul>
 
-        <div class="tab-content">
-            <div ng-show="tab=='registry'" class="col-sm-8">
-                <div confignode="selectedDevice.config.deviceExtensions.XdsRegistry"
-                     schema="ConfigEditorService.schemas.deviceExtensions.XdsRegistry">
+
+        <div ng-show="tab=='registry'">
+            <div class="row">
+                <div class="col-md-6 column-border-right">
+                    <div confignode="xdsDevice.config.deviceExtensions.XdsRegistry"
+                         schema="ConfigEditorService.schemas.deviceExtensions.XdsRegistry"
+                         options="{hideGroups:['XDS profile strictness'], excludeProps:['xdsApplicationName']}">
+                    </div>
+                    <div ng-show="hl7Connection " confignode="hl7Connection"
+                         schema="ConfigEditorService.schemas.device.properties.dicomConnection.items"
+                         options="{legend:'HL7 connection for ADP feeds', excludeProps:['cn']}">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div confignode="xdsDevice.config.deviceExtensions.XdsRegistry"
+                         schema="ConfigEditorService.schemas.deviceExtensions.XdsRegistry"
+                         options="{showGroups:['XDS profile strictness']}">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+        <div ng-show="tab=='repository'">
+            <div class="row">
+                <div class="col-md-6 column-border-right">
 
+                    <div confignode="xdsDevice.config.deviceExtensions.XdsRepository"
+                         schema="ConfigEditorService.schemas.deviceExtensions.XdsRepository"
+                         options="{hideGroups:['XDS profile strictness'], excludeProps:['xdsSources', 'xdsApplicationName']}">
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+                    <div confignode="xdsDevice.config.deviceExtensions.XdsRepository"
+                         schema="ConfigEditorService.schemas.deviceExtensions.XdsRepository"
+                         options="{showGroups:['XDS profile strictness']}">
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <div confignode="xdsDevice.config.deviceExtensions.StorageConfiguration.filesystemGroups"
+                         schema="ConfigEditorService.schemas.deviceExtensions.StorageConfiguration.properties.filesystemGroups">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
 
 
 </div>
