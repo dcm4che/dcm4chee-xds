@@ -1,4 +1,4 @@
-var appCommon = angular.module('dcm4che.appCommon', ['mgcrea.ngStrap.popover']);
+var appCommon = angular.module('dcm4che.appCommon', ['mgcrea.ngStrap.popover', 'dcm4che.appCommon.customizations']);
 
 // temporary re-use of config
 appCommon.factory('appConfiguration', function (customizations) {

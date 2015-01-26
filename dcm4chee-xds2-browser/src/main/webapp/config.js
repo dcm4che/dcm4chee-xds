@@ -1,19 +1,14 @@
-angular.module('dcm4che.appCommon')
-    .factory('customizations', function () {
-        return {
 
-            // Change values in this file to customize the app's behavior
+angular.module('dcm4che.appCommon.customizations', ['com.agfa.agility.xdsConfig'])
+    .constant('customizations', {
 
-            // Properties //
-
-            //logoutEnabled: false,
-            //useNICETheme: true
-
-            ////////////////
+        // Change values in this file to customize the app's behavior
 
 
-            logoutEnabled: true,
-            useNICETheme: false
+        customConfigIndexPage: 'agility-xds-config/xds-config.html',
 
-        }
-    });
+        logoutEnabled: true,
+        useNICETheme: false
+
+    }
+);

@@ -47,14 +47,15 @@
                    class="btn btn-danger ">Cancel</a>
             </span>
         </h2>
-            <!--hide/expand device panel-->
-            <a href="" class="badge" ng-click="isDeviceNavCollapsed = !isDeviceNavCollapsed">
-                <span ng-class="!isDeviceNavCollapsed ? 'dropup' : ''"><span class="caret"></span></span>&nbsp;
-            </a>
-            <!-- reload/save device/cancel -->
+
+        <!--hide/expand device panel-->
+        <a href="" class="badge" ng-click="isDeviceNavCollapsed = !isDeviceNavCollapsed">
+            <span ng-class="!isDeviceNavCollapsed ? 'dropup' : ''"><span class="caret"></span></span>&nbsp;
+        </a>
+        <!-- reload/save device/cancel -->
 
         <div class="row" ng-show="selectedDevice.config" ng-controller="DeviceEditorController">
-            
+
             <div ng-show="!isDeviceNavCollapsed" class="col-sm-3">
                 <div class="panel panel-default">
                     <!--<div class="panel-heading">-->

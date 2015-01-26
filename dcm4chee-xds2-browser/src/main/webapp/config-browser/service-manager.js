@@ -21,14 +21,16 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
 
         $scope.configuration = {};
 
-        $scope.cancelChangesDevice = function () {
-            $scope.selectedDevice.config = angular.copy($scope.selectedDevice.lastPersistedConfig);
+        $scope.cancelChangesDevice = function (device) {
+            device = device || $scope.selectedDevice;
+            device.config = angular.copy(device.lastPersistedConfig);
             checkModified();
         };
 
-        $scope.reconfigureDevice = function () {
+        $scope.reconfigureDevice = function (device) {
+            device = device || $scope.selectedDevice;
 
-            appHttp.get("data/config/reconfigure-all-extensions/" + $scope.selectedDevice.deviceName, null, function (data) {
+            appHttp.get("data/config/reconfigure-all-extensions/" + device.deviceName, null, function (data) {
                 appNotifications.showNotification({
                     level: "success",
                     text: "The service has successfully reloaded the configuration",
@@ -43,10 +45,11 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
                 })
             });
         };
-        $scope.loadDeviceConfig = function () {
-            appHttp.get("data/config/device/" + $scope.selectedDevice.deviceName, null, function (data) {
-                $scope.selectedDevice.config = data;
-                $scope.selectedDevice.lastPersistedConfig = angular.copy(data);
+        $scope.loadDeviceConfig = function (device) {
+            device = device || $scope.selectedDevice;
+            appHttp.get("data/config/device/" + device.deviceName, null, function (data) {
+                device.config = data;
+                device.lastPersistedConfig = angular.copy(data);
 
             }, function (data, status) {
                 appNotifications.showNotification({
@@ -58,10 +61,11 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
 
         };
 
-        $scope.saveDeviceConfig = function () {
-            var configToSave = angular.copy($scope.selectedDevice.config);
-            appHttp.post("data/config/device/" + $scope.selectedDevice.deviceName, configToSave, function (data, status) {
-                $scope.selectedDevice.lastPersistedConfig = configToSave;
+        $scope.saveDeviceConfig = function (device) {
+            device = device || $scope.selectedDevice;
+            var configToSave = angular.copy(device.config);
+            appHttp.post("data/config/device/" + device.deviceName, configToSave, function (data, status) {
+                device.lastPersistedConfig = configToSave;
 
                 checkModified();
 
