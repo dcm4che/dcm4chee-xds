@@ -40,6 +40,8 @@
 package org.dcm4chee.conf.browser;
 
 import org.dcm4che3.conf.api.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -55,27 +57,16 @@ import java.util.List;
 @Provider
 public class ConfigExceptionHandler implements ExceptionMapper<ConfigurationException>
 {
+    public static final Logger log = LoggerFactory.getLogger(ConfigExceptionHandler.class);
+
     @Override
     @Produces({ MediaType.APPLICATION_JSON })
     public Response toResponse(ConfigurationException exception)
     {
+        log.info("A problem in Configuration GUI", exception);
         return Response.status(Response.Status.BAD_REQUEST).entity(getNiceErrorMessageList(exception)).build();
     }
 
-    private String getNiceErrorMessage(Throwable e) {
-        String s = "";
-        boolean first = true;
-        while (e != null) {
-            if (first)
-                first = false;
-            else
-                s += ". Cause: \n";
-
-            s += e.getMessage();
-            e = e.getCause();
-        }
-        return s;
-    }
     private List<String> getNiceErrorMessageList(Throwable e) {
         List<String> l = new ArrayList<>();
         boolean first = true;

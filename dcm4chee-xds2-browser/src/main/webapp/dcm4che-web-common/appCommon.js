@@ -156,6 +156,48 @@ appCommon.factory('getIconClassForType', function() {
 	return getIconClassForType;
 });
 
+
+appCommon.directive('focusOn', function () {
+	return function (scope, elem, attr) {
+		scope.$on('focusOn', function (e, name) {
+			if (name === attr.focusOn) {
+				elem[0].focus();
+			}
+		});
+	};
+});
+
+appCommon.service('$confirm', function ($modal, $rootScope, $q) {
+	var scope = $rootScope.$new();
+	var deferred;
+	
+	scope.title = 'Please confirm';
+	scope.content = 'Confirm deletion?';
+
+	var modal = $modal({html: true, template: 'dcm4che-web-common/confirmation.html', scope: scope, show: false});
+	var baseHide = modal.hide;
+	// override hide, so in any scenario like user clicking somewhere outside of modal we still can call reject
+	modal.hide = function () {
+		deferred.reject();
+		baseHide();
+	};
+
+	// called from the template when 'confirm' is clicked
+	scope.doConfirm = function () {
+		deferred.resolve();
+		baseHide();
+	};
+
+	var confirm = function(message) {
+		scope.content = message;
+		deferred = $q.defer();
+		modal.show();
+		return deferred.promise;
+	}; 
+	
+	return confirm;
+});
+
 /* taken from http://stackoverflow.com/questions/14430655/recursion-in-angular-directives
 * to enable recursive object trees output*/
 appCommon.factory('RecursionHelper', ['$compile', function($compile){

@@ -16,7 +16,7 @@ var dcm4cheBrowserApp = angular.module('dcm4cheBrowserApp', [
   'dcm4che.xds.controllers',
   'dcm4che.xds.REST',
 
-  'dcm4che.configurationManager'
+  'dcm4che.config.manager'
 
 ]);
 
