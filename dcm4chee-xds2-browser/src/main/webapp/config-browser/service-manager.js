@@ -4,6 +4,10 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
         // modification tracking
         var modifiedChecksTriggered = 0;
 
+        $scope.switchToAdvancedView = function () {
+            $scope.advancedView = true;
+        };
+
         function checkModified() {
             $scope.selectedDevice.isModified = !angular.equals($scope.selectedDevice.lastPersistedConfig, $scope.selectedDevice.config);
         };
@@ -45,11 +49,13 @@ angular.module('dcm4che.config.manager', ['dcm4che.appCommon', 'dcm4che.config.c
                 })
             });
         };
-        $scope.loadDeviceConfig = function (device) {
+        $scope.loadDeviceConfig = function (device, cb) {
             device = device || $scope.selectedDevice;
             appHttp.get("data/config/device/" + device.deviceName, null, function (data) {
                 device.config = data;
                 device.lastPersistedConfig = angular.copy(data);
+
+                if (cb) cb();
 
             }, function (data, status) {
                 appNotifications.showNotification({

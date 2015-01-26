@@ -3,10 +3,11 @@
             schema.class != 'Map'" xmlns="http://java.sun.com/jsf/core">
 
     <div class="form-horizontal" ng-controller="CompositeNodeController">
-        <div ng-repeat="group in groups | groupSorter">
+        <div ng-repeat="group in groups | groupSorter:options">
             <fieldset>
-                <legend ng-show="groups.length>1">{{group}}</legend>
-                <legend ng-show="groups.length==1">{{schema.class}}<span ng-show="index!=null">({{index}})</span>
+                <legend ng-show="options.legend">{{options.legend}}</legend>
+                <legend ng-show="groups.length>1 && !options.legend">{{group}}</legend>
+                <legend ng-show="groups.length==1 && !options.legend">{{schema.class}}<span ng-show="index!=null">({{index}})</span>
                 </legend>
                 <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:['uiOrder','title']">
                     <div confignode="confignode[propertySchema.$key]"
@@ -47,7 +48,7 @@
            bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
 
 
-    <div ng-class="(!noLabel ? 'col-sm-8' : 'col-sm-10')">
+    <div ng-class="(!noLabel ? 'col-sm-8' : 'col-sm-12')">
 
         <!-- Primitives -->
         <div ng-if="((schema.type === 'string' || schema.type === 'integer') && schema.class!=='Reference')">
@@ -91,17 +92,21 @@
         <!-- Collections -->
         <div ng-if="(schema.type === 'array')">
             <div class="row" ng-repeat="(k, node) in confignode track by k">
-
-                <div confignode="node"
-                     schema="schema.items"
-                     parentnode="confignode"
-                     index="k"
-                     editor="editor"
-                     no-label="true">
+                <div class="col-sm-10">
+                    <div confignode="node"
+                         schema="schema.items"
+                         parentnode="confignode"
+                         index="k"
+                         editor="editor"
+                         no-label="true">
+                    </div>
                 </div>
-                <a href="" class="btn btn-danger close" ng-click="confignode.splice(k,1);ConfigEditorService.checkModified()">
-                    <small>&times</small>
-                </a>
+                <div class="col-sm-2">
+                    <a href="" class="btn btn-danger close"
+                       ng-click="confignode.splice(k,1);ConfigEditorService.checkModified()">
+                        <small>&times</small>
+                    </a>
+                </div>
             </div>
             <a href="" class="btn btn-info" ng-click="confignode.push('');ConfigEditorService.checkModified()">Add</a>
         </div>
@@ -135,13 +140,15 @@
                         </div>
                     </td>
                     <td>
-                        <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(k);ConfigEditorService.checkModified()">
+                        <a href="" class="btn btn-danger close"
+                           ng-click="deleteMapEntry(k);ConfigEditorService.checkModified()">
                             <small>&times</small>
                         </a>
                     </td>
                 </tr>
             </table>
-            <a href="" class="btn btn-info" ng-click="addMapEntryOrArrayItem();ConfigEditorService.checkModified()">Add</a>
+            <a href="" class="btn btn-info"
+               ng-click="addMapEntryOrArrayItem();ConfigEditorService.checkModified()">Add</a>
         </div>
     </div>
 </div>

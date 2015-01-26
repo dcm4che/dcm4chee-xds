@@ -1,3 +1,44 @@
 <div class="col-sm-12" ng-controller="AgilityXDSConfigManagerCtrl">
-Hi I am overridden {{yup}}
+
+
+    <h2>XDS configuration
+
+            <span>
+                <a href=""
+                   ng-click="reconfigureDevice()"
+                   title="Trigger a reload of configuration in the backend"
+                   class="btn btn-info ">Force reload</a>
+                <a ng-show="selectedDevice.isModified" href=""
+                   ng-click="saveDeviceConfig()"
+                   class="btn btn-success ">Save</a>
+                <a ng-show="selectedDevice.isModified" href=""
+                   ng-click="cancelChangesDevice()"
+                   class="btn btn-danger ">Cancel</a>
+            </span>
+    </h2>
+
+
+    <div class="nice-solid-regular nice-pane-padding" >
+        <h2>Tabs - Regular color</h2>
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li><a href=""
+                   ng-class="tab == 'registry' ? 'active' : ''"
+                   ng-click="tab = 'registry'">XDS Registry</a></li>
+            <li><a href=""
+                   ng-class="tab == 'repository' ? 'active' : ''"
+                   ng-click="tab = 'repository'">XDS Repository</a></li>
+        </ul>
+
+        <div class="tab-content">
+            <div ng-show="tab=='registry'" class="col-sm-8">
+                <div confignode="selectedDevice.config.deviceExtensions.XdsRegistry"
+                     schema="ConfigEditorService.schemas.deviceExtensions.XdsRegistry">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
 </div>

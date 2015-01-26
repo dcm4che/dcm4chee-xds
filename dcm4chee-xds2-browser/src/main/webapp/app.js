@@ -28,20 +28,12 @@ dcm4cheBrowserApp.config(
             when('/step/:stepNum', {
                 templateUrl: 'xds-browser/xds-browser.html',
                 controller: 'XdsBrowserCtrl'
+            }).when('/service-manager', {
+                templateUrl: customizations.customConfigIndexPage ? customizations.customConfigIndexPage : 'config-browser/service-manager.html',
+                controller: 'ServiceManagerCtrl'
+            }).otherwise({
+                redirectTo: '/service-manager'
             });
-
-        if (customizations.customConfigIndexPage) {
-            $routeProvider.when('/service-manager', {
-                templateUrl: customizations.customConfigIndexPage
-            });
-        } else $routeProvider.when('/service-manager', {
-            templateUrl: 'config-browser/service-manager.html',
-            controller: 'ServiceManagerCtrl'
-        });
-
-        $routeProvider.otherwise({
-            redirectTo: '/service-manager'
-        });
     });
 
 dcm4cheBrowserApp.controller('dcm4cheAppController', function ($scope, appConfiguration) {

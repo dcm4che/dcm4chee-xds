@@ -13,7 +13,6 @@ angular.module('dcm4che.config.core', [])
             controller: function ($scope) {
 
 
-
                 $scope.ConfigEditorService = ConfigEditorService;
 
                 $scope.getLabel = function (node, schema) {
@@ -45,10 +44,10 @@ angular.module('dcm4che.config.core', [])
                     }
 
                 });
-                
-                
+
+
                 $scope.$watch("schema", function () {
-                    
+
                     $scope.doShowAllProps = true;
                     $scope.isShowAllTogglable = false;
 
@@ -89,10 +88,11 @@ angular.module('dcm4che.config.core', [])
 
             if ($scope.schema) {
                 $scope.groups = _.chain($scope.schema.properties)
-                    .map(function (prop) {
-                        if (prop.uiGroup) return prop.uiGroup;
+                    .map(function (prop, name) {
+                        if ($scope.options && $scope.options.excludeProps && _.contains($scope.options.excludeProps,name)) return null;
+                        if (prop.uiGroup) return prop.uiGroup; else return null;
                     })
-                    .uniq().value();
+                    .uniq().without(null).value();
             }
 
         });
@@ -249,9 +249,19 @@ angular.module('dcm4che.config.core', [])
             return map;
         }
     }).filter('groupSorter', function (ConfigEditorService) {
-        return function (groups) {
+        return function (groups, options) {
             // force order provided by groupOrder
-            return _.chain(ConfigEditorService.groupOrder).intersection(groups).union(groups).value();
+
+            var val = _.chain(ConfigEditorService.groupOrder).intersection(groups).union(groups).value();
+
+            if (options && options.showGroups)
+                val = _.intersection(val, options.showGroups);
+
+            if (options && options.hideGroups)
+                val = _.difference(val, options.hideGroups);
+
+            return val;
+
         };
 
     });
