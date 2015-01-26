@@ -61,7 +61,7 @@
 
                     <div confignode="xdsDevice.config.deviceExtensions.XdsRepository"
                          schema="ConfigEditorService.schemas.deviceExtensions.XdsRepository"
-                         options="{hideGroups:['XDS profile strictness'], excludeProps:['xdsSources', 'xdsApplicationName']}">
+                         options="{hideGroups:['XDS profile strictness', 'Storage'], excludeProps:['xdsSources', 'xdsApplicationName']}">
                     </div>
 
                 </div>
@@ -74,8 +74,9 @@
                 </div>
 
                 <div class="col-md-12">
-                    <div confignode="xdsDevice.config.deviceExtensions.StorageConfiguration.filesystemGroups"
-                         schema="ConfigEditorService.schemas.deviceExtensions.StorageConfiguration.properties.filesystemGroups">
+                    <div confignode="selectedFileSystemGroup"
+                         schema="ConfigEditorService.schemas.deviceExtensions.StorageConfiguration.properties.filesystemGroups.properties['*']"
+                         options="{legend:'Storage', excludeProps:['storageFileSystemGroupID']}">
                     </div>
                 </div>
             </div>
