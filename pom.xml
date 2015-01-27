@@ -46,10 +46,6 @@
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 		<extrascripts></extrascripts>
 
-        <!-- XDS Browser access control -->
-        <browser.security.domain>dcm4chee</browser.security.domain>
-        <browser.security.adminRole>WebAdmin</browser.security.adminRole>
-
         <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
         <ws.security.parameters></ws.security.parameters>
 
@@ -99,10 +95,6 @@
 				<asb>-asb</asb>
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
-
-				<!-- XDS Browser access control -->
-				<browser.security.domain>authnservice</browser.security.domain>
-				<browser.security.adminRole>XDSAdmin</browser.security.adminRole>
 
 				<ws.security.domain>
 					&lt;security:security-domain&gt;client-certificate-authentication&lt;/security:security-domain&gt;

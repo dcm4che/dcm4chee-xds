@@ -165,6 +165,9 @@
 
 	</dependencies>
 	<build>
+                <filters>
+                    <filter>browser${asb}.properties</filter>
+                </filters>
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
