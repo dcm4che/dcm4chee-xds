@@ -7,11 +7,11 @@ angular.module('dcm4che.appCommon.customizations', ['dcm4che.config.xds'])
         appName: "XDS administration",
 
         // Agility XDS
-        customConfigIndexPage: 'xds-config/xds-config.html',
-        xdsDeviceName:'dcm4chee-xds',
+        customConfigIndexPage: 'agility-xds-config/xds-config.html',
+        xdsDeviceName:'agility-xds',
 
-        logoutEnabled: true,
-        useNICETheme: false
+        logoutEnabled: false,
+        useNICETheme: true
 
     }
 );

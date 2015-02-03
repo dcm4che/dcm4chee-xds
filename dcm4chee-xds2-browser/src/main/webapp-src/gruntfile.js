@@ -6,12 +6,14 @@ module.exports = function (grunt) {
 
     // configurable paths for the application
     var appConfig = {
-        indexPath : 'root/index.html',
         srcPath: 'root',
-        distPath: './dist'
+        distPath: '../webapp'
     };
+    appConfig.indexPath = appConfig.srcPath+'/index.html';
+    appConfig.distIndexPath = appConfig.distPath + '/index.html';
 
-    grunt.initConfig({
+
+        grunt.initConfig({
 
         // cleanup folders
         clean: {
@@ -39,10 +41,7 @@ module.exports = function (grunt) {
             target: {
                 options: {
                     src: appConfig.srcPath,
-                    dest: appConfig.distPath,
-                    wiredep: {
-                        cwd:'.'
-                    }
+                    dest: appConfig.distPath
                 }
             }
         },
@@ -67,12 +66,12 @@ module.exports = function (grunt) {
 
         useminPrepare: {
             options: {
-                dest: 'dist'
+                dest: appConfig.distPath
             },
             html: appConfig.indexPath
         },
         usemin: {
-            html: [appConfig.indexPath]
+            html: [appConfig.distIndexPath]
         }
     });
 
@@ -83,8 +82,11 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'wiredep',
-        'wiredepCopy',
-        'copy:dist'
+        'copy:dist',
+        'useminPrepare',
+        'concat:generated',
+        'uglify:generated',
+        'usemin'
     ]);
 
     grunt.registerTask('default', [

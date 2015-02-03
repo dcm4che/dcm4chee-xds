@@ -1,5 +1,5 @@
-angular.module('com.agfa.agility.xdsConfig', ['dcm4che.config.manager'])
-    .controller('AgilityXDSConfigManagerCtrl', function ($scope, customizations, ConfigEditorService) {
+angular.module('dcm4che.config.xds', ['dcm4che.config.manager'])
+    .controller('XDSConfigManagerCtrl', function ($scope, customizations, ConfigEditorService) {
 
         // TODO: refactor to use events
 

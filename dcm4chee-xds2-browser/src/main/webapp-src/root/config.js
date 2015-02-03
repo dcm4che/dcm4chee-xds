@@ -1,5 +1,5 @@
 
-angular.module('dcm4che.appCommon.customizations', ['com.agfa.agility.xdsConfig'])
+angular.module('dcm4che.appCommon.customizations', ['dcm4che.config.xds'])
     .constant('customizations', {
 
         // Change values in this file to customize the app's behavior
