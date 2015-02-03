@@ -1,0 +1,8 @@
+<div class="popover wide-popover" ng-controller="appNotificationsPopoverController">
+  <div class="arrow"></div>
+  <h3 class="popover-title">Notifications <button type="button" class="close" ng-click="$hide()">&times;</button></h3>
+  <div class="popover-content">
+	<div ng-repeat="n in appNotifications.notifications" class='alert' ng-class="'alert-'+n.level">{{n.text}}</div>
+  </div>
+</div>  
+	

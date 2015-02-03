@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html ng-app="loginApp">
+<head>
+    <meta charset="UTF-8">
+    <title>XDS Login</title>
+
+    <link rel="stylesheet" href="lib/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="dcm4che-web-common/css/login.css">
+
+
+    <script type="text/javascript" src="lib/angular/angular.js"></script>
+
+</head>
+<body>
+
+<script type="text/javascript">
+
+    angular.module("loginApp", []).controller("LoginController", function($scope)
+    {
+        $scope.isError = window.location.href.indexOf("j_security_check") !== -1;
+    });
+
+</script>
+<div class="container" ng-controller="LoginController">
+
+    <form class="form-signin" role="form" action="j_security_check" method="POST">
+        <h2 class="form-signin-heading">XDS administration <br/> <small>Please login</small></h2>
+        <input type="text" class="form-control" placeholder="Username" name="j_username" required autofocus>
+        <input type="password" class="form-control" placeholder="Password" name="j_password" required>
+        <!--<label class="checkbox">
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>-->
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+
+        <div ng-show="isError" class="form-signin-alert alert alert-danger">The username or password you have entered is incorrect</div>
+
+    </form>
+
+
+</div> <!-- /container -->
+
+</body>
+</html>

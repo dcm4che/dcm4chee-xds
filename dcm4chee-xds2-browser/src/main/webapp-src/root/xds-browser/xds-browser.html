@@ -1,0 +1,60 @@
+
+    <div ng-controller="RouteCtrl">
+
+		<div class="row" ng-controller="AdhocQueryUICtrl">
+
+			<div class="panel panel-default">
+				<div class="panel-body">
+
+					<!-- searchbox -->
+					<div class="col-md-6">
+						<form ng-submit="search()">
+							<label> Search (patient id / entry uuid / unique id)</label>
+							<div class="input-group">
+								 <input
+									class="form-control"
+									ng-model="searchStr"
+									ng-options="pid for pid in xdsPatientIds()"
+									placeholder="Patient id, UUID, Unique id ...."
+									data-min-length="1"
+									data-limit = "30"
+									bs-typeahead
+
+									ng-change = "searchChanged()"
+
+									type="text">
+								    <span class="input-group-btn">
+        								<button id = "searchButton" class="btn btn-default" type="submit">
+        								<span ng-hide='isLoading()'>Search</span>
+        								<img ng-show='isLoading()' class='loading' src='dcm4che-web-common/img/ajax-loader.gif'>
+        								</button>
+      								</span>
+							</div>
+						</form>
+					</div>
+
+					<!-- By patient id navbar buttons -->
+					<div class="col-md-6" ng-show="isSearchPid()">
+						<div><label> By patient id </label></div>
+						<div class="btn-group">
+						<button type="button" class="btn btn-default"
+							ng-repeat="(label,name) in entities"
+							ng-class="currentEntity==name ? 'active' : ''"
+							ng-click="browseEntity(name)">{{label}}</button>
+
+						<button type="button" class="btn btn-default"
+							ng-model="currentStatus" data-html="1"
+							ng-options="status.val as status.name for status in xdsConstants.B_Statuses"
+							ng-change = "browseEntity(currentEntity)"
+							bs-select>
+							Status <span class="caret"></span>
+						</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+       <div ng-include = "'dcm4che-web-common/2col-view-browser.html'"></div>
+
+     </div>

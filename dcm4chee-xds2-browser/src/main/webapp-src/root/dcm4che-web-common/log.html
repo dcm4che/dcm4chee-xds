@@ -1,0 +1,43 @@
+<div class="aside" tabindex="-1" role="dialog">
+    <div class="aside-dialog">
+        <div class="aside-content">
+            <div class="aside-header">
+                <button type="button" class="close" ng-click="$hide()">&times;</button>
+                <h4 class="aside-title">Messages Log</h4>
+            </div>
+            <div class="aside-body" ng-controller="appNotificationsPopoverController">
+
+                <table class="table table-regular table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>When</th>
+                        <th>Text</th>
+                        <th>Details</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="n in appNotifications.notificationsArchive">
+                        <td>
+                            {{:: n.time | date:'mediumTime'}}
+                        </td>
+                        <td>
+                            <div class='alert' ng-class="'alert-'+n.level">{{:: n.text}}</div>
+                        </td>
+                        <td>
+                            Status: {{n.details[1]}}
+
+                            <div ng-if="_.isArray(n.details[0])" ng-repeat="(k,item) in n.details[0] track by k">{{:: item}} </div>
+                            <div ng-if="!_.isArray(n.details[0])" >{{:: n.details[0]}} </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="aside-footer">
+                <button type="button" class="btn btn-default" ng-click="$hide()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

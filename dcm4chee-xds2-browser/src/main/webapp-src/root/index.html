@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dcm4cheApp" ng-controller="dcm4cheAppController">
+<head>
+    <meta charset="utf-8">
+
+    <!-- bower:css -->
+    <link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="lib/angular-motion/dist/angular-motion.css" />
+    <!-- endbower -->
+
+    <!-- build:js lib/libs.js -->
+    <!-- bower:js -->
+    <script src="lib/jquery/dist/jquery.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="lib/angular-animate/angular-animate.js"></script>
+    <script src="lib/angular-strap/dist/angular-strap.js"></script>
+    <script src="lib/angular-strap/dist/angular-strap.tpl.js"></script>
+    <script src="lib/angular-sanitize/angular-sanitize.js"></script>
+    <script src="lib/angular-route/angular-route.js"></script>
+    <script src="lib/underscore/underscore.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+
+    <link rel="stylesheet" href="dcm4che-web-common/icons/icomoon.css">
+    <link rel="stylesheet" href="dcm4che-web-common/css/dcm4chee.css">
+    <link rel="stylesheet" href="lib_other/angular-strap/bootstrap-additions.css">
+
+    <script src="app.js"></script>
+    <script src="dcm4che-web-common/appCommon.js"></script>
+    <script src="dcm4che-web-common/browserLinkedView.js"></script>
+
+    <script src="xds-browser/xdsCommon.js"></script>
+    <script src="xds-browser/xdsConstants.js"></script>
+    <script src="xds-browser/xdsREST.js"></script>
+
+    <script src="xds-browser/IdentifiableListCtrl.js"></script>
+    <script src="xds-browser/IdentifiableDetailsCtrl.js"></script>
+    <script src="xds-browser/AdhocQueryUICtrl.js"></script>
+    <script src="xds-browser/XdsBrowserCtrl.js"></script>
+
+    <script src="config-browser/service-manager.js"></script>
+    <script src="config-browser/confignode.js"></script>
+    <script src="config.js"></script>
+
+    <link ng-if="appConfiguration.useNICETheme" rel="stylesheet" href="lib_other/bootstrap/css/nice.1.9.css">
+
+
+    <title>xds repo browser</title>
+    <style type="text/css">
+
+        /*due to fixed navbar*/
+        body {
+            padding-top: 70px;
+        }
+
+        .table.smallprops {
+            font-size: 11px;
+            margin-bottom: 0px;
+        }
+
+        .loading {
+            width: 20px;
+            height: 20px;
+            margin: -5px -5px;
+        }
+
+        .xds-id-badge {
+            margin: 0 10px;
+        }
+
+        .details-header {
+            font-size: 150%;
+        }
+
+        .wide-popover {
+            max-width: 400px;
+            width: 400px;
+        }
+
+        .black-text {
+            color: black;
+        }
+
+    </style>
+</head>
+<body class="nice-solid-regular">
+<div class="navbar navbar-fixed-top" ng-class="useNICETheme ? 'navbar-primary' : 'navbar-default'" role="navigation"
+     ng-controller="NavbarController">
+    <div class="container">
+
+        <span class="navbar-group">
+            <span class="navbar-text"><strong>{:: appName}}</strong></span>
+            <a class="btn navbar-btn btn-primary" href="#/service-manager">Configuration</a>
+            <a class="btn navbar-btn btn-primary" href="#/step/0">Registry browser</a>
+        </span>
+
+        <div class="nav navbar-right">
+
+            <a class="btn navbar-btn btn-default" href=""
+               app-notifications-popover
+
+               data-template="dcm4che-web-common/log.html"
+               data-placement="right"
+               data-animation="am-slide-right"
+               bs-aside
+               data-container="body">Notifications</a>
+
+            <a ng-show="logoutEnabled" ng-click="logout()" class="btn navbar-btn btn-default">Logout <span
+                    class="icon-forward"></span></a>
+        </div>
+
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div ng-view></div>
+    </div>
+</div>
+
+<!--<link rel="stylesheet" href="agility-xds-config/xds-config.css">-->
+<!--<script type="text/javascript" src="agility-xds-config/xds-config.js"></script>-->
+${extraScripts}
+</body>
+</html>

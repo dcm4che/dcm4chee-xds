@@ -1,0 +1,250 @@
+<!-- Composite (Object) -->
+<div ng-if="schema.type == 'object' &&
+            schema.class != 'Map'" xmlns="http://java.sun.com/jsf/core">
+
+    <div class="form-horizontal" ng-controller="CompositeNodeController">
+        <div ng-repeat="group in groups | groupSorter:options">
+            <fieldset>
+                <legend ng-show="options.legend">{{options.legend}}</legend>
+                <legend ng-show="groups.length>1 && !options.legend">{{group}}</legend>
+                <legend ng-show="groups.length==1 && !options.legend">{{schema.class}}<span ng-show="index!=null">({{index}})</span>
+                </legend>
+                <div ng-repeat="propertySchema in schema.properties | toArray | primaryPropsOnly:doShowAllProps | filterProperties:options | filter:{uiGroup:group} | orderBy:['uiOrder','title']">
+                    <div confignode="confignode[propertySchema.$key]"
+                         schema="propertySchema"
+                         parentnode="confignode"
+                         index="propertySchema.$key"
+                         editor="editor">
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+
+        <a href=""
+           class="btn btn-default pull-right"
+           ng-click="toggleShowAllProps()"
+           ng-show="isShowAllTogglable">{{doShowAllProps ?
+            "Show only primary "+schema.class+" properties" :
+            "Show all "+schema.class+" properties..."}}
+        </a>
+    </div>
+</div>
+
+<!-- properties with a label on the left-->
+<div ng-class="(!noLabel ? 'form-group' : '')"
+     ng-if="schema.type === 'string' ||
+     schema.type === 'integer' ||
+     schema.type === 'boolean' ||
+     schema.type === 'enum' ||
+     (schema.type === 'array' && schema.items.type !== 'object') ||
+     (schema.class === 'Map' && schema.properties['*'].type !== 'object')">
+
+    <label class="col-sm-4 control-label"
+           ng-if="!noLabel"
+           data-placement="bottom-right"
+           data-animation="am-fade-and-scale"
+           data-html="true"
+           data-delay="200"
+           bs-tooltip="propertyTooltip">{{schema.title ? schema.title : index}}</label>
+
+
+    <div ng-class="(!noLabel ? 'col-sm-8' : 'col-sm-12')">
+
+        <!-- Primitives -->
+        <div ng-if="((schema.type === 'string' || schema.type === 'integer') && schema.class!=='Reference')">
+            <input class="form-control" ng-model="parentnode[index]" ng-change="ConfigEditorService.checkModified()">
+        </div>
+
+
+        <!-- Boolean -->
+        <div class="checkbox" ng-if="schema.type === 'boolean'">
+            <input ng-model="parentnode[index]" type="checkbox" ng-change="ConfigEditorService.checkModified()">
+        </div>
+
+        <!-- enum -->
+        <div ng-if="schema.type === 'enum'">
+            <select ng-if="schema.enumRepresentation=='STRING'" ng-model="parentnode[index]" class="form-control"
+                    ng-options="option for option in schema.enum" ng-change="ConfigEditorService.checkModified()">
+            </select>
+            <select ng-if="schema.enumRepresentation=='ORDINAL'" ng-model="parentnode[index]" class="form-control"
+                    ng-options="option as schema.enumStrValues[option] for option in schema.enum"
+                    ng-change="ConfigEditorService.checkModified()">
+            </select>
+        </div>
+
+        <!-- reference -->
+        <div ng-if="(schema.type === 'string' && schema.class==='Reference')">
+            <select class="form-control"
+                    ng-if="schema.referencedClass=='Device'"
+                    ng-model="parentnode[index]"
+                    ng-options="option.ref as option.name for option in ConfigEditorService.deviceRefs"
+                    ng-change="ConfigEditorService.checkModified()">
+            </select>
+            <select class="form-control"
+                    ng-if="schema.referencedClass=='Connection'"
+                    ng-model="parentnode[index]"
+                    ng-options="option.ref as option.name for option in editor.connectionRefs"
+                    ng-change="ConfigEditorService.checkModified()">
+            </select>
+        </div>
+
+
+        <!-- Collections -->
+        <div ng-if="(schema.type === 'array')">
+            <div class="row" ng-repeat="(k, node) in confignode track by k">
+                <div class="col-sm-10">
+                    <div confignode="node"
+                         schema="schema.items"
+                         parentnode="confignode"
+                         index="k"
+                         editor="editor"
+                         no-label="true">
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <a href="" class="btn btn-danger close"
+                       ng-click="confignode.splice(k,1);ConfigEditorService.checkModified()">
+                        <small>&times</small>
+                    </a>
+                </div>
+            </div>
+            <a href="" class="btn btn-info" ng-click="confignode.push('');ConfigEditorService.checkModified()">Add</a>
+        </div>
+
+        <!-- Maps with primitives -->
+        <div ng-if="(schema.class === 'Map' && schema.properties['*'].type !== 'object')"
+             ng-controller="CollectionController">
+
+            <table class="table table-regular table-bordered table-hover">
+                <tr ng-repeat="(k, node) in confignode track by k">
+
+                    <!-- view key -->
+                    <td ng-show="editedIndex!=k" ng-click="selectItem(k,node)">{{k}}
+                        <a href="" class="btn btn-default pull-right" ng-click="selectItem(k,node);selectItem(k,node);"><span
+                                class="icon-pencil"></span></a>
+                    </td>
+                    <!-- edit key -->
+                    <td ng-show="editedIndex==k" ng-init="newkey = k">
+                        <input focus-on="{{k}}"
+                               ng-model="newkey"
+                               ng-keydown="$event.keyCode == 13 ? saveMapKey(k,newkey) : null;ConfigEditorService.checkModified()"/>
+                    </td>
+
+                    <td>
+                        <div confignode="node"
+                             schema="schema.properties['*']"
+                             parentnode="confignode"
+                             index="k"
+                             editor="editor"
+                             no-label="true">
+                        </div>
+                    </td>
+                    <td>
+                        <a href="" class="btn btn-danger close"
+                           ng-click="deleteMapEntry(k);ConfigEditorService.checkModified()">
+                            <small>&times</small>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+            <a href="" class="btn btn-info"
+               ng-click="addMapEntryOrArrayItem();ConfigEditorService.checkModified()">Add</a>
+        </div>
+    </div>
+</div>
+
+<!-- Object map/collection -->
+<div ng-if="(schema.type === 'array' && schema.items.type === 'object') ||
+            (schema.type === 'object' && schema.class === 'Map' && schema.properties['*'].type === 'object')"
+     ng-controller="CollectionController">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{schema.title ? schema.title : index}}</h3>
+        </div>
+        <div class="panel-body">
+
+            <div class="row">
+                <div class="nice-pane-padding nice-solid-regular col-sm-3">
+                    <p ng-show="isCollectionEmpty()">No items.</p>
+
+                    <div class="pre-scrollable">
+                        <table class="table table-regular table-bordered table-hover" ng-show="!isCollectionEmpty()">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th ng-show="modificationMode"></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-if="schema.type === 'array'"
+                                ng-repeat="(index,item) in confignode track by index"
+                                ng-class="selectedItemConfig == item ? 'active' : ''">
+                                <td style="cursor: pointer;"
+                                    ng-click="selectItem(index,item)">
+                                    {{getLabel(item, schema.items)}}
+                                </td>
+                                <td ng-show="modificationMode">
+                                    <a href="" class="btn btn-danger close" ng-click="deleteArrayItem(index)">
+                                        <small>&times</small>
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr ng-if="schema.class === 'Map'"
+                                ng-repeat="(key,value) in confignode"
+                                ng-class="selectedItemConfig == value ? 'active' : ''">
+                                <!-- view key -->
+                                <td ng-show="editedIndex!=key"
+                                    style="cursor: pointer;"
+                                    ng-click="selectItem(key, value);">{{key}}
+                                </td>
+                                <!-- edit key -->
+                                <td ng-show="editedIndex == key" ng-init="newkey = key">
+                                    <input ng-model="newkey"
+                                           focus-on="{{key}}"
+                                           ng-keydown="$event.keyCode == 13 ? saveMapKey(key,newkey) : null"
+                                            />
+                                </td>
+
+                                <td ng-show="modificationMode">
+                                    <a href="" class="btn btn-danger close" ng-click="deleteMapEntry(key)">
+                                        <small>&times</small>
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- add btn -->
+
+                    <a href=""
+                       class="btn btn-info"
+                       ng-click="addMapEntryOrArrayItem()">Add</a>
+                    <!-- modify/delete btn -->
+                    <a class="btn"
+                       ng-class="modificationMode ? 'btn-info' : 'btn-danger'" ng-show="!isCollectionEmpty()"
+                       ng-click="modificationMode = !modificationMode"
+                       href="">{{modificationMode ? "Done deleting" : "Delete ..."}}
+                    </a>
+                </div>
+                <div class="col-sm-9" ng-if="selectedItemConfig">
+                    <div ng-if="schema.type === 'array'"
+                         confignode="selectedItemConfig"
+                         schema="schema.items"
+                         editor="editor"
+                         parentnode="confignode"
+                         index="selectedItemIndex">
+                    </div>
+                    <div ng-if="schema.class === 'Map'"
+                         confignode="selectedItemConfig"
+                         schema="schema.properties['*']"
+                         editor="editor"
+                         parentnode="confignode"
+                         index="selectedItemIndex">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

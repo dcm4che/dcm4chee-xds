@@ -1,0 +1,4 @@
+<jboss-web>
+    <security-domain>java:/jaas/${browser.security.domain}</security-domain>
+    <context-root>/</context-root>
+</jboss-web>

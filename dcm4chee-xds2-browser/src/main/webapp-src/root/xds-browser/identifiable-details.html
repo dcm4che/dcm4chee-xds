@@ -1,0 +1,63 @@
+<div class="panel panel-primary" ng-controller="IdentifiableDetailsCtrl">
+	<div class="panel-heading">
+			<!-- heading with icon,id and name -->
+		<span xds-identifiable ng-model='currentIdentifiable' class='details-header'></span>
+		<!-- show download link for document entries -->
+        <div ng-show="type == 'XDSDocumentEntry' && showDocumentDownload" class="pull-right">
+            <a class="btn btn-success"
+               ng-href="data/repo/retrieve-download/{{docRepoId}}/{{docUniqueId}}"
+               role="button" target="_blank">Download</a>
+        </div>
+        <div ng-show="type == 'XDSSubmissionSet'" class="pull-right">
+            <button type="button" class="btn btn-danger" data-animation="am-fade-and-slide-top" bs-modal="" data-template="xds-browser/confirmation.html">Delete
+            </button>
+        </div>
+	</div>
+
+	<div class="panel-body">
+
+
+		<div
+			ng-repeat="currentIdentifiableList in currentIdentifiable.__extraLists">
+			<div ng-include="'xds-browser/identifiable-list.html'"></div>
+		</div>
+
+		<h4>Metadata</h4>
+		<table class="table table-condensed smallprops">
+			<tr
+				ng-repeat="(k,v) in currentIdentifiable.value | xdsExcludeSlotClassExtId">
+				<td>{{k}}</td>
+				<td>{{v}}</td>
+			</tr>
+		</table>
+
+
+		<h5>Slots</h5>
+		<table class="table table-condensed smallprops">
+			<tr ng-repeat="slot in currentIdentifiable.value.slot">
+				<td>{{slot.name}}</td>
+				<td>
+					<div ng-repeat="sv in slot.valueList">{{sv[0]}}</div>
+				</td>
+			</tr>
+		</table>
+
+		<h5>Classifications</h5>
+		<table class="table table-condensed smallprops">
+			<tr
+				ng-repeat="classification in currentIdentifiable.value.classification">
+				<td>{{(classification.nodeRepresentation ?
+					classification.nodeRepresentation :
+					classification.classificationScheme)}}</td>
+			</tr>
+		</table>
+
+		<h5>External ids</h5>
+		<table class="table table-condensed smallprops">
+			<tr ng-repeat="extid in currentIdentifiable.value.externalIdentifier">
+				<td>{{extid.name.localizedString[0].value}}</td>
+				<td>{{extid.value}}</td>
+			</tr>
+		</table>
+	</div>
+</div>

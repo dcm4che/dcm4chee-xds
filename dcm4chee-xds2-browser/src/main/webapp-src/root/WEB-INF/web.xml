@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>xds-browser</display-name>
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<mime-mapping>
+		<extension>ttf</extension>
+		<mime-type>application/octet-stream</mime-type>
+	</mime-mapping>
+	<servlet-mapping>
+		<servlet-name>javax.ws.rs.core.Application</servlet-name>
+		<url-pattern>/data/*</url-pattern>
+	</servlet-mapping>
+
+    <!-- Security. Only allow WebAdmin role to the browser--> ${browser.security.enabled.l}
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Stylesheets and libs</web-resource-name>
+            <url-pattern>/dcm4che-web-common/css/login.css</url-pattern>
+            <url-pattern>/lib/bootstrap/css/bootstrap.css</url-pattern>
+            <url-pattern>/lib/bootstrap/css/bootstrap.css.map</url-pattern>
+            <url-pattern>/lib/angular/angular.js</url-pattern>
+            <url-pattern>/lib/angular/angular.min.js</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+    </security-constraint>
+    <security-role>
+      <role-name>${browser.security.adminRole}</role-name>
+    </security-role>
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Browser UI and Web serivices
+            </web-resource-name>
+            <url-pattern>/*</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>${browser.security.adminRole}</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>FORM</auth-method>
+        <realm-name>${browser.security.domain}</realm-name>
+        <form-login-config>
+            <form-login-page>/login.html</form-login-page>
+            <form-error-page>/login.html?loginFailed=true</form-error-page>
+        </form-login-config>
+    </login-config> ${browser.security.enabled.r}
+</web-app>

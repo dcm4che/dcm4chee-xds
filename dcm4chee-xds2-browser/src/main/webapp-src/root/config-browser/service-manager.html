@@ -1,0 +1,151 @@
+<div class="row">
+
+
+    <!--div class="col-md-3">
+
+        <div class="list-group">
+            <a href="" class="list-group-item" ng-repeat="device in devices"
+               ng-class="(selectedDevice == device ? 'active' : '')" ng-click="selectDevice(device)">
+                <h4 class="list-group-item-heading">
+                    <small><span class="icon-cogs"></span></small>
+                    {{device.deviceName}}
+                </h4>
+                <small>
+                    <p class="list-group-item-text" ng-show="device.appEntities.length>0">AEs:
+                        <small>{{device.appEntities.join(', ')}}</small>
+                    </p>
+                    <p class="list-group-item-text" ng-show="device.deviceExtensions.length>0">Extensions:
+                        <small>{{device.deviceExtensions.join(', ')}}</small>
+                    </p>
+                </small>
+            </a>
+        </div>
+
+    </div -->
+
+    <div class="col-sm-12">
+
+        <h2>Device
+            <button type="button" class="btn btn-default"
+                    ng-model="selectedDeviceName"
+                    data-html="1"
+                    ng-options="deviceName for deviceName in deviceNames"
+                    data-placeholder="Select device ..."
+                    bs-select>
+                Device <span class="caret"></span>
+            </button>
+            <span>
+                <a href=""
+                   ng-click="reconfigureDevice()"
+                   title="Trigger a reload of configuration in the backend"
+                   class="btn btn-info ">Force reload</a>
+                <a ng-show="selectedDevice.isModified" href=""
+                   ng-click="saveDeviceConfig()"
+                   class="btn btn-success ">Save</a>
+                <a ng-show="selectedDevice.isModified" href=""
+                   ng-click="cancelChangesDevice()"
+                   class="btn btn-danger ">Cancel</a>
+            </span>
+        </h2>
+
+        <!--hide/expand device panel-->
+        <a href="" class="badge" ng-click="isDeviceNavCollapsed = !isDeviceNavCollapsed">
+            <span ng-class="!isDeviceNavCollapsed ? 'dropup' : ''"><span class="caret"></span></span>&nbsp;
+        </a>
+        <!-- reload/save device/cancel -->
+
+        <div class="row" ng-show="selectedDevice.config" ng-controller="DeviceEditorController">
+
+            <div ng-show="!isDeviceNavCollapsed" class="col-sm-3">
+                <div class="panel panel-default">
+                    <!--<div class="panel-heading">-->
+                    <!--<h3 class="panel-title"><span class="small"> Device: </span> {{selectedDevice.deviceName}}</h3>-->
+                    <!--</div>-->
+                    <div class="panel-body">
+
+                        <ul class="nav nav-pills nav-stacked">
+                            <li ng-class="(selectedConfigNode.node == selectedDevice.config ? 'active' : '')">
+                                <!--,{excludeProps:['dicomConnection','dicomNetworkAE']}-->
+                                <a href=""
+                                   ng-click="selectConfigNode(selectedDevice.config,ConfigEditorService.schemas.device)">Device
+                                    properties</a>
+                            </li>
+                            <li><h3>Application entities</a></h3>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li ng-repeat="(aeName, ae) in selectedDevice.config.dicomNetworkAE"
+                                        ng-class="(selectedConfigNode.node == ae ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(ae,ConfigEditorService.schemas.device.properties.dicomNetworkAE.properties['*'], selectedDevice.config.dicomNetworkAE, ConfigEditorService.schemas.device.properties.dicomNetworkAE)">{{aeName}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                <h3>
+                                    Connections
+                                    <a href=""
+                                       ng-click="selectedDevice.config.dicomConnection.push(ConfigEditorService.createNewItem(ConfigEditorService.schemas.device.properties.dicomConnection.items));ConfigEditorService.checkModified()">
+                                        <span class="badge">+</span>
+                                    </a>
+                                </h3>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li ng-repeat="(index, connection) in selectedDevice.config.dicomConnection"
+                                        ng-class="(selectedConfigNode.node == connection ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(  connection,
+                                                                        ConfigEditorService.schemas.device.properties.dicomConnection.items,
+                                                                        selectedDevice.config.dicomConnection, 
+                                                                        ConfigEditorService.schemas.device.properties.dicomConnection,
+                                                                        index)">
+                                            {{connection.cn}}
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li><h3>Extensions</h3></li>
+                            <li>
+                                <ul class="nav nav-pills nav-stacked">
+                                    <li
+                                            ng-repeat="(extensionName,extensionConfig) in selectedDevice.config.deviceExtensions | orderBy:'extensionName'"
+                                            ng-class="(selectedConfigNode.node == extensionConfig ? 'active' : '')">
+                                        <a href=""
+                                           ng-click="selectConfigNode(extensionConfig,ConfigEditorService.schemas.deviceExtensions[extensionName],selectedDevice.config.deviceExtensions,{class:'Map',type:'object'})">{{extensionName}}</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+            </div>
+            <div ng-class="isDeviceNavCollapsed ? 'col-sm-12' : 'col-sm-9'">
+
+                <div class="pull-right" ng-show="selectedConfigNode.parentSchema.type == 'array'"
+                     ng-controller="DeleteTopLevelElementController">
+                    <a href="" class="btn btn-danger" ng-click="deleteCurrentElement()">
+                        Delete this {{selectedConfigNode.schema.class}}
+                    </a>
+                </div>
+                <div class="clearfix"></div>
+
+                <div confignode="selectedConfigNode.node"
+                     schema="selectedConfigNode.schema"
+                     editor="editor"
+                     options="selectedConfigNode.options"
+                     index="selectedConfigNode.index">
+                </div>
+
+                <!--<div config-node-editor-->
+                <!--schema="ConfigEditorService.schemas.deviceExtensions['HL7DeviceExtension'].properties.hl7Apps.properties['*'].properties.dicomNetworkConnectionReference"-->
+                <!--config="selectedDevice.config.deviceExtensions.HL7DeviceExtension.hl7Apps['XDS^DCM4CHEE'].dicomNetworkConnectionReference"-->
+                <!--editor="editor">-->
+                <!--</div>-->
+
+
+                <!-- Save and Cancel buttons template -->
+            </div>
+
+        </div>
+    </div>
+</div>
