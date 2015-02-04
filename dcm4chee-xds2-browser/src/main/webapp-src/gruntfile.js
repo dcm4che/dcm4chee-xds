@@ -41,7 +41,10 @@ module.exports = function (grunt) {
             target: {
                 options: {
                     src: appConfig.srcPath,
-                    dest: appConfig.distPath
+                    dest: appConfig.distPath,
+                    wiredep: {
+                        exclude: ['\.js$', '\.less$']
+                    }
                 }
             }
         },
@@ -82,10 +85,12 @@ module.exports = function (grunt) {
     grunt.registerTask('build', [
         'clean:dist',
         'wiredep',
+        'wiredepCopy',
         'copy:dist',
         'useminPrepare',
         'concat:generated',
         'uglify:generated',
+        //'cssmin:generated',
         'usemin'
     ]);
 
