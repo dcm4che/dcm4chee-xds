@@ -136,7 +136,7 @@ public class DefaultConfigurator {
             hl7conn.setProtocol(Connection.Protocol.HL7);
             hl7conn.setCommonName("hl7-conn");
             hl7conn.setHostname(ip);
-            hl7conn.setPort(2575);
+            hl7conn.setPort(2576);
             conns.add(hl7conn);
 
             device.setConnections(conns);
