@@ -30,7 +30,14 @@ public class DefaultConfigurator {
     private static final String[] MIME_TYPES2 = new String[]{"application/xml", "application/dicom", "application/pdf",
             "application/msword", "application/msexcel", "text/plain", "text/xml", "image/jpeg", "image/png", "image/tiff"};
 
-    public static void applyDefaultConfig(DicomConfiguration config, String deviceName) {
+
+    public DefaultConfigurator(DicomConfiguration config) {
+        this.config = config;
+    }
+
+    private DicomConfiguration config;
+
+    public void applyDefaultConfig(String deviceName) {
 
         log.info("Initializing the default configuration for device {}", deviceName);
 

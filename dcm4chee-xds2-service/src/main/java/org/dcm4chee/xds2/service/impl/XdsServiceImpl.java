@@ -126,6 +126,9 @@ public class XdsServiceImpl implements XdsService {
     @Named("xdsServiceType")
     private String xdsServiceType;
 
+    @Inject
+    DefaultConfigurator defaultConfigurator;
+
     private Device device;
 
     private boolean running;
@@ -153,7 +156,7 @@ public class XdsServiceImpl implements XdsService {
 
             // Try to initialize the default config if configured by a system property
             if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null) {
-                DefaultConfigurator.applyDefaultConfig(conf, deviceName);
+                defaultConfigurator.applyDefaultConfig(deviceName);
                 return conf.findDevice(deviceName);
             } else
                 throw e;
