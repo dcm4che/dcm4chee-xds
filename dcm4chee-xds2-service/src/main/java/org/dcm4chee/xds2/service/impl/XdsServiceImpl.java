@@ -88,7 +88,7 @@ public class XdsServiceImpl implements XdsService {
 
     private static final String DEVICE_NAME_PROPERTY =
             "org.dcm4chee.xds.deviceName";
-    
+
     private static final String DO_DEFAULT_CONFIG_PROPERTY =
     "org.dcm4chee.xds.initializeDefaultConfiguration";
     
@@ -127,6 +127,7 @@ public class XdsServiceImpl implements XdsService {
     private String xdsServiceType;
 
     @Inject
+    @Xds
     DefaultConfigurator defaultConfigurator;
 
     private Device device;

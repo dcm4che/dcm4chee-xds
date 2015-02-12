@@ -30,6 +30,8 @@ public class DefaultConfigurator {
     private static final String[] MIME_TYPES2 = new String[]{"application/xml", "application/dicom", "application/pdf",
             "application/msword", "application/msexcel", "text/plain", "text/xml", "image/jpeg", "image/png", "image/tiff"};
 
+    public DefaultConfigurator() {
+    }
 
     public DefaultConfigurator(DicomConfiguration config) {
         this.config = config;
@@ -180,7 +182,10 @@ public class DefaultConfigurator {
 
             config.close();
 
-        } catch (ConfigurationException e) {
+        }catch (ConfigurationAlreadyExistsException e) {
+            // noop - probably some other deployment already inited it
+            log.warn("Tried to auto-init the configuration for device {}, but it already exists", deviceName);
+        } catch (Exception e) {
             log.error("Could not auto-initialize default XDS configuration", e);
         }
 
