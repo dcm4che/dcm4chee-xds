@@ -33,8 +33,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<dcm4che.version>3.3.6-ASB2</dcm4che.version>
-		<storage.version>1.0.2-SNAPSHOT</storage.version>
-		<conf-db-storage.version>1.0.0-SNAPSHOT</conf-db-storage.version>
+		<storage.version>1.0.2-ASB1</storage.version>
+		<conf-db-storage.version>1.0.0-ASB2</conf-db-storage.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
