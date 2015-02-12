@@ -1,4 +1,6 @@
 ${data-source-string}
+
+data-source --name=xdsDS --enabled=true
 /system-property=org.dcm4chee.xds.initializeDefaultConfiguration:add(value=true)
 
 batch
