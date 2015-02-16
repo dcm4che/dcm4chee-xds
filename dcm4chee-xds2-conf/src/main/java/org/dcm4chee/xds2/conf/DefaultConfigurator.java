@@ -186,7 +186,7 @@ public class DefaultConfigurator {
             // noop - probably some other deployment already inited it
             log.warn("Tried to auto-init the configuration for device {}, but it already exists", deviceName);
         } catch (Exception e) {
-            log.error("Could not auto-initialize default XDS configuration", e);
+            log.warn("Could not auto-initialize default XDS configuration", e);
         }
 
     }
