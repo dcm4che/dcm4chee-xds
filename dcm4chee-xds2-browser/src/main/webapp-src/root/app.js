@@ -36,6 +36,6 @@ dcm4cheApp.config(
             });
     });
 
-dcm4cheBrowserApp.controller('dcm4cheAppController', function ($scope, appConfiguration) {
+dcm4cheApp.controller('dcm4cheAppController', function ($scope, appConfiguration) {
     $scope.appConfiguration = appConfiguration;
 });

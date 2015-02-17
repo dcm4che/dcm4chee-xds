@@ -6,7 +6,7 @@ data-source --name=xdsDS --enabled=true
 batch
 /subsystem=security/security-domain=dcm4chee/:add(cache-type=default)
 /subsystem=security/security-domain=dcm4chee/authentication=classic:add
-/subsystem=security/security-domain=dcm4chee/authentication=classic:write-attribute(name=login-modules, value=[{"code"=>"ConfiguredIdentity", "flag"=>"required", "module-options"=>[("username"=>""), ("password"=>""), ("principal"=>"")]}])
+/subsystem=security/security-domain=dcm4chee/authentication=classic:write-attribute(name=login-modules, value=[{"code"=>"UsersRolesLoginModule", "flag"=>"required", "module-options"=>[("usersProperties"=>"${jboss.server.config.dir}/basic-user.properties"), ("rolesProperties"=>"${jboss.server.config.dir}/basic-roles.properties")]}])
 run-batch
 
 q
