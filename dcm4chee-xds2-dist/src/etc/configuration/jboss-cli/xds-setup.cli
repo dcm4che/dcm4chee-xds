@@ -1,0 +1,12 @@
+${data-source-string}
+
+data-source --name=xdsDS --enabled=true
+/system-property=org.dcm4chee.xds.initializeDefaultConfiguration:add(value=true)
+
+batch
+/subsystem=security/security-domain=dcm4chee/:add(cache-type=default)
+/subsystem=security/security-domain=dcm4chee/authentication=classic:add
+/subsystem=security/security-domain=dcm4chee/authentication=classic:write-attribute(name=login-modules, value=[{"code"=>"ConfiguredIdentity", "flag"=>"required", "module-options"=>[("username"=>""), ("password"=>""), ("principal"=>"")]}])
+run-batch
+
+q

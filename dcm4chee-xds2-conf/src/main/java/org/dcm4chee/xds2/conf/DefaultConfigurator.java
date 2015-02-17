@@ -30,7 +30,16 @@ public class DefaultConfigurator {
     private static final String[] MIME_TYPES2 = new String[]{"application/xml", "application/dicom", "application/pdf",
             "application/msword", "application/msexcel", "text/plain", "text/xml", "image/jpeg", "image/png", "image/tiff"};
 
-    public static void applyDefaultConfig(DicomConfiguration config, String deviceName) {
+    public DefaultConfigurator() {
+    }
+
+    public DefaultConfigurator(DicomConfiguration config) {
+        this.config = config;
+    }
+
+    private DicomConfiguration config;
+
+    public void applyDefaultConfig(String deviceName) {
 
         log.info("Initializing the default configuration for device {}", deviceName);
 
@@ -136,7 +145,7 @@ public class DefaultConfigurator {
             hl7conn.setProtocol(Connection.Protocol.HL7);
             hl7conn.setCommonName("hl7-conn");
             hl7conn.setHostname(ip);
-            hl7conn.setPort(2575);
+            hl7conn.setPort(2576);
             conns.add(hl7conn);
 
             device.setConnections(conns);
@@ -173,8 +182,11 @@ public class DefaultConfigurator {
 
             config.close();
 
-        } catch (ConfigurationException e) {
-            log.error("Could not auto-initialize default XDS configuration", e);
+        }catch (ConfigurationAlreadyExistsException e) {
+            // noop - probably some other deployment already inited it
+            log.warn("Tried to auto-init the configuration for device {}, but it already exists", deviceName);
+        } catch (Exception e) {
+            log.warn("Could not auto-initialize default XDS configuration", e);
         }
 
     }

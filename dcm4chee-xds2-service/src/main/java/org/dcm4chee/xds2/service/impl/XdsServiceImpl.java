@@ -88,7 +88,7 @@ public class XdsServiceImpl implements XdsService {
 
     private static final String DEVICE_NAME_PROPERTY =
             "org.dcm4chee.xds.deviceName";
-    
+
     private static final String DO_DEFAULT_CONFIG_PROPERTY =
     "org.dcm4chee.xds.initializeDefaultConfiguration";
     
@@ -126,6 +126,10 @@ public class XdsServiceImpl implements XdsService {
     @Named("xdsServiceType")
     private String xdsServiceType;
 
+    @Inject
+    @Xds
+    DefaultConfigurator defaultConfigurator;
+
     private Device device;
 
     private boolean running;
@@ -153,7 +157,7 @@ public class XdsServiceImpl implements XdsService {
 
             // Try to initialize the default config if configured by a system property
             if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null) {
-                DefaultConfigurator.applyDefaultConfig(conf, deviceName);
+                defaultConfigurator.applyDefaultConfig(deviceName);
                 return conf.findDevice(deviceName);
             } else
                 throw e;
