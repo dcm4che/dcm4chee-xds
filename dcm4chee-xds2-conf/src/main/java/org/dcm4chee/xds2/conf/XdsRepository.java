@@ -143,7 +143,7 @@ public class XdsRepository extends XdsExtension {
     }
 
     public String getFilesystemGroupID(String affinity) {
-        String groupID = fsGroupIDbyAffinity.get(affinity);
+        String groupID = affinity == null ? null : fsGroupIDbyAffinity.get(affinity);
         if (groupID == null) {
             groupID = fsGroupIDbyAffinity.get(DEFAULTID);
         }
