@@ -31,28 +31,15 @@
 		<artifactId>dcm4chee-xds2-parent</artifactId>
 		<version>2.0.6-SNAPSHOT</version>
 	</parent>
-	<artifactId>dcm4chee-xds2-browser</artifactId>
+	<artifactId>dcm4chee-xds2-browser-rs</artifactId>
 	<packaging>war</packaging>
-	<name>Online registry browser for admininstration purposes </name>
+	<name>Online registry browser REST services</name>
     <properties>
-        <serviceManager.enabled>true</serviceManager.enabled>
 		<browser.security.enabled.l />
 		<browser.security.enabled.r />
     </properties>
     <profiles>
         <profile>
-            <id>xd</id>
-            <properties>
-                <serviceManager.enabled>false</serviceManager.enabled>
-            </properties>
-            <activation>
-                <property>
-                    <name>environment</name>
-                    <value>xdbuild</value>
-                </property>
-            </activation>
-        </profile>
-		<profile>
 
 			<id>security-disabled</id>
 			<properties>
@@ -165,21 +152,18 @@
 
 	</dependencies>
 	<build>
-                <filters>
-                    <filter>browser${asb}.properties</filter>
-                </filters>
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<version>2.1.1</version>
-				<configuration>
-					<webResources>
-						<resource>
-							<directory>src/main/webapp</directory>
-							<filtering>true</filtering>
-						</resource>
-					</webResources>
-				</configuration>
+                <configuration>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
 			</plugin>
 		</plugins>
 

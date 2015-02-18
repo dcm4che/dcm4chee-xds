@@ -81,7 +81,6 @@ import java.util.*;
  * @author Roman K
  */
 @SuppressWarnings("serial")
-@Path("/")
 @Produces(MediaType.APPLICATION_JSON)
 public class XdsBrowserRESTServicesServlet extends HttpServlet {
 

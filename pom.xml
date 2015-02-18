@@ -35,6 +35,8 @@
 		<dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
 		<storage.version>1.0.2-SNAPSHOT</storage.version>
 		<conf-db-storage.version>1.0.0-SNAPSHOT</conf-db-storage.version>
+        <dcm4chee-conf-web.version>1.0.0-SNAPSHOT</dcm4chee-conf-web.version>
+
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
@@ -44,7 +46,8 @@
 		<show_sql>false</show_sql>
 		<hbm2ddl.auto>update</hbm2ddl.auto>
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
-		<extrascripts></extrascripts>
+
+		<browser.security.domain>dcm4chee</browser.security.domain>
 
         <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
         <ws.security.parameters></ws.security.parameters>
@@ -122,7 +125,7 @@
 		<module>dcm4chee-xds2-service</module>
 		<module>dcm4chee-xds2-ctrl</module>
 		<module>dcm4chee-xds2-ctrl-war</module>
-		<module>dcm4chee-xds2-browser</module>
+		<module>dcm4chee-xds2-browser-rs</module>
 		<module>dcm4chee-xds2-registry-ws</module>
 		<module>dcm4chee-xds2-registry-ctrl</module>
 		<module>dcm4chee-xds2-registry-war</module>
