@@ -97,8 +97,7 @@ public class XdsConfigTestIT extends XdsConfigTestBase {
     public void setup() throws ConfigurationException {
         DicomConfigurationBuilder builder = new DicomConfigurationBuilder();
         builder.registerCustomConfigurationStorage(dbConfigStorage);
-        //builder.cache(true);
-        builder.cache();
+        builder.cache(true);
 
         builder.registerDeviceExtension(XdsRegistry.class);
         builder.registerDeviceExtension(XdsRepository.class);
