@@ -198,7 +198,7 @@
                         <webModule>
                             <groupId>org.dcm4che</groupId>
                             <artifactId>dcm4chee-xds2-browser-rs</artifactId>
-                            <contextRoot>/xds-browser/rs/</contextRoot>
+                            <contextRoot>/xds-browser/rs</contextRoot>
                         </webModule>
                         <webModule>
                             <groupId>org.dcm4chee</groupId>
