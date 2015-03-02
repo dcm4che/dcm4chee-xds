@@ -63,13 +63,11 @@ import javax.ejb.Startup;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -94,7 +92,7 @@ public class XdsServiceImpl implements XdsService {
     
     private static final String DEF_DEVICE_NAME =
             "dcm4chee-xds";
-    private static String[] JBOSS_PROPERITIES = {
+    private static String[] JBOSS_PROPERTIES = {
         "jboss.home",
         "jboss.modules",
         "jboss.server.base",
@@ -139,7 +137,7 @@ public class XdsServiceImpl implements XdsService {
     private final HL7ServiceRegistry hl7ServiceRegistry = new HL7ServiceRegistry();
 
     private void addJBossDirURLSystemProperties() {
-        for (String key : JBOSS_PROPERITIES) {
+        for (String key : JBOSS_PROPERTIES) {
             String url = new File(System.getProperty(key + ".dir"))
                 .toURI().toString();
             System.setProperty(key + ".url", url.substring(0, url.length()-1));
@@ -180,7 +178,7 @@ public class XdsServiceImpl implements XdsService {
 
                 int hl7ServicesCount = 0;
 
-            	for (HL7Service service : hl7Services) {
+                for (HL7Service service : hl7Services) {
             		hl7ServiceRegistry.addHL7Service(service);
             		hl7serviceAvail = true;
                     hl7ServicesCount++;
