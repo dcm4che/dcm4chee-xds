@@ -3,7 +3,7 @@
    ng-click="advancedView = false"
    ng-show="advancedView" class="btn btn-default">Back to simple view</a>
 
-<div ng-if="advancedView" static-include="config-browser/service-manager.html"></div>
+<div ng-show="advancedView" static-include="config-browser/service-manager.html"></div>
 
 <!--'Simple' ;) view-->
 <div ng-show="!advancedView" class="col-md-12" ng-controller="AgilityXDSConfigManagerCtrl">

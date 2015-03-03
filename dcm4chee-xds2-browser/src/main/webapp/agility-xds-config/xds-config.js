@@ -22,7 +22,7 @@ angular.module('com.agfa.agility.xdsConfig', ['dcm4che.config.manager'])
 
 
         $scope.$watchCollection('xdsDevice.config.deviceExtensions.StorageConfiguration.filesystemGroups', function () {
-            if ($scope.xdsDevice.config) {
+            if ($scope.xdsDevice && $scope.xdsDevice.config) {
                 var groups = _.values($scope.xdsDevice.config.deviceExtensions.StorageConfiguration.filesystemGroups);
                 if (groups.length>0)
                     $scope.selectedFileSystemGroup = groups[0];
