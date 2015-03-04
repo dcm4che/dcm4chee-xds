@@ -112,6 +112,12 @@
 
 				</extrascripts>
             </properties>
+	<distributionManagement>
+		<repository>
+                    <id>hap-repository</id>
+                    <url>${hap-repository.url}</url>
+		</repository>
+	</distributionManagement>
 		</profile>
 	</profiles>
 	<modules>
