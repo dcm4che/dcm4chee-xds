@@ -161,7 +161,7 @@
         <dependency>
             <groupId>org.dcm4chee</groupId>
             <artifactId>dcm4chee-conf-web</artifactId>
-            <classifier>xds${conf-web-classifier}</classifier>
+            <classifier>xds${asb}${conf-web-classifier}</classifier>
             <type>war</type>
             <version>${dcm4chee-conf-web.version}</version>
         </dependency>

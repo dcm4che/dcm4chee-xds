@@ -188,6 +188,9 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
+        <filters>
+            <filter>${basedir}/xds${asb}.properties</filter>
+        </filters>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
