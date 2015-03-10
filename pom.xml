@@ -47,8 +47,6 @@
 		<hbm2ddl.auto>update</hbm2ddl.auto>
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 
-		<browser.security.domain>dcm4chee</browser.security.domain>
-
         <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
         <ws.security.parameters></ws.security.parameters>
 
