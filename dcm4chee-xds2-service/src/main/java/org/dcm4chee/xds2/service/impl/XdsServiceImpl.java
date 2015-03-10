@@ -181,9 +181,12 @@ public class XdsServiceImpl implements XdsService {
 
                 // Ugly, but works.
                 // The issue seems to be correlated to late webservice start (thus fails if webservice does not start until now),
-                // therefore it will most likely succeed once webservice is up
+                // therefore it will most likely succeed once webservice is up.
+                //
+                // Latest observation: failed after 10 retries,
+                // but before "JBAS015539: Starting service jboss.ws.endpoint."xds-registry.ear"."dcm4chee-xds2-registry-ws-2.0.6.v20150303_1255.jar".XDSRegistryBeanWS"
 
-                int retries = 10;
+                int retries = Integer.valueOf(System.getProperty("org.dcm4chee.xds.hl7IteratorRetriesSec", "300"));
                 Iterator<HL7Service> hl7ServiceIterator = null;
                 while (retries>0)
                     try {
