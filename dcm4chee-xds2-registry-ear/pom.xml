@@ -203,6 +203,7 @@
                             <groupId>org.dcm4che</groupId>
                             <artifactId>dcm4chee-xds2-browser-rs</artifactId>
                             <contextRoot>/xds-browser/rs</contextRoot>
+                            <bundleFileName>dcm4chee-xds2-browser-rs.war</bundleFileName>
                         </webModule>
                         <webModule>
                             <groupId>org.dcm4chee</groupId>
