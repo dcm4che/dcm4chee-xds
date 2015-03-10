@@ -32,10 +32,10 @@
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dcm4che.version>3.3.6-SNAPSHOT</dcm4che.version>
-		<storage.version>1.0.2-SNAPSHOT</storage.version>
-		<conf-db-storage.version>1.0.0-SNAPSHOT</conf-db-storage.version>
-        <dcm4chee-conf-web.version>1.0.0-SNAPSHOT</dcm4chee-conf-web.version>
+		<dcm4che.version>3.3.6-ASB2</dcm4che.version>
+		<storage.version>1.0.2-ASB1</storage.version>
+		<conf-db-storage.version>1.0.0.beta.v20150303_1031</conf-db-storage.version>
+                <dcm4chee-conf-web.version>1.0.0.beta.v20150310_1233</dcm4chee-conf-web.version>
 
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
@@ -188,9 +188,6 @@
 		</dependencies>
 	</dependencyManagement>
 	<build>
-        <filters>
-            <filter>${basedir}/xds${asb}.properties</filter>
-        </filters>
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>

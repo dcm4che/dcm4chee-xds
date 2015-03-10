@@ -181,6 +181,10 @@
                 <configuration>
                     <defaultJavaBundleDir>lib</defaultJavaBundleDir>
                     <classifier>${db}${asb}${jdbcprefs.classifier}</classifier>
+                    <filtering>true</filtering>
+                    <filters>
+                        <filter>${basedir}/../xds${asb}.properties</filter>
+                    </filters>
                     <modules>
                         <ejbModule>
                             <groupId>org.dcm4che</groupId>
@@ -211,6 +215,7 @@
                 </configuration>
             </plugin>
         </plugins>
+
     </build>
 
 
