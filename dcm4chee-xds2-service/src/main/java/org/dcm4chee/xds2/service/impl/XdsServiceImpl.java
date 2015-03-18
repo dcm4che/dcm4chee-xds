@@ -67,7 +67,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -146,6 +148,26 @@ public class XdsServiceImpl implements XdsService {
     }
 
     private Device findDevice() throws ConfigurationException {
+
+
+        // Workaround to prevent clashes when initing the default config from different xds actors
+        // Will be fully removed when we have config upgrade/migration mechanism in place.
+
+        Map<String,Integer> disSyncOffsetMs = new HashMap<>();
+
+        disSyncOffsetMs.put("repository", 0);
+        disSyncOffsetMs.put("registry", 5000);
+        disSyncOffsetMs.put("xca", 1000);
+        disSyncOffsetMs.put("xcai", 2000);
+
+        try {
+            Thread.sleep(disSyncOffsetMs.get(xdsServiceType));
+        } catch (InterruptedException e) {
+            // noop
+        }
+        // endOf workaround
+
+
         String deviceName = System.getProperty(deviceNameProperty);
         if (deviceName == null)
             deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
