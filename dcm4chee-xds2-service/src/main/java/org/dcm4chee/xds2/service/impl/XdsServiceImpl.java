@@ -149,25 +149,18 @@ public class XdsServiceImpl implements XdsService {
         String deviceName = System.getProperty(deviceNameProperty);
         if (deviceName == null)
             deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
+        try {
+            conf.sync();
+            return conf.findDevice(deviceName);
+        } catch (ConfigurationNotFoundException e) {
 
-        int retries = 10;
-        Device xdsDevice = null;
-
-        while (retries>0) {
-            try {
-                conf.sync();
-                xdsDevice = conf.findDevice(deviceName);
-                break;
-            } catch (ConfigurationNotFoundException e) {
-                // Try to initialize the default config if configured by a system property
-                if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null)
-                    defaultConfigurator.applyDefaultConfig(deviceName);
-            }
-            retries--;
+            // Try to initialize the default config if configured by a system property
+            if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null) {
+                defaultConfigurator.applyDefaultConfig(deviceName);
+                return conf.findDevice(deviceName);
+            } else
+                throw e;
         }
-
-        if (xdsDevice == null) throw new ConfigurationNotFoundException("Could not retrieve the XDS device '"+deviceName+"'");
-        return xdsDevice;
     }
 
 
