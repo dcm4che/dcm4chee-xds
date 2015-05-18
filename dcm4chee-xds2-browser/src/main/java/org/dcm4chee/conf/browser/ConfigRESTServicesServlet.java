@@ -5,6 +5,7 @@ import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.core.AnnotatedConfigurableProperty;
 import org.dcm4che3.conf.core.BeanVitalizer;
+import org.dcm4che3.conf.core.Configuration;
 import org.dcm4che3.conf.dicom.DicomConfigurationManager;
 import org.dcm4che3.conf.core.adapters.ConfigTypeAdapter;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
@@ -157,11 +158,21 @@ public class ConfigRESTServicesServlet {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response modifyDeviceConfig(@Context UriInfo ctx, @PathParam(value = "deviceName") String deviceName, Map<String, Object> config) throws ConfigurationException {
 
-        // vitalize device to perform basic validation
-        configurationManager.vitalizeDevice(deviceName, config);
+        // quick validation
+        Configuration storage = configurationManager.getConfigurationStorage();
+        String devicePath = DicomPath.DeviceByName.set("deviceName", deviceName).path();
+        Object oldDeviceConfig = storage.getConfigurationNode(devicePath, Device.class);
+        storage.persistNode(devicePath, config, Device.class);
 
-        configurationManager.getConfigurationStorage().persistNode(DicomPath.DeviceByName.set("deviceName", deviceName).path(), config, Device.class);
+        try {
+            listDevices();
+        } catch (ConfigurationException e) {
+            // validation failed, replace the node back
+            storage.persistNode(devicePath, (Map<String, Object>) oldDeviceConfig, Device.class);
+            throw new ConfigurationException("The device "+deviceName+" cannot be persisted because it violates the configuration integrity", e);
+        }
 
+        // reload
         try {
             reloadAllExtensionsOfDevice(ctx, deviceName);
             log.info("Configuration for device {} stored successfully",deviceName);
