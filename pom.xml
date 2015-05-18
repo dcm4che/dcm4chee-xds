@@ -96,15 +96,6 @@
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
 
-				<ws.security.domain>
-					&lt;security:security-domain&gt;client-certificate-authentication&lt;/security:security-domain&gt;
-				</ws.security.domain>
-
-				<ws.security.parameters>
-					&lt;auth-method&gt;CLIENT-CERT&lt;/auth-method&gt;
-					&lt;transport-guarantee&gt;CONFIDENTIAL&lt;/transport-guarantee&gt;
-				</ws.security.parameters>
-
 				<extrascripts>
 
 				</extrascripts>
