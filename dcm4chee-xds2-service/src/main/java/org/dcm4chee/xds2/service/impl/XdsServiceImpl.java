@@ -128,7 +128,6 @@ public class XdsServiceImpl implements XdsService {
     private String xdsServiceType;
 
     @Inject
-    @Xds
     DefaultConfigurator defaultConfigurator;
 
     private Device device;
@@ -148,24 +147,6 @@ public class XdsServiceImpl implements XdsService {
     }
 
     private Device findDevice() throws ConfigurationException {
-
-
-        // Workaround to prevent clashes when initing the default config from different xds actors
-        // Will be fully removed when we have config upgrade/migration mechanism in place.
-
-        Map<String,Integer> disSyncOffsetMs = new HashMap<>();
-
-        disSyncOffsetMs.put("repository", 0);
-        disSyncOffsetMs.put("registry", 5000);
-        disSyncOffsetMs.put("xca", 1000);
-        disSyncOffsetMs.put("xcai", 2000);
-
-        try {
-            Thread.sleep(disSyncOffsetMs.get(xdsServiceType));
-        } catch (InterruptedException e) {
-            // noop
-        }
-        // endOf workaround
 
 
         String deviceName = System.getProperty(deviceNameProperty);

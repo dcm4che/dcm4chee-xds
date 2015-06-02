@@ -84,14 +84,6 @@ public class XdsConfigurationFactory {
     Instance<Configuration> dbConfigStorage;
 
     @Produces
-    @Xds
-    @ApplicationScoped
-    public DefaultConfigurator getDefaultConfigurator(DicomConfiguration configuration) throws ConfigurationException {
-        return new DefaultConfigurator(configuration);
-    }
-
-
-    @Produces
     @ApplicationScoped
     public DicomConfigurationManager getDicomConfigurationManager() throws ConfigurationException {
         return getCommonDicomConfigurationWithHL7();

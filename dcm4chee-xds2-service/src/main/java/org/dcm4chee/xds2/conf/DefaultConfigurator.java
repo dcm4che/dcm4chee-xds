@@ -17,12 +17,18 @@ import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ejb.Stateful;
+import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Stateless
 public class DefaultConfigurator {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultConfigurator.class);
@@ -33,12 +39,14 @@ public class DefaultConfigurator {
     public DefaultConfigurator() {
     }
 
-    public DefaultConfigurator(DicomConfiguration config) {
-        this.config = config;
-    }
-
+    @Inject
     private DicomConfiguration config;
 
+    /**
+     * Separate transaction ensures that only the init fails, but it should not introduce an overall failure
+     * @param deviceName
+     */
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void applyDefaultConfig(String deviceName) {
 
         log.info("Initializing the default configuration for device {}", deviceName);
