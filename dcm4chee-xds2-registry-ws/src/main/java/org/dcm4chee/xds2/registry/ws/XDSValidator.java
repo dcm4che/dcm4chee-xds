@@ -59,7 +59,8 @@ import org.dcm4chee.xds2.persistence.Slot;
 import org.dcm4chee.xds2.persistence.XADPatient;
 import org.dcm4chee.xds2.persistence.XDSDocumentEntry;
 import org.dcm4chee.xds2.persistence.XDSObject;
-import org.eclipse.jetty.util.log.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * XDS Validator
@@ -70,7 +71,7 @@ import org.eclipse.jetty.util.log.Log;
  *
  */
 public class XDSValidator {
-
+    private static Logger log = LoggerFactory.getLogger(XDSValidator.class);
     public static void checkSamePatient(List<? extends Identifiable> objects) throws XDSException {
         Identifiable obj, obj1 = null;
         XADPatient pat, pat1 = null;
@@ -98,7 +99,7 @@ public class XDSValidator {
             if (dst instanceof XDSObject) {
                 if (!((XDSObject)src).getPatient().equals(((XDSObject)dst).getPatient())) {
                 	if (XDSConstants.RPLC.equals(assoc.getAssocType().getId())) {
-                    	Log.info("RPLC: Replace with different Patient IDs! source:"+((XDSObject)src).getPatient()+
+                    	log.info("RPLC: Replace with different Patient IDs! source:"+((XDSObject)src).getPatient()+
                     			"and target:"+((XDSObject)dst).getPatient());
                 	} else {
                 		throw new XDSException(XDSException.XDS_ERR_PATID_DOESNOT_MATCH, 
