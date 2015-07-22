@@ -29,7 +29,7 @@
 	<parent>
 		<groupId>org.dcm4che</groupId>
 		<artifactId>dcm4chee-xds2-parent</artifactId>
-		<version>2.0.7-SNAPSHOT</version>
+		<version>2.0.6_SU1</version>
 	</parent>
 	<artifactId>dcm4chee-xds2-browser</artifactId>
 	<packaging>war</packaging>
