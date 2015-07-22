@@ -166,12 +166,14 @@ public class DefaultConfigurator {
             hl7conns.add(hl7conn);
             hl7App.setConns(hl7conns);
             hl7App.setAcceptedMessageTypes(
-                "ADT^A03",
-                "ADT^A06",
-                "ADT^A07",
-                "ADT^A08",
-                "ADT^A40",
-                "ORM^O01");
+                    "ADT^A01",
+                    "ADT^A02",
+                    "ADT^A03",
+                    "ADT^A06",
+                    "ADT^A07",
+                    "ADT^A08",
+                    "ADT^A40",
+                    "ORM^O01");
 
             hl7ext.addHL7Application(hl7App);
             device.addDeviceExtension(hl7ext);
