@@ -42,6 +42,7 @@ import static org.dcm4che3.audit.AuditMessages.createEventIdentification;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -263,7 +264,7 @@ public class XDSAudit {
 	    	if (logger != null && logger.isInstalled()) {
 	            logImport(eventTypeCode, null, patID, repositoryURL.toExternalForm(),
 	                null, repositoryURL.getHost(), XDSConstants.WS_ADDRESSING_ANONYMOUS, AuditLogger.processID(), 
-	                AuditLogger.localHost().getHostName(), docReq, success);
+	                getLocalHostname(), docReq, success);
 	        }
 	    } catch (Exception e ){
 	        log.warn("Audit log of Import ({}) failed!",eventTypeCode.getDisplayName());    	
@@ -476,7 +477,7 @@ public class XDSAudit {
                 String patID = XDSUtil.getQueryPatID(qry.getSlot());
                 String homeCommunityID = InfosetUtil.getSlotValue(qry.getSlot(), XDSConstants.QRY_HOME_COMMUNITY_ID, null);
                 if (srcHostName == null)
-                    srcHostName = AuditLogger.localHost().getHostName();
+                    srcHostName = getLocalHostname();
                 Calendar timeStamp = logger.timeStamp();
                 AuditMessage msg = XDSAudit.createQuery(eventTypeCode, qry.getId(), patID, homeCommunityID, InfosetUtil.marshallObject(req, true).getBytes("UTF-8"), 
                         srcUserID, altSrcUserID, srcHostName, destUserID, altDestUserID, destHostName, 
@@ -520,7 +521,7 @@ public class XDSAudit {
                         EventTypeCode.ITI_9_PIXQuery));
                 msg.getAuditSourceIdentification().add(
                         logger.createAuditSourceIdentification());
-                String hostName = AuditLogger.localHost().getHostName();
+                String hostName = getLocalHostname();
                 msg.getActiveParticipant().add(
                         AuditMessages.createActiveParticipant(sendingFacility+"|"+sendingApp, 
                                 AuditLogger.processID(), null, true,
@@ -701,7 +702,7 @@ public class XDSAudit {
                 logger.createAuditSourceIdentification());
         msg.getActiveParticipant().add(
                 logger.createActiveParticipant(false, AuditLogger.processID(), null, 
-                        appName, AuditLogger.localHost().getHostName(), RoleIDCode.Application));
+                        appName, getLocalHostname(), RoleIDCode.Application));
         
         return msg;
     }
@@ -794,7 +795,7 @@ public class XDSAudit {
                 eventTypeCode));
         msg.getAuditSourceIdentification().add(
                 logger.createAuditSourceIdentification());
-        String hostName = AuditLogger.localHost().getHostName();
+        String hostName = getLocalHostname();
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
                         srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
@@ -822,7 +823,7 @@ public class XDSAudit {
                 EventTypeCode.ITI_8_PatientIdentityFeed));
         msg.getAuditSourceIdentification().add(
                 logger.createAuditSourceIdentification());
-        String hostName = AuditLogger.localHost().getHostName();
+        String hostName = getLocalHostname();
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
                         srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
@@ -924,4 +925,15 @@ public class XDSAudit {
         return sb.toString();
     }
     
+    private static String getLocalHostname() {
+        InetAddress addr = AuditLogger.localHost();
+        if (addr == null) {
+            String hostname = System.getProperty("jboss.host.name");
+            return (hostname == null || hostname.equals("127.0.0.1")) ?
+                "<Unknown local hostname>" : hostname;
+        }
+        return addr.getHostName();
+    }
+
+
 }

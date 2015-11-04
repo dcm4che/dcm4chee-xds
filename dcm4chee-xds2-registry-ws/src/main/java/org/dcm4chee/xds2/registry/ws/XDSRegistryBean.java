@@ -41,6 +41,7 @@ package org.dcm4chee.xds2.registry.ws;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
@@ -731,13 +732,30 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
         return true;
    }
 
-	private void mergePatient(String tableName, XADPatient subsumedPat,
+   private void mergePatient(String tableName, XADPatient subsumedPat,
 			XADPatient survivingPat) {
-		Query q = em.createQuery("UPDATE "+tableName+" s SET s.patient = :survived WHERE s.patient = :subsumed");  
-        q.setParameter("survived", survivingPat);
+        Query q = em.createQuery("SELECT s FROM " + tableName + " s WHERE s.patient = :subsumed");
         q.setParameter("subsumed", subsumedPat);
-        q.executeUpdate();
-	}
+        @SuppressWarnings("unchecked")
+        List<RegistryObject> list = q.getResultList();
+        String idScheme;
+        for (RegistryObject ro : list) {
+            for (ExternalIdentifierType ei : ro.getExternalIdentifiers()) {
+                idScheme = ei.getIdentificationScheme();
+                if ( XDSConstants.UUID_XDSDocumentEntry_patientId.equals(idScheme) ||
+                        XDSConstants.UUID_XDSFolder_patientId.equals(idScheme) ||
+                        XDSConstants.UUID_XDSSubmissionSet_patientId.equals(idScheme) ) {
+                    ei.setValue(survivingPat.getXADPatientID());
+                }
+            };
+            em.merge(ro);
+        }
+        Query qUpd = em.createQuery("UPDATE "+tableName+" s SET s.patient = :survived WHERE s.patient = :subsumed");  
+        qUpd.setParameter("survived", survivingPat);
+        qUpd.setParameter("subsumed", subsumedPat);
+        qUpd.executeUpdate();
+        
+   }
  
     public XDSCode getXDSCode(ClassificationType clType, boolean createMissing) throws XDSException {
         String scheme = clType.getClassificationScheme();

@@ -127,6 +127,9 @@ public class StoredQueryParam {
         StoredQueryParam param;
         for (int i = 0, len= slots.size() ; i < len ; i++) {
             slot = slots.get(i);
+            if (slot.getValueList() == null || slot.getValueList().getValue().isEmpty() ||
+                    slot.getValueList().getValue().get(0).length() == 0  )
+                continue;
             param = params.get(slot.getName());
             if (param == null) {
                 param = new StoredQueryParam(slot.getName()); 
@@ -187,7 +190,7 @@ public class StoredQueryParam {
             List<String> values = new ArrayList<String>();
             andOrValues.add(values);
             for (String s : slotValues) {
-                if (s.charAt(0)=='(' && s.charAt(s.length()-1)==')') {
+                if (s.length() > 1 && s.charAt(0)=='(' && s.charAt(s.length()-1)==')') {
                     StringTokenizer st = new StringTokenizer(s.substring(1,s.length()-1), ",");
                     while (st.hasMoreElements()) {
                         values.add(checkText(st.nextToken().trim()));
