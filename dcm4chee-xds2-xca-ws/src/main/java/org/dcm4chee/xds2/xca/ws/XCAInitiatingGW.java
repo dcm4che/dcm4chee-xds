@@ -53,6 +53,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -121,6 +122,7 @@ import org.slf4j.LoggerFactory;
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
 @DeactivateableByConfiguration(extension = XCAInitiatingGWCfg.class)
+@PermitAll
 public class XCAInitiatingGW implements InitiatingGatewayPortType {
     
     private ObjectFactory factory = new ObjectFactory();

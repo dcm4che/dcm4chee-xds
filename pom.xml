@@ -32,8 +32,11 @@
 	<name>XDS implementation for JBoss7/EJB3</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<dcm4che.version>3.3.4</dcm4che.version>
-		<storage.version>1.0.0</storage.version>
+		<dcm4che.version>3.3.6-ASB2</dcm4che.version>
+		<storage.version>1.0.2-ASB1</storage.version>
+		<conf-db-storage.version>1.0.0.beta.v20150303_1031</conf-db-storage.version>
+                <dcm4chee-conf-web.version>1.0.0.beta.v20150310_1233</dcm4chee-conf-web.version>
+
 		<slf4j.version>1.6.1</slf4j.version>
 		<hibernate.version>4.2.7.Final</hibernate.version>
 		<querydsl.version>3.2.3</querydsl.version>
@@ -44,13 +47,19 @@
 		<hbm2ddl.auto>update</hbm2ddl.auto>
 		<shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 
-        <!-- XDS Browser access control -->
-        <security.domain>dcm4chee</security.domain>
-        <security.adminRole>WebAdmin</security.adminRole>
+        <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
+        <ws.security.parameters></ws.security.parameters>
+
+        <!--  empty value or security domain enclosed in the corresponding tag-->
+        <ws.security.domain></ws.security.domain>
+
 
 		<jboss.version>6.0.0.Final</jboss.version>
 		<skipTests>true</skipTests>
+
+        <!-- see asb profile -->
 		<asb />
+
 		<jdbcprefs.classifier />
 	</properties>
 	<profiles>
@@ -88,10 +97,16 @@
 				<ds>java:jboss/datasources/OracleDS</ds>
 				<hbm2ddl.auto>validate</hbm2ddl.auto>
 
-                <!-- XDS Browser access control -->
-                <security.domain>authnservice</security.domain>
-                <security.adminRole>JBossAdmin</security.adminRole>
-			</properties>
+				<extrascripts>
+
+				</extrascripts>
+            </properties>
+	<distributionManagement>
+		<repository>
+                    <id>hap-repository</id>
+                    <url>${hap-repository.url}</url>
+		</repository>
+	</distributionManagement>
 		</profile>
 	</profiles>
 	<modules>
@@ -100,11 +115,12 @@
 		<module>dcm4chee-xds2-common</module>
 		<module>dcm4chee-xds2-common-ws</module>
 		<module>dcm4chee-xds2-conf</module>
+		<module>dcm4chee-xds2-conf-test</module>
 		<module>dcm4chee-xds2-registry-persistence</module>
 		<module>dcm4chee-xds2-service</module>
 		<module>dcm4chee-xds2-ctrl</module>
 		<module>dcm4chee-xds2-ctrl-war</module>
-		<module>dcm4chee-xds2-browser</module>
+		<module>dcm4chee-xds2-browser-rs</module>
 		<module>dcm4chee-xds2-registry-ws</module>
 		<module>dcm4chee-xds2-registry-ctrl</module>
 		<module>dcm4chee-xds2-registry-war</module>

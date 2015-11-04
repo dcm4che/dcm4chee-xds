@@ -38,128 +38,96 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.prefs.Preferences;
-
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-
 import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
-import org.dcm4che3.conf.ldap.LdapDicomConfiguration;
-import org.dcm4che3.conf.ldap.audit.LdapAuditLoggerConfiguration;
-import org.dcm4che3.conf.ldap.audit.LdapAuditRecordRepositoryConfiguration;
-import org.dcm4che3.conf.ldap.generic.LdapGenericConfigExtension;
-import org.dcm4che3.conf.ldap.hl7.LdapHL7Configuration;
-import org.dcm4che3.conf.prefs.PreferencesDicomConfiguration;
-import org.dcm4che3.conf.prefs.audit.PreferencesAuditLoggerConfiguration;
-import org.dcm4che3.conf.prefs.audit.PreferencesAuditRecordRepositoryConfiguration;
-import org.dcm4che3.conf.prefs.cdi.PrefsFactory;
-import org.dcm4che3.conf.prefs.generic.PreferencesGenericConfigExtension;
-import org.dcm4che3.conf.prefs.hl7.PreferencesHL7Configuration;
-import org.dcm4che3.util.StreamUtils;
-import org.dcm4che3.util.StringUtils;
+import org.dcm4che3.conf.core.Configuration;
+import org.dcm4che3.conf.dicom.DicomConfigurationManager;
+import org.dcm4che3.conf.dicom.CommonDicomConfigurationWithHL7;
+import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
+import org.dcm4che3.net.AEExtension;
+import org.dcm4che3.net.DeviceExtension;
+import org.dcm4che3.net.audit.AuditLogger;
+import org.dcm4che3.net.audit.AuditRecordRepository;
+import org.dcm4che3.net.hl7.HL7ApplicationExtension;
+import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Instance;
+import javax.enterprise.inject.Produces;
+import javax.enterprise.inject.Typed;
+import javax.inject.Inject;
+import java.util.Collection;
+
 /**
  * @author Franz Willer <franz.willer@gmail.com>
- * 
  */
-public class XdsConfigurationFactory {
 
-    private static final String LDAP_PROPERTIES_PROPERTY = "org.dcm4chee.xds.ldapPropertiesURL";
+@ApplicationScoped
+public class XdsConfigurationFactory {
 
     public static final Logger log = LoggerFactory.getLogger(XdsConfigurationFactory.class);
 
-    
+
     /**
-     * Allows for custom Preferences implementations to be used, like jdbc-prefs
+     * Allows for custom config storage backend
      */
+
     @Inject
-    Instance<PrefsFactory> prefsFactoryInstance;
-    
+    Instance<Configuration> dbConfigStorage;
+
     @Produces
-    @Xds
     @ApplicationScoped
-    public DicomConfiguration createDicomConfiguration() throws ConfigurationException {
-        return System.getProperty(LDAP_PROPERTIES_PROPERTY) != null ? getLdapConfiguration() : getPrefsConfiguration();
+    public DicomConfigurationManager getDicomConfigurationManager() throws ConfigurationException {
+        return getCommonDicomConfigurationWithHL7();
     }
 
-    protected DicomConfiguration getLdapConfiguration() throws ConfigurationException {
-        LdapDicomConfiguration conf = new LdapDicomConfiguration(ldapEnv());
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsRepository>(XdsRepository.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
-        conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XdsSource>(XdsSource.class));
+    public CommonDicomConfigurationWithHL7 getCommonDicomConfigurationWithHL7() throws ConfigurationException {
+        DicomConfigurationBuilder builder = DicomConfigurationBuilder
+                .newConfigurationBuilder(System.getProperties());
         conf.addDicomConfigurationExtension(new LdapGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
-        conf.addDicomConfigurationExtension(new LdapAuditLoggerConfiguration());
-        conf.addDicomConfigurationExtension(new LdapAuditRecordRepositoryConfiguration());
-        conf.addDicomConfigurationExtension(new LdapHL7Configuration());
-        return conf;
-    }
 
-    protected DicomConfiguration getPrefsConfiguration() throws ConfigurationException {
-        
-        PreferencesDicomConfiguration conf; 
-        
-        // check if there is an implementation of PrefsFactory provided and construct DicomConfiguration accordingly
-        if (!prefsFactoryInstance.isUnsatisfied()) {
-            Preferences prefs = prefsFactoryInstance.get().getPreferences();
-            log.info("Using custom Preferences implementation {}", prefs.getClass().toString());
-            conf = new PreferencesDicomConfiguration(prefs); 
-        } else
-            conf = new PreferencesDicomConfiguration();
-        
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRegistry>(XdsRegistry.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsRepository>(XdsRepository.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCARespondingGWCfg>(XCARespondingGWCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAInitiatingGWCfg>(XCAInitiatingGWCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiRespondingGWCfg>(XCAiRespondingGWCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XCAiInitiatingGWCfg>(XCAiInitiatingGWCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<StorageConfiguration>(StorageConfiguration.class));
-        conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XdsSource>(XdsSource.class));
+        // register custom config storage backend if provided
+        if (dbConfigStorage != null &&
+                !dbConfigStorage.isUnsatisfied() &&
+                !dbConfigStorage.isAmbiguous()) {
+            Configuration storage = dbConfigStorage.get();
+            log.info("Using custom configuration storage {}", storage.getClass());
+            builder.registerCustomConfigurationStorage(storage);
+        }
+
+        builder.registerDeviceExtension(XdsRegistry.class);
+        builder.registerDeviceExtension(XdsRepository.class);
+        builder.registerDeviceExtension(XCARespondingGWCfg.class);
+        builder.registerDeviceExtension(XCAiRespondingGWCfg.class);
+        builder.registerDeviceExtension(XCAiInitiatingGWCfg.class);
+        builder.registerDeviceExtension(XCAInitiatingGWCfg.class);
+        builder.registerDeviceExtension(XdsSource.class);
+        builder.registerDeviceExtension(StorageConfiguration.class);
+        builder.registerDeviceExtension(HL7DeviceExtension.class);
+        builder.registerDeviceExtension(AuditRecordRepository.class);
+        builder.registerDeviceExtension(AuditLogger.class);
+
+        return  builder.build();
         conf.addDicomConfigurationExtension(new PreferencesGenericConfigExtension<XDSiSourceCfg>(XDSiSourceCfg.class));
-        conf.addDicomConfigurationExtension(new PreferencesAuditLoggerConfiguration());
-        conf.addDicomConfigurationExtension(new PreferencesAuditRecordRepositoryConfiguration());
-        conf.addDicomConfigurationExtension(new PreferencesHL7Configuration());
-        return conf;
     }
 
-    public void disposeDicomConfiguration(@Disposes @Xds DicomConfiguration conf) {
+
+    public void disposeDicomConfiguration(@Disposes DicomConfiguration conf) {
         conf.close();
     }
 
     @Produces
     @ApplicationScoped
-    public IHL7ApplicationCache getHL7ApplicationCache(@Xds DicomConfiguration conf) {
+    public IHL7ApplicationCache getHL7ApplicationCache(DicomConfiguration conf) {
         return new HL7ApplicationCache(conf.getDicomConfigurationExtension(HL7Configuration.class));
-    }
-
-    private Properties ldapEnv() throws ConfigurationException {
-        String url = System.getProperty(LDAP_PROPERTIES_PROPERTY);
-        url = StringUtils.replaceSystemProperties(url);
-        Properties p = new Properties();
-        try (InputStream in = StreamUtils.openFileOrURL(url);) {
-            p.load(in);
-        } catch (IOException e) {
-            throw new ConfigurationException(e);
-        }
-        return p;
     }
 
 }

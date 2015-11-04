@@ -2,6 +2,7 @@
 .project
 .settings/
 *.iml
+test.war
 .idea/
 target/
 dcm4chee-xds2-browser/.tern-project

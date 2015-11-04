@@ -145,11 +145,17 @@
 					<ejbVersion>3.1</ejbVersion>
 					<archive>
 						<manifestEntries>
-							<Dependencies>org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit,org.dcm4che.conf.ldap-audit,org.dcm4che.conf.prefs-audit</Dependencies>
+							<Dependencies>org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit</Dependencies>
 						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
 		</plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 	</build>
 </project>

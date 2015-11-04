@@ -62,11 +62,13 @@
 			<directory>src/etc</directory>
 			<includes>
 				<include>configuration/affinitydomain/default/codes.xml</include>
+				<include>configuration/jboss-cli/*.cli</include>
 				<include>configuration/keystore</include>
 			</includes>
 			<outputDirectory>.</outputDirectory>
 			<fileMode>0755</fileMode>
 			<lineEnding>unix</lineEnding>
+		        <filtered>true</filtered>
 		</fileSet>
 	</fileSets>
 	<dependencySets>

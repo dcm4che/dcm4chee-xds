@@ -47,6 +47,7 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJBContext;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -108,6 +109,7 @@ import org.slf4j.LoggerFactory;
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
 @DeactivateableByConfiguration(extension = XdsRepository.class)
+@PermitAll
 public class XDSRepositoryBean implements DocumentRepositoryPortType {
 
     private ObjectFactory factory = new ObjectFactory();
