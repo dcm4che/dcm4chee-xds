@@ -25,293 +25,289 @@
 	BLOCK ***** -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.dcm4che</groupId>
-  <artifactId>dcm4chee-xds2-parent</artifactId>
-  <version>2.0.7-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>XDS implementation for JBoss7/EJB3</name>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.dcm4che</groupId>
+    <artifactId>dcm4chee-xds2-parent</artifactId>
+    <version>2.0.7-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>XDS implementation for JBoss7/EJB3</name>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <dcm4che.version>3.3.8-SNAPSHOT</dcm4che.version>
-    <dcm4chee-ee.version>1.1.0-SNAPSHOT</dcm4chee-ee.version>
-    <dcm4chee-conf.version>1.1.0-SNAPSHOT</dcm4chee-conf.version>
+        <dcm4che.version>3.3.8-SNAPSHOT</dcm4che.version>
+        <dcm4chee-ee.version>1.1.0-SNAPSHOT</dcm4chee-ee.version>
+        <dcm4chee-conf.version>1.1.0-SNAPSHOT</dcm4chee-conf.version>
 
-    <!-- still using old storage -->
-    <storage.version>1.0.2-SNAPSHOT</storage.version>
+        <!-- still using old storage -->
+        <storage.version>1.0.2-SNAPSHOT</storage.version>
 
-    <slf4j.version>1.6.1</slf4j.version>
-    <hibernate.version>4.2.7.Final</hibernate.version>
-    <querydsl.version>3.2.3</querydsl.version>
-    <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
-    <db>oracle</db>
-    <ds>java:/xdsDS</ds>
-    <show_sql>false</show_sql>
-    <hbm2ddl.auto>update</hbm2ddl.auto>
-    <shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
+        <slf4j.version>1.6.1</slf4j.version>
+        <hibernate.version>4.2.7.Final</hibernate.version>
+        <querydsl.version>3.2.3</querydsl.version>
+        <javaee6.with.tools.version>1.0.7.Final</javaee6.with.tools.version>
+        <db>oracle</db>
+        <ds>java:/xdsDS</ds>
+        <show_sql>false</show_sql>
+        <hbm2ddl.auto>update</hbm2ddl.auto>
+        <shrinkwrap.resolver.version>2.0.2</shrinkwrap.resolver.version>
 
-    <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
-    <ws.security.parameters></ws.security.parameters>
+        <!-- Webservice security. Escaped xml nodes for jboss-webservices.xml for all EJBs. -->
+        <ws.security.parameters></ws.security.parameters>
 
-    <!--  empty value or security domain enclosed in the corresponding tag-->
-    <ws.security.domain></ws.security.domain>
+        <!--  empty value or security domain enclosed in the corresponding tag-->
+        <ws.security.domain></ws.security.domain>
 
 
-    <jboss.version>6.0.0.Final</jboss.version>
-    <skipTests>true</skipTests>
+        <jboss.version>6.0.0.Final</jboss.version>
+        <skipTests>true</skipTests>
 
-    <!-- see asb profile -->
-    <asb/>
+        <!-- see asb profile -->
+        <asb/>
 
-    <jdbcprefs.classifier/>
-  </properties>
-  <profiles>
-    <profile>
-      <!-- Works only with maven 3.0.2 and above -->
-      <id>jdbc-prefs</id>
-      <activation>
-        <property>
-          <name>environment</name>
-          <value>xdbuild</value>
-        </property>
-      </activation>
-      <properties>
-        <jdbc-prefs.version>1.1.1</jdbc-prefs.version>
-        <jdbcprefs.classifier>-jdbcprefs</jdbcprefs.classifier>
-      </properties>
-    </profile>
-    <profile>
-      <id>xd</id>
-      <properties>
-        <hbm2ddl.auto>validate</hbm2ddl.auto>
-      </properties>
-      <activation>
-        <property>
-          <name>environment</name>
-          <value>xdbuild</value>
-        </property>
-      </activation>
-    </profile>
-    <profile>
-      <!-- Produces agility-specific artifacts -->
-      <id>asb</id>
-      <properties>
-        <asb>-asb</asb>
-        <ds>java:jboss/datasources/OracleDS</ds>
-        <hbm2ddl.auto>validate</hbm2ddl.auto>
+        <jdbcprefs.classifier/>
+    </properties>
+    <profiles>
+        <profile>
+            <id>xd</id>
+            <properties>
+                <hbm2ddl.auto>validate</hbm2ddl.auto>
+            </properties>
+            <activation>
+                <property>
+                    <name>environment</name>
+                    <value>xdbuild</value>
+                </property>
+            </activation>
+        </profile>
+        <profile>
+            <id>csp</id>
+            <properties>
+                <!-- couple DS with arc for a consolidated sandbox -->
+                <ds>java:/PacsDS</ds>
+            </properties>
 
-        <extrascripts>
+        </profile>
+        <profile>
+            <!-- Produces agility-specific artifacts -->
+            <id>asb</id>
+            <properties>
+                <asb>-asb</asb>
+                <ds>java:jboss/datasources/OracleDS</ds>
+                <hbm2ddl.auto>validate</hbm2ddl.auto>
 
-        </extrascripts>
-      </properties>
-      <distributionManagement>
+                <extrascripts>
+
+                </extrascripts>
+            </properties>
+            <distributionManagement>
+                <repository>
+                    <id>hap-repository</id>
+                    <url>${hap-repository.url}</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+
+
+    </profiles>
+    <modules>
+        <module>dcm4chee-xds2-mvnprepare</module>
+        <module>dcm4chee-xds2-infoset</module>
+        <module>dcm4chee-xds2-common</module>
+        <module>dcm4chee-xds2-common-ws</module>
+        <module>dcm4chee-xds2-conf</module>
+        <module>dcm4chee-xds2-conf-test</module>
+        <module>dcm4chee-xds2-registry-persistence</module>
+        <module>dcm4chee-xds2-service</module>
+        <module>dcm4chee-xds2-ctrl</module>
+        <module>dcm4chee-xds2-ctrl-war</module>
+        <module>dcm4chee-xds2-browser-rs</module>
+        <module>dcm4chee-xds2-registry-ws</module>
+        <module>dcm4chee-xds2-registry-ctrl</module>
+        <module>dcm4chee-xds2-registry-war</module>
+        <module>dcm4chee-xds2-hl7</module>
+        <module>dcm4chee-xds2-repository-ws</module>
+        <module>dcm4chee-xds2-repository-entity</module>
+        <module>dcm4chee-xds2-repository-ejb</module>
+        <module>dcm4chee-xds2-repository-ctrl</module>
+        <module>dcm4chee-xds2-repository-war</module>
+        <module>dcm4chee-xds2-store-api</module>
+        <module>dcm4chee-xds2-store-file</module>
+        <module>dcm4chee-xds2-registry-ear</module>
+        <module>dcm4chee-xds2-repository-ear</module>
+        <module>dcm4chee-xds2-tool</module>
+        <module>dcm4chee-xds2-src</module>
+        <module>dcm4chee-xds2-pix-client</module>
+        <module>dcm4chee-xds2-pix-tool</module>
+        <module>dcm4chee-xds2-xca-ws</module>
+        <module>dcm4chee-xds2-xca-ear</module>
+        <module>dcm4chee-xds2-xcai-ws</module>
+        <module>dcm4chee-xds2-xcai-ear</module>
+        <module>dcm4chee-xds2-imgsrc-ws</module>
+        <module>dcm4chee-xds2-imgsrc-ear</module>
+        <module>dcm4chee-xds2-dist</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.6.1</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- Override dependency resolver with latest version. This must go *BEFORE*
+              the Arquillian BOM. -->
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.resolver</groupId>
+                <artifactId>shrinkwrap-resolver-bom</artifactId>
+                <version>${shrinkwrap.resolver.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill
+              of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection)
+              of artifacts. We use this here so that we always get the correct versions
+              of artifacts. Here we use the jboss-javaee-6.0-with tools stack (you can
+              read this as the JBoss stack of the Java EE 6 APIs, with some extras tools
+              for your project, such as Arquillian for testing) -->
+            <dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-javaee-6.0-with-tools</artifactId>
+                <version>${javaee6.with.tools.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh</artifactId>
+                <version>2.4</version>
+            </extension>
+        </extensions>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.1</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <doCheck>false</doCheck>
+                    <doUpdate>false</doUpdate>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
         <repository>
-          <id>hap-repository</id>
-          <url>${hap-repository.url}</url>
+            <id>dcm4che-repository</id>
+            <name>DCM4CHE Public Maven Repository</name>
+            <url>http://www.dcm4che.org/maven2</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
         </repository>
-      </distributionManagement>
-    </profile>
-  </profiles>
-  <modules>
-    <module>dcm4chee-xds2-mvnprepare</module>
-    <module>dcm4chee-xds2-infoset</module>
-    <module>dcm4chee-xds2-common</module>
-    <module>dcm4chee-xds2-common-ws</module>
-    <module>dcm4chee-xds2-conf</module>
-    <module>dcm4chee-xds2-conf-test</module>
-    <module>dcm4chee-xds2-registry-persistence</module>
-    <module>dcm4chee-xds2-service</module>
-    <module>dcm4chee-xds2-ctrl</module>
-    <module>dcm4chee-xds2-ctrl-war</module>
-    <module>dcm4chee-xds2-browser-rs</module>
-    <module>dcm4chee-xds2-registry-ws</module>
-    <module>dcm4chee-xds2-registry-ctrl</module>
-    <module>dcm4chee-xds2-registry-war</module>
-    <module>dcm4chee-xds2-hl7</module>
-    <module>dcm4chee-xds2-repository-ws</module>
-    <module>dcm4chee-xds2-repository-entity</module>
-    <module>dcm4chee-xds2-repository-ejb</module>
-    <module>dcm4chee-xds2-repository-ctrl</module>
-    <module>dcm4chee-xds2-repository-war</module>
-    <module>dcm4chee-xds2-store-api</module>
-    <module>dcm4chee-xds2-store-file</module>
-    <module>dcm4chee-xds2-registry-ear</module>
-    <module>dcm4chee-xds2-repository-ear</module>
-    <module>dcm4chee-xds2-tool</module>
-    <module>dcm4chee-xds2-src</module>
-    <module>dcm4chee-xds2-pix-client</module>
-    <module>dcm4chee-xds2-pix-tool</module>
-    <module>dcm4chee-xds2-xca-ws</module>
-    <module>dcm4chee-xds2-xca-ear</module>
-    <module>dcm4chee-xds2-xcai-ws</module>
-    <module>dcm4chee-xds2-xcai-ear</module>
-    <module>dcm4chee-xds2-imgsrc-ws</module>
-    <module>dcm4chee-xds2-imgsrc-ear</module>
-    <module>dcm4chee-xds2-dist</module>
-  </modules>
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-        <version>1.6.1</version>
-        <scope>provided</scope>
-      </dependency>
-      <!-- Override dependency resolver with latest version. This must go *BEFORE*
-        the Arquillian BOM. -->
-      <dependency>
-        <groupId>org.jboss.shrinkwrap.resolver</groupId>
-        <artifactId>shrinkwrap-resolver-bom</artifactId>
-        <version>${shrinkwrap.resolver.version}</version>
-        <scope>import</scope>
-        <type>pom</type>
-      </dependency>
-      <!-- JBoss distributes a complete set of Java EE 6 APIs including a Bill
-        of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection)
-        of artifacts. We use this here so that we always get the correct versions
-        of artifacts. Here we use the jboss-javaee-6.0-with tools stack (you can
-        read this as the JBoss stack of the Java EE 6 APIs, with some extras tools
-        for your project, such as Arquillian for testing) -->
-      <dependency>
-        <groupId>org.jboss.bom</groupId>
-        <artifactId>jboss-javaee-6.0-with-tools</artifactId>
-        <version>${javaee6.with.tools.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.wagon</groupId>
-        <artifactId>wagon-ssh</artifactId>
-        <version>2.4</version>
-      </extension>
-    </extensions>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.1</version>
-        <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
-        <configuration>
-          <encoding>UTF-8</encoding>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>buildnumber-maven-plugin</artifactId>
-        <version>1.1</version>
-        <executions>
-          <execution>
-            <phase>validate</phase>
-            <goals>
-              <goal>create</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <doCheck>false</doCheck>
-          <doUpdate>false</doUpdate>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <repositories>
-    <repository>
-      <id>dcm4che-repository</id>
-      <name>DCM4CHE Public Maven Repository</name>
-      <url>http://www.dcm4che.org/maven2</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Maven Repository Group</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>jboss-public-repository-group</id>
-      <name>JBoss Public Maven Repository Group</name>
-      <url>http://repository.jboss.org/nexus/content/groups/public/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </pluginRepository>
-    <pluginRepository>
-      <id>dcm4che-repository</id>
-      <name>DCM4CHE Public Maven Repository</name>
-      <url>http://www.dcm4che.org/maven2/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </pluginRepository>
-  </pluginRepositories>
-  <distributionManagement>
-    <repository>
-      <id>www.dcm4che.org</id>
-      <name>dcm4che Repository</name>
-      <url>scp://www.dcm4che.org:443/home/maven2</url>
-    </repository>
-  </distributionManagement>
-  <scm>
-    <connection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</connection>
-    <developerConnection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</developerConnection>
-    <url>https://github.com/dcm4che/dcm4chee-xds</url>
-    <tag>HEAD</tag>
-  </scm>
+        <repository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jboss-public-repository-group</id>
+            <name>JBoss Public Maven Repository Group</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>dcm4che-repository</id>
+            <name>DCM4CHE Public Maven Repository</name>
+            <url>http://www.dcm4che.org/maven2/</url>
+            <layout>default</layout>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <distributionManagement>
+        <repository>
+            <id>www.dcm4che.org</id>
+            <name>dcm4che Repository</name>
+            <url>scp://www.dcm4che.org:443/home/maven2</url>
+        </repository>
+    </distributionManagement>
+    <scm>
+        <connection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</connection>
+        <developerConnection>scm:git:https://github.com/dcm4che/dcm4chee-xds.git</developerConnection>
+        <url>https://github.com/dcm4che/dcm4chee-xds</url>
+        <tag>HEAD</tag>
+    </scm>
 </project>

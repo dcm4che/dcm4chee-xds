@@ -38,7 +38,6 @@
 package org.dcm4chee.xds2.service.impl;
 
 import org.dcm4che3.audit.AuditMessages.EventTypeCode;
-import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.net.Device;
@@ -50,9 +49,10 @@ import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
-import org.dcm4chee.xds2.conf.DefaultConfigurator;
+import org.dcm4chee.xds2.conf.DefaultXdsRegRepConfigurationInit;
+import org.dcm4chee.xds2.conf.XdsDeviceNameProvider;
 import org.dcm4chee.xds2.service.ReconfigureEvent;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +67,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -85,14 +83,9 @@ public class XdsServiceImpl implements XdsService {
     private static final Logger log = LoggerFactory.getLogger(XdsServiceImpl.class);
 
 
-    private static final String DEVICE_NAME_PROPERTY =
-            "org.dcm4chee.xds.deviceName";
-
     private static final String DO_DEFAULT_CONFIG_PROPERTY =
             "org.dcm4chee.xds.initializeDefaultConfiguration";
 
-    private static final String DEF_DEVICE_NAME =
-            "dcm4chee-xds";
     private static String[] JBOSS_PROPERTIES = {
             "jboss.home",
             "jboss.modules",
@@ -112,10 +105,6 @@ public class XdsServiceImpl implements XdsService {
     private Instance<HL7Service> hl7Services;
 
     @Inject
-    @Named("deviceNameProperty")
-    private String deviceNameProperty;
-
-    @Inject
     @Named("usedDeviceExtension")
     private Instance<String[]> usedDeviceExtension;
 
@@ -128,7 +117,7 @@ public class XdsServiceImpl implements XdsService {
     private String xdsServiceType;
 
     @Inject
-    DefaultConfigurator defaultConfigurator;
+    private XdsDeviceNameProvider deviceNameProvider;
 
     private Device device;
 
@@ -147,24 +136,10 @@ public class XdsServiceImpl implements XdsService {
     }
 
     private Device findDevice() throws ConfigurationException {
-
-
-        String deviceName = System.getProperty(deviceNameProperty);
-        if (deviceName == null)
-            deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
-        try {
-            conf.sync();
-            return conf.findDevice(deviceName);
-        } catch (ConfigurationNotFoundException e) {
-
-            // Try to initialize the default config if configured by a system property
-            if (System.getProperty(DO_DEFAULT_CONFIG_PROPERTY) != null) {
-                defaultConfigurator.applyDefaultConfig(deviceName);
-                return conf.findDevice(deviceName);
-            } else
-                throw e;
-        }
+        String deviceName = deviceNameProvider.getDeviceName();
+        return conf.findDevice(deviceName);
     }
+
 
 
     @PostConstruct

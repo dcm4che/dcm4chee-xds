@@ -37,15 +37,13 @@
  * ***** END LICENSE BLOCK ***** */
 package org.dcm4chee.xds2.registry;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
-import javax.enterprise.inject.Typed;
 
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.conf.XdsRegistry;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>

@@ -40,7 +40,6 @@ package org.dcm4chee.xds2.registry.ws;
 
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,12 +70,8 @@ import org.dcm4chee.xds2.infoset.rim.SubmitObjectsRequest;
 import org.dcm4chee.xds2.persistence.XDSCode;
 import org.dcm4chee.xds2.registry.AuditTestManager;
 import org.dcm4chee.xds2.registry.XdsTestServiceImpl;
-import org.dcm4chee.xds2.registry.ws.XDSPersistenceWrapper;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBean;
-import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
-import org.dcm4chee.xds2.registry.ws.XDSValidator;
 import org.dcm4chee.xds2.registry.ws.tools.DeepEquals;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 import org.dcm4chee.xds2.ws.handler.LogHandler;
 import org.jboss.shrinkwrap.api.ArchivePaths;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

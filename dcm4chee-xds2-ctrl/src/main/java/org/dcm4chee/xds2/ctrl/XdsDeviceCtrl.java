@@ -43,7 +43,7 @@ import org.dcm4che3.conf.api.internal.DicomConfigurationManager;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

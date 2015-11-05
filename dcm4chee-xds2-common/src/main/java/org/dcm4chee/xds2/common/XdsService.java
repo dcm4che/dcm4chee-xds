@@ -35,7 +35,7 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.dcm4chee.xds2.service;
+package org.dcm4chee.xds2.common;
 
 import org.dcm4che3.net.DeviceServiceInterface;
 
@@ -44,6 +44,10 @@ import org.dcm4che3.net.DeviceServiceInterface;
  *
  */
 public interface XdsService extends DeviceServiceInterface {
+
+    String DEVICE_NAME_PROPERTY = "org.dcm4chee.xds.deviceName";
+    String DEF_DEVICE_NAME = "dcm4chee-xds";
+
     /**
      * Should reload the configuration and fire a ReconfigureEvent
      * @throws Exception

@@ -58,7 +58,7 @@ import org.dcm4chee.xds2.common.code.XADCfgRepository;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.ctrl.XdsDeviceCtrl;
 import org.dcm4chee.xds2.registry.ws.XDSRegistryBeanLocal;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
