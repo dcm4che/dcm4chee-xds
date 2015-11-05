@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.audit.AuditRecordRepository;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
@@ -55,9 +56,23 @@ public class XdsConfigTest extends XdsConfigTestBase{
         if (System.getProperty("org.dcm4che.conf.filename") == null)
             System.setProperty("org.dcm4che.conf.filename", "target/config.json");
 
-        if (System.getProperty("org.dcm4che.conf.cached") == null)
-            System.setProperty("org.dcm4che.conf.cached", "false");
 
-        config = new XdsConfigurationFactory().getCommonDicomConfigurationWithHL7();
+        DicomConfigurationBuilder builder = new DicomConfigurationBuilder(System.getProperties());
+
+        builder.registerDeviceExtension(XdsRegistry.class);
+        builder.registerDeviceExtension(XdsRepository.class);
+        builder.registerDeviceExtension(XCARespondingGWCfg.class);
+        builder.registerDeviceExtension(XCAiRespondingGWCfg.class);
+        builder.registerDeviceExtension(XCAiInitiatingGWCfg.class);
+        builder.registerDeviceExtension(XCAInitiatingGWCfg.class);
+        builder.registerDeviceExtension(XdsSource.class);
+        builder.registerDeviceExtension(StorageConfiguration.class);
+        builder.registerDeviceExtension(HL7DeviceExtension.class);
+        builder.registerDeviceExtension(AuditRecordRepository.class);
+        builder.registerDeviceExtension(AuditLogger.class);
+        builder.registerDeviceExtension(XDSiSourceCfg.class);
+
+        config = builder.build();
+
     }
 }

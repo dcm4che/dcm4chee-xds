@@ -38,8 +38,8 @@
 
 package org.dcm4chee.xds2.ctrl;
 
-import org.dcm4che3.conf.core.BeanVitalizer;
-import org.dcm4che3.conf.dicom.DicomConfigurationManager;
+import org.dcm4che3.conf.core.api.internal.BeanVitalizer;
+import org.dcm4che3.conf.api.internal.DicomConfigurationManager;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.cdi.Xds;

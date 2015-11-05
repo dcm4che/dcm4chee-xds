@@ -39,8 +39,8 @@
  */
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che3.conf.api.ConfigurationException;
-import org.dcm4che3.conf.core.Configuration;
+import org.dcm4che3.conf.core.api.ConfigurationException;
+import org.dcm4che3.conf.core.api.Configuration;
 import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.audit.AuditRecordRepository;
@@ -97,8 +97,6 @@ public class XdsConfigTestIT extends XdsConfigTestBase {
     public void setup() throws ConfigurationException {
         DicomConfigurationBuilder builder = new DicomConfigurationBuilder();
         builder.registerCustomConfigurationStorage(dbConfigStorage);
-        //builder.cache(true);
-        builder.cache();
 
         builder.registerDeviceExtension(XdsRegistry.class);
         builder.registerDeviceExtension(XdsRepository.class);

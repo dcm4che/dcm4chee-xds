@@ -210,7 +210,7 @@
                             <bundleFileName>dcm4chee-xds2-browser-rs.war</bundleFileName>
                         </webModule>
                         <webModule>
-                            <groupId>org.dcm4chee</groupId>
+                            <groupId>org.dcm4che.dcm4chee-conf</groupId>
                             <artifactId>dcm4chee-conf-web</artifactId>
                             <contextRoot>/xds-browser</contextRoot>
                             <bundleFileName>dcm4chee-xds2-browser.war</bundleFileName>
