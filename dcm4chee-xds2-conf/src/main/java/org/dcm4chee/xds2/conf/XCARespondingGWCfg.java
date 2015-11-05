@@ -38,10 +38,10 @@
 
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che3.conf.api.extensions.ReconfiguringIterator;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.core.api.ConfigurableProperty;
 import org.dcm4che3.conf.core.api.LDAP;
-import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
@@ -134,12 +134,6 @@ public class XCARespondingGWCfg extends XCAExtension {
 
     public void setRepositoryDeviceByUidMap(Map<String, Device> repositoryDeviceByUidMap) {
         this.repositoryDeviceByUidMap = repositoryDeviceByUidMap;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
-        ConfigIterators.reconfigure(src, this, XCARespondingGWCfg.class);
     }
 
 }

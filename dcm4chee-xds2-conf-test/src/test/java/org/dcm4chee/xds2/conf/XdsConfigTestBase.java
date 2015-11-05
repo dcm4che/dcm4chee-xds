@@ -53,9 +53,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.dcm4che3.audit.AuditMessages;
-import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.data.Code;
 import org.dcm4che3.data.Issuer;
 import org.dcm4che3.net.Connection;
@@ -127,7 +127,6 @@ public class XdsConfigTestBase {
             createdDevices.clear();
         }
 
-        config.close();
     }
 
     public Device addDeviceWithExtensionAndPersist(DeviceExtension extension, String deviceName) throws Exception {
@@ -945,7 +944,7 @@ public class XdsConfigTestBase {
         AuditLogger logger = new AuditLogger();
         device.addDeviceExtension(logger);
         logger.addConnection(udp);
-        logger.setAuditRecordRepositoryDevice(arrDevice);
+        logger.getAuditRecordRepositoryDevices().add(arrDevice);
         logger.setSchemaURI(AuditMessages.SCHEMA_URI);
         return logger;
     }

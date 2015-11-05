@@ -41,7 +41,7 @@
   <parent>
     <groupId>org.dcm4che</groupId>
     <artifactId>dcm4chee-xds2-parent</artifactId>
-    <version>2.0.6-SNAPSHOT</version>
+    <version>2.0.7-SNAPSHOT</version>
   </parent>
   <artifactId>dcm4chee-xds2-conf-test</artifactId>
     <properties>
@@ -52,6 +52,11 @@
       <dependency>
           <groupId>org.dcm4che</groupId>
           <artifactId>dcm4che-conf-core</artifactId>
+          <version>${dcm4che.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.dcm4che</groupId>
+          <artifactId>dcm4che-conf-api</artifactId>
           <version>${dcm4che.version}</version>
       </dependency>
       <dependency>

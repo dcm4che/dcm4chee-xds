@@ -38,7 +38,6 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che3.conf.dicom.DicomConfigurationBuilder;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.audit.AuditRecordRepository;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;

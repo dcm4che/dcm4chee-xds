@@ -38,9 +38,9 @@
 package org.dcm4chee.xds2.service.impl;
 
 import org.dcm4che3.audit.AuditMessages.EventTypeCode;
-import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.audit.AuditLogger;

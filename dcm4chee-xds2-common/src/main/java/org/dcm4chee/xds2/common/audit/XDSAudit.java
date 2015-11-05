@@ -920,8 +920,6 @@ public class XDSAudit {
             .append(":").append(c.getPort())
             .append('(').append(c.getProtocol()).append(')');
         }
-        Device arrDevice = logger.getAuditRecordRepositoryDevice();
-        sb.append("\nAudit Record Repository:").append(arrDevice);
         sb.append("\nProcess ID:").append(AuditLogger.processID())
         .append("\nLocalHost:").append(AuditLogger.localHost());
         return sb.toString();
