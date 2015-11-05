@@ -1,13 +1,13 @@
 package org.dcm4chee.xds2.conf;
 
+import org.dcm4che3.conf.api.extensions.CommonDeviceExtension;
 import org.dcm4che3.conf.core.api.ConfigurableProperty;
-import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 
 /**
  * @author Roman K
  */
-public class XdsExtension extends DeviceExtension implements Deactivateable {
+public class XdsExtension extends CommonDeviceExtension implements Deactivateable {
 
     @ConfigurableProperty(name = "xdsIsDeactivated",
             label = "Deactivated",

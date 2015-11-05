@@ -1,7 +1,6 @@
 package org.dcm4chee.xds2.conf;
 
 import org.dcm4che3.conf.api.ConfigurationAlreadyExistsException;
-import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.net.Connection;
 import org.dcm4che3.net.Device;
@@ -10,14 +9,13 @@ import org.dcm4che3.net.audit.AuditRecordRepository;
 import org.dcm4che3.net.hl7.HL7Application;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.util.UIDUtils;
-import org.dcm4chee.storage.conf.StorageAvailability;
 import org.dcm4chee.storage.conf.Filesystem;
 import org.dcm4chee.storage.conf.FilesystemGroup;
+import org.dcm4chee.storage.conf.StorageAvailability;
 import org.dcm4chee.storage.conf.StorageConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ejb.Stateful;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -189,8 +187,6 @@ public class DefaultConfigurator {
             device.addDeviceExtension(auditLogger);
 
             config.persist(device);
-
-            config.close();
 
         }catch (ConfigurationAlreadyExistsException e) {
             // noop - probably some other deployment already inited it

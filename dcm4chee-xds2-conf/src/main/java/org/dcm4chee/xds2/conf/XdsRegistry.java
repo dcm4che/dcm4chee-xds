@@ -41,8 +41,6 @@ package org.dcm4chee.xds2.conf;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.core.api.ConfigurableProperty;
 import org.dcm4che3.conf.core.api.LDAP;
-import org.dcm4che3.conf.core.util.ConfigIterators;
-import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.util.StringUtils;
 import org.dcm4chee.xds2.common.code.XADCfgRepository;
 
@@ -209,12 +207,6 @@ public class XdsRegistry extends XdsExtension {
 
     public void setCheckMimetype(boolean checkMimetype) {
         this.checkMimetype = checkMimetype;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XdsRegistry src = (XdsRegistry) from;
-        ConfigIterators.reconfigure(src, this, XdsRegistry.class);
     }
 
 }

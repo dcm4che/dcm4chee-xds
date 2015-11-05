@@ -158,43 +158,9 @@
 	</build>
 	
 	<profiles>
-		<profile>
-		<id>jdbc-prefs</id>
-			<activation>
-			  	<property>
-			    	<name>environment</name>
-			    	<value>xdbuild</value>
-		  		</property>
-			</activation>
-			<dependencies>
-				<dependency>
-					<groupId>org.dcm4che.jdbc.prefs</groupId>
-					<artifactId>dcm4che-jdbc-prefs-ejb</artifactId>
-					<classifier>${db}${asb}</classifier>
-					<type>ejb</type>
-					<version>${jdbc-prefs.version}</version>
-				</dependency>
-			</dependencies>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-ear-plugin</artifactId>
-						<version>2.6</version>
-						<configuration>
-							<defaultJavaBundleDir>lib</defaultJavaBundleDir>
-							<modules combine.children="append">
-								<ejbModule>
-									<groupId>org.dcm4che.jdbc.prefs</groupId>
-									<artifactId>dcm4che-jdbc-prefs-ejb</artifactId>
-								</ejbModule>
-							</modules>
-							<version>6</version>
-						</configuration>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
+
+
+		
 	</profiles>
 
 	

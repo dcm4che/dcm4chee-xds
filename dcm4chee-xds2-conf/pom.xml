@@ -51,7 +51,7 @@
     <dependencies>
         <dependency>
             <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4che-conf-core</artifactId>
+            <artifactId>dcm4che-conf-api-hl7</artifactId>
             <version>${dcm4che.version}</version>
             <scope>provided</scope>
         </dependency>

@@ -41,7 +41,6 @@ package org.dcm4chee.xds2.conf;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.core.api.ConfigurableProperty;
 import org.dcm4che3.conf.core.api.LDAP;
-import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 import org.slf4j.Logger;
@@ -278,8 +277,7 @@ public class XCAInitiatingGWCfg extends XCAExtension {
 
     @Override
     public void reconfigure(DeviceExtension from) {
-        XCAInitiatingGWCfg src = (XCAInitiatingGWCfg) from;
-        ConfigIterators.reconfigure(src, this, XCAInitiatingGWCfg.class);
+        super.reconfigure(from);
         this.lastReconfigured = System.currentTimeMillis();
     }
     

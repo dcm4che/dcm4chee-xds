@@ -41,9 +41,7 @@ package org.dcm4chee.xds2.conf;
 import org.dcm4che3.conf.core.api.ConfigurableClass;
 import org.dcm4che3.conf.core.api.ConfigurableProperty;
 import org.dcm4che3.conf.core.api.LDAP;
-import org.dcm4che3.conf.core.util.ConfigIterators;
 import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,12 +156,6 @@ public class XCAiInitiatingGWCfg extends XCAExtension {
 
     public void setAsyncHandler(boolean asyncHandler) {
         this.asyncHandler = asyncHandler;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XCAiInitiatingGWCfg src = (XCAiInitiatingGWCfg) from;
-        ConfigIterators.reconfigure(src, this, XCAiInitiatingGWCfg.class);
     }
 
 }

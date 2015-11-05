@@ -38,9 +38,9 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
@@ -49,28 +49,29 @@ import org.slf4j.LoggerFactory;
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-@ConfigClass(commonName = "XdsImagingSource", objectClass = "xdsImagingSource", nodeName = "xdsImagingSource")
+@LDAP(objectClasses = "xdsImagingSource")
+@ConfigurableClass
 public class XDSiSourceCfg extends DeviceExtension implements Deactivateable{
 
     public static final Logger log = LoggerFactory.getLogger(XDSiSourceCfg.class);
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigField(name = "xdsIsDeactivated",
+    @ConfigurableProperty(name = "xdsIsDeactivated",
             label = "Deactivated",
             description = "Controls whether the service is deactivated")
     private boolean deactivated = false;
 
-    @ConfigField(name = "xdsApplicationName")
+    @ConfigurableProperty(name = "xdsApplicationName")
     private String applicationName;
 
-    @ConfigField(name = "xdsURL")
+    @ConfigurableProperty(name = "xdsURL")
     private String url;
 
-    @ConfigField(name = "xdsSoapMsgLogDir")
+    @ConfigurableProperty(name = "xdsSoapMsgLogDir")
     private String soapLogDir;
 
-    @ConfigField(name = "xdsDicomObjectProvider")
+    @ConfigurableProperty(name = "xdsDicomObjectProvider")
     private String dicomObjectProvider;
 
 
@@ -104,12 +105,6 @@ public class XDSiSourceCfg extends DeviceExtension implements Deactivateable{
 
     public void setSoapLogDir(String soapLogDir) {
         this.soapLogDir = soapLogDir;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XDSiSourceCfg src = (XDSiSourceCfg) from;
-        ReflectiveConfig.reconfigure(src, this);
     }
 
     @Override

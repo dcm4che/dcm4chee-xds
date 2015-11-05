@@ -38,26 +38,8 @@
 
 package org.dcm4chee.xds2.storage.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.text.Format;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.ejb.EJB;
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
-
-import org.dcm4che3.conf.api.ConfigurationException;
 import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.net.Device;
 import org.dcm4chee.storage.conf.Storage;
 import org.dcm4chee.storage.service.StorageResult;
@@ -71,6 +53,23 @@ import org.dcm4chee.xds2.storage.XDSStorage;
 import org.dcm4chee.xds2.storage.ejb.XdsStorageBeanLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
+import javax.ejb.EJB;
+import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Any;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.Format;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class XDSFileStorage implements XDSStorage {

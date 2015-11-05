@@ -111,6 +111,11 @@
             <version>${storage.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.dcm4che.dcm4chee-conf</groupId>
+            <artifactId>dcm4chee-conf-cdi</artifactId>
+            <version>${dcm4chee-conf.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.6.1</version>
@@ -177,11 +182,11 @@
             <id>asb</id>
             <dependencies>
                 <dependency>
-                    <groupId>org.dcm4chee</groupId>
+                    <groupId>org.dcm4che.dcm4chee-conf</groupId>
                     <artifactId>dcm4chee-conf-db</artifactId>
                     <classifier>asb</classifier>
                     <type>ejb</type>
-                    <version>${conf-db-storage.version}</version>
+                    <version>${dcm4chee-conf.version}</version>
                 </dependency>
             </dependencies>
             <build>
@@ -194,7 +199,7 @@
                             <defaultJavaBundleDir>lib</defaultJavaBundleDir>
                             <modules combine.children="append">
                                 <ejbModule>
-                                    <groupId>org.dcm4chee</groupId>
+                                    <groupId>org.dcm4che.dcm4chee-conf</groupId>
                                     <artifactId>dcm4chee-conf-db</artifactId>
                                 </ejbModule>
                             </modules>
