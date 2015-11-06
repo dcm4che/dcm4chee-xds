@@ -46,13 +46,12 @@ import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4che3.net.hl7.HL7DeviceExtension;
 import org.dcm4che3.net.hl7.service.HL7Service;
 import org.dcm4che3.net.hl7.service.HL7ServiceRegistry;
+import org.dcm4chee.xds2.common.XdsService;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.cdi.Xds;
 import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
-import org.dcm4chee.xds2.conf.DefaultXdsRegRepConfigurationInit;
 import org.dcm4chee.xds2.conf.XdsDeviceNameProvider;
 import org.dcm4chee.xds2.service.ReconfigureEvent;
-import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,6 +115,12 @@ public class XdsServiceImpl implements XdsService {
     @Named("xdsServiceType")
     private String xdsServiceType;
 
+
+    @Inject
+    @Named("deviceNameProperty")
+    private String deviceNameProperty;
+
+
     @Inject
     private XdsDeviceNameProvider deviceNameProvider;
 
@@ -136,10 +141,15 @@ public class XdsServiceImpl implements XdsService {
     }
 
     private Device findDevice() throws ConfigurationException {
-        String deviceName = deviceNameProvider.getDeviceName();
-        return conf.findDevice(deviceName);
+        return conf.findDevice(getDeviceName());
     }
 
+    private String getDeviceName() {
+        String deviceName = System.getProperty(deviceNameProperty);
+        if (deviceName == null)
+            deviceName = System.getProperty(DEVICE_NAME_PROPERTY, DEF_DEVICE_NAME);
+        return deviceName;
+    }
 
 
     @PostConstruct
@@ -231,13 +241,17 @@ public class XdsServiceImpl implements XdsService {
     }
 
     @Override
-    public void reload() throws Exception {
-        log.info("Reloading XDS extension {} @ {}", xdsServiceType, device.getDeviceName());
-        device.reconfigure(findDevice());
-        if (hl7serviceAvail) {
-            device.rebindConnections();
+    public void reload() {
+        try {
+            log.info("Reloading XDS extension {} @ {}", xdsServiceType, device.getDeviceName());
+            device.reconfigure(findDevice());
+            if (hl7serviceAvail) {
+                device.rebindConnections();
+            }
+            reconfigureEvent.fire(new ReconfigureEvent());
+        } catch (Exception e) {
+            throw new RuntimeException("Cannot reload XDS configuration (device '"+getDeviceName()+"')",e);
         }
-        reconfigureEvent.fire(new ReconfigureEvent());
     }
 
     private void logApplicationActivity(boolean started) {
