@@ -1,4 +1,6 @@
-/* ***** BEGIN LICENSE BLOCK *****
+/*
+ *
+ * ** BEGIN LICENSE BLOCK *****
  * Version: MPL 1.1/GPL 2.0/LGPL 2.1
  *
  * The contents of this file are subject to the Mozilla Public License Version
@@ -16,7 +18,7 @@
  *
  * The Initial Developer of the Original Code is
  * Agfa Healthcare.
- * Portions created by the Initial Developer are Copyright (C) 2011-2014
+ * Portions created by the Initial Developer are Copyright (C) 2015
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -34,50 +36,24 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
- * ***** END LICENSE BLOCK ***** */
+ * **** END LICENSE BLOCK *****
+ *
+ */
 
-package org.dcm4chee.xds2.conf;
+package org.dcm4che.xds2.conf;
 
 import org.dcm4che3.conf.api.DicomConfiguration;
 import org.dcm4che3.conf.api.hl7.HL7ApplicationCache;
 import org.dcm4che3.conf.api.hl7.HL7Configuration;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
-import org.dcm4che3.net.audit.AuditLogger;
-import org.dcm4che3.net.audit.AuditRecordRepository;
-import org.dcm4che3.net.hl7.HL7DeviceExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
+import javax.ws.rs.Produces;
 
 /**
- * @author Franz Willer <franz.willer@gmail.com>
+ * @author Roman K
  */
-
-@ApplicationScoped
-public class CacheAndLibraryExtensionsProducer {
-
-    public static final Logger log = LoggerFactory.getLogger(CacheAndLibraryExtensionsProducer.class);
-
-    /*
-     * Library modules do not support CDI so we need these explicit producers for device extensions that come from the library.
-     */
-
-    @Produces
-    AuditLogger getAuditLogger() {
-        return new AuditLogger();
-    }
-
-    @Produces
-    AuditRecordRepository getAuditRecordRepository() {
-        return new AuditRecordRepository();
-    }
-
-    @Produces
-    HL7DeviceExtension getHL7DeviceExtension() {
-        return new HL7DeviceExtension();
-    }
+public class HL7CacheProducer {
 
     @Produces
     @ApplicationScoped

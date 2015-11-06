@@ -40,8 +40,6 @@
 
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4chee.xds2.common.XdsService;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -50,16 +48,7 @@ import javax.inject.Named;
  */
 public class XdsDeviceNameProvider {
 
-    @Inject
-    @Named("deviceNameProperty")
-    private String deviceNameProperty;
 
-    public String getDeviceName() {
-        String deviceName = System.getProperty(deviceNameProperty);
-        if (deviceName == null)
-            deviceName = System.getProperty(XdsService.DEVICE_NAME_PROPERTY, XdsService.DEF_DEVICE_NAME);
-        return deviceName;
-    }
 
 
 }

@@ -105,7 +105,7 @@
 					<ejbVersion>3.1</ejbVersion>
 			          <archive>
 			            <manifestEntries>
-					<Dependencies>org.dcm4che.conf.api, org.dcm4che.net, org.dcm4che.net-hl7 </Dependencies>
+										<Dependencies>org.dcm4che.conf.api, org.dcm4che.net, org.dcm4che.net-hl7 </Dependencies>
 			            </manifestEntries>
 			          </archive>
 				</configuration>

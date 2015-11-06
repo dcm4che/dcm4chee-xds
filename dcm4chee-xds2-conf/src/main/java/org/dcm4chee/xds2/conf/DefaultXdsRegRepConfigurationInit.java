@@ -17,10 +17,10 @@ import org.dcm4chee.storage.conf.Filesystem;
 import org.dcm4chee.storage.conf.FilesystemGroup;
 import org.dcm4chee.storage.conf.StorageAvailability;
 import org.dcm4chee.storage.conf.StorageConfiguration;
+import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,35 +38,29 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
     public DefaultXdsRegRepConfigurationInit() {
     }
 
-
-    @Inject
-    XdsDeviceNameProvider deviceNameProvider;
-
     @Override
     public void upgrade(UpgradeContext upgradeContext) throws ConfigurationException {
 
-        String deviceName = deviceNameProvider.getDeviceName();
+        String deviceName = System.getProperty(XdsService.DEVICE_NAME_PROPERTY, XdsService.DEF_DEVICE_NAME);
         try {
-            Device device = upgradeContext.getDicomConfiguration().findDevice(deviceName);
+            upgradeContext.getDicomConfiguration().findDevice(deviceName);
+            log.info("XDS device '{}' already exists, no config init performed", deviceName);
         } catch (ConfigurationNotFoundException nf) {
-
-            // only init if not found
+            log.info("XDS device '{}' not found => initializing default config ...", deviceName);
             try {
                 applyDefaultConfig(deviceName, upgradeContext.getDicomConfiguration());
             } catch (Exception e) {
-                throw new ConfigurationException("Could not auto-initialize default XDS configuration", e);
+                throw new ConfigurationException("Could not initialize default XDS configuration", e);
             }
         }
     }
 
     public void applyDefaultConfig(String deviceName, DicomConfiguration config) {
 
-        log.info("Initializing the default configuration for device {}", deviceName);
-
+        log.info("Initializing default XDS configuration for device {}", deviceName);
 
         // should work with agility
         String ip = System.getProperty("jboss.bind.address", "localhost");
-
 
         boolean useArr = false;
         try {
