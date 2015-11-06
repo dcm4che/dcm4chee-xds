@@ -3,6 +3,7 @@ package org.dcm4chee.xds2.conf;
 import org.dcm4che3.conf.api.ConfigurationAlreadyExistsException;
 import org.dcm4che3.conf.api.ConfigurationNotFoundException;
 import org.dcm4che3.conf.api.DicomConfiguration;
+import org.dcm4che3.conf.api.upgrade.ScriptVersion;
 import org.dcm4che3.conf.api.upgrade.UpgradeScript;
 import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.net.Connection;
@@ -26,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ScriptVersion("110-0")
 public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultXdsRegRepConfigurationInit.class);
