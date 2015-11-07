@@ -46,6 +46,7 @@ import org.dcm4che3.conf.core.api.ConfigChangeEvent;
 import org.dcm4chee.xds2.common.XdsService;
 
 import javax.enterprise.event.Observes;
+import javax.enterprise.inject.Any;
 import javax.inject.Inject;
 
 /**
@@ -54,6 +55,7 @@ import javax.inject.Inject;
 public class ConfigUpdateObserver {
 
     @Inject
+    @Any
     XdsService xdsService;
 
     public void onConfigUpdate(@Observes ConfigChangeEvent changeEvent) {
