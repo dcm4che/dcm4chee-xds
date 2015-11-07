@@ -1,4 +1,6 @@
 <jboss-web>
+    ${browser.security.enabled.l}
         <security-domain>java:/jaas/${browser.security.domain}</security-domain>
 	${jboss-web.extra.settings}
+    ${browser.security.enabled.r}
 </jboss-web>
