@@ -174,6 +174,7 @@
             <groupId>org.dcm4che.dcm4chee-conf</groupId>
             <artifactId>dcm4chee-conf-cdi</artifactId>
             <version>${dcm4chee-conf.version}</version>
+            <type>ejb</type>
         </dependency>
     </dependencies>
     <build>
@@ -197,6 +198,10 @@
                         <ejbModule>
                             <groupId>org.dcm4che</groupId>
                             <artifactId>dcm4chee-xds2-service</artifactId>
+                        </ejbModule>
+                        <ejbModule>
+                            <groupId>org.dcm4che.dcm4chee-conf</groupId>
+                            <artifactId>dcm4chee-conf-cdi</artifactId>
                         </ejbModule>
                         <webModule>
                             <groupId>org.dcm4che</groupId>

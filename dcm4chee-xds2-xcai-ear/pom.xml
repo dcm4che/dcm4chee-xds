@@ -95,6 +95,12 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.dcm4che.dcm4chee-conf</groupId>
+			<artifactId>dcm4chee-conf-cdi</artifactId>
+			<version>${dcm4chee-conf.version}</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-pix-client</artifactId>
 			<version>${project.version}</version>
@@ -141,6 +147,10 @@
 						<ejbModule>
 							<groupId>org.dcm4che</groupId>
 							<artifactId>dcm4chee-xds2-service</artifactId>
+						</ejbModule>
+						<ejbModule>
+							<groupId>org.dcm4che.dcm4chee-conf</groupId>
+							<artifactId>dcm4chee-conf-cdi</artifactId>
 						</ejbModule>
 						<webModule>
 							<groupId>org.dcm4che</groupId>
