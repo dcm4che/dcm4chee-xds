@@ -12,15 +12,16 @@
  * License.
  *
  * The Original Code is part of dcm4che, an implementation of DICOM(TM) in
- * Java(TM), hosted at https://github.com/gunterze/dcm4che.
+ * Java(TM), available at http://sourceforge.net/projects/dcm4che.
  *
  * The Initial Developer of the Original Code is
- * Agfa Healthcare.
- * Portions created by the Initial Developer are Copyright (C) 2011
+ * TIANI Medgraph AG.
+ * Portions created by the Initial Developer are Copyright (C) 2003-2005
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * See @authors listed below
+ * Gunter Zeilinger <gunter.zeilinger@tiani.com>
+ * Franz Willer <franz.willer@gmail.com>
  *
  * Alternatively, the contents of this file may be used under the terms of
  * either the GNU General Public License Version 2 or later (the "GPL"), or
@@ -35,19 +36,32 @@
  * the terms of any one of the MPL, the GPL or the LGPL.
  *
  * ***** END LICENSE BLOCK ***** */
-package org.dcm4chee.xds2.common;
+package org.dcm4chee.xds2.common.code;
 
-import org.dcm4che3.net.DeviceServiceInterface;
+import java.util.Collection;
+
 
 /**
- * @author Gunter Zeilinger <gunterze@gmail.com>
+ * Service Provider Interface for code repository provider.
+ * 
+ * @author franz.willer@agfa.com
  *
  */
-public interface XdsService extends DeviceServiceInterface {
+public interface XADCfgProviderSPI {
 
-    /**
-     * Should reload the configuration and fire a ReconfigureEvent
-     * @throws Exception
-     */
-    void reload();
+    String getName();
+    
+    void init(String... cfg);
+    
+    Collection<String> getAffinityDomains();
+    
+    AffinityDomainCodes initCodes(XADCfgRepository codeRep, String affinityDomain);
+    
+    String getDescription();
+    
+    boolean supportMimetypeCfg();
+    
+    boolean configChanged(String name, String... cfg);
+    
+    String getNameOfDefaultDomain();
 }

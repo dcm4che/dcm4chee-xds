@@ -69,11 +69,6 @@
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>
-            <artifactId>dcm4chee-xds2-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.dcm4che</groupId>
             <artifactId>dcm4chee-storage-conf</artifactId>
             <version>${storage.version}</version>
         </dependency>

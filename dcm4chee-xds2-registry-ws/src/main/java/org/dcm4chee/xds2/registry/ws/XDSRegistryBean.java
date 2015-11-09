@@ -49,13 +49,7 @@ import java.util.UUID;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import javax.ejb.EJB;
-import javax.ejb.EJBContext;
-import javax.ejb.EJBException;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateless;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -948,20 +942,28 @@ public class XDSRegistryBean implements XDSRegistryBeanLocal {
        return null;
        
     }
-    
+
+    /**
+     * Async to make sure we don't end up having recursive PostConstruct calls for XdsServiceImpl
+     */
     @Override
+    @Asynchronous
     public void checkAndAutoInitializeRegistry()  {
-        // if there are no identifiables in the database, perform the XDS initialization
-        log.info("Checking content of the XDS registry...");
-        Long identifiablesTotal = (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
-        if (identifiablesTotal == 0) {
-            log.info("Initializing XDS Registry with default metadata...");
-            XDSInitCommon.autoInitializeRegistry(this);
-            log.info("XDS Registry successfully initialized");
-        } else {
-            log.info("XDS Registry already contains data - no initialization needed");
+
+        // make sure we don't let more than 1 init run at the same time
+        synchronized (XDSRegistryBean.class) {
+            log.info("Checking if the XDS registry needs to be initialized with metadata (XDS Registry auto-initialization)...");
+            // if there are no identifiables in the database, perform the XDS initialization
+            Long identifiablesTotal = (Long) em.createQuery("SELECT count(i) FROM Identifiable i").getResultList().get(0);
+            if (identifiablesTotal == 0) {
+                log.info("Initializing XDS Registry with default metadata...");
+                XDSInitCommon.autoInitializeRegistry(this);
+                log.info("XDS Registry successfully initialized");
+            } else {
+                log.info("XDS Registry already contains data - no initialization needed");
+            }
         }
-        
+
     }
     
 

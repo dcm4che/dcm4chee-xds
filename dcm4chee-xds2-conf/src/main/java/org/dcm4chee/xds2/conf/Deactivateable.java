@@ -35,7 +35,7 @@
  *   the terms of any one of the MPL, the GPL or the LGPL.
  */
 
-package org.dcm4chee.xds2.common.deactivatable;
+package org.dcm4chee.xds2.conf;
 
 /**
  * @author Roman K

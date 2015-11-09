@@ -82,6 +82,11 @@
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.dcm4che.dcm4chee</groupId>
+			<artifactId>dcm4chee-ee-core</artifactId>
+			<version>${dcm4chee-conf.version}</version>
+		</dependency>
 		
 		<dependency>
 			<groupId>org.jboss.spec.javax.ejb</groupId>

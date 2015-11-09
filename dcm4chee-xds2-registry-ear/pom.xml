@@ -176,6 +176,11 @@
             <version>${dcm4chee-conf.version}</version>
             <type>ejb</type>
         </dependency>
+        <dependency>
+            <groupId>org.dcm4che.dcm4chee</groupId>
+            <artifactId>dcm4chee-ee-core</artifactId>
+            <version>${dcm4chee-conf.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

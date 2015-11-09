@@ -17,7 +17,6 @@ import org.dcm4chee.storage.conf.Filesystem;
 import org.dcm4chee.storage.conf.FilesystemGroup;
 import org.dcm4chee.storage.conf.StorageAvailability;
 import org.dcm4chee.storage.conf.StorageConfiguration;
-import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +40,7 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
     @Override
     public void upgrade(UpgradeContext upgradeContext) throws ConfigurationException {
 
-        String deviceName = System.getProperty(XdsService.DEVICE_NAME_PROPERTY, XdsService.DEF_DEVICE_NAME);
+        String deviceName = System.getProperty(XdsExtension.DEVICE_NAME_PROPERTY, XdsExtension.DEF_DEVICE_NAME);
         try {
             upgradeContext.getDicomConfiguration().findDevice(deviceName);
             log.info("XDS device '{}' already exists, no config init performed", deviceName);
