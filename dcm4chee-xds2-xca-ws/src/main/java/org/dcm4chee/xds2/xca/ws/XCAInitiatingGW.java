@@ -53,6 +53,7 @@ import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.jws.HandlerChain;
@@ -66,7 +67,7 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.dcm4che3.conf.api.ConfigurationException;
+import org.dcm4che3.conf.core.api.ConfigurationException;
 import org.dcm4che3.conf.api.hl7.IHL7ApplicationCache;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.hl7.HL7Application;
@@ -121,6 +122,7 @@ import org.slf4j.LoggerFactory;
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
 @DeactivateableByConfiguration(extension = XCAInitiatingGWCfg.class)
+@PermitAll
 public class XCAInitiatingGW implements InitiatingGatewayPortType {
     
     private ObjectFactory factory = new ObjectFactory();

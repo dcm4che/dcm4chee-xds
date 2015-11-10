@@ -43,6 +43,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-conf-api</artifactId>
+			<version>${dcm4che.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-common</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
@@ -57,13 +63,11 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-store-api</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-store-file</artifactId>
 			<version>${project.version}</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.dcm4che</groupId>
@@ -405,11 +409,17 @@
 					<ejbVersion>3.1</ejbVersion>
 			          <archive>
 			            <manifestEntries>
-							<Dependencies>com.mysema.querydsl,org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit,org.dcm4che.conf.ldap-audit,org.dcm4che.conf.prefs-audit</Dependencies>
+							<Dependencies>com.mysema.querydsl,org.apache.cxf,org.dcm4che.net,org.dcm4che.net-hl7,org.dcm4che.audit</Dependencies>
 			            </manifestEntries>
 			          </archive>
 				</configuration>
 			</plugin>
 		</plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 	</build>
 </project>

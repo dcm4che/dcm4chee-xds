@@ -7,5 +7,6 @@
 		<ejb-name>XDSRegistryBeanWS</ejb-name>
 		<port-component-name>DocumentRegistry_Port_Soap12</port-component-name>
 		<port-component-uri>/*</port-component-uri>
+        ${ws.security.parameters}
 	</port-component>
 </webservices>

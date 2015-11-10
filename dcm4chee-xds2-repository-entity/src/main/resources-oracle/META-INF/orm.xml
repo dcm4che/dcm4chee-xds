@@ -18,8 +18,8 @@
   </mapped-superclass>
 
   <entity class="XdsFileRef">
-    <table name="file_ref" />
-    <sequence-generator name="seq" sequence-name="files_pk_seq" allocation-size="1" />
+    <table name="xds_file_ref" />
+    <sequence-generator name="seq" sequence-name="xds_file_ref_pks" allocation-size="1" />
     <attributes>
       <id name="pk">
         <column name="pk" />
@@ -30,7 +30,7 @@
 
   <entity class="XdsDocument">
     <table name="xds_document" />
-    <sequence-generator name="seq" sequence-name="xds_document_pk_seq" allocation-size="1" />
+    <sequence-generator name="seq" sequence-name="xds_document_pks" allocation-size="1" />
     <attributes>
       <id name="pk">
         <column name="pk" />

@@ -38,9 +38,14 @@
 
 package org.dcm4chee.xds2.ctrl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.dcm4che3.conf.core.api.internal.BeanVitalizer;
+import org.dcm4che3.conf.api.internal.DicomConfigurationManager;
+import org.dcm4che3.net.Device;
+import org.dcm4che3.net.DeviceExtension;
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.common.XdsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
@@ -52,13 +57,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.service.XdsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.Map;
 
 @Path("/ctrl")
 @RequestScoped
@@ -101,20 +101,26 @@ public class XdsDeviceCtrl {
         return Response.status(Status.NO_CONTENT).build();
     }
 
+
+    @Inject
+    DicomConfigurationManager configurationManager;
+
+
     @GET
     @Path("config")
     @Produces(MediaType.APPLICATION_JSON)      
-    public List<ConfigObjectJSON> getConfig() throws Exception {
-    	
-    	List<ConfigObjectJSON> jsonexts = new ArrayList<ConfigObjectJSON>();
-    	Collection<DeviceExtension> exts = service.getDevice().listDeviceExtensions();
-    	
-    	for (DeviceExtension de : exts) {
-            if (de.getClass().getAnnotation(ConfigClass.class) != null)
-                jsonexts.add(ConfigObjectJSON.serializeDeviceExtension(de)); 		
-    	}
-    	
-    	return jsonexts;
+    public Map<String,Object> getConfig() throws Exception {
+
+        BeanVitalizer vitalizer = configurationManager.getVitalizer();
+        Map<String, Object> map = (Map<String, Object>) vitalizer.lookupDefaultTypeAdapter(Device.class).toConfigNode(service.getDevice(), null, vitalizer);
+
+        HashMap<String, Object> exts = new HashMap<String, Object>();
+        map.put("deviceExtensions", exts);
+        for (DeviceExtension deviceExtension : service.getDevice().listDeviceExtensions()) {
+            exts.put(deviceExtension.getClass().getSimpleName(), vitalizer.lookupDefaultTypeAdapter(deviceExtension.getClass()).toConfigNode(deviceExtension, null, vitalizer));
+        }
+
+        return map;
     }
 
     

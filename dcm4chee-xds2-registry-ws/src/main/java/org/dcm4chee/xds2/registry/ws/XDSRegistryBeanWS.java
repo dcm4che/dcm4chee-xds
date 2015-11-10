@@ -38,6 +38,7 @@
 
 package org.dcm4chee.xds2.registry.ws;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.jws.HandlerChain;
@@ -73,6 +74,7 @@ import org.slf4j.LoggerFactory;
 @SOAPBinding(style = SOAPBinding.Style.DOCUMENT)
 @Addressing(enabled=true, required=true)
 @HandlerChain(file="handlers.xml")
+@PermitAll
 public class XDSRegistryBeanWS implements DocumentRegistryPortType {
 
     @EJB

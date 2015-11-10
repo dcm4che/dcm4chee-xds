@@ -55,6 +55,9 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <version>2.2.1</version>
         <configuration>
+          <filters>
+            <filter>${basedir}/src/etc/configuration/jboss-cli/${db}.properties</filter>
+          </filters>
           <descriptors>
             <descriptor>src/assembly/bin.xml</descriptor>
           </descriptors>

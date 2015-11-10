@@ -50,7 +50,7 @@ import java.lang.annotation.Target;
  * <p> Intercepts all the calls and allows to proceed only if the service specified by a device extension parameter has a configuration property isDeactivated()==false </p>
  * Throws a {@code XDSServiceDeactivatedException} if there is no such an extension defined for the device, or if the extension is deactivated.
  * <p>{@code extension} parameter must specify a class that extends {@code DeviceExtension} and implements {@code Deactivateable}</p>
- * @see org.dcm4chee.xds2.common.deactivatable.Deactivateable
+ * @see org.dcm4chee.xds2.conf.Deactivateable
  * @author Roman K
  */
 @Retention(RetentionPolicy.RUNTIME)

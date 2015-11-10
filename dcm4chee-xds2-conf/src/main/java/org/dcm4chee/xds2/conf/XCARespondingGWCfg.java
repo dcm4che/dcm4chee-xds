@@ -38,22 +38,23 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.Map;
-
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
+import org.dcm4che3.conf.api.extensions.ReconfiguringIterator;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
-@ConfigClass(commonName = "XCARespondingGW", objectClass = "xcaRespondingGW", nodeName = "xcaRespondingGW")
-public class XCARespondingGWCfg extends DeviceExtension implements Deactivateable {
+@LDAP( objectClasses = "xcaRespondingGW")
+@ConfigurableClass
+public class XCARespondingGWCfg extends XCAExtension {
 
     public static final Logger log = LoggerFactory.getLogger(XCARespondingGWCfg.class);
 
@@ -61,30 +62,21 @@ public class XCARespondingGWCfg extends DeviceExtension implements Deactivateabl
 
     private static final String DEFAULTID = "*";
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName")
-    private String applicationName;
-
-    @ConfigField(name = "xdsHomeCommunityID")
-    private String homeCommunityID;
-
-    @ConfigField(name = "xdsSoapMsgLogDir")
-    private String soapLogDir;
-
-    @ConfigField(name = "xdsQueryUrl")
+    @ConfigurableProperty(name = "xdsQueryUrl")
     private String queryUrl;
 
-    @ConfigField(name = "xdsRetrieveUrl")
+    @ConfigurableProperty(name = "xdsRetrieveUrl")
     private String retrieveUrl;
 
-    @ConfigField(name = "xdsRegistry")
+    @ConfigurableProperty(name = "xdsRegistry", isReference = true)
     private Device registry;
 
-    @ConfigField(mapName = "xdsRepositories", mapKey = "xdsRepositoryUid", name = "xdsRepository", mapElementObjectClass = "xdsRepositoryByUid")
+    @LDAP(
+            distinguishingField = "xdsRepositoryUid",
+            mapValueAttribute = "xdsRepository",
+            mapEntryObjectClass = "xdsRepositoryByUid"
+    )
+    @ConfigurableProperty(name = "xdsRepositories", collectionOfReferences = true)
     private Map<String, Device> repositoryDeviceByUidMap;
 
     public String getRepositoryURL(String repositoryID) {
@@ -143,42 +135,4 @@ public class XCARespondingGWCfg extends DeviceExtension implements Deactivateabl
         this.repositoryDeviceByUidMap = repositoryDeviceByUidMap;
     }
 
-    public String getApplicationName() {
-        return applicationName;
-    }
-
-    public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
-
-    public String getHomeCommunityID() {
-        return homeCommunityID;
-    }
-
-    public void setHomeCommunityID(String homeCommunityID) {
-        this.homeCommunityID = homeCommunityID;
-    }
-
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XCARespondingGWCfg src = (XCARespondingGWCfg) from;
-        ReflectiveConfig.reconfigure(src, this);
-    }
-
-    @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
 }

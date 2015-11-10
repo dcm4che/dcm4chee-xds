@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ***** BEGIN LICENSE BLOCK ***** - Version: MPL 1.1/GPL 2.0/LGPL 2.1 
+	- - The contents of this file are subject to the Mozilla Public License Version 
+	- 1.1 (the "License"); you may not use this file except in compliance with 
+	- the License. You may obtain a copy of the License at - http://www.mozilla.org/MPL/ 
+	- - Software distributed under the License is distributed on an "AS IS" basis, 
+	- WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License 
+	- for the specific language governing rights and limitations under the - 
+	License. - - The Original Code is part of dcm4che, an implementation of DICOM(TM)in 
+	- Java(TM), hosted at https://github.com/gunterze/dcm4che. - - The Initial 
+	Developer of the Original Code is - Agfa Healthcare. - Portions created by 
+	the Initial Developer are Copyright (C) 2011 - the Initial Developer. All 
+	Rights Reserved. - - Contributor(s): - Roman K <roman.khazankin@gmail.com> 
+	- - Alternatively, the contents of this file may be used under the terms 
+	of - either the GNU General Public License Version 2 or later (the "GPL"), 
+	or - the GNU Lesser General Public License Version 2.1 or later (the "LGPL"), 
+	- in which case the provisions of the GPL or the LGPL are applicable instead 
+	- of those above. If you wish to allow use of your version of this file only 
+	- under the terms of either the GPL or the LGPL, and not to allow others 
+	to - use your version of this file under the terms of the MPL, indicate your 
+	- decision by deleting the provisions above and replace them with the notice 
+	- and other provisions required by the GPL or the LGPL. If you do not delete 
+	- the provisions above, a recipient may use your version of this file under 
+	- the terms of any one of the MPL, the GPL or the LGPL. - - ***** END LICENSE 
+	BLOCK ***** -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.dcm4che</groupId>
+		<artifactId>dcm4chee-xds2-parent</artifactId>
+		<version>2.0.7-SNAPSHOT</version>
+	</parent>
+	<artifactId>dcm4chee-xds2-browser-rs</artifactId>
+	<packaging>war</packaging>
+	<name>Online registry browser REST services</name>
+    <properties>
+		<browser.security.enabled.l />
+		<browser.security.enabled.r />
+    </properties>
+    <profiles>
+        <profile>
+
+			<id>security-disabled</id>
+			<properties>
+				<browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
+				<browser.security.enabled.r>--&gt;</browser.security.enabled.r>
+			</properties>
+
+		</profile>
+    </profiles>
+	<dependencies>
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-registry-ws</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-repository-ws</artifactId>
+			<version>${project.version}</version>
+			<type>ejb</type>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-common</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-infoset</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-conf</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-conf-api</artifactId>
+			<version>${dcm4che.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4che-conf-core</artifactId>
+			<version>${dcm4che.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.dcm4che</groupId>
+			<artifactId>dcm4chee-xds2-ctrl</artifactId>
+			<version>${project.version}</version>
+			<scope>provided</scope>
+		</dependency>		
+
+		<dependency>
+			<groupId>javax.enterprise</groupId>
+			<artifactId>cdi-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>		
+
+		<!-- mime type tools -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.spec.javax.ejb</groupId>
+			<artifactId>jboss-ejb-api_3.1_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.spec.javax.servlet</groupId>
+			<artifactId>jboss-servlet-api_3.0_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
+
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.1.1</version>
+                <configuration>
+                    <filters>
+                        <filter>${basedir}/../xds${asb}.properties</filter>
+                    </filters>
+                    <webResources>
+
+                        <resource>
+                            <directory>src/main/webapp</directory>
+                            <filtering>true</filtering>
+                        </resource>
+                    </webResources>
+                </configuration>
+			</plugin>
+		</plugins>
+
+	</build>
+</project>

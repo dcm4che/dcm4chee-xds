@@ -38,28 +38,20 @@
 
 package org.dcm4chee.xds2.repository.ctrl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.dcm4chee.storage.service.StorageService;
+import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.common.XdsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.storage.service.StorageService;
-import org.dcm4chee.xds2.common.cdi.Xds;
-import org.dcm4chee.xds2.service.XdsService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Path("/ctrl")
 @RequestScoped
@@ -120,37 +112,6 @@ public class XdsRepositoryCtrl {
         log.info("Service reconfigured (device {})",storeService.getDevice().getDeviceName());
         return Response.status(Status.OK).build();
     }
-    
-    @GET
-    @Path("config")
-    @Produces(MediaType.APPLICATION_JSON)      
-    public List<ConfigObjectJSON> getConfig() throws Exception {
-    	
-    	List<ConfigObjectJSON> jsonexts = new ArrayList<ConfigObjectJSON>();
-    	Collection<DeviceExtension> exts = service.getDevice().listDeviceExtensions();
-    	
-    	for (DeviceExtension de : exts) {
-            if (de.getClass().getAnnotation(ConfigClass.class) != null)
-                jsonexts.add(ConfigObjectJSON.serializeDeviceExtension(de)); 		
-    	}
-    	
-    	return jsonexts;
-    }
 
-    @GET
-    @Path("config/storage")
-    @Produces(MediaType.APPLICATION_JSON)      
-    public List<ConfigObjectJSON> getStorageConfig() throws Exception {
-    	
-    	List<ConfigObjectJSON> jsonexts = new ArrayList<ConfigObjectJSON>();
-    	Collection<DeviceExtension> exts = storeService.getDevice().listDeviceExtensions();
-    	
-    	for (DeviceExtension de : exts) {
-            if (de.getClass().getAnnotation(ConfigClass.class) != null)
-                jsonexts.add(ConfigObjectJSON.serializeDeviceExtension(de)); 		
-    	}
-    	
-    	return jsonexts;
-    }
 
 }

@@ -347,7 +347,10 @@ public class PnRSnd {
         device.addConnection(auditUDP);
         logger.addConnection(auditUDP);
         logger.setAuditSourceTypeCodes("4");
-        logger.setAuditRecordRepositoryDevice(arrDevice);
+
+        if (!logger.getAuditRecordRepositoryDeviceNames().contains(arrDevice.getDeviceName()))
+            logger.getAuditRecordRepositoryDevices().add(arrDevice);
+
         logger.setIncludeBOM(false);
         XDSAudit.setAuditLogger(logger);
     }
@@ -376,7 +379,10 @@ public class PnRSnd {
         device.addConnection(auditTLS);
         logger.addConnection(auditTLS);
         logger.setAuditSourceTypeCodes("4");
-        logger.setAuditRecordRepositoryDevice(arrDevice);
+
+        if (!logger.getAuditRecordRepositoryDeviceNames().contains(arrDevice.getDeviceName()))
+            logger.getAuditRecordRepositoryDevices().add(arrDevice);
+
         logger.setIncludeBOM(false);
         XDSAudit.setAuditLogger(logger);
     }

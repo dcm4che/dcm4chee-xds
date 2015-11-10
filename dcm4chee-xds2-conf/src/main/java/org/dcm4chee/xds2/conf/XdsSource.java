@@ -1,31 +1,30 @@
 package org.dcm4chee.xds2.conf;
 
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
 import org.dcm4che3.net.Device;
 import org.dcm4che3.net.DeviceExtension;
 
-@ConfigClass(commonName = "XDSSource", objectClass = "xdsSource", nodeName = "xdsSource")
+@LDAP(objectClasses = "xdsSource")
+@ConfigurableClass
 public class XdsSource extends DeviceExtension {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1288348626210008707L;
 
-    @ConfigField(name = "xdsSourceUid")
+    @ConfigurableProperty(name = "xdsSourceUid")
     private String uid;
 
     /**
      * Which registry to route Register requests/queries
      */
-    @ConfigField(name = "xdsRegistry")
+    @ConfigurableProperty(name = "xdsRegistry", isReference = true)
     private Device registry;
 
-    @ConfigField(name = "xdsRepository")
+    @ConfigurableProperty(name = "xdsRepository", isReference = true)
     private Device repository;
 
-    @ConfigField(name = "xdsURL")
+    @ConfigurableProperty(name = "xdsURL")
     private String url;
 
     public String getUrl() {

@@ -45,6 +45,7 @@ import javax.interceptor.InvocationContext;
 import org.dcm4che3.net.DeviceExtension;
 import org.dcm4che3.net.DeviceServiceInterface;
 import org.dcm4chee.xds2.common.cdi.Xds;
+import org.dcm4chee.xds2.conf.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

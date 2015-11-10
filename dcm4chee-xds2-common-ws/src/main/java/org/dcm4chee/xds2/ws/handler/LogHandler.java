@@ -70,7 +70,7 @@ import org.dcm4chee.xds2.conf.XCAiRespondingGWCfg;
 import org.dcm4chee.xds2.conf.XDSiSourceCfg;
 import org.dcm4chee.xds2.conf.XdsRegistry;
 import org.dcm4chee.xds2.conf.XdsRepository;
-import org.dcm4chee.xds2.service.XdsService;
+import org.dcm4chee.xds2.common.XdsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

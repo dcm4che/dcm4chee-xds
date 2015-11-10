@@ -38,26 +38,22 @@
 
 package org.dcm4chee.xds2.conf;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.dcm4che3.conf.api.ConfigurationException;
-import org.dcm4che3.conf.api.generic.ConfigClass;
-import org.dcm4che3.conf.api.generic.ConfigField;
-import org.dcm4che3.conf.api.generic.ReflectiveConfig;
-import org.dcm4che3.conf.ldap.generic.LdapConfigIO;
+import org.dcm4che3.conf.core.api.ConfigurableClass;
+import org.dcm4che3.conf.core.api.ConfigurableProperty;
+import org.dcm4che3.conf.core.api.LDAP;
 import org.dcm4che3.net.Device;
-import org.dcm4che3.net.DeviceExtension;
-import org.dcm4chee.xds2.common.deactivatable.Deactivateable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * @author Franz Willer <franz.willer@gmail.com>
  */
 
-@ConfigClass(commonName = "XDSRepository", objectClass = "xdsRepository", nodeName = "xdsRepository")
-public class XdsRepository extends DeviceExtension implements Deactivateable {
+@LDAP(objectClasses = "xdsRepository")
+@ConfigurableClass
+public class XdsRepository extends XdsExtension {
 
     public static final Logger log = LoggerFactory.getLogger(XdsRepository.class);
 
@@ -65,42 +61,63 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     private static final long serialVersionUID = -8258532093950989486L;
 
-    @ConfigField(name = "xdsIsDeactivated",
-            label = "Deactivated",
-            description = "Controls whether the repository service is deactivated")
-    private boolean deactivated = false;
-
-    @ConfigField(name = "xdsApplicationName")
-    private String applicationName;
-
-    @ConfigField(name = "xdsRepositoryUID")
+    @ConfigurableProperty(name = "xdsRepositoryUID",
+            label = "XDS repository UID",
+            description = "The unique identifier assigned to the repository",
+            group = "General")
     private String repositoryUID;
 
-    @ConfigField(name = "xdsSoapMsgLogDir")
-    private String soapLogDir;
+    @ConfigurableProperty(name = "xdsAcceptedMimeTypes",
+            label = "Accept MIME Types",
+            description = "Which MIME types documents that are stored in this repository allowed to have.",
+            group = "XDS profile strictness")
+    private String[] acceptedMimeTypes = new String[]{};
 
-    @ConfigField(name = "xdsAcceptedMimeTypes")
-    private String[] acceptedMimeTypes = new String[] {};
-
-    @ConfigField(name = "xdsLogFullMessageHosts")
-    private String[] logFullMessageHosts = new String[] {};
-
-    @ConfigField(name = "xdsCheckMimetype")
+    @ConfigurableProperty(name = "xdsCheckMimetype",
+            label = "Check MIME Type",
+            description = "Perform MIME type check for registered documents",
+            defaultValue = "true",
+            group = "XDS profile strictness")
     private boolean checkMimetype;
 
-    @ConfigField(name = "xdsAllowedCipherHostname")
-    private String allowedCipherHostname;
-
-    @ConfigField(name = "xdsProvideUrl")
+    @ConfigurableProperty(name = "xdsProvideUrl",
+            label = "Provide URL",
+            description = "Provide URL that should be used to store documents with this repository (Does NOT actually configure the endpoint!)",
+            group = "Endpoints")
     private String provideUrl;
 
-    @ConfigField(name = "xdsRetrieveUrl")
+    @ConfigurableProperty(name = "xdsRetrieveUrl",
+            label = "Retrieve URL",
+            description = "Retrieve URL that should be used to retrieve documents from this repository (Does NOT actually configure the endpoint!)",
+            group = "Endpoints"
+    )
     private String retrieveUrl;
 
-    @ConfigField(mapName = "xdsSources", mapKey = "xdsSourceUid", name = "xdsSource", mapElementObjectClass = "xdsSourceByUid")
+    @LDAP(
+            distinguishingField = "xdsSourceUid",
+            mapValueAttribute = "xdsSource",
+            mapEntryObjectClass = "xdsSourceByUid"
+    )
+    @ConfigurableProperty(name = "xdsSources",
+            label = "XDS Sources",
+            description = "For different source ids the repository can forward to different registries. " +
+                    "This mapping (Source Id -> Device) specifies which device is used to lookup the source configuration. " +
+                    "The source's configuration is then used to define the registry where the data is forwarded to. Wildcard * is supported.",
+
+            collectionOfReferences= true
+    )
     private Map<String, Device> srcDevicebySrcIdMap;
 
-    @ConfigField(mapName = "xdsFileSystemGroupIDs", mapKey = "xdsAffinityDomain", name = "xdsFileSystemGroupID", mapElementObjectClass = "xdsFilesystemGroupByAffinity")
+    @LDAP(
+            distinguishingField = "xdsAffinityDomain",
+            mapValueAttribute = "xdsFileSystemGroupID",
+            mapEntryObjectClass = "xdsFilesystemGroupByAffinity"
+    )
+    @ConfigurableProperty(name = "xdsFileSystemGroupIDs",
+            label = "Filesystem groups",
+            description = "Mapping (Affinity domain -> Filesystem group) that defines which filesystem groups in the storage are used for which affinity domains. Wildcard * is supported.",
+            group = "Storage"
+    )
     private Map<String, String> fsGroupIDbyAffinity;
 
     public String getRegistryURL(String sourceID) {
@@ -124,21 +141,14 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
     }
 
     public String getFilesystemGroupID(String affinity) {
-        String groupID = fsGroupIDbyAffinity.get(affinity);
+        String groupID = affinity == null ? null : fsGroupIDbyAffinity.get(affinity);
         if (groupID == null) {
-        	groupID = fsGroupIDbyAffinity.get(DEFAULTID);
+            groupID = fsGroupIDbyAffinity.get(DEFAULTID);
         }
         return groupID;
     }
 
     // Getters&setters
-
-    public String getApplicationName() {
-        return applicationName;
-    }
-	public final void setApplicationName(String applicationName) {
-        this.applicationName = applicationName;
-    }
 
     public Map<String, Device> getSrcDevicebySrcIdMap() {
         return srcDevicebySrcIdMap;
@@ -149,12 +159,12 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
     }
 
     public Map<String, String> getFsGroupIDbyAffinity() {
-		return fsGroupIDbyAffinity;
-	}
+        return fsGroupIDbyAffinity;
+    }
 
-	public void setFsGroupIDbyAffinity(Map<String, String> fsGroupIDbyAffinity) {
-		this.fsGroupIDbyAffinity = fsGroupIDbyAffinity;
-	}
+    public void setFsGroupIDbyAffinity(Map<String, String> fsGroupIDbyAffinity) {
+        this.fsGroupIDbyAffinity = fsGroupIDbyAffinity;
+    }
 
     public String getProvideUrl() {
         return provideUrl;
@@ -170,14 +180,6 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
 
     public void setRetrieveUrl(String retrieveUrl) {
         this.retrieveUrl = retrieveUrl;
-    }
-
-    public String getSoapLogDir() {
-        return soapLogDir;
-    }
-
-    public void setSoapLogDir(String soapLogDir) {
-        this.soapLogDir = soapLogDir;
     }
 
     public String getRepositoryUID() {
@@ -204,34 +206,4 @@ public class XdsRepository extends DeviceExtension implements Deactivateable {
         this.checkMimetype = checkMimetype;
     }
 
-    public String[] getLogFullMessageHosts() {
-        return logFullMessageHosts;
-    }
-
-    public void setLogFullMessageHosts(String[] logFullMessageHosts) {
-        this.logFullMessageHosts = logFullMessageHosts;
-    }
-
-    public String getAllowedCipherHostname() {
-        return allowedCipherHostname;
-    }
-
-    public void setAllowedCipherHostname(String allowedCipherHostnames) {
-        this.allowedCipherHostname = allowedCipherHostnames;
-    }
-
-    @Override
-    public void reconfigure(DeviceExtension from) {
-        XdsRepository src = (XdsRepository) from;
-        ReflectiveConfig.reconfigure(src, this);
-    }
-
-    @Override
-    public boolean isDeactivated() {
-        return deactivated;
-    }
-
-    public void setDeactivated(boolean deactivated) {
-        this.deactivated = deactivated;
-    }
 }
