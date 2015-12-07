@@ -57,7 +57,7 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.dcm4che3.audit.ParticipantObjectDescription;
+import org.dcm4che3.audit.AuditMessages.ParticipantObjectDescription;
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -65,7 +65,6 @@ import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
 import org.dcm4chee.xds2.common.audit.XDSAudit;
 import org.dcm4chee.xds2.common.deactivatable.DeactivateableByConfiguration;
 import org.dcm4chee.xds2.common.exception.XDSException;
-import org.dcm4chee.xds2.conf.XCAiInitiatingGWCfg;
 import org.dcm4chee.xds2.conf.XDSiSourceCfg;
 import org.dcm4chee.xds2.imgsrc.DicomObjectProvider;
 import org.dcm4chee.xds2.infoset.ihe.RetrieveDocumentSetRequestType.DocumentRequest;

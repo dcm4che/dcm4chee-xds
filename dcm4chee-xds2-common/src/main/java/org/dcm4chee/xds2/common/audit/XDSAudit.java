@@ -59,10 +59,10 @@ import org.dcm4che3.audit.AuditMessages.EventActionCode;
 import org.dcm4che3.audit.AuditMessages.EventID;
 import org.dcm4che3.audit.AuditMessages.EventOutcomeIndicator;
 import org.dcm4che3.audit.AuditMessages.EventTypeCode;
+import org.dcm4che3.audit.AuditMessages.ParticipantObjectDescription;
 import org.dcm4che3.audit.AuditMessages.ParticipantObjectIDTypeCode;
 import org.dcm4che3.audit.AuditMessages.RoleIDCode;
 import org.dcm4che3.audit.Instance;
-import org.dcm4che3.audit.ParticipantObjectDescription;
 import org.dcm4che3.audit.ParticipantObjectDetail;
 import org.dcm4che3.audit.ParticipantObjectIdentification;
 import org.dcm4che3.audit.SOPClass;
@@ -70,7 +70,6 @@ import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.io.DicomInputStream;
 import org.dcm4che3.net.Connection;
-import org.dcm4che3.net.Device;
 import org.dcm4che3.net.IncompatibleConnectionException;
 import org.dcm4che3.net.audit.AuditLogger;
 import org.dcm4chee.xds2.common.InputStreamDataSource;
@@ -519,8 +518,7 @@ public class XDSAudit {
                         success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure,
                         null,
                         EventTypeCode.ITI_9_PIXQuery));
-                msg.getAuditSourceIdentification().add(
-                        logger.createAuditSourceIdentification());
+                msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
                 String hostName = getLocalHostname();
                 msg.getActiveParticipant().add(
                         AuditMessages.createActiveParticipant(sendingFacility+"|"+sendingApp, 
@@ -677,7 +675,7 @@ public class XDSAudit {
     }
 
     private static ParticipantObjectIdentification createStudyPOI(String studyIUID,
-            ParticipantObjectDescription pod) {
+            AuditMessages.ParticipantObjectDescription pod) {
         return AuditMessages.createParticipantObjectIdentification(
                 studyIUID, 
                 AuditMessages.ParticipantObjectIDTypeCode.StudyInstanceUID, 
@@ -700,8 +698,7 @@ public class XDSAudit {
                 outcomeIndicator,
                 null,
                 eventType));
-        msg.getAuditSourceIdentification().add(
-                logger.createAuditSourceIdentification());
+        msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
         msg.getActiveParticipant().add(
                 logger.createActiveParticipant(false, AuditLogger.processID(), null, 
                         appName, getLocalHostname(), RoleIDCode.Application));
@@ -720,8 +717,7 @@ public class XDSAudit {
                 outcomeIndicator,
                 null,
                 eventTypeCode));
-        msg.getAuditSourceIdentification().add(
-                logger.createAuditSourceIdentification());
+        msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
                         srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
@@ -764,8 +760,7 @@ public class XDSAudit {
                 outcomeIndicator,
                 null,
                 eventTypeCode));
-        msg.getAuditSourceIdentification().add(
-                logger.createAuditSourceIdentification());
+        msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
                         srcHostName, machineOrIP(srcHostName), null, RoleIDCode.Source));
@@ -795,8 +790,7 @@ public class XDSAudit {
                 outcomeIndicator,
                 null,
                 eventTypeCode));
-        msg.getAuditSourceIdentification().add(
-                logger.createAuditSourceIdentification());
+        msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
         String hostName = getLocalHostname();
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
@@ -823,8 +817,7 @@ public class XDSAudit {
                 outcomeIndicator,
                 null,
                 EventTypeCode.ITI_8_PatientIdentityFeed));
-        msg.getAuditSourceIdentification().add(
-                logger.createAuditSourceIdentification());
+        msg.setAuditSourceIdentification(logger.createAuditSourceIdentification());
         String hostName = getLocalHostname();
         msg.getActiveParticipant().add(
                 AuditMessages.createActiveParticipant(srcUserID, altSrcUserID, null, true,
