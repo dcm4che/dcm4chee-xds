@@ -135,10 +135,9 @@ public class RegistryObjectIndex implements Serializable {
         if (!x.getClass().equals(RegistryObjectIndex.class)) return false;
 
         RegistryObjectIndex arg0 = (RegistryObjectIndex) x;
-        
+        boolean b = value == null ? arg0.getValue() == null : value.equals(arg0.getValue());
         // exclude pk from comparison
-        return (getKey().equals(arg0.getKey()) && 
-                getValue().equals(arg0.getValue()) && 
+        return (getKey().equals(arg0.getKey()) && b && 
                 getSubject().equals(arg0.getSubject()));
     }
     
@@ -149,7 +148,8 @@ public class RegistryObjectIndex implements Serializable {
     
     @Override
     public int hashCode() {
-        return getSubject().hashCode()+getValue().hashCode()*10+getKey().ordinal();
+        String v = getValue();
+        return getSubject().hashCode()+(v == null ? 0 : v.hashCode()*10)+getKey().ordinal();
     }
     
 }
