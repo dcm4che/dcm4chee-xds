@@ -266,7 +266,7 @@ public class XDSAudit {
 	                getLocalHostname(), docReq, success);
 	        }
 	    } catch (Exception e ){
-	        log.warn("Audit log of Import ({}) failed!",eventTypeCode.getDisplayName());    	
+	        log.warn("Audit log of Import ({}) failed!",eventTypeCode.getOriginalText());    	
             log.debug("AuditLog Exception:", e);
 	    }
     }
@@ -282,7 +282,7 @@ public class XDSAudit {
                     success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
             sendAuditMessage(timeStamp, msg);
         } catch (Exception e) {
-            log.warn("Audit log of Import ("+eventTypeCode.getDisplayName()+") failed!");
+            log.warn("Audit log of Import ("+eventTypeCode.getOriginalText()+") failed!");
             log.debug("AuditLog Exception:", e);
         }
     }
@@ -404,7 +404,7 @@ public class XDSAudit {
                     docReq, docUIDs, timeStamp, success ? EventOutcomeIndicator.Success : EventOutcomeIndicator.MinorFailure);
             sendAuditMessage(timeStamp, msg);
         } catch (Exception e) {
-            log.warn("Audit log of Export ("+eventTypeCode.getDisplayName()+") failed!");
+            log.warn("Audit log of Export ("+eventTypeCode.getOriginalText()+") failed!");
             log.debug("AuditLog Exception:", e);
         }
     }
@@ -838,11 +838,11 @@ public class XDSAudit {
     }
 
     public static void sendAuditMessage(Calendar timeStamp, AuditMessage msg) throws IncompatibleConnectionException, GeneralSecurityException, IOException {
-        log.debug("Send audit message! EventId: {}", msg.getEventIdentification().getEventID().getDisplayName());
+        log.debug("Send audit message! EventId: {}", msg.getEventIdentification().getEventID().getOriginalText());
         if (log.isDebugEnabled())
             log.debug("Sent audit message:"+AuditMessages.toXML(msg));
         logger.write(timeStamp, msg);
-        log.debug("Audit message sent! EventId: {}", msg.getEventIdentification().getEventID().getDisplayName());
+        log.debug("Audit message sent! EventId: {}", msg.getEventIdentification().getEventID().getOriginalText());
     }
 
     public static ParticipantObjectIdentification createPatient(String patID) {
