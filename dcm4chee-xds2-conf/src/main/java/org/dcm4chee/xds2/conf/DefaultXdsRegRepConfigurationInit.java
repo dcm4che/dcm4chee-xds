@@ -59,7 +59,10 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
         log.info("Initializing default XDS configuration for device {}", deviceName);
 
         // should work with agility
-        String ip = System.getProperty("jboss.bind.address", "localhost");
+        String ip = System.getProperty("jboss.bind.address");
+        if (ip == null || ip.equals("0.0.0.0")) {
+            ip = "localhost";
+        }
 
         boolean useArr = false;
         try {
