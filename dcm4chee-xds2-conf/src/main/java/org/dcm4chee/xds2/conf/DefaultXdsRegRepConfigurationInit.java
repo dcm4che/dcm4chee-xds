@@ -104,8 +104,8 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
         registry.setAffinityDomainConfigDir("${jboss.server.config.dir}/xds/affinitydomain");
         registry.setAcceptedMimeTypes(MIME_TYPES2);
         registry.setSoapLogDir("../standalone/log/xds");
-        registry.setQueryUrl("https://" + ip + ":443/xds/registry");
-        registry.setRegisterUrl("https://" + ip + ":443/xds/registry");
+        registry.setQueryUrl("https://" + ip + ":8443/xds/registry");
+        registry.setRegisterUrl("https://" + ip + ":8443/xds/registry");
 
         // generic source
         XdsSource source = new XdsSource();
@@ -119,8 +119,8 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
         device.addDeviceExtension(rep);
         rep.setApplicationName("XDS-REPOSITORY");
         rep.setRepositoryUID(UIDUtils.createUID());
-        rep.setRetrieveUrl("https://" + ip + ":443/xds/repository");
-        rep.setProvideUrl("https://" + ip + ":443/xds/repository");
+        rep.setRetrieveUrl("https://" + ip + ":8443/xds/repository");
+        rep.setProvideUrl("https://" + ip + ":8443/xds/repository");
         rep.setAcceptedMimeTypes(MIME_TYPES2);
         rep.setSoapLogDir("../standalone/log/xds");
         rep.setCheckMimetype(false);
