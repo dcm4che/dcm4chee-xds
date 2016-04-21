@@ -34,21 +34,6 @@
 	<artifactId>dcm4chee-xds2-browser-rs</artifactId>
 	<packaging>war</packaging>
 	<name>Online registry browser REST services</name>
-    <properties>
-		<browser.security.enabled.l />
-		<browser.security.enabled.r />
-    </properties>
-    <profiles>
-        <profile>
-
-			<id>security-disabled</id>
-			<properties>
-				<browser.security.enabled.l>&lt;!--</browser.security.enabled.l>
-				<browser.security.enabled.r>--&gt;</browser.security.enabled.r>
-			</properties>
-
-		</profile>
-    </profiles>
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>

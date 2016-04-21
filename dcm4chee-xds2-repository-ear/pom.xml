@@ -70,7 +70,7 @@
             <groupId>org.dcm4che</groupId>
             <artifactId>dcm4chee-xds2-repository-entity</artifactId>
             <version>${project.version}</version>
-            <classifier>${db}</classifier>
+            <classifier>${db}${asb}</classifier>
         </dependency>
         <dependency>
             <groupId>org.dcm4che</groupId>

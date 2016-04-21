@@ -47,9 +47,6 @@
     <artifactId>dcm4chee-xds2-registry-ear</artifactId>
     <packaging>ear</packaging>
     <name>Build EAR for XDS.b Registry (ebRS v3.0)</name>
-    <properties>
-        <conf-web-classifier/>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>org.dcm4che</groupId>
@@ -160,7 +157,7 @@
         <dependency>
             <groupId>org.dcm4che.dcm4chee-conf</groupId>
             <artifactId>dcm4chee-conf-web</artifactId>
-            <classifier>xds${asb}${conf-web-classifier}</classifier>
+            <classifier>${conf-web-classifier}</classifier>
             <type>war</type>
             <version>${dcm4chee-conf.version}</version>
         </dependency>
@@ -236,12 +233,6 @@
 
     <profiles>
         <profile>
-            <id>security-disabled</id>
-            <properties>
-                <conf-web-classifier>-unsecure</conf-web-classifier>
-            </properties>
-        </profile>
-        <profile>
             <id>conf-db</id>
             <dependencies>
                 <dependency>
@@ -274,6 +265,9 @@
 
         <profile>
             <id>asb</id>
+            <properties>
+        			<conf-web-classifier>csp-asb</conf-web-classifier>
+    		</properties>
             <dependencies>
                 <dependency>
                     <groupId>org.dcm4che.dcm4chee-conf</groupId>

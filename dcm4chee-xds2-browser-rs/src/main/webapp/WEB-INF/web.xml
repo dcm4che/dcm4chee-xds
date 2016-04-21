@@ -8,7 +8,7 @@
 		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
-    <!-- Security. Only allow WebAdmin role to the browser--> ${browser.security.enabled.l}
+    <!-- Security. Only allow WebAdmin role to the browser
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Stylesheets and libs</web-resource-name>
@@ -41,5 +41,5 @@
             <form-login-page>/login.html</form-login-page>
             <form-error-page>/login.html?loginFailed=true</form-error-page>
         </form-login-config>
-    </login-config> ${browser.security.enabled.r}
+    </login-config> -->
 </web-app>
