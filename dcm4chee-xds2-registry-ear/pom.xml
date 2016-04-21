@@ -47,6 +47,9 @@
     <artifactId>dcm4chee-xds2-registry-ear</artifactId>
     <packaging>ear</packaging>
     <name>Build EAR for XDS.b Registry (ebRS v3.0)</name>
+    <properties>
+        <conf-web-classifier/>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>org.dcm4che</groupId>
