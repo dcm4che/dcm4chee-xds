@@ -57,38 +57,45 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.jboss.ws.plugins</groupId>
-				<artifactId>maven-jaxws-tools-plugin</artifactId>
-				<version>1.0.0.GA</version>
+				<groupId>org.jvnet.jax-ws-commons</groupId>
+				<artifactId>jaxws-maven-plugin</artifactId>
+				<version>2.3</version>
 				
 				<executions>
 					<execution>
 						<id>XDS.b Registry</id>
 						<goals>
-							<goal>wsconsume</goal>
+							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XDS.b_DocumentRegistry.wsdl</wsdl>
-							</wsdls>
+							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>XDS.b_DocumentRegistry.wsdl</wsdlFile>
+							</wsdlFiles>
+							<bindingDirectory>src/bindings</bindingDirectory>
 							<bindingFiles>
-								<File>${basedir}/src/bindings/wsdl.xml</File>
-								<File>${basedir}/src/bindings/schemas_rim.xml</File>
+								<bindingFile>wsdl.xml</bindingFile>
+								<bindingFile>schemas_rim.xml</bindingFile>
 							</bindingFiles>
 							<extension>true</extension>
 							<target>2.0</target>
 							<verbose>true</verbose>
+							<vmArgs>
+								<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+							</vmArgs>
 						</configuration>
 					</execution>
 					<execution>
 						<id>XDS.b Repository</id>
 						<goals>
-							<goal>wsconsume</goal>
+							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XDS.b_DocumentRepository.wsdl</wsdl>
-							</wsdls>
+							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>XDS.b_DocumentRepository.wsdl</wsdlFile>
+							</wsdlFiles>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_repo.xml</File>
 								<File>${basedir}/src/bindings/schemas_repo.xml</File>
@@ -96,18 +103,23 @@
 							<extension>true</extension>
 							<target>2.0</target>
 							<verbose>true</verbose>
+							<vmArgs>
+								<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+							</vmArgs>
 						</configuration>
 					</execution>
 					<execution>
 						<id>XCA Initiating and Responding Gateway</id>
 						<goals>
-							<goal>wsconsume</goal>
+							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XCARespondingGateway.wsdl</wsdl>
-								<wsdl>${basedir}/src/main/resources/wsdl/XCAInitiatingGateway.wsdl</wsdl>
-							</wsdls>
+							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>XCARespondingGateway.wsdl</wsdlFile>
+								<wsdlFile>XCAInitiatingGateway.wsdl</wsdlFile>
+							</wsdlFiles>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_xca.xml</File>
 								<File>${basedir}/src/bindings/schemas_repo.xml</File>
@@ -115,17 +127,22 @@
 							<extension>true</extension>
 							<target>2.0</target>
 							<verbose>true</verbose>
+							<vmArgs>
+								<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+							</vmArgs>
 						</configuration>
 					</execution>
 					<execution>
 						<id>XDS-I.b ImagingDocumentSource</id>
 						<goals>
-							<goal>wsconsume</goal>
+							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XDS-I.b_ImagingDocumentSource.wsdl</wsdl>
-							</wsdls>
+							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>XDS-I.b_ImagingDocumentSource.wsdl</wsdlFile>
+							</wsdlFiles>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_src.xml</File>
 								<File>${basedir}/src/bindings/schemas_src.xml</File>
@@ -133,18 +150,23 @@
 							<extension>true</extension>
 							<target>2.0</target>
 							<verbose>true</verbose>
+							<vmArgs>
+								<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+							</vmArgs>
 						</configuration>
 					</execution>
 					<execution>
 						<id>XCA-I Initiating and Responding Gateway</id>
 						<goals>
-							<goal>wsconsume</goal>
+							<goal>wsimport</goal>
 						</goals>
 						<configuration>
-							<wsdls>
-								<wsdl>${basedir}/src/main/resources/wsdl/XCA-I-RespondingGateway.wsdl</wsdl>
-								<!-- <wsdl>${basedir}/src/main/resources/wsdl/XCA-I-InitiatingGateway.wsdl</wsdl> -->
-							</wsdls>
+							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
+							<wsdlFiles>
+								<wsdlFile>XCA-I-RespondingGateway.wsdl</wsdlFile>
+								<!-- <wsdlFile>XCA-I-InitiatingGateway.wsdl</wsdlFile> -->
+							</wsdlFiles>
 							<bindingFiles>
 								<File>${basedir}/src/bindings/wsdl_xca.xml</File>
 								<File>${basedir}/src/bindings/schemas_src.xml</File>
@@ -152,25 +174,13 @@
 							<extension>true</extension>
 							<target>2.0</target>
 							<verbose>true</verbose>
+							<vmArgs>
+								<vmArg>-Djavax.xml.accessExternalDTD=all</vmArg>
+								<vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
+							</vmArgs>
 						</configuration>
 					</execution>
 				</executions>
-				<dependencies>
-					<dependency>
-						<groupId>org.jboss.ws.native</groupId>
-						<artifactId>jbossws-native-client</artifactId>
-						<version>3.2.1.GA</version>
-						<type>jar</type>
-						<scope>compile</scope>
-					</dependency>
-					<dependency>
-						<groupId>org.jboss</groupId>
-						<artifactId>jbossws-spi</artifactId>
-						<version>1.1.1.GA</version>
-						<type>jar</type>
-						<scope>compile</scope>
-					</dependency>
-				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -185,11 +195,11 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>org.jboss.ws.plugins</groupId>
-										<artifactId>maven-jaxws-tools-plugin</artifactId>
-										<versionRange>[1.0.0.GA,)</versionRange>
+										<groupId>org.jvnet.jax-ws-commonss</groupId>
+										<artifactId>jaxws-maven-plugin</artifactId>
+										<versionRange>[2.0,)</versionRange>
 										<goals>
-											<goal>wsconsume</goal>
+											<goal>wsimport</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

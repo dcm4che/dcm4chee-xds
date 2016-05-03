@@ -110,7 +110,6 @@
 
     </profiles>
     <modules>
-        <module>dcm4chee-xds2-mvnprepare</module>
         <module>dcm4chee-xds2-infoset</module>
         <module>dcm4chee-xds2-common</module>
         <module>dcm4chee-xds2-common-ws</module>

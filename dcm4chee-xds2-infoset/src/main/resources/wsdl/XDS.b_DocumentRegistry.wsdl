@@ -21,19 +21,16 @@
 		<xsd:schema elementFormDefault="qualified"
 			targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0"
 			xmlns:rs="urn:oasis:names:tc:ebxml-regrep:xsd:rs:3.0">
-			<!-- Include the message schema -->
 			<xsd:include schemaLocation="../schema/ebRS/rs.xsd" />
 		</xsd:schema>
 		<xsd:schema elementFormDefault="qualified"
 			targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0"
 			xmlns:query="urn:oasis:names:tc:ebxml-regrep:xsd:query:3.0">
-			<!-- Include the message schema -->
 			<xsd:include schemaLocation="../schema/ebRS/query.xsd" />
 		</xsd:schema>
 		<xsd:schema elementFormDefault="qualified"
 			targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0"
 			xmlns:lcm="urn:oasis:names:tc:ebxml-regrep:xsd:lcm:3.0">
-			<!-- Include the message schema -->
 			<xsd:include schemaLocation="../schema/ebRS/lcm.xsd" />
 		</xsd:schema>
 		<!-- While no elements are directly used from this schema in the WSDL, 
@@ -42,9 +39,8 @@
 		<xsd:schema elementFormDefault="qualified"
 			targetNamespace="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0"
 			xmlns:lcm="urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0">
-			<!-- Include the message schema -->
 			<xsd:include schemaLocation="../schema/ebRS/rim.xsd" />
-		</xsd:schema>
+		</xsd:schema> 
 	</types>
 	<message name="RegistryStoredQuery_Message">
 		<documentation>Registry Stored Query</documentation>
