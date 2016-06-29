@@ -57,7 +57,6 @@ import javax.xml.ws.soap.Addressing;
 import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
-import org.dcm4che3.audit.AuditMessages.ParticipantObjectDescription;
 import org.dcm4che3.net.Device;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
@@ -136,10 +135,9 @@ public class XDSiSource implements ImagingDocumentSourcePortType {
         try {
             DicomObjectProvider dicomProvider = getDicomObjectProvider();
             for (StudyRequest study : req.getStudyRequest()) {
-                ParticipantObjectDescription pod = new ParticipantObjectDescription();
                 for (SeriesRequest series : study.getSeriesRequest()) {
                     for ( DocumentRequest doc : series.getDocumentRequest()) {
-                        addDicomObject(dicomProvider, rsp, study.getStudyInstanceUID(), series.getSeriesInstanceUID(), doc, supportedTS, pod);
+                        addDicomObject(dicomProvider, rsp, study.getStudyInstanceUID(), series.getSeriesInstanceUID(), doc, supportedTS);
                     }
                 }
             }
@@ -158,7 +156,7 @@ public class XDSiSource implements ImagingDocumentSourcePortType {
         return rsp;
     }
 
-    private void addDicomObject(DicomObjectProvider dicomProvider, final RetrieveDocumentSetResponseType rsp, final String studyUID, final String seriesUID, final DocumentRequest doc, List<String> supportedTS, ParticipantObjectDescription pod) {
+    private void addDicomObject(DicomObjectProvider dicomProvider, final RetrieveDocumentSetResponseType rsp, final String studyUID, final String seriesUID, final DocumentRequest doc, List<String> supportedTS) {
         try {
             DataHandler dh = dicomProvider.getDataHandler(studyUID, seriesUID, doc.getDocumentUniqueId(), cfg.getDicomObjectProvider(), supportedTS);
             DocumentResponse docRsp = iheFactory.createRetrieveDocumentSetResponseTypeDocumentResponse();
