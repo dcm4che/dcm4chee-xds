@@ -49,7 +49,7 @@
 			<groupId>org.dcm4che</groupId>
 			<artifactId>dcm4chee-xds2-repository-entity</artifactId>
 			<version>${project.version}</version>
-			<classifier>${db}</classifier>
+			<classifier>${db}${asb}</classifier>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

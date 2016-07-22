@@ -136,7 +136,6 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -148,7 +147,6 @@
         <dependency>
             <groupId>org.jboss.spec.javax.servlet</groupId>
             <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <version>1.0.0.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -167,7 +165,6 @@
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.0-api</artifactId>
-            <version>1.0.0.Final</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -207,6 +204,7 @@
                         <ejbModule>
                             <groupId>org.dcm4che.dcm4chee-conf</groupId>
                             <artifactId>dcm4chee-conf-cdi</artifactId>
+                            <bundleFileName>dcm4chee-conf-cdi.jar</bundleFileName>
                         </ejbModule>
                         <webModule>
                             <groupId>org.dcm4che</groupId>
@@ -257,6 +255,7 @@
                                 <ejbModule>
                                     <groupId>org.dcm4che.dcm4chee-conf</groupId>
                                     <artifactId>dcm4chee-conf-db</artifactId>
+                                    <bundleFileName>dcm4chee-conf-db.jar</bundleFileName>
                                 </ejbModule>
                             </modules>
                             <version>6</version>
@@ -292,6 +291,7 @@
                                 <ejbModule>
                                     <groupId>org.dcm4che.dcm4chee-conf</groupId>
                                     <artifactId>dcm4chee-conf-db</artifactId>
+                                    <bundleFileName>dcm4chee-conf-db.jar</bundleFileName>
                                 </ejbModule>
                             </modules>
                             <version>6</version>
