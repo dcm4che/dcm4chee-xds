@@ -67,12 +67,12 @@ public class XdsDeviceCtrl {
     @Inject
     @Xds
     private XdsService service;
-    
+
     public static final Logger log = LoggerFactory.getLogger(XdsDeviceCtrl.class);
-    
+
     @Context
     private HttpServletRequest request;
-    
+
     @GET
     @Path("running")
     public String isRunning() {
@@ -97,7 +97,7 @@ public class XdsDeviceCtrl {
     @Path("reload")
     public Response reload() throws Exception {
         service.reload();
-        log.info("Service reconfigured (device {})",service.getDevice().getDeviceName());
+        log.info("Service reconfigured (device {})", service.getDevice().getDeviceName());
         return Response.status(Status.NO_CONTENT).build();
     }
 
@@ -108,21 +108,17 @@ public class XdsDeviceCtrl {
 
     @GET
     @Path("config")
-    @Produces(MediaType.APPLICATION_JSON)      
-    public Map<String,Object> getConfig() throws Exception {
+    @Produces(MediaType.APPLICATION_JSON)
+    public Map<String, Object> getConfig() throws Exception {
 
         BeanVitalizer vitalizer = configurationManager.getVitalizer();
-        Map<String, Object> map = (Map<String, Object>) vitalizer.lookupDefaultTypeAdapter(Device.class).toConfigNode(service.getDevice(), null, vitalizer);
-
-        HashMap<String, Object> exts = new HashMap<String, Object>();
-        map.put("deviceExtensions", exts);
-        for (DeviceExtension deviceExtension : service.getDevice().listDeviceExtensions()) {
-            exts.put(deviceExtension.getClass().getSimpleName(), vitalizer.lookupDefaultTypeAdapter(deviceExtension.getClass()).toConfigNode(deviceExtension, null, vitalizer));
-        }
+        Map<String, Object> map = (Map<String, Object>) vitalizer.lookupDefaultTypeAdapter(Device.class).toConfigNode(
+                service.getDevice(),
+                null,
+                configurationManager.getTypeSafeConfiguration().getContextFactory().newSavingContext());
 
         return map;
     }
 
-    
-    
+
 }
