@@ -888,7 +888,7 @@ public class XdsConfigTestBase {
         System.out.println("\n###################################################");
         System.out.println("\n###################################################");
         System.out.println("\n###################################################");
-        config.persist(d);
+        config.merge(d);
         afterPersist();
         checkHL7Apps(DEFAULT_XDS_DEVICE, hl7Apps);
 
@@ -939,7 +939,7 @@ public class XdsConfigTestBase {
         arrUDP.setPort(514);
         arrDevice.addConnection(arrUDP);
         arr.addConnection(arrUDP);
-        config.persist(arrDevice);
+        config.merge(arrDevice);
 
         AuditLogger logger = new AuditLogger();
         device.addDeviceExtension(logger);
