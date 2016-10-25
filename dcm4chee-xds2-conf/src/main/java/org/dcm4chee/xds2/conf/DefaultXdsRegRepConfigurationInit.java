@@ -174,6 +174,8 @@ public class DefaultXdsRegRepConfigurationInit implements UpgradeScript {
                 "ADT^A01",
                 "ADT^A02",
                 "ADT^A03",
+                "ADT^A04",
+                "ADT^A05",
                 "ADT^A06",
                 "ADT^A07",
                 "ADT^A08",
