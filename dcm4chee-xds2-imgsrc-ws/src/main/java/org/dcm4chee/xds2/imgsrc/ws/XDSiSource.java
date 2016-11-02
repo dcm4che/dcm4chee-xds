@@ -58,6 +58,7 @@ import javax.xml.ws.soap.MTOM;
 import javax.xml.ws.soap.SOAPBinding;
 
 import org.dcm4che3.net.Device;
+import org.dcm4che3.util.UIDUtils;
 import org.dcm4chee.xds2.common.XDSConstants;
 import org.dcm4chee.xds2.common.XDSUtil;
 import org.dcm4chee.xds2.common.audit.AuditRequestInfo;
@@ -131,8 +132,9 @@ public class XDSiSource implements ImagingDocumentSourcePortType {
         log.info("######## imagingDocumentSourceRetrieveImagingDocumentSet called!");
         RetrieveDocumentSetResponseType rsp = iheFactory.createRetrieveDocumentSetResponseType();
         rsp.setRegistryResponse(factory.createRegistryResponseType());
-        List<String> supportedTS = req.getTransferSyntaxUIDList().getTransferSyntaxUID();
         try {
+            validateRequest(req);
+            List<String> supportedTS = req.getTransferSyntaxUIDList().getTransferSyntaxUID();
             DicomObjectProvider dicomProvider = getDicomObjectProvider();
             for (StudyRequest study : req.getStudyRequest()) {
                 for (SeriesRequest series : study.getSeriesRequest()) {
@@ -154,6 +156,21 @@ public class XDSiSource implements ImagingDocumentSourcePortType {
         }
         XDSAudit.logImgRetrieve(rsp, new AuditRequestInfo(LogHandler.getInboundSOAPHeader(), wsContext));
         return rsp;
+    }
+
+    private void validateRequest(RetrieveImagingDocumentSetRequestType req) throws XDSException {
+        List<String> supportedTS = req.getTransferSyntaxUIDList().getTransferSyntaxUID();
+        if (supportedTS.isEmpty()) {
+            throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                    "Invalid request: TransferSyntaxUIDList is empty!", null);
+        }
+        for (String uid : supportedTS) {
+            if (!UIDUtils.isValid(uid)) {
+                throw new XDSException(XDSException.XDS_ERR_REGISTRY_ERROR, 
+                        "Invalid request: TransferSyntaxUIDList contains invalid UID value! UID:"+uid, null);
+            }
+        }
+        
     }
 
     private void addDicomObject(DicomObjectProvider dicomProvider, final RetrieveDocumentSetResponseType rsp, final String studyUID, final String seriesUID, final DocumentRequest doc, List<String> supportedTS) {
